@@ -11,6 +11,7 @@ set(LANG_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/brazilian_portuguese.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/bulgarian.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/catalan.txt
+        ${CMAKE_CURRENT_SOURCE_DIR}/cantonese.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/chuvash.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/croatian.txt
         ${CMAKE_CURRENT_SOURCE_DIR}/czech.txt
