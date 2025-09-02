@@ -926,12 +926,14 @@ static void DrawTile_Water(TileInfo *ti)
 	switch (GetWaterTileType(ti->tile)) {
 		case WATER_TILE_CLEAR:
 			DrawWaterClassGround(ti);
-			DrawBridgeMiddle(ti);
+			/* A plain water tile can be traversed in any direction, so setting blocked pillars here would mean all bridges
+			 * with edges would have no pillars above water. Instead prefer current behaviour of ships passing through. */
+			DrawBridgeMiddle(ti, {});
 			break;
 
 		case WATER_TILE_COAST: {
 			DrawShoreTile(ti->tileh);
-			DrawBridgeMiddle(ti);
+			DrawBridgeMiddle(ti, {});
 			break;
 		}
 
@@ -1410,6 +1412,11 @@ static CommandCost TerraformTile_Water(TileIndex tile, DoCommandFlags flags, int
 	return Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile);
 }
 
+static CommandCost CheckBuildAbove_Water(TileIndex tile, DoCommandFlags flags, Axis, int)
+{
+	if (IsWater(tile) || IsCoast(tile)) return CommandCost();
+	return Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile);
+}
 
 extern const TileTypeProcs _tile_type_water_procs = {
 	DrawTile_Water,           // draw_tile_proc
@@ -1426,4 +1433,5 @@ extern const TileTypeProcs _tile_type_water_procs = {
 	VehicleEnter_Water,       // vehicle_enter_tile_proc
 	GetFoundation_Water,      // get_foundation_proc
 	TerraformTile_Water,      // terraform_tile_proc
+	CheckBuildAbove_Water, // check_build_above_proc
 };

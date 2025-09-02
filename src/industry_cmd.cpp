@@ -701,7 +701,7 @@ static void AnimateTile_Industry(TileIndex tile)
 		if ((TimerGameTick::counter & 1) == 0) AnimateSugarSieve(tile);
 		break;
 
-	case GFX_TOFFEE_QUARY:
+	case GFX_TOFFEE_QUARRY:
 		if ((TimerGameTick::counter & 3) == 0) AnimateToffeeQuarry(tile);
 		break;
 
@@ -793,7 +793,7 @@ static void MakeIndustryTileBigger(TileIndex tile)
 
 	case GFX_TOY_FACTORY:
 	case GFX_BUBBLE_CATCHER:
-	case GFX_TOFFEE_QUARY:
+	case GFX_TOFFEE_QUARRY:
 		SetAnimationFrame(tile, 0);
 		SetIndustryAnimationLoop(tile, 0);
 		break;
@@ -938,7 +938,7 @@ static void TileLoop_Industry(TileIndex tile)
 		TileLoopIndustry_BubbleGenerator(tile);
 		break;
 
-	case GFX_TOFFEE_QUARY:
+	case GFX_TOFFEE_QUARRY:
 		AddAnimatedTile(tile);
 		break;
 
@@ -3224,6 +3224,7 @@ extern const TileTypeProcs _tile_type_industry_procs = {
 	nullptr,                        // vehicle_enter_tile_proc
 	GetFoundation_Industry,      // get_foundation_proc
 	TerraformTile_Industry,      // terraform_tile_proc
+	nullptr, // check_build_above_proc
 };
 
 bool IndustryCompare::operator() (const IndustryListEntry &lhs, const IndustryListEntry &rhs) const

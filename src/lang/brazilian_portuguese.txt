@@ -1691,6 +1691,9 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Mover mapa com 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Suavizar deslocamento da visualização: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Controlar como a visualização principal se move para uma localização específica ao clicar no minimapa ou quando é dado um comando para ir até um objeto específico no mapa. Se ativado, a visualização se move suavemente. Se desativado, a visualização salta diretamente para o destino escolhido
 
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT                  :Comportamento do menu de seleção da barra de ferramentas: {STRING}
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT_HELPTEXT         :Escolha o comportamento dos menus de seleção da barra de ferramentas. Se desativado, os menus da barra de ferramentas permanecerão abertos até que uma seleção seja feita. Se ativado, os menus da barra de ferramentas serão ativados quando o botão do mouse for solto.
+
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Mostrar medidas quando usar as ferramentas de construção: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Mostrar distâncias em quadrados e diferenças de altura quando Clicar+Arrastar nas ações de construção
 
@@ -2783,10 +2786,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}Custo de
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Unir estação
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Construir uma estação separada
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Construir uma estação separada
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Unir ponto de controle
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Construir um ponto de controle separado
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Construir um ponto de controle separado
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Desativado porque atualmente não existem veículos disponíveis para esta infraestrutura
@@ -2880,7 +2883,7 @@ STR_HOUSE_PICKER_PROTECT_ON                                     :Ativado
 
 STR_STATION_CLASS_DFLT                                          :Padrão
 STR_STATION_CLASS_DFLT_STATION                                  :Estação padrão
-STR_STATION_CLASS_DFLT_ROADSTOP                                 :Parada de estrada padrão
+STR_STATION_CLASS_DFLT_ROADSTOP                                 :Parada rodoviária padrão
 STR_STATION_CLASS_WAYP                                          :Pontos de controle
 STR_STATION_CLASS_WAYP_WAYPOINT                                 :Ponto de controle padrão
 
@@ -5054,7 +5057,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Não é 
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... o valor máximo de empréstimo permitido é {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Não é possível pedir mais dinheiro emprestado...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... não existe empréstimo para pagar
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... não existe empréstimo para pagar
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... é necessário {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Não é possível pagar empréstimo...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Não é possível doar dinheiro proveniente de empréstimo bancário...
@@ -5260,6 +5263,11 @@ STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}Início 
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}... os extremos da ponte devem estar sobre a terra
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... ponte muito longa
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}A ponte terminaria fora do mapa
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}Ponte é muito baixa para uma estação
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}Ponte é muito baixa para uma parada rodoviária
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}Ponte é muito baixa para uma boia
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}Ponte é muito baixa para um ponto de controle ferroviário
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}Ponte é muito baixa para um ponto de controle rodoviário
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}Não é possível construir túnel aqui...
@@ -5876,6 +5884,8 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :Espectador, {1:
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{TOWN} ({COMMA})
+STR_VIEWPORT_TOWN_CITY                                          :{TOWN} {CITY_ICON}
+STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN} ({COMMA}) {CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
 
 # Simple strings to get specific types of data

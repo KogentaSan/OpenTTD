@@ -2070,6 +2070,9 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Przeciągnij ma
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Wygładź przesuwanie widoku: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Określ, w jaki sposób widok główny ma być przesuwany do określonej lokalizacji po kliknięciu na minimapie lub po użyciu funkcji przeniesienia do określonego obiektu na mapie. Jeśli opcja ta jest włączona, widok przesuwa się płynnie, natomiast jeśli jest wyłączona, przeskakuje natychmiast do wybranego miejsca
 
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT                  :Tradycyjne zachowanie menu pod paskiem narzędzi: {STRING}
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT_HELPTEXT         :Określ zachowanie rozwijanych menu pod głównym paskiem narzędzi. Jeśli ta opcja jest wyłączona, menu pozostanie rozwinięte do momentu dokonania wyboru. Jeśli ta opcja jest włączona, pozycja menu zostanie aktywowana po zwolnieniu przycisku myszy.
+
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Pokaż dymek z pomiarem podczas używania różnych narzędzi: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Wyświetlaj długość budowanych odcinków i różnicę wysokości przy przeciąganiu w trakcie operacji budowlanych
 
@@ -3162,10 +3165,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}Koszt ut
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Połącz stację
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Zbuduj oddzielną stację
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Zbuduj oddzielną stację
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Połącz posterunki
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Zbuduj oddzielny posterunek
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Zbuduj oddzielny posterunek
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Nieaktywne, ponieważ nie są dostępne pojazdy korzystające z takiej infrastruktury
@@ -5439,7 +5442,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Nie moż
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... maksymalna dozwolona pożyczka wynosi {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Nie można pożyczyć więcej pieniędzy...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... pożyczka już jest spłacona
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... pożyczka już jest spłacona
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}...{CURRENCY_LONG} wymagane
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Nie można zwrócić pożyczki...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Nie możesz wydać pieniędzy, które są pożyczone z banku...
@@ -5645,6 +5648,11 @@ STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}Począte
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}... końce mostu muszą znajdować się na lądzie
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... za długi most
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}Koniec mostu poza mapą
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}Most jest zbyt niski dla stacji
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}Most jest zbyt niski dla przystanku
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}Most jest zbyt niski dla boi
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}Most jest zbyt niski dla posterunku kolejowego
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}Most jest zbyt niski dla posterunku drogowego
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}Nie można tutaj zbudować tunelu...
@@ -6316,6 +6324,8 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :Obserwator, {1:
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{TOWN} ({COMMA})
+STR_VIEWPORT_TOWN_CITY                                          :{TOWN} {CITY_ICON}
+STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN} ({COMMA}) {CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
 
 # Simple strings to get specific types of data

@@ -1690,6 +1690,9 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :使用左鍵移
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :畫面平滑移動：{STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :設定在小地圖中點選一個位置時，主畫面的顯示方式。啟用時，畫面會平緩移動到所點選的位置；否則畫面會直接跳到所點選的位置
 
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT                  :自動選取下拉式功能表項目：{STRING}
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT_HELPTEXT         :自訂下拉式功能表的動作。如果設定關閉，在點選功能表開啟下拉式選單時將維持開啟狀態，直到作出選擇為止。如果設定啟用，下拉式功能表則將在放開滑鼠按鈕時選取當前所選的項目。
+
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :使用某些建設工具時顯示度量提示：{STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :當點選建造工具後拖曳滑鼠時，是否顯示兩端的方格距離及高度差異。
 
@@ -2782,10 +2785,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}維護�
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}合併車站
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}建造獨立車站
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}建造獨立車站
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}合併中途站
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}建立個別中途站
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}建立個別中途站
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}此設施已被禁用，因為沒有任何此設施可用的載具
@@ -5053,7 +5056,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}無法�
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... 貸款額度上限是 {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}無法再借更多錢...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... 不需償還貸款
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... 不需償還貸款
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... 需要 {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}無法償還貸款...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}無法把貸款的錢流通出去...
@@ -5257,8 +5260,13 @@ STR_ERROR_BRIDGE_TOO_LOW_FOR_TERRAIN                            :{WHITE}橋樑�
 STR_ERROR_BRIDGE_TOO_HIGH_FOR_TERRAIN                           :{WHITE}這座橋對這個地形而言太高了
 STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}開始與結束位置必須在同一直線上
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}... 橋樑的兩端應在陸地上
-STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... 橋樑過長
+STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}……橋樑過長
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}橋的終點將會在地圖外
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}橋樑過低，無法興建車站
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}橋樑過低，無法興建車站
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}橋樑過低，無法放置浮標
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}橋樑過低，無法興建中途站
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}橋樑過低，無法興建中途站
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}無法在此挖掘隧道...
@@ -5875,6 +5883,8 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :觀眾，{1:STR
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{TOWN} （ {COMMA} ）
+STR_VIEWPORT_TOWN_CITY                                          :{TOWN}{CITY_ICON}
+STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN}（{COMMA}）{CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
 
 # Simple strings to get specific types of data

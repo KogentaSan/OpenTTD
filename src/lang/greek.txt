@@ -1783,6 +1783,9 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Μετακίν�
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Ομαλή μετάβαση οθόνης: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Ελέγξτε τον τρόπο με τον οποίο η κύρια προβολή κυλίεται σε μια συγκεκριμένη θέση όταν πατάτε πάνω στον μικρό χάρτη ή όταν δίνετε εντολή για μετάβαση σε ένα συγκεκριμένο αντικείμενο στον χάρτη. Όταν είναι ενεργοποιημένη, η κύλιση γίνεται ομαλά, και όταν είναι απενεργοποιημένη μεταβαίνει απ' ευθείας στο επιλεγμένο σημείο
 
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT                  :Παραδοσιακή συμπεριφορά επιλογής μενού γραμμής εργαλείων: {STRING}
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT_HELPTEXT         :Επιλέξτε τη συμπεριφορά επιλογής των μενού της γραμμής εργαλείων. Εάν είναι απενεργοποιημένη, τα μενού της γραμμής εργαλείων θα παραμείνουν ανοιχτά μέχρι να γίνει μια επιλογή. Εάν είναι ενεργοποιημένη, τα μενού της γραμμής εργαλείων θα ενεργοποιηθούν όταν αφήσετε το κουμπί του ποντικιού.
+
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Εμφάνιση εργαλείου μετρήσεως όταν χρησιμοποιούνται διάφορα εργαλεία: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Εμφάνιση αποστάσεων τετραγωνίδιων και υψομετρικών διαφορών όταν γίνονται λειτουργίες κατασκευών με σύρσιμο του ποντικιού
 
@@ -2875,10 +2878,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}Κόστ
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Συνένωση σταθμού
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Κατασκευάστε ένα ξεχωριστό σταθμό
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Κατασκευάστε ένα ξεχωριστό σταθμό
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Συνένωση σημείου καθοδήγησης
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Κατασκευή ενός ξεχωριστού σημείου καθοδήγησης
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Κατασκευή ενός ξεχωριστού σημείου καθοδήγησης
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Απενεργοποιημένο διότι δεν υπάρχουν διαθέσιμα οχήματα για αυτή την υποδομή
@@ -5154,7 +5157,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Δεν �
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... το μέγιστο επιτρεπόμενο δάνειο είναι {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Δεν μπορείτε να δανειστείτε περισσότερα χρήματα...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... δεν υπάρχει δάνειο προς αποπληρωμή
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... δεν υπάρχει δάνειο προς αποπληρωμή
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... απαιτούνται {CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Αδύνατη η αποπληρωμή του δανείου...
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Δεν είναι δυνατό να δοθούν χρήματα που είναι δανεισμένα από τη τράπεζα...
@@ -5360,6 +5363,11 @@ STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}Η αρ�
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}... και τα δύο άκρα της γέφυρας πρέπει να είναι σε έδαφος
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... η γέφυρα είναι πολλή μακριά
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}Η γέφυρα θα καταλήξει εκτός χάρτη
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}Η γέφυρα είναι πολύ χαμηλή για σταθμό
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}Η γέφυρα είναι πολύ χαμηλή για οδική στάση
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}Η γέφυρα είναι πολύ χαμηλή για σημαδούρα
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}Η γέφυρα είναι πολύ χαμηλή για σιδηροδρομικό σημείο αναφοράς
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}Η γέφυρα είναι πολύ χαμηλή για οδικό σημείο αναφοράς
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}Δεν μπορεί να κατασκευαστεί σήραγγα εδώ...
@@ -5980,6 +5988,8 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :Θεατής, {
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{TOWN} ({COMMA})
+STR_VIEWPORT_TOWN_CITY                                          :{TOWN} {CITY_ICON}
+STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN} ({COMMA}) {CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
 
 # Simple strings to get specific types of data

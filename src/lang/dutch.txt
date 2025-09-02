@@ -637,8 +637,8 @@ STR_GRAPH_CARGO_PAYMENT_RATES_SECONDS                           :{TINY_FONT}{BLA
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}Betaling voor het leveren van 10 eenheden (of 10.000 liter) vracht over een afstand van 20 vakjes
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}Alles
 STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}Geen
-STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Alle vrachtsoorten weergeven op de grafiek van vrachtprijzen
-STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Geen vrachtsoorten weergeven op de grafiek van vrachtprijzen
+STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}Alle vrachtsoorten weergeven op de grafiek
+STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}Geen vrachtsoorten weergeven op de grafiek
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}Grafiek voor dit vrachttype weergeven-verbergen
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
 
@@ -1689,6 +1689,9 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :Kaart verplaats
 
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :Kijkvenster vloeiend verplaatsen: {STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :Bepaalt hoe het hoofdvenster naar een specifieke positie schuift wanneer je op de minikaart klikt of je opdracht geeft om naar een specifiek object op de kaart te bladeren. Als dit is ingeschakeld, dan schuift het kijkvenster soepel; als dit is uitgeschakeld, ga je rechtstreeks naar de gewenste plek.
+
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT                  :Traditioneel gedrag voor kiezen werkbalkmenu's: {STRING}
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT_HELPTEXT         :Kies het gedrag van werkbalkmenu's. Bij Uit, blijven de werkbalkmenu's open tot je een keus hebt gemaakt. Bij Aan, worden werkbalkmenu's actief als je de muisknop loslaat.
 
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :Maten weergeven bij het gebruik van diverse bouwgereedschappen: {STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :Geef tegelafstanden en hoogteverschillen weer bij het slepen tijdens het bouwen
@@ -2782,10 +2785,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}Onderhou
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}Station samenvoegen
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}Een losstaand station bouwen
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}Een losstaand station bouwen
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}Routepunt samenvoegen
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Los routepunt bouwen
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}Los routepunt bouwen
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}Momenteel uitgeschakeld omdat er geen voertuigen zijn voor deze infrastructuur
@@ -5053,7 +5056,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}Kan dire
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}... maximaal toegestane lening bedraagt {CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}Kan geen geld meer lenen...
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}... geen lening om af te betalen
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}... geen lening om af te betalen
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}... {CURRENCY_LONG} benodigd
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}Kan de lening niet afbetalen..
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}Kan geen geld weggeven dat van de bank geleend is...
@@ -5259,6 +5262,11 @@ STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}Begin en
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}... uiteinden van brug moeten beiden op land zijn
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... brug te lang
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}Brug zou eindigen buiten de kaart
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}Brug te laag voor station
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}Brug te laag voor halte
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}Brug te laag voor boei
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}Brug te laag voor spoorroutepunt
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}Brug te laag voor wegroutepunt
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}Kan hier geen tunnel bouwen...
@@ -5414,7 +5422,7 @@ STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :{WHITE}Er zijn 
 STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :{WHITE}Er zijn geen haltes die geschikt zijn voor gelede wegvoertuigen.{}Gelede wegvoertuigen kunnen alleen stoppen aan de weg, niet bij een laadplatform.
 STR_ERROR_AIRPORT_NO_PLANES                                     :{WHITE}Dit vliegtuig kan niet landen op dit heliplatform
 STR_ERROR_AIRPORT_NO_HELICOPTERS                                :{WHITE}Deze helikopter kan niet landen op dit vliegveld
-STR_ERROR_NO_RAIL_WAYPOINT                                      :{WHITE}Er is geen routepunt
+STR_ERROR_NO_RAIL_WAYPOINT                                      :{WHITE}Er is geen spoor-routepunt
 STR_ERROR_NO_ROAD_WAYPOINT                                      :{WHITE}Er is geen weg-routepunt
 STR_ERROR_NO_BUOY                                               :{WHITE}Er is geen boei
 
@@ -5875,6 +5883,8 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :Toeschouwer, {1
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{TOWN} ({COMMA})
+STR_VIEWPORT_TOWN_CITY                                          :{TOWN} {CITY_ICON}
+STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN} ({COMMA}) {CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
 
 # Simple strings to get specific types of data

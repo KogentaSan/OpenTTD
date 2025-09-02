@@ -293,25 +293,12 @@ public:
 	 */
 	inline bool PfCalcEstimate(Node &n)
 	{
-		static const int dg_dir_to_x_offs[] = {-1, 0, 1, 0};
-		static const int dg_dir_to_y_offs[] = {0, 1, 0, -1};
 		if (this->PfDetectDestination(n)) {
 			n.estimate = n.cost;
 			return true;
 		}
 
-		TileIndex tile = n.segment_last_tile;
-		DiagDirection exitdir = TrackdirToExitdir(n.segment_last_td);
-		int x1 = 2 * TileX(tile) + dg_dir_to_x_offs[(int)exitdir];
-		int y1 = 2 * TileY(tile) + dg_dir_to_y_offs[(int)exitdir];
-		int x2 = 2 * TileX(this->dest_tile);
-		int y2 = 2 * TileY(this->dest_tile);
-		int dx = abs(x1 - x2);
-		int dy = abs(y1 - y2);
-		int dmin = std::min(dx, dy);
-		int dxy = abs(dx - dy);
-		int d = dmin * YAPF_TILE_CORNER_LENGTH + (dxy - 1) * (YAPF_TILE_LENGTH / 2);
-		n.estimate = n.cost + d;
+		n.estimate = n.cost + OctileDistanceCost(n.segment_last_tile, n.segment_last_td, this->dest_tile);
 		assert(n.estimate >= n.parent->estimate);
 		return true;
 	}
@@ -417,7 +404,7 @@ public:
 					TileArea non_cached_area = v->IsBus() ? st->bus_station : st->truck_station;
 					non_cached_area.Expand(YAPF_ROADVEH_PATH_CACHE_DESTINATION_LIMIT);
 
-					/* Find the first tile not contained by the non-cachable area, and remove from the cache. */
+					/* Find the first tile not contained by the non-cacheable area, and remove from the cache. */
 					auto it = std::find_if(std::begin(path_cache), std::end(path_cache), [&non_cached_area](const auto &pc) { return !non_cached_area.Contains(pc.tile); });
 					path_cache.erase(std::begin(path_cache), it);
 				}

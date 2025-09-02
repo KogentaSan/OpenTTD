@@ -1690,6 +1690,9 @@ STR_CONFIG_SETTING_SCROLLMODE_LMB                               :鼠标左键移
 STR_CONFIG_SETTING_SMOOTH_SCROLLING                             :平滑视角滚动：{STRING}
 STR_CONFIG_SETTING_SMOOTH_SCROLLING_HELPTEXT                    :设置在缩略图上点击或者发出转到特定目标的命令时主视角的转换方式。启用时，视角平缓滚动，否则直接跳转到目标位置
 
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT                  :自动选择工具栏下拉菜单项目：{STRING}
+STR_CONFIG_SETTING_TOOLBAR_DROPDOWN_AUTOSELECT_HELPTEXT         :选择工具栏下拉菜单的行为。关闭时，点选工具栏按钮后下拉菜单将保持常开，直到做出选择为止。启用时，将自动选取鼠标松开时指向的项目。
+
 STR_CONFIG_SETTING_MEASURE_TOOLTIP                              :建设时显示测量数据：{STRING}
 STR_CONFIG_SETTING_MEASURE_TOOLTIP_HELPTEXT                     :建设时显示距离格数和地形高差
 
@@ -2782,10 +2785,10 @@ STR_STATION_BUILD_INFRASTRUCTURE_COST_PERIOD                    :{BLACK}维护�
 
 # Join station window
 STR_JOIN_STATION_CAPTION                                        :{WHITE}合并车站
-STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}建造分体车站
+STR_JOIN_STATION_CREATE_SPLIT_STATION                           :{YELLOW}建造分体车站
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}合并路点
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}建造分体路点
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}建造分体路点
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}由于没有可使用此类设施的载具，已禁用此设施
@@ -3858,8 +3861,8 @@ STR_STATION_VIEW_CARGO_SUPPLY_RATING                            :{WHITE}{STRING}
 STR_STATION_VIEW_GROUP                                          :{BLACK}群组方式
 STR_STATION_VIEW_WAITING_STATION                                :等候装载的货物，按站名排序
 STR_STATION_VIEW_WAITING_AMOUNT                                 :等候装载的货物，按总量排序
-STR_STATION_VIEW_PLANNED_STATION                                :计划发出的货物，按站名排序
-STR_STATION_VIEW_PLANNED_AMOUNT                                 :计划发出的货物，按总量排序
+STR_STATION_VIEW_PLANNED_STATION                                :计划处理的货物，按站名排序
+STR_STATION_VIEW_PLANNED_AMOUNT                                 :计划处理的货物，按总量排序
 STR_STATION_VIEW_FROM                                           :{YELLOW}{CARGO_SHORT}来自 {STATION}
 STR_STATION_VIEW_VIA                                            :{YELLOW}{CARGO_SHORT}途经 {STATION}
 STR_STATION_VIEW_TO                                             :{YELLOW}{CARGO_SHORT}前往 {STATION}
@@ -5053,7 +5056,7 @@ STR_ERROR_CAN_T_CHANGE_PRESIDENT                                :{WHITE}不能�
 
 STR_ERROR_MAXIMUM_PERMITTED_LOAN                                :{WHITE}……最大贷款额度是{CURRENCY_LONG}
 STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY                           :{WHITE}无法借更多钱……
-STR_ERROR_LOAN_ALREADY_REPAYED                                  :{WHITE}……没有要偿还的贷款
+STR_ERROR_LOAN_ALREADY_REPAID                                   :{WHITE}……没有要偿还的贷款
 STR_ERROR_CURRENCY_REQUIRED                                     :{WHITE}……需要{CURRENCY_LONG}
 STR_ERROR_CAN_T_REPAY_LOAN                                      :{WHITE}不能偿还贷款……
 STR_ERROR_INSUFFICIENT_FUNDS                                    :{WHITE}不能给予银行贷款……
@@ -5259,6 +5262,11 @@ STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}起止�
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}……桥梁两端必须都位于地面上
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}……桥梁太长
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}桥梁终点将越出地图
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}桥梁过低，无法建设车站
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}桥梁过低，无法建设车站
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}桥梁过低，无法放置浮标
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}桥梁过低，无法建设路点
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}桥梁过低，无法建设路点
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}不能在这里开凿隧道……
@@ -5875,6 +5883,8 @@ STR_SAVEGAME_NAME_SPECTATOR                                     :观众，{1:STR
 
 # Viewport strings
 STR_VIEWPORT_TOWN_POP                                           :{TOWN}（{COMMA}）
+STR_VIEWPORT_TOWN_CITY                                          :{TOWN}{CITY_ICON}
+STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN}（{COMMA}）{CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
 
 # Simple strings to get specific types of data

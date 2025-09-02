@@ -794,7 +794,7 @@ CommandCost CmdBuildRoad(DoCommandFlags flags, TileIndex tile, RoadBits pieces, 
 
 		case MP_TUNNELBRIDGE: {
 			if (GetTunnelBridgeTransportType(tile) != TRANSPORT_ROAD) goto do_clear;
-			/* Only allow building the outern roadbit, so building long roads stops at existing bridges */
+			/* Only allow building the outer roadbit, so building long roads stops at existing bridges */
 			if (MirrorRoadBits(DiagDirToRoadBits(GetTunnelBridgeDirection(tile))) != pieces) goto do_clear;
 			if (HasTileRoadType(tile, rtt)) return CommandCost(STR_ERROR_ALREADY_BUILT);
 			/* Don't allow adding roadtype to the bridge/tunnel when vehicles are already driving on it */
@@ -1699,9 +1699,18 @@ static void DrawRoadBits(TileInfo *ti)
 /** Tile callback function for rendering a road tile to the screen */
 static void DrawTile_Road(TileInfo *ti)
 {
+	BridgePillarFlags blocked_pillars{};
 	switch (GetRoadTileType(ti->tile)) {
 		case ROAD_TILE_NORMAL:
 			DrawRoadBits(ti);
+
+			if (IsBridgeAbove(ti->tile)) {
+				RoadBits bits = GetAllRoadBits(ti->tile);
+				if ((bits & ROAD_NE) != 0) blocked_pillars.Set(BridgePillarFlag::EdgeNE);
+				if ((bits & ROAD_SE) != 0) blocked_pillars.Set(BridgePillarFlag::EdgeSE);
+				if ((bits & ROAD_SW) != 0) blocked_pillars.Set(BridgePillarFlag::EdgeSW);
+				if ((bits & ROAD_NW) != 0) blocked_pillars.Set(BridgePillarFlag::EdgeNW);
+			}
 			break;
 
 		case ROAD_TILE_CROSSING: {
@@ -1809,7 +1818,7 @@ static void DrawTile_Road(TileInfo *ti)
 
 			/* Draw rail catenary */
 			if (HasRailCatenaryDrawn(GetRailType(ti->tile))) DrawRailCatenary(ti);
-
+			blocked_pillars = {BridgePillarFlag::EdgeSW, BridgePillarFlag::EdgeNE, BridgePillarFlag::EdgeNW, BridgePillarFlag::EdgeSE};
 			break;
 		}
 
@@ -1855,10 +1864,11 @@ static void DrawTile_Road(TileInfo *ti)
 			}
 
 			DrawRailTileSeq(ti, dts, TO_BUILDINGS, relocation, 0, palette);
+			/* Depots can't have bridges above so no blocked pillars. */
 			break;
 		}
 	}
-	DrawBridgeMiddle(ti);
+	DrawBridgeMiddle(ti, blocked_pillars);
 }
 
 /**
@@ -2616,6 +2626,11 @@ CommandCost CmdConvertRoad(DoCommandFlags flags, TileIndex tile, TileIndex area_
 	return found_convertible_road ? cost : error;
 }
 
+static CommandCost CheckBuildAbove_Road(TileIndex tile, DoCommandFlags flags, Axis, int)
+{
+	if (!IsRoadDepot(tile)) return CommandCost();
+	return Command<CMD_LANDSCAPE_CLEAR>::Do(flags, tile);
+}
 
 /** Tile callback functions for road tiles */
 extern const TileTypeProcs _tile_type_road_procs = {
@@ -2633,4 +2648,5 @@ extern const TileTypeProcs _tile_type_road_procs = {
 	VehicleEnter_Road,       // vehicle_enter_tile_proc
 	GetFoundation_Road,      // get_foundation_proc
 	TerraformTile_Road,      // terraform_tile_proc
+	CheckBuildAbove_Road, // check_build_above_proc
 };
