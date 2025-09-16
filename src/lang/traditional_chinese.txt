@@ -2616,7 +2616,7 @@ STR_NETWORK_ERROR_CLIENT_NAME_IN_USE                            :已有人使用
 STR_NETWORK_ERROR_CLIENT_WRONG_PASSWORD                         :密碼錯誤
 STR_NETWORK_ERROR_CLIENT_NOT_ON_ALLOW_LIST                      :不在允許名單內
 STR_NETWORK_ERROR_CLIENT_NO_AUTHENTICATION_METHOD_AVAILABLE     :已請求的驗證方式均不可用
-STR_NETWORK_ERROR_CLIENT_COMPANY_MISMATCH                       :DoCommand 內含錯誤的 company-id
+STR_NETWORK_ERROR_CLIENT_COMPANY_MISMATCH                       :DoCommand 內含錯誤的公司 ID
 STR_NETWORK_ERROR_CLIENT_KICKED                                 :被伺服器踢除
 STR_NETWORK_ERROR_CLIENT_CHEATER                                :想試著作弊
 STR_NETWORK_ERROR_CLIENT_SERVER_FULL                            :伺服器已滿
@@ -5264,9 +5264,11 @@ STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}……�
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}橋的終點將會在地圖外
 STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}橋樑過低，無法興建車站
 STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}橋樑過低，無法興建車站
+STR_ERROR_BRIDGE_TOO_LOW_FOR_DOCK                               :{WHITE}橋樑過低，無法興建碼頭
 STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}橋樑過低，無法放置浮標
 STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}橋樑過低，無法興建中途站
 STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}橋樑過低，無法興建中途站
+STR_ERROR_BRIDGE_TOO_LOW_FOR_LOCK                               :{WHITE}橋樑過低，無法興建水閘
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}無法在此挖掘隧道...

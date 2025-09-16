@@ -109,9 +109,6 @@ enum RailFenceOffset : uint8_t {
 	RFO_SLOPE_NW_SW,   //!< Slope NW,   Track Y,     Fence SW
 };
 
-/** List of rail type labels. */
-typedef std::vector<RailTypeLabel> RailTypeLabelList;
-
 /**
  * This struct contains all the info that is needed to draw and construct tracks.
  */
@@ -214,7 +211,7 @@ public:
 	/**
 	 * Acceleration type of this rail type
 	 */
-	uint8_t acceleration_type;
+	VehicleAccelerationModel acceleration_type;
 
 	/**
 	 * Maximum speed for vehicles travelling on this rail type
@@ -229,7 +226,7 @@ public:
 	/**
 	 * Rail type labels this type provides in addition to the main label.
 	 */
-	RailTypeLabelList alternate_labels;
+	std::vector<RailTypeLabel> alternate_labels;
 
 	/**
 	 * Colour on mini-map
@@ -318,6 +315,42 @@ inline RailType GetRailTypeInfoIndex(const RailTypeInfo *rti)
 }
 
 /**
+ * Returns all compatible railtypes for a set of railtypes.
+ * @param railtypes Set of railtypes to get the compatible railtypes from.
+ * @return Union of all compatible railtypes.
+ */
+inline RailTypes GetAllCompatibleRailTypes(RailTypes railtypes)
+{
+	RailTypes compatible{};
+	for (RailType rt : railtypes) compatible.Set(GetRailTypeInfo(rt)->compatible_railtypes);
+	return compatible;
+}
+
+/**
+ * Returns all powered railtypes for a set of railtypes.
+ * @param railtypes Set of railtypes to get the powered railtypes from.
+ * @return Union of all powered railtypes.
+ */
+inline RailTypes GetAllPoweredRailTypes(RailTypes railtypes)
+{
+	RailTypes powered{};
+	for (RailType rt : railtypes) powered.Set(GetRailTypeInfo(rt)->powered_railtypes);
+	return powered;
+}
+
+/**
+ * Returns all introduced railtypes for a set of railtypes.
+ * @param railtypes Set of railtypes to get the introduced railtypes from.
+ * @return Union of all introduced railtypes.
+ */
+inline RailTypes GetAllIntroducesRailTypes(RailTypes railtypes)
+{
+	RailTypes introduces{};
+	for (RailType rt : railtypes) introduces.Set(GetRailTypeInfo(rt)->introduces_railtypes);
+	return introduces;
+}
+
+/**
  * Checks if an engine of the given RailType can drive on a tile with a given
  * RailType. This would normally just be an equality check, but for electric
  * rails (which also support non-electric engines).
@@ -331,6 +364,18 @@ inline bool IsCompatibleRail(RailType enginetype, RailType tiletype)
 }
 
 /**
+ * Checks if an engine of the given RailTypes can drive on a tile with a given
+ * RailType.
+ * @param  enginetype The RailTypes of the engine we are considering.
+ * @param  tiletype   The RailType of the tile we are considering.
+ * @return Whether the engine can drive on this tile.
+ */
+inline bool IsCompatibleRail(RailTypes enginetype, RailType tiletype)
+{
+	return GetAllCompatibleRailTypes(enginetype).Test(tiletype);
+}
+
+/**
  * Checks if an engine of the given RailType got power on a tile with a given
  * RailType. This would normally just be an equality check, but for electric
  * rails (which also support non-electric engines).
@@ -341,6 +386,18 @@ inline bool IsCompatibleRail(RailType enginetype, RailType tiletype)
 inline bool HasPowerOnRail(RailType enginetype, RailType tiletype)
 {
 	return GetRailTypeInfo(enginetype)->powered_railtypes.Test(tiletype);
+}
+
+/**
+ * Checks if an engine of the given RailTypes got power on a tile with a given
+ * RailType.
+ * @param  enginetype The RailTypes of the engine we are considering.
+ * @param  tiletype   The RailType of the tile we are considering.
+ * @return Whether the engine got power on this tile.
+ */
+inline bool HasPowerOnRail(RailTypes enginetype, RailType tiletype)
+{
+	return GetAllPoweredRailTypes(enginetype).Test(tiletype);
 }
 
 /**

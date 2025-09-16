@@ -86,7 +86,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		8,
 
 		/* acceleration type */
-		0,
+		VehicleAccelerationModel::Normal,
 
 		/* max speed */
 		0,
@@ -95,7 +95,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		RAILTYPE_LABEL_RAIL,
 
 		/* alternate labels */
-		RailTypeLabelList(),
+		{},
 
 		/* map colour */
 		PC_GREY,
@@ -188,7 +188,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		12,
 
 		/* acceleration type */
-		0,
+		VehicleAccelerationModel::Normal,
 
 		/* max speed */
 		0,
@@ -197,7 +197,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		RAILTYPE_LABEL_ELECTRIC,
 
 		/* alternate labels */
-		RailTypeLabelList(),
+		{},
 
 		/* map colour */
 		PC_GREY,
@@ -286,7 +286,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		16,
 
 		/* acceleration type */
-		1,
+		VehicleAccelerationModel::Monorail,
 
 		/* max speed */
 		0,
@@ -295,7 +295,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		RAILTYPE_LABEL_MONO,
 
 		/* alternate labels */
-		RailTypeLabelList(),
+		{},
 
 		/* map colour */
 		PC_GREY,
@@ -384,7 +384,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		24,
 
 		/* acceleration type */
-		2,
+		VehicleAccelerationModel::Maglev,
 
 		/* max speed */
 		0,
@@ -393,7 +393,7 @@ static const RailTypeInfo _original_railtypes[] = {
 		RAILTYPE_LABEL_MAGLEV,
 
 		/* alternate labels */
-		RailTypeLabelList(),
+		{},
 
 		/* map colour */
 		PC_GREY,
