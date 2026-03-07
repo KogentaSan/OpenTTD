@@ -5450,39 +5450,39 @@ STR_BASEMUSIC_NONE_DESCRIPTION                                  :不含任何音
 
 ##id 0x2000
 # Town building names
-STR_TOWN_BUILDING_NAME_TALL_OFFICE_BLOCK_1                      :摩天辦公大樓
-STR_TOWN_BUILDING_NAME_OFFICE_BLOCK_1                           :辦公大樓
-STR_TOWN_BUILDING_NAME_SMALL_BLOCK_OF_FLATS_1                   :小平房
+STR_TOWN_BUILDING_NAME_TALL_OFFICE_BLOCK_1                      :摩天寫字樓
+STR_TOWN_BUILDING_NAME_OFFICE_BLOCK_1                           :寫字樓
+STR_TOWN_BUILDING_NAME_SMALL_BLOCK_OF_FLATS_1                   :屋邨大廈
 STR_TOWN_BUILDING_NAME_CHURCH_1                                 :教堂
-STR_TOWN_BUILDING_NAME_LARGE_OFFICE_BLOCK_1                     :大型辦公大樓
-STR_TOWN_BUILDING_NAME_TOWN_HOUSES_1                            :城內住宅
-STR_TOWN_BUILDING_NAME_HOTEL_1                                  :旅館
+STR_TOWN_BUILDING_NAME_LARGE_OFFICE_BLOCK_1                     :大型寫字樓
+STR_TOWN_BUILDING_NAME_TOWN_HOUSES_1                            :市區住宅
+STR_TOWN_BUILDING_NAME_HOTEL_1                                  :酒店
 STR_TOWN_BUILDING_NAME_STATUE_1                                 :雕像
-STR_TOWN_BUILDING_NAME_FOUNTAIN_1                               :噴泉
+STR_TOWN_BUILDING_NAME_FOUNTAIN_1                               :噴水池
 STR_TOWN_BUILDING_NAME_PARK_1                                   :公園
-STR_TOWN_BUILDING_NAME_OFFICE_BLOCK_2                           :辦公大樓
-STR_TOWN_BUILDING_NAME_SHOPS_AND_OFFICES_1                      :店舖與公司
-STR_TOWN_BUILDING_NAME_MODERN_OFFICE_BUILDING_1                 :現代辦公大樓
-STR_TOWN_BUILDING_NAME_WAREHOUSE_1                              :倉庫
-STR_TOWN_BUILDING_NAME_OFFICE_BLOCK_3                           :辦公大樓
+STR_TOWN_BUILDING_NAME_OFFICE_BLOCK_2                           :寫字樓
+STR_TOWN_BUILDING_NAME_SHOPS_AND_OFFICES_1                      :舖頭同辦公室
+STR_TOWN_BUILDING_NAME_MODERN_OFFICE_BUILDING_1                 :現代寫字樓
+STR_TOWN_BUILDING_NAME_WAREHOUSE_1                              :貨倉
+STR_TOWN_BUILDING_NAME_OFFICE_BLOCK_3                           :寫字樓
 STR_TOWN_BUILDING_NAME_STADIUM_1                                :體育館
-STR_TOWN_BUILDING_NAME_OLD_HOUSES_1                             :老舊房屋
-STR_TOWN_BUILDING_NAME_COTTAGES_1                               :農舍
-STR_TOWN_BUILDING_NAME_HOUSES_1                                 :住宅
-STR_TOWN_BUILDING_NAME_FLATS_1                                  :平房
-STR_TOWN_BUILDING_NAME_TALL_OFFICE_BLOCK_2                      :摩天辦公大樓
-STR_TOWN_BUILDING_NAME_SHOPS_AND_OFFICES_2                      :店舖與辦公室
-STR_TOWN_BUILDING_NAME_SHOPS_AND_OFFICES_3                      :店舖與辦公室
+STR_TOWN_BUILDING_NAME_OLD_HOUSES_1                             :舊式房屋
+STR_TOWN_BUILDING_NAME_COTTAGES_1                               :村屋
+STR_TOWN_BUILDING_NAME_HOUSES_1                                 :洋房
+STR_TOWN_BUILDING_NAME_FLATS_1                                  :屋苑大廈
+STR_TOWN_BUILDING_NAME_TALL_OFFICE_BLOCK_2                      :摩天寫字樓
+STR_TOWN_BUILDING_NAME_SHOPS_AND_OFFICES_2                      :舖頭同辦公室
+STR_TOWN_BUILDING_NAME_SHOPS_AND_OFFICES_3                      :舖頭同辦公室
 STR_TOWN_BUILDING_NAME_THEATER_1                                :劇院
 STR_TOWN_BUILDING_NAME_STADIUM_2                                :體育館
 STR_TOWN_BUILDING_NAME_OFFICES_1                                :辦公室
-STR_TOWN_BUILDING_NAME_HOUSES_2                                 :住宅
-STR_TOWN_BUILDING_NAME_CINEMA_1                                 :電影院
-STR_TOWN_BUILDING_NAME_SHOPPING_MALL_1                          :購物中心
-STR_TOWN_BUILDING_NAME_IGLOO_1                                  :圓頂房舍
-STR_TOWN_BUILDING_NAME_TEPEES_1                                 :帳篷小屋
+STR_TOWN_BUILDING_NAME_HOUSES_2                                 :洋樓
+STR_TOWN_BUILDING_NAME_CINEMA_1                                 :戲院
+STR_TOWN_BUILDING_NAME_SHOPPING_MALL_1                          :購物商場
+STR_TOWN_BUILDING_NAME_IGLOO_1                                  :圓頂屋
+STR_TOWN_BUILDING_NAME_TEPEES_1                                 :帳篷屋
 STR_TOWN_BUILDING_NAME_TEAPOT_HOUSE_1                           :茶壺屋
-STR_TOWN_BUILDING_NAME_PIGGY_BANK_1                             :撲滿
+STR_TOWN_BUILDING_NAME_PIGGY_BANK_1                             :豬仔銀行
 
 ##id 0x4800
 # industry names
@@ -5518,7 +5518,7 @@ STR_INDUSTRY_NAME_BATTERY_FARM                                  :電池農場
 STR_INDUSTRY_NAME_COLA_WELLS                                    :可樂井
 STR_INDUSTRY_NAME_TOY_SHOP                                      :玩具店
 STR_INDUSTRY_NAME_TOY_FACTORY                                   :玩具工廠
-STR_INDUSTRY_NAME_PLASTIC_FOUNTAINS                             :塑膠噴泉
+STR_INDUSTRY_NAME_PLASTIC_FOUNTAINS                             :塑膠噴水池
 STR_INDUSTRY_NAME_FIZZY_DRINK_FACTORY                           :汽水工廠
 STR_INDUSTRY_NAME_BUBBLE_GENERATOR                              :氣泡產生器
 STR_INDUSTRY_NAME_TOFFEE_QUARRY                                 :太妃糖採集場
@@ -5541,14 +5541,14 @@ STR_SV_STNAME_NORTH                                             :{STRING} 北站
 STR_SV_STNAME_SOUTH                                             :{STRING} 南站
 STR_SV_STNAME_EAST                                              :{STRING} 東站
 STR_SV_STNAME_WEST                                              :{STRING} 西站
-STR_SV_STNAME_CENTRAL                                           :{STRING} 中央
-STR_SV_STNAME_TRANSFER                                          :{STRING} 交流站
-STR_SV_STNAME_HALT                                              :{STRING} 停站
+STR_SV_STNAME_CENTRAL                                           :{STRING} 市中心
+STR_SV_STNAME_TRANSFER                                          :{STRING} 交匯站
+STR_SV_STNAME_HALT                                              :{STRING} 停留站
 STR_SV_STNAME_VALLEY                                            :{STRING} 山谷
 STR_SV_STNAME_HEIGHTS                                           :{STRING} 高地
 STR_SV_STNAME_WOODS                                             :{STRING} 林場
 STR_SV_STNAME_LAKESIDE                                          :{STRING} 湖畔
-STR_SV_STNAME_EXCHANGE                                          :{STRING} 轉運站
+STR_SV_STNAME_EXCHANGE                                          :{STRING} 轉車站
 STR_SV_STNAME_AIRPORT                                           :{STRING} 機場
 STR_SV_STNAME_OILFIELD                                          :{STRING} 油田
 STR_SV_STNAME_MINES                                             :{STRING} 礦場
