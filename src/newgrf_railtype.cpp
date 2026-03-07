@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_railtype.cpp NewGRF handling of rail types. */
@@ -35,7 +35,7 @@
 			case 0x43: return TimerGameCalendar::date.base();
 			case 0x44: return to_underlying(HouseZone::TownEdge);
 			case 0x45: {
-				auto rt = GetRailTypeInfoIndex(this->rti);
+				RailType rt = this->rti->Index();
 				uint8_t local = GetReverseRailTypeTranslation(rt, this->ro.grffile);
 				if (local == 0xFF) local = 0xFE;
 				return 0xFFFF | local << 16;
@@ -212,23 +212,23 @@ void ConvertRailTypes()
 
 	for (const auto t : Map::Iterate()) {
 		switch (GetTileType(t)) {
-			case MP_RAILWAY:
+			case TileType::Railway:
 				SetRailType(t, railtype_conversion_map[GetRailType(t)]);
 				break;
 
-			case MP_ROAD:
+			case TileType::Road:
 				if (IsLevelCrossing(t)) {
 					SetRailType(t, railtype_conversion_map[GetRailType(t)]);
 				}
 				break;
 
-			case MP_STATION:
+			case TileType::Station:
 				if (HasStationRail(t)) {
 					SetRailType(t, railtype_conversion_map[GetRailType(t)]);
 				}
 				break;
 
-			case MP_TUNNELBRIDGE:
+			case TileType::TunnelBridge:
 				if (GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL) {
 					SetRailType(t, railtype_conversion_map[GetRailType(t)]);
 				}

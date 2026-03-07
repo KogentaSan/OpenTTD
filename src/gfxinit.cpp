@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file gfxinit.cpp Initializing of the (GRF) graphics. */
@@ -77,7 +77,6 @@ static uint LoadGrfFile(const std::string &filename, SpriteID load_index, bool n
  * @param filename   The name of the file to open.
  * @param index_tbl  The offsets of each of the sprites.
  * @param needs_palette_remap Whether the colours in the GRF file need a palette remap.
- * @return The number of loaded sprites.
  */
 static void LoadGrfFileIndexed(const std::string &filename, std::span<const std::pair<SpriteID, SpriteID>> index_tbl, bool needs_palette_remap)
 {
@@ -466,7 +465,9 @@ MD5File::ChecksumResult MD5File::CheckMD5(Subdirectory subdir, size_t max_size) 
 /** Names corresponding to the GraphicsFileType */
 static const std::string_view _graphics_file_names[] = { "base", "logos", "arctic", "tropical", "toyland", "extra" };
 
-/** Implementation */
+/* Implementation */
+
+/** @copydoc BaseSet::GetFilenames */
 template <>
 /* static */ std::span<const std::string_view> BaseSet<GraphicsSet>::GetFilenames()
 {

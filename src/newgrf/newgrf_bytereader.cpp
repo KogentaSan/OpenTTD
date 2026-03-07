@@ -2,13 +2,12 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_bytereader.cpp NewGRF byte buffer reader implementation. */
 
 #include "../stdafx.h"
-#include "../core/backup_type.hpp"
 #include "../string_func.h"
 #include "newgrf_bytereader.h"
 
@@ -16,6 +15,7 @@
 
 /**
  * Read a value of the given number of bytes.
+ * @param size Number of bytes to read; must be 1, 2 or 4.
  * @returns Value read from buffer.
  */
 uint32_t ByteReader::ReadVarSize(uint8_t size)

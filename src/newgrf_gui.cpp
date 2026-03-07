@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_gui.cpp GUI to change NewGRF settings. */
@@ -51,17 +51,20 @@ void ShowNewGRFError()
 
 	for (const auto &c : _grfconfig) {
 		/* Only show Fatal and Error level messages */
-		if (!c->error.has_value() || (c->error->severity != STR_NEWGRF_ERROR_MSG_FATAL && c->error->severity != STR_NEWGRF_ERROR_MSG_ERROR)) continue;
+		if (c->errors.empty()) continue;
+
+		const GRFError &error = c->errors.back();
+		if (error.severity != STR_NEWGRF_ERROR_MSG_FATAL && error.severity != STR_NEWGRF_ERROR_MSG_ERROR) continue;
 
 		std::vector<StringParameter> params;
 		params.emplace_back(c->GetName());
-		params.emplace_back(c->error->message != STR_NULL ? c->error->message : STR_JUST_RAW_STRING);
-		params.emplace_back(c->error->custom_message);
+		params.emplace_back(error.message != STR_NULL ? error.message : STR_JUST_RAW_STRING);
+		params.emplace_back(error.custom_message);
 		params.emplace_back(c->filename);
-		params.emplace_back(c->error->data);
-		for (const uint32_t &value : c->error->param_value) params.emplace_back(value);
+		params.emplace_back(error.data);
+		for (const uint32_t &value : error.param_value) params.emplace_back(value);
 
-		if (c->error->severity == STR_NEWGRF_ERROR_MSG_FATAL) {
+		if (error.severity == STR_NEWGRF_ERROR_MSG_FATAL) {
 			ShowErrorMessage(GetEncodedStringWithArgs(STR_NEWGRF_ERROR_FATAL_POPUP, params), {}, WL_CRITICAL);
 		} else {
 			ShowErrorMessage(GetEncodedStringWithArgs(STR_NEWGRF_ERROR_POPUP, params), {}, WL_ERROR);
@@ -81,15 +84,15 @@ static StringID GetGRFPaletteString(uint8_t palette)
 static void ShowNewGRFInfo(const GRFConfig &c, const Rect &r, bool show_params)
 {
 	Rect tr = r.Shrink(WidgetDimensions::scaled.frametext);
-	if (c.error.has_value()) {
-		std::array<StringParameter, 3 + std::tuple_size_v<decltype(c.error->param_value)>> params{};
+	for (const GRFError &error : c.errors) {
+		std::array<StringParameter, 3 + std::tuple_size_v<decltype(error.param_value)>> params{};
 		auto it = params.begin();
-		*it++ = c.error->custom_message; // is skipped by built-in messages
+		*it++ = error.custom_message; // is skipped by built-in messages
 		*it++ = c.filename;
-		*it++ = c.error->data;
-		for (const uint32_t &value : c.error->param_value) *it++ = value;
+		*it++ = error.data;
+		for (const uint32_t &value : error.param_value) *it++ = value;
 
-		tr.top = DrawStringMultiLine(tr, GetString(c.error->severity, GetStringWithArgs(c.error->message != STR_NULL ? c.error->message : STR_JUST_RAW_STRING, {params.begin(), it})));
+		tr.top = DrawStringMultiLine(tr, GetString(error.severity, GetStringWithArgs(error.message != STR_NULL ? error.message : STR_JUST_RAW_STRING, {params.begin(), it})));
 	}
 
 	/* Draw filename or not if it is not known (GRF sent over internet) */
@@ -497,7 +500,7 @@ struct NewGRFParametersWindow : public Window {
 GRFParameterInfo NewGRFParametersWindow::dummy_parameter_info(0);
 
 
-static constexpr NWidgetPart _nested_newgrf_parameter_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_parameter_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_MAUVE),
 		NWidget(WWT_CAPTION, COLOUR_MAUVE, WID_NP_CAPTION),
@@ -868,8 +871,8 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 							}
 						}
 						DrawSprite(SPR_SQUARE, pal, square_left, tr.top + square_offset_y);
-						if (c->error.has_value()) DrawSprite(SPR_WARNING_SIGN, 0, warning_left, tr.top + warning_offset_y);
-						uint txtoffset = !c->error.has_value() ? 0 : warning.width;
+						if (!c->errors.empty()) DrawSprite(SPR_WARNING_SIGN, 0, warning_left, tr.top + warning_offset_y);
+						uint txtoffset = c->errors.empty() ? 0 : warning.width;
 						DrawString(text_left + (rtl ? 0 : txtoffset), text_right - (rtl ? txtoffset : 0), tr.top + offset_y, std::move(text), h ? TC_WHITE : TC_ORANGE);
 						tr.top += step_height;
 					}
@@ -1337,16 +1340,18 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 
 					this->vscroll->ScrollTowards(to_pos);
 					this->preset = -1;
-					this->InvalidateData();
+					this->InvalidateData(GOID_NEWGRF_LIST_EDITED);
 				}
 			} else if (this->avail_sel != nullptr) {
 				int to_pos = std::min(this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_NS_FILE_LIST, WidgetDimensions::scaled.framerect.top), this->vscroll->GetCount() - 1);
 				this->AddGRFToActive(to_pos);
+				this->InvalidateData(GOID_NEWGRF_LIST_EDITED);
 			}
 		} else if (widget == WID_NS_AVAIL_LIST && this->active_sel != nullptr) {
 			/* Remove active NewGRF file by dragging it over available list. */
 			Point dummy = {-1, -1};
 			this->OnClick(dummy, WID_NS_REMOVE, 1);
+			this->InvalidateData(GOID_NEWGRF_LIST_EDITED);
 		}
 
 		ResetObjectToPlace();
@@ -1382,7 +1387,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 	}
 
 private:
-	/** Sort grfs by name. */
+	/** Sort grfs by name. @copydoc GUIList::Sorter */
 	static bool NameSorter(const GRFConfig * const &a, const GRFConfig * const &b)
 	{
 		std::string name_a = StrMakeValid(a->GetName(), {}); // Make a copy without control codes.
@@ -1396,13 +1401,13 @@ private:
 		return a->ident.md5sum < b->ident.md5sum;
 	}
 
-	/** Filter grfs by tags/name */
-	static bool TagNameFilter(const GRFConfig * const *a, StringFilter &filter)
+	/** Filter grfs by tags/name. @copydoc GUIList::FilterFunction */
+	static bool TagNameFilter(const GRFConfig * const *item, StringFilter &filter)
 	{
 		filter.ResetState();
-		filter.AddLine((*a)->GetName());
-		filter.AddLine((*a)->filename);
-		if (auto desc = (*a)->GetDescription(); desc.has_value()) filter.AddLine(*desc);
+		filter.AddLine((*item)->GetName());
+		filter.AddLine((*item)->filename);
+		if (auto desc = (*item)->GetDescription(); desc.has_value()) filter.AddLine(*desc);
 		return filter.GetState();;
 	}
 
@@ -1740,7 +1745,7 @@ public:
 const uint NWidgetNewGRFDisplay::MAX_EXTRA_INFO_WIDTH    = 150;
 const uint NWidgetNewGRFDisplay::MIN_EXTRA_FOR_3_COLUMNS = 50;
 
-static constexpr NWidgetPart _nested_newgrf_actives_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_actives_widgets = {
 	NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0),
 		/* Left side, presets. */
 		NWidget(NWID_VERTICAL),
@@ -1795,7 +1800,7 @@ static constexpr NWidgetPart _nested_newgrf_actives_widgets[] = {
 	EndContainer(),
 };
 
-static constexpr NWidgetPart _nested_newgrf_availables_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_availables_widgets = {
 	NWidget(WWT_FRAME, COLOUR_MAUVE), SetStringTip(STR_NEWGRF_SETTINGS_INACTIVE_LIST), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0),
 		/* Left side, available grfs, filter edit box. */
 		NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_wide, 0),
@@ -1828,7 +1833,7 @@ static constexpr NWidgetPart _nested_newgrf_availables_widgets[] = {
 	EndContainer(),
 };
 
-static constexpr NWidgetPart _nested_newgrf_infopanel_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_infopanel_widgets = {
 	NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0),
 		/* Right side, info panel. */
 		NWidget(WWT_PANEL, COLOUR_MAUVE),
@@ -1872,7 +1877,7 @@ static constexpr NWidgetPart _nested_newgrf_infopanel_widgets[] = {
 	EndContainer(),
 };
 
-/** Construct nested container widget for managing the lists and the info panel of the NewGRF GUI. */
+/** Construct nested container widget for managing the lists and the info panel of the NewGRF GUI. @copydoc NWidgetFunctionType */
 std::unique_ptr<NWidgetBase> NewGRFDisplay()
 {
 	std::unique_ptr<NWidgetBase> avs = MakeNWidgets(_nested_newgrf_availables_widgets, nullptr);
@@ -1882,8 +1887,8 @@ std::unique_ptr<NWidgetBase> NewGRFDisplay()
 	return std::make_unique<NWidgetNewGRFDisplay>(std::move(avs), std::move(acs), std::move(inf));
 }
 
-/* Widget definition of the manage newgrfs window */
-static constexpr NWidgetPart _nested_newgrf_widgets[] = {
+/** Widget definition of the manage newgrfs window. */
+static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_MAUVE),
 		NWidget(WWT_CAPTION, COLOUR_MAUVE), SetStringTip(STR_NEWGRF_SETTINGS_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -1899,7 +1904,7 @@ static constexpr NWidgetPart _nested_newgrf_widgets[] = {
 	EndContainer(),
 };
 
-/* Window definition of the manage newgrfs window */
+/** Window definition of the manage newgrfs window. */
 static WindowDesc _newgrf_desc(
 	WDP_CENTER, "settings_newgrf", 300, 263,
 	WC_GAME_OPTIONS, WC_NONE,
@@ -1967,7 +1972,7 @@ void ShowNewGRFSettings(bool editable, bool show_params, bool exec_changes, GRFC
 }
 
 /** Widget parts of the save preset window. */
-static constexpr NWidgetPart _nested_save_preset_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_save_preset_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_SAVE_PRESET_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -2033,7 +2038,7 @@ struct SavePresetWindow : public Window {
 		this->presetname_editbox.text.Assign(initial_text);
 	}
 
-	~SavePresetWindow()
+	~SavePresetWindow() override
 	{
 	}
 
@@ -2120,7 +2125,7 @@ static void ShowSavePresetWindow(std::string_view initial_text)
 }
 
 /** Widgets for the progress window. */
-static constexpr NWidgetPart _nested_scan_progress_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_scan_progress_widgets = {
 	NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_NEWGRF_SCAN_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0), SetPadding(WidgetDimensions::unscaled.modalpopup),

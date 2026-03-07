@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_debug_gui.cpp GUIs for debugging NewGRFs. */
@@ -128,7 +128,7 @@ struct NIVariable {
 /** Helper class to wrap some functionality/queries in. */
 class NIHelper {
 public:
-	/** Silence a warning. */
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NIHelper() = default;
 
 	/**
@@ -162,6 +162,7 @@ public:
 	/**
 	 * Get the name of this item.
 	 * @param index the index to get the name for.
+	 * @return The name of the inspected object.
 	 */
 	virtual std::string GetName(uint index) const = 0;
 
@@ -292,6 +293,7 @@ struct NewGRFInspectWindow : Window {
 
 	/**
 	 * Check whether this feature has chain index, i.e. refers to ground vehicles.
+	 * @return \c true iff the feature can have a chain of elements.
 	 */
 	bool HasChainIndex() const
 	{
@@ -594,7 +596,7 @@ struct NewGRFInspectWindow : Window {
 	{
 		if (!str.has_value()) return;
 
-		auto val = ParseInteger<int32_t>(*str, 10, true);
+		auto val = ParseInteger<uint32_t>(*str, 16, true);
 		if (!val.has_value()) return;
 		NewGRFInspectWindow::var60params[GetFeatureNum(this->window_number)][this->current_edit_param - 0x60] = *val;
 		this->SetDirty();
@@ -624,7 +626,7 @@ struct NewGRFInspectWindow : Window {
 
 /* static */ uint32_t NewGRFInspectWindow::var60params[GSF_FAKE_END][0x20] = { {0} }; // Use spec to have 0s in whole array
 
-static constexpr NWidgetPart _nested_newgrf_inspect_chain_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_inspect_chain_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_NGRFI_CAPTION), SetStringTip(STR_NEWGRF_INSPECT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -648,7 +650,7 @@ static constexpr NWidgetPart _nested_newgrf_inspect_chain_widgets[] = {
 	EndContainer(),
 };
 
-static constexpr NWidgetPart _nested_newgrf_inspect_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_inspect_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_NGRFI_CAPTION), SetStringTip(STR_NEWGRF_INSPECT_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -761,13 +763,13 @@ GrfSpecFeature GetGrfSpecFeature(TileIndex tile)
 {
 	switch (GetTileType(tile)) {
 		default:              return GSF_INVALID;
-		case MP_RAILWAY:      return GSF_RAILTYPES;
-		case MP_ROAD:         return IsLevelCrossing(tile) ? GSF_RAILTYPES : GSF_ROADTYPES;
-		case MP_HOUSE:        return GSF_HOUSES;
-		case MP_INDUSTRY:     return GSF_INDUSTRYTILES;
-		case MP_OBJECT:       return GSF_OBJECTS;
+		case TileType::Railway:      return GSF_RAILTYPES;
+		case TileType::Road:         return IsLevelCrossing(tile) ? GSF_RAILTYPES : GSF_ROADTYPES;
+		case TileType::House:        return GSF_HOUSES;
+		case TileType::Industry:     return GSF_INDUSTRYTILES;
+		case TileType::Object:       return GSF_OBJECTS;
 
-		case MP_STATION:
+		case TileType::Station:
 			switch (GetStationType(tile)) {
 				case StationType::Rail:    return GSF_STATIONS;
 				case StationType::Airport: return GSF_AIRPORTTILES;
@@ -1119,7 +1121,7 @@ private:
 bool SpriteAlignerWindow::centre = true;
 bool SpriteAlignerWindow::crosshair = true;
 
-static constexpr NWidgetPart _nested_sprite_aligner_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_sprite_aligner_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_SA_CAPTION),

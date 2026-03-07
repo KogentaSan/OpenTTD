@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file tree_gui.cpp GUIs for building trees. */
@@ -229,7 +229,7 @@ public:
 			TileIndex tile = TileVirtXY(pt.x, pt.y);
 
 			if (this->mode == PM_NORMAL) {
-				Command<CMD_PLANT_TREE>::Post(tile, tile, this->tree_to_plant, false);
+				Command<Commands::PlantTree>::Post(tile, tile, this->tree_to_plant, false);
 			} else {
 				this->DoPlantForest(tile);
 			}
@@ -239,7 +239,7 @@ public:
 	void OnPlaceMouseUp([[maybe_unused]] ViewportPlaceMethod select_method, ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt, TileIndex start_tile, TileIndex end_tile) override
 	{
 		if (_game_mode != GM_EDITOR && this->mode == PM_NORMAL && pt.x != -1 && select_proc == DDSP_PLANT_TREES) {
-			Command<CMD_PLANT_TREE>::Post(STR_ERROR_CAN_T_PLANT_TREE_HERE, end_tile, start_tile, this->tree_to_plant, _ctrl_pressed);
+			Command<Commands::PlantTree>::Post(STR_ERROR_CAN_T_PLANT_TREE_HERE, end_tile, start_tile, this->tree_to_plant, _ctrl_pressed);
 		}
 	}
 
@@ -254,7 +254,7 @@ public:
  * Make widgets for the current available tree types.
  * This does not use a NWID_MATRIX or WWT_MATRIX control as those are more difficult to
  * get producing the correct result than dynamically building the widgets is.
- * @see NWidgetFunctionType
+ * @copydoc NWidgetFunctionType
  */
 static std::unique_ptr<NWidgetBase> MakeTreeTypeButtons()
 {
@@ -285,7 +285,7 @@ static std::unique_ptr<NWidgetBase> MakeTreeTypeButtons()
 	return vstack;
 }
 
-static constexpr NWidgetPart _nested_build_trees_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_trees_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_PLANT_TREE_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),

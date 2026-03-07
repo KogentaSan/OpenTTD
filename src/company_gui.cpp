@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file company_gui.cpp %Company related GUIs. */
@@ -101,7 +101,10 @@ struct ExpensesList {
 		return static_cast<uint>(this->items.size()) * GetCharacterHeight(FS_NORMAL);
 	}
 
-	/** Compute width of the expenses categories in pixels. */
+	/**
+	 * Compute width of the expenses categories.
+	 * @return The width in pixels.
+	 */
 	uint GetListWidth() const
 	{
 		uint width = 0;
@@ -160,6 +163,9 @@ static uint GetMaxCategoriesWidth()
 
 /**
  * Draw a category of expenses (revenue, operating expenses, capital expenses).
+ * @param r The bounding box to draw in.
+ * @param start_y The top to start drawing from.
+ * @param list The list of expenses to draw.
  */
 static void DrawCategory(const Rect &r, int start_y, const ExpensesList &list)
 {
@@ -232,6 +238,10 @@ static void DrawPrice(Money amount, int left, int right, int top, TextColour col
 
 /**
  * Draw a category of expenses/revenues in the year column.
+ * @param r The bounding box to draw in.
+ * @param start_y The top to start drawing from.
+ * @param list The list of expenses to draw.
+ * @param tbl The actual expenses.
  * @return The income sum of the category.
  */
 static Money DrawYearCategory(const Rect &r, int start_y, const ExpensesList &list, const Expenses &tbl)
@@ -286,7 +296,7 @@ static void DrawYearColumn(const Rect &r, TimerGameEconomy::Year year, const Exp
 	DrawPrice(sum, r.left, r.right, y, TC_WHITE);
 }
 
-static constexpr NWidgetPart _nested_company_finances_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_company_finances_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_CF_CAPTION),
@@ -506,11 +516,11 @@ struct CompanyFinancesWindow : Window {
 				break;
 
 			case WID_CF_INCREASE_LOAN: // increase loan
-				Command<CMD_INCREASE_LOAN>::Post(STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY, _ctrl_pressed ? LoanCommand::Max : LoanCommand::Interval, 0);
+				Command<Commands::IncreaseLoan>::Post(STR_ERROR_CAN_T_BORROW_ANY_MORE_MONEY, _ctrl_pressed ? LoanCommand::Max : LoanCommand::Interval, 0);
 				break;
 
 			case WID_CF_REPAY_LOAN: // repay loan
-				Command<CMD_DECREASE_LOAN>::Post(STR_ERROR_CAN_T_REPAY_LOAN, _ctrl_pressed ? LoanCommand::Max : LoanCommand::Interval, 0);
+				Command<Commands::DecreaseLoan>::Post(STR_ERROR_CAN_T_REPAY_LOAN, _ctrl_pressed ? LoanCommand::Max : LoanCommand::Interval, 0);
 				break;
 
 			case WID_CF_INFRASTRUCTURE: // show infrastructure details
@@ -574,7 +584,7 @@ void ShowCompanyFinances(CompanyID company)
 	new CompanyFinancesWindow(_company_finances_desc, company);
 }
 
-/* Association of liveries to livery classes */
+/** Association of liveries to livery classes. */
 static const LiveryClass _livery_class[LS_END] = {
 	LC_OTHER,
 	LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL,
@@ -655,7 +665,7 @@ private:
 		}
 
 		uint8_t sel;
-		if (default_livery == nullptr || HasBit(livery->in_use, primary ? 0 : 1)) {
+		if (default_livery == nullptr || livery->in_use.Test(primary ? Livery::Flag::Primary : Livery::Flag::Secondary)) {
 			sel = primary ? livery->colour1 : livery->colour2;
 		} else {
 			sel = default_col;
@@ -697,6 +707,7 @@ public:
 	SelectCompanyLiveryWindow(WindowDesc &desc, CompanyID company, GroupID group) : Window(desc)
 	{
 		this->CreateNestedTree();
+		this->GetWidget<NWidgetStacked>(WID_SCL_SEC_COL_DROP_SEL)->SetDisplayedPlane(_loaded_newgrf_features.has_2CC ? 0 : SZSP_NONE);
 		this->vscroll = this->GetScrollbar(WID_SCL_MATRIX_SCROLLBAR);
 
 		if (group == GroupID::Invalid()) {
@@ -767,10 +778,7 @@ public:
 			}
 
 			case WID_SCL_SEC_COL_DROPDOWN:
-				if (!_loaded_newgrf_features.has_2CC) {
-					size.width = 0;
-					break;
-				}
+				if (!_loaded_newgrf_features.has_2CC) break;
 				[[fallthrough]];
 
 			case WID_SCL_PRI_COL_DROPDOWN: {
@@ -819,7 +827,7 @@ public:
 						}
 						if (scheme == LS_END) scheme = LS_DEFAULT;
 						const Livery *livery = &c->livery[scheme];
-						if (scheme == LS_DEFAULT || HasBit(livery->in_use, primary ? 0 : 1)) {
+						if (scheme == LS_DEFAULT || livery->in_use.Test(primary ? Livery::Flag::Primary : Livery::Flag::Secondary)) {
 							colour = STR_COLOUR_DARK_BLUE + (primary ? livery->colour1 : livery->colour2);
 						}
 					}
@@ -827,7 +835,7 @@ public:
 					if (this->sel != GroupID::Invalid()) {
 						const Group *g = Group::Get(this->sel);
 						const Livery *livery = &g->livery;
-						if (HasBit(livery->in_use, primary ? 0 : 1)) {
+						if (livery->in_use.Test(primary ? Livery::Flag::Primary : Livery::Flag::Secondary)) {
 							colour = STR_COLOUR_DARK_BLUE + (primary ? livery->colour1 : livery->colour2);
 						}
 					}
@@ -875,12 +883,12 @@ public:
 
 			/* Text below the first dropdown. */
 			DrawSprite(SPR_SQUARE, GetColourPalette(livery.colour1), pri_squ.left, y + square_offs);
-			DrawString(pri.left, pri.right, y + text_offs, (is_default_scheme || HasBit(livery.in_use, 0)) ? STR_COLOUR_DARK_BLUE + livery.colour1 : STR_COLOUR_DEFAULT, is_selected ? TC_WHITE : TC_GOLD);
+			DrawString(pri.left, pri.right, y + text_offs, (is_default_scheme || livery.in_use.Test(Livery::Flag::Primary)) ? STR_COLOUR_DARK_BLUE + livery.colour1 : STR_COLOUR_DEFAULT, is_selected ? TC_WHITE : TC_GOLD);
 
 			/* Text below the second dropdown. */
 			if (sec.right > sec.left) { // Second dropdown has non-zero size.
 				DrawSprite(SPR_SQUARE, GetColourPalette(livery.colour2), sec_squ.left, y + square_offs);
-				DrawString(sec.left, sec.right, y + text_offs, (is_default_scheme || HasBit(livery.in_use, 1)) ? STR_COLOUR_DARK_BLUE + livery.colour2 : STR_COLOUR_DEFAULT, is_selected ? TC_WHITE : TC_GOLD);
+				DrawString(sec.left, sec.right, y + text_offs, (is_default_scheme || livery.in_use.Test(Livery::Flag::Secondary)) ? STR_COLOUR_DARK_BLUE + livery.colour2 : STR_COLOUR_DEFAULT, is_selected ? TC_WHITE : TC_GOLD);
 			}
 
 			y += this->line_height;
@@ -1006,12 +1014,12 @@ public:
 			for (LiveryScheme scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
 				/* Changed colour for the selected scheme, or all visible schemes if CTRL is pressed. */
 				if (HasBit(this->sel, scheme) || (_ctrl_pressed && _livery_class[scheme] == this->livery_class && HasBit(_loaded_newgrf_features.used_liveries, scheme))) {
-					Command<CMD_SET_COMPANY_COLOUR>::Post(scheme, widget == WID_SCL_PRI_COL_DROPDOWN, colour);
+					Command<Commands::SetCompanyColour>::Post(scheme, widget == WID_SCL_PRI_COL_DROPDOWN, colour);
 				}
 			}
 		} else {
 			/* Setting group livery */
-			Command<CMD_SET_GROUP_LIVERY>::Post(static_cast<GroupID>(this->sel), widget == WID_SCL_PRI_COL_DROPDOWN, colour);
+			Command<Commands::SetGroupLivery>::Post(static_cast<GroupID>(this->sel), widget == WID_SCL_PRI_COL_DROPDOWN, colour);
 		}
 	}
 
@@ -1062,7 +1070,7 @@ public:
 	}
 };
 
-static constexpr NWidgetPart _nested_select_company_livery_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_select_company_livery_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_SCL_CAPTION),
@@ -1089,13 +1097,15 @@ static constexpr NWidgetPart _nested_select_company_livery_widgets[] = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_PANEL, COLOUR_GREY, WID_SCL_SPACER_DROPDOWN), SetFill(1, 1), SetResize(1, 0), EndContainer(),
 		NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_SCL_PRI_COL_DROPDOWN), SetFill(0, 1), SetToolTip(STR_LIVERY_PRIMARY_TOOLTIP),
-		NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_SCL_SEC_COL_DROPDOWN), SetFill(0, 1), SetToolTip(STR_LIVERY_SECONDARY_TOOLTIP),
+		NWidget(NWID_SELECTION, INVALID_COLOUR, WID_SCL_SEC_COL_DROP_SEL),
+			NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_SCL_SEC_COL_DROPDOWN), SetFill(0, 1), SetToolTip(STR_LIVERY_SECONDARY_TOOLTIP),
+		EndContainer(),
 		NWidget(WWT_RESIZEBOX, COLOUR_GREY),
 	EndContainer(),
 };
 
 static WindowDesc _select_company_livery_desc(
-	WDP_AUTO, "company_color_scheme", 0, 0,
+	WDP_AUTO, "company_colour_scheme", 0, 0,
 	WC_COMPANY_COLOUR, WC_NONE,
 	{},
 	_nested_select_company_livery_widgets
@@ -1161,7 +1171,7 @@ void DrawCompanyManagerFace(const CompanyManagerFace &cmf, Colours colour, const
 }
 
 /** Nested widget description for the company manager face selection dialog */
-static constexpr NWidgetPart _nested_select_company_manager_face_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_select_company_manager_face_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_SCMF_CAPTION), SetStringTip(STR_FACE_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -1333,8 +1343,8 @@ public:
 				Rect ir = r.Shrink(WidgetDimensions::scaled.frametext, RectPadding::zero).WithHeight(this->line_height);
 				bool rtl = _current_text_dir == TD_RTL;
 
-				Rect br = ir.CentreTo(ir.Width(), SETTING_BUTTON_HEIGHT).WithWidth(SETTING_BUTTON_WIDTH, rtl);
-				Rect tr = ir.Shrink(RectPadding::zero, WidgetDimensions::scaled.matrix).CentreTo(ir.Width(), GetCharacterHeight(FS_NORMAL)).Indent(SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_wide, rtl);
+				Rect br = ir.CentreToHeight(SETTING_BUTTON_HEIGHT).WithWidth(SETTING_BUTTON_WIDTH, rtl);
+				Rect tr = ir.Shrink(RectPadding::zero, WidgetDimensions::scaled.matrix).CentreToHeight(GetCharacterHeight(FS_NORMAL)).Indent(SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_wide, rtl);
 
 				DrawArrowButtons(br.left, br.top, COLOUR_YELLOW, this->selected_var == UINT_MAX - 1 ? this->click_state : 0, true, true);
 				DrawString(tr, GetString(STR_FACE_SETTING_NUMERIC, STR_FACE_STYLE, this->face.style + 1, GetNumCompanyManagerFaceStyles()), TC_WHITE);
@@ -1352,8 +1362,8 @@ public:
 					const uint8_t var = static_cast<uint8_t>(*it - vars.data());
 					const FaceVar &facevar = **it;
 
-					Rect br = ir.CentreTo(ir.Width(), SETTING_BUTTON_HEIGHT).WithWidth(SETTING_BUTTON_WIDTH, rtl);
-					Rect tr = ir.Shrink(RectPadding::zero, WidgetDimensions::scaled.matrix).CentreTo(ir.Width(), GetCharacterHeight(FS_NORMAL)).Indent(SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_wide, rtl);
+					Rect br = ir.CentreToHeight(SETTING_BUTTON_HEIGHT).WithWidth(SETTING_BUTTON_WIDTH, rtl);
+					Rect tr = ir.Shrink(RectPadding::zero, WidgetDimensions::scaled.matrix).CentreToHeight(GetCharacterHeight(FS_NORMAL)).Indent(SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_wide, rtl);
 
 					uint val = vars[var].GetBits(this->face);
 					if (facevar.type == FaceVarType::Toggle) {
@@ -1384,7 +1394,7 @@ public:
 
 			/* OK button */
 			case WID_SCMF_ACCEPT:
-				Command<CMD_SET_COMPANY_MANAGER_FACE>::Post(this->face.bits, this->face.style);
+				Command<Commands::SetCompanyManagerFace>::Post(this->face.style, this->face.bits);
 				[[fallthrough]];
 
 			/* Cancel button */
@@ -1536,7 +1546,7 @@ static void DoSelectCompanyManagerFace(Window *parent)
 	new SelectCompanyManagerFaceWindow(_select_company_manager_face_desc, parent);
 }
 
-static constexpr NWidgetPart _nested_company_infrastructure_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_company_infrastructure_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_CI_CAPTION),
@@ -1840,7 +1850,7 @@ static void ShowCompanyInfrastructure(CompanyID company)
 	AllocateWindowDescFront<CompanyInfrastructureWindow>(_company_infrastructure_desc, company);
 }
 
-static constexpr NWidgetPart _nested_company_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_company_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_C_CAPTION),
@@ -1926,6 +1936,9 @@ static const StringID _company_view_vehicle_count_strings[] = {
  */
 struct CompanyWindow : Window
 {
+	/** WID_C_CAPTION does not have a query string, so it can be safely used as invalid value. */
+	static constexpr CompanyWidgets INVALID_QUERY_WIDGET = WID_C_CAPTION;
+
 	CompanyWidgets query_widget{};
 
 	/** Display planes in the company window. */
@@ -2169,13 +2182,13 @@ struct CompanyWindow : Window
 				break;
 
 			case WID_C_PRESIDENT_NAME:
-				this->query_widget = WID_C_PRESIDENT_NAME;
 				ShowQueryString(GetString(STR_PRESIDENT_NAME, this->window_number), STR_COMPANY_VIEW_PRESIDENT_S_NAME_QUERY_CAPTION, MAX_LENGTH_PRESIDENT_NAME_CHARS, this, CS_ALPHANUMERAL, {QueryStringFlag::EnableDefault, QueryStringFlag::LengthIsInChars});
+				this->query_widget = WID_C_PRESIDENT_NAME;
 				break;
 
 			case WID_C_COMPANY_NAME:
-				this->query_widget = WID_C_COMPANY_NAME;
 				ShowQueryString(GetString(STR_COMPANY_NAME, this->window_number), STR_COMPANY_VIEW_COMPANY_NAME_QUERY_CAPTION, MAX_LENGTH_COMPANY_NAME_CHARS, this, CS_ALPHANUMERAL, {QueryStringFlag::EnableDefault, QueryStringFlag::LengthIsInChars});
+				this->query_widget = WID_C_COMPANY_NAME;
 				break;
 
 			case WID_C_VIEW_HQ: {
@@ -2218,8 +2231,8 @@ struct CompanyWindow : Window
 				break;
 
 			case WID_C_GIVE_MONEY:
-				this->query_widget = WID_C_GIVE_MONEY;
 				ShowQueryString({}, STR_COMPANY_VIEW_GIVE_MONEY_QUERY_CAPTION, 30, this, CS_NUMERAL, {});
+				this->query_widget = WID_C_GIVE_MONEY;
 				break;
 
 			case WID_C_HOSTILE_TAKEOVER:
@@ -2248,7 +2261,7 @@ struct CompanyWindow : Window
 
 	void OnPlaceObject([[maybe_unused]] Point pt, TileIndex tile) override
 	{
-		if (Command<CMD_BUILD_OBJECT>::Post(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS, tile, OBJECT_HQ, 0) && !_shift_pressed) {
+		if (Command<Commands::BuildObject>::Post(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS, tile, OBJECT_HQ, 0) && !_shift_pressed) {
 			ResetObjectToPlace();
 			this->RaiseButtons();
 		}
@@ -2261,34 +2274,42 @@ struct CompanyWindow : Window
 
 	void OnQueryTextFinished(std::optional<std::string> str) override
 	{
+		CompanyWidgets widget = this->query_widget;
+		this->query_widget = CompanyWindow::INVALID_QUERY_WIDGET;
+
 		if (!str.has_value()) return;
 
-		switch (this->query_widget) {
+		switch (widget) {
 			default: NOT_REACHED();
 
 			case WID_C_GIVE_MONEY: {
 				auto value = ParseInteger<uint64_t>(*str, 10, true);
 				if (!value.has_value()) return;
 				Money money = *value / GetCurrency().rate;
-				Command<CMD_GIVE_MONEY>::Post(STR_ERROR_CAN_T_GIVE_MONEY, money, this->window_number);
+				Command<Commands::GiveMoney>::Post(STR_ERROR_CAN_T_GIVE_MONEY, money, this->window_number);
 				break;
 			}
 
 			case WID_C_PRESIDENT_NAME:
-				Command<CMD_RENAME_PRESIDENT>::Post(STR_ERROR_CAN_T_CHANGE_PRESIDENT, *str);
+				Command<Commands::RenamePresident>::Post(STR_ERROR_CAN_T_CHANGE_PRESIDENT, *str);
 				break;
 
 			case WID_C_COMPANY_NAME:
-				Command<CMD_RENAME_COMPANY>::Post(STR_ERROR_CAN_T_CHANGE_COMPANY_NAME, *str);
+				Command<Commands::RenameCompany>::Post(STR_ERROR_CAN_T_CHANGE_COMPANY_NAME, *str);
 				break;
 		}
 	}
 
 	void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
 	{
-		if (gui_scope && data == 1) {
-			/* Manually call OnResize to adjust minimum height of president name widget. */
-			OnResize();
+		if (!gui_scope) return;
+
+		/* Manually call OnResize to adjust minimum height of president name widget. */
+		if (data == WID_C_PRESIDENT_NAME) this->OnResize();
+
+		/* If a query string is visible, update its default value. */
+		if (this->query_widget != CompanyWindow::INVALID_QUERY_WIDGET && data == this->query_widget) {
+			UpdateQueryStringDefault(GetString(data == WID_C_COMPANY_NAME ? STR_COMPANY_NAME : STR_PRESIDENT_NAME, this->window_number));
 		}
 	}
 };
@@ -2380,7 +2401,7 @@ struct BuyCompanyWindow : Window {
 				break;
 
 			case WID_BC_YES:
-				Command<CMD_BUY_COMPANY>::Post(STR_ERROR_CAN_T_BUY_COMPANY, this->window_number, this->hostile_takeover);
+				Command<Commands::BuyCompany>::Post(STR_ERROR_CAN_T_BUY_COMPANY, this->window_number, this->hostile_takeover);
 				break;
 		}
 	}
@@ -2405,7 +2426,7 @@ private:
 	Money company_value{}; ///< The value of the company for which the user can buy it.
 };
 
-static constexpr NWidgetPart _nested_buy_company_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_buy_company_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_LIGHT_BLUE),
 		NWidget(WWT_CAPTION, COLOUR_LIGHT_BLUE, WID_BC_CAPTION),

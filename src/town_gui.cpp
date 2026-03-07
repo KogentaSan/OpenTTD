@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file town_gui.cpp GUI for towns. */
@@ -58,7 +58,7 @@ TownKdtree _town_local_authority_kdtree{};
 
 typedef GUIList<const Town*, const bool &> GUITownList;
 
-static constexpr NWidgetPart _nested_town_authority_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_town_authority_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_TA_CAPTION),
@@ -235,7 +235,7 @@ public:
 		switch (widget) {
 			case WID_TA_ACTION_INFO:
 				if (this->sel_action != TownAction::End) {
-					Money action_cost = _price[PR_TOWN_ACTION] * GetTownActionCost(this->sel_action) >> 8;
+					Money action_cost = _price[Price::TownAction] * GetTownActionCost(this->sel_action) >> 8;
 					bool affordable = Company::IsValidID(_local_company) && action_cost < GetAvailableMoney(_local_company);
 
 					DrawStringMultiLine(r.Shrink(WidgetDimensions::scaled.framerect),
@@ -253,7 +253,7 @@ public:
 				assert(size.width > padding.width && size.height > padding.height);
 				Dimension d = {0, 0};
 				for (TownAction i = {}; i != TownAction::End; ++i) {
-					Money price = _price[PR_TOWN_ACTION] * GetTownActionCost(i) >> 8;
+					Money price = _price[Price::TownAction] * GetTownActionCost(i) >> 8;
 					d = maxdim(d, GetStringMultiLineBoundingBox(GetString(this->action_tooltips[to_underlying(i)], price), size));
 				}
 				d.width += padding.width;
@@ -309,7 +309,7 @@ public:
 			}
 
 			case WID_TA_EXECUTE:
-				Command<CMD_DO_TOWN_ACTION>::Post(STR_ERROR_CAN_T_DO_THIS, this->town->xy, static_cast<TownID>(this->window_number), this->sel_action);
+				Command<Commands::TownAction>::Post(STR_ERROR_CAN_T_DO_THIS, this->town->xy, static_cast<TownID>(this->window_number), this->sel_action);
 				break;
 		}
 	}
@@ -343,7 +343,7 @@ static void ShowTownAuthorityWindow(uint town)
 }
 
 
-/* Town view window. */
+/** Town view window. */
 struct TownViewWindow : Window {
 private:
 	Town *town = nullptr; ///< Town displayed by the window.
@@ -453,7 +453,7 @@ public:
 			tr.top += GetCharacterHeight(FS_NORMAL);
 		}
 
-		if (HasBit(this->town->flags, TOWN_IS_GROWING)) {
+		if (this->town->flags.Test(TownFlag::IsGrowing)) {
 			DrawString(tr, GetString(this->town->fund_buildings_months == 0 ? STR_TOWN_VIEW_TOWN_GROWS_EVERY : STR_TOWN_VIEW_TOWN_GROWS_EVERY_FUNDED, RoundDivSU(this->town->growth_rate + 1, Ticks::DAY_TICKS)));
 			tr.top += GetCharacterHeight(FS_NORMAL);
 		} else {
@@ -496,19 +496,19 @@ public:
 				break;
 
 			case WID_TV_EXPAND: // expand town - only available on Scenario editor
-				Command<CMD_EXPAND_TOWN>::Post(STR_ERROR_CAN_T_EXPAND_TOWN, static_cast<TownID>(this->window_number), 0, {TownExpandMode::Buildings, TownExpandMode::Roads});
+				Command<Commands::ExpandTown>::Post(STR_ERROR_CAN_T_EXPAND_TOWN, static_cast<TownID>(this->window_number), 0, {TownExpandMode::Buildings, TownExpandMode::Roads});
 				break;
 
 			case WID_TV_EXPAND_BUILDINGS: // expand buildings of town - only available on Scenario editor
-				Command<CMD_EXPAND_TOWN>::Post(STR_ERROR_CAN_T_EXPAND_TOWN, static_cast<TownID>(this->window_number), 0, {TownExpandMode::Buildings});
+				Command<Commands::ExpandTown>::Post(STR_ERROR_CAN_T_EXPAND_TOWN, static_cast<TownID>(this->window_number), 0, {TownExpandMode::Buildings});
 				break;
 
 			case WID_TV_EXPAND_ROADS: // expand roads of town - only available on Scenario editor
-				Command<CMD_EXPAND_TOWN>::Post(STR_ERROR_CAN_T_EXPAND_TOWN, static_cast<TownID>(this->window_number), 0, {TownExpandMode::Roads});
+				Command<Commands::ExpandTown>::Post(STR_ERROR_CAN_T_EXPAND_TOWN, static_cast<TownID>(this->window_number), 0, {TownExpandMode::Roads});
 				break;
 
 			case WID_TV_DELETE: // delete town - only available on Scenario editor
-				Command<CMD_DELETE_TOWN>::Post(STR_ERROR_TOWN_CAN_T_DELETE, static_cast<TownID>(this->window_number));
+				Command<Commands::DeleteTown>::Post(STR_ERROR_TOWN_CAN_T_DELETE, static_cast<TownID>(this->window_number));
 				break;
 
 			case WID_TV_GRAPH: {
@@ -529,6 +529,7 @@ public:
 
 	/**
 	 * Gets the desired height for the information panel.
+	 * @param width The width of the panel in pixels.
 	 * @return the desired height in pixels.
 	 */
 	uint GetDesiredInfoHeight(int width) const
@@ -580,7 +581,7 @@ public:
 	void OnMouseWheel(int wheel, WidgetID widget) override
 	{
 		if (widget != WID_TV_VIEWPORT) return;
-		if (_settings_client.gui.scrollwheel_scrolling != SWS_OFF) {
+		if (_settings_client.gui.scrollwheel_scrolling != ScrollWheelScrolling::Off) {
 			DoZoomInOutWindow(wheel < 0 ? ZOOM_IN : ZOOM_OUT, this);
 		}
 	}
@@ -602,16 +603,16 @@ public:
 	{
 		if (!str.has_value()) return;
 
-		Command<CMD_RENAME_TOWN>::Post(STR_ERROR_CAN_T_RENAME_TOWN, static_cast<TownID>(this->window_number), *str);
+		Command<Commands::RenameTown>::Post(STR_ERROR_CAN_T_RENAME_TOWN, static_cast<TownID>(this->window_number), *str);
 	}
 
-	const IntervalTimer<TimerGameCalendar> daily_interval = {{TimerGameCalendar::DAY, TimerGameCalendar::Priority::NONE}, [this](auto) {
+	const IntervalTimer<TimerGameCalendar> daily_interval = {{TimerGameCalendar::Trigger::Day, TimerGameCalendar::Priority::None}, [this](auto) {
 		/* Refresh after possible snowline change */
 		this->SetDirty();
 	}};
 };
 
-static constexpr NWidgetPart _nested_town_game_view_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_town_game_view_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_TV_CHANGE_NAME), SetAspect(WidgetDimensions::ASPECT_RENAME), SetSpriteTip(SPR_RENAME, STR_TOWN_VIEW_RENAME_TOOLTIP),
@@ -642,7 +643,7 @@ static WindowDesc _town_game_view_desc(
 	_nested_town_game_view_widgets
 );
 
-static constexpr NWidgetPart _nested_town_editor_view_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_town_editor_view_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_TV_CHANGE_NAME), SetAspect(WidgetDimensions::ASPECT_RENAME), SetSpriteTip(SPR_RENAME, STR_TOWN_VIEW_RENAME_TOOLTIP),
@@ -686,7 +687,7 @@ void ShowTownViewWindow(TownID town)
 	}
 }
 
-static constexpr NWidgetPart _nested_town_directory_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_town_directory_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_TD_CAPTION),
@@ -717,16 +718,16 @@ static constexpr NWidgetPart _nested_town_directory_widgets[] = {
 /** Town directory window class. */
 struct TownDirectoryWindow : public Window {
 private:
-	/* Runtime saved values */
+	/** Retains sorting setting when closing the window. */
 	static Listing last_sorting;
 
-	/* Constants for sorting towns */
+	/** Strings describing how towns are sorted. */
 	static inline const StringID sorter_names[] = {
 		STR_SORT_BY_NAME,
 		STR_SORT_BY_POPULATION,
 		STR_SORT_BY_RATING,
 	};
-	static const std::initializer_list<GUITownList::SortFunction * const> sorter_funcs;
+	static const std::initializer_list<GUITownList::SortFunction * const> sorter_funcs; ///< Functions to sort towns.
 
 	StringFilter string_filter{}; ///< Filter for towns
 	QueryString townname_editbox; ///< Filter editbox
@@ -759,32 +760,32 @@ private:
 		this->SetWidgetDirty(WID_TD_LIST); // Force repaint of the displayed towns.
 	}
 
-	/** Sort by town name */
-	static bool TownNameSorter(const Town * const &a, const Town * const &b, const bool &)
+	/** Sort by town name. @copydoc GUIList::SorterWithFilter */
+	static bool TownNameSorter(const Town * const &a, const Town * const &b, [[maybe_unused]] const bool &filter)
 	{
 		return StrNaturalCompare(a->GetCachedName(), b->GetCachedName()) < 0; // Sort by name (natural sorting).
 	}
 
-	/** Sort by population (default descending, as big towns are of the most interest). */
-	static bool TownPopulationSorter(const Town * const &a, const Town * const &b, const bool &order)
+	/** Sort by population (default descending, as big towns are of the most interest). @copydoc GUIList::SorterWithFilter */
+	static bool TownPopulationSorter(const Town * const &a, const Town * const &b, const bool &filter)
 	{
 		uint32_t a_population = a->cache.population;
 		uint32_t b_population = b->cache.population;
-		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b, order);
+		if (a_population == b_population) return TownDirectoryWindow::TownNameSorter(a, b, filter);
 		return a_population < b_population;
 	}
 
-	/** Sort by town rating */
-	static bool TownRatingSorter(const Town * const &a, const Town * const &b, const bool &order)
+	/** Sort by town rating. @copydoc GUIList::SorterWithFilter */
+	static bool TownRatingSorter(const Town * const &a, const Town * const &b, const bool &filter)
 	{
-		bool before = !order; // Value to get 'a' before 'b'.
+		bool before = !filter; // Value to get 'a' before 'b'.
 
 		/* Towns without rating are always after towns with rating. */
 		if (a->have_ratings.Test(_local_company)) {
 			if (b->have_ratings.Test(_local_company)) {
 				int16_t a_rating = a->ratings[_local_company];
 				int16_t b_rating = b->ratings[_local_company];
-				if (a_rating == b_rating) return TownDirectoryWindow::TownNameSorter(a, b, order);
+				if (a_rating == b_rating) return TownDirectoryWindow::TownNameSorter(a, b, filter);
 				return a_rating < b_rating;
 			}
 			return before;
@@ -792,8 +793,8 @@ private:
 		if (b->have_ratings.Test(_local_company)) return !before;
 
 		/* Sort unrated towns always on ascending town name. */
-		if (before) return TownDirectoryWindow::TownNameSorter(a, b, order);
-		return TownDirectoryWindow::TownNameSorter(b, a, order);
+		if (before) return TownDirectoryWindow::TownNameSorter(a, b, filter);
+		return TownDirectoryWindow::TownNameSorter(b, a, filter);
 	}
 
 public:
@@ -834,6 +835,7 @@ public:
 	/**
 	 * Get the string to draw the town name.
 	 * @param t Town to draw.
+	 * @param population The population of the town.
 	 * @return The string to use.
 	 */
 	static std::string GetTownString(const Town *t, uint64_t population)
@@ -1068,7 +1070,7 @@ void CcFoundRandomTown(Commands, const CommandCost &result, Money, TownID town_i
 	if (result.Succeeded()) ScrollMainWindowToTile(Town::Get(town_id)->xy);
 }
 
-static constexpr NWidgetPart _nested_found_town_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_found_town_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_FOUND_TOWN_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -1230,7 +1232,7 @@ public:
 			if (original_name != this->townname_editbox.text.GetText()) name = this->townname_editbox.text.GetText();
 		}
 
-		bool success = Command<CMD_FOUND_TOWN>::Post(errstr, cc,
+		bool success = Command<Commands::FoundTown>::Post(errstr, cc,
 				tile, this->town_size, this->city, this->town_layout, random, townnameparts, name);
 
 		/* Rerandomise name, if success and no cost-estimation. */
@@ -1264,7 +1266,7 @@ public:
 
 			case WID_TF_EXPAND_ALL_TOWNS:
 				for (Town *t : Town::Iterate()) {
-					Command<CMD_EXPAND_TOWN>::Do(DoCommandFlag::Execute, t->index, 0, FoundTownWindow::expand_modes);
+					Command<Commands::ExpandTown>::Do(DoCommandFlag::Execute, t->index, 0, FoundTownWindow::expand_modes);
 				}
 				break;
 
@@ -1477,8 +1479,7 @@ public:
 	static inline int sel_type; ///< Currently selected HouseID.
 	static inline int sel_view; ///< Currently selected 'view'. This is not controllable as its based on random data.
 
-	/* Houses do not have classes like NewGRFClass. We'll make up fake classes based on town zone
-	 * availability instead. */
+	/** Houses do not have classes like NewGRFClass. We'll make up fake classes based on town zone availability instead. */
 	static inline const std::array<StringID, NUM_HOUSE_ZONES> zone_names = {
 		STR_HOUSE_PICKER_CLASS_ZONE1,
 		STR_HOUSE_PICKER_CLASS_ZONE2,
@@ -1491,6 +1492,7 @@ public:
 
 	StringID GetClassTooltip() const override { return STR_PICKER_HOUSE_CLASS_TOOLTIP; }
 	StringID GetTypeTooltip() const override { return STR_PICKER_HOUSE_TYPE_TOOLTIP; }
+	StringID GetCollectionTooltip() const override { return STR_PICKER_HOUSE_COLLECTION_TOOLTIP; }
 	bool IsActive() const override { return true; }
 
 	bool HasClassChoice() const override { return true; }
@@ -1580,24 +1582,34 @@ public:
 		}
 	}
 
-	std::set<PickerItem> UpdateSavedItems(const std::set<PickerItem> &src) override
+	std::map<std::string, std::set<PickerItem>> UpdateSavedItems(const std::map<std::string, std::set<PickerItem>> &src) override
 	{
 		if (src.empty()) return src;
 
 		const auto &specs = HouseSpec::Specs();
-		std::set<PickerItem> dst;
-		for (const auto &item : src) {
-			if (item.grfid == 0) {
-				dst.insert(item);
-			} else {
-				/* Search for spec by grfid and local index. */
-				auto it = std::ranges::find_if(specs, [&item](const HouseSpec &spec) { return spec.grf_prop.grfid == item.grfid && spec.grf_prop.local_id == item.local_id; });
-				if (it == specs.end()) {
-					/* Not preset, hide from UI. */
-					dst.insert({item.grfid, item.local_id, -1, -1});
+		std::map<std::string, std::set<PickerItem>> dst;
+		for (auto group_it = src.begin(); group_it != src.end(); group_it++) {
+			if (group_it->second.empty() || (group_it->second.size() == 1 && group_it->second.contains({}))) {
+				dst[group_it->first];
+				continue;
+			}
+
+			for (const auto &item : group_it->second) {
+				if (item.grfid == 0) {
+					const HouseSpec *hs = HouseSpec::Get(item.local_id);
+					if (hs == nullptr) continue;
+					int class_index = GetClassIdFromHouseZone(hs->building_availability);
+					dst[group_it->first].emplace(item.grfid, item.local_id, class_index, item.local_id);
 				} else {
-					int class_index = GetClassIdFromHouseZone(it->building_availability);
-					dst.insert( {item.grfid, item.local_id, class_index, it->Index()});
+					/* Search for spec by grfid and local index. */
+					auto it = std::ranges::find_if(specs, [&item](const HouseSpec &spec) { return spec.grf_prop.grfid == item.grfid && spec.grf_prop.local_id == item.local_id; });
+					if (it == specs.end()) {
+						/* Not preset, hide from UI. */
+						dst[group_it->first].emplace(item.grfid, item.local_id, -1, -1);
+					} else {
+						int class_index = GetClassIdFromHouseZone(it->building_availability);
+						dst[group_it->first].emplace(item.grfid, item.local_id, class_index, it->Index());
+					}
 				}
 			}
 		}
@@ -1642,6 +1654,7 @@ static CargoTypes GetProducedCargoOfHouse(const HouseSpec *hs)
 struct BuildHouseWindow : public PickerWindow {
 	std::string house_info{};
 	static inline bool house_protected;
+	static inline bool replace;
 
 	BuildHouseWindow(WindowDesc &desc, Window *parent) : PickerWindow(desc, parent, 0, HousePickerCallbacks::instance)
 	{
@@ -1746,11 +1759,17 @@ struct BuildHouseWindow : public PickerWindow {
 	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override
 	{
 		switch (widget) {
-			case WID_BH_PROTECT_OFF:
-			case WID_BH_PROTECT_ON:
-				BuildHouseWindow::house_protected = (widget == WID_BH_PROTECT_ON);
-				this->SetWidgetLoweredState(WID_BH_PROTECT_OFF, !BuildHouseWindow::house_protected);
-				this->SetWidgetLoweredState(WID_BH_PROTECT_ON, BuildHouseWindow::house_protected);
+			case WID_BH_PROTECT_TOGGLE:
+				BuildHouseWindow::house_protected = !BuildHouseWindow::house_protected;
+				this->SetWidgetLoweredState(WID_BH_PROTECT_TOGGLE, BuildHouseWindow::house_protected);
+
+				SndClickBeep();
+				this->SetDirty();
+				break;
+
+			case WID_BH_REPLACE_TOGGLE:
+				BuildHouseWindow::replace = !BuildHouseWindow::replace;
+				this->SetWidgetLoweredState(WID_BH_REPLACE_TOGGLE, BuildHouseWindow::replace);
 
 				SndClickBeep();
 				this->SetDirty();
@@ -1772,24 +1791,44 @@ struct BuildHouseWindow : public PickerWindow {
 		PickerInvalidations pi(data);
 		if (pi.Test(PickerInvalidation::Position)) {
 			UpdateSelectSize(spec);
-			this->house_info = GetHouseInformation(spec);
+			this->house_info = spec->enabled ? GetHouseInformation(spec) : "";
 		}
 
 		/* If house spec already has the protected flag, handle it automatically and disable the buttons. */
 		bool hasflag = spec->extra_flags.Test(HouseExtraFlag::BuildingIsProtected);
 		if (hasflag) BuildHouseWindow::house_protected = true;
 
-		this->SetWidgetLoweredState(WID_BH_PROTECT_OFF, !BuildHouseWindow::house_protected);
-		this->SetWidgetLoweredState(WID_BH_PROTECT_ON, BuildHouseWindow::house_protected);
+		this->SetWidgetLoweredState(WID_BH_PROTECT_TOGGLE, BuildHouseWindow::house_protected);
+		this->SetWidgetLoweredState(WID_BH_REPLACE_TOGGLE, BuildHouseWindow::replace);
 
-		this->SetWidgetDisabledState(WID_BH_PROTECT_OFF, hasflag);
-		this->SetWidgetDisabledState(WID_BH_PROTECT_ON, hasflag);
+		this->SetWidgetDisabledState(WID_BH_PROTECT_TOGGLE, hasflag);
 	}
 
 	void OnPlaceObject([[maybe_unused]] Point pt, TileIndex tile) override
 	{
 		const HouseSpec *spec = HouseSpec::Get(HousePickerCallbacks::sel_type);
-		Command<CMD_PLACE_HOUSE>::Post(STR_ERROR_CAN_T_BUILD_HOUSE, CcPlaySound_CONSTRUCTION_OTHER, tile, spec->Index(), BuildHouseWindow::house_protected);
+
+		if (spec->building_flags.Test(BuildingFlag::Size1x1)) {
+			VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_PLACE_HOUSE);
+		} else {
+			Command<Commands::PlaceHouse>::Post(STR_ERROR_CAN_T_BUILD_HOUSE, CcPlaySound_CONSTRUCTION_OTHER, tile, spec->Index(), BuildHouseWindow::house_protected, BuildHouseWindow::replace);
+		}
+	}
+
+	void OnPlaceDrag(ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt) override
+	{
+		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
+	}
+
+	void OnPlaceMouseUp([[maybe_unused]] ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt, TileIndex start_tile, TileIndex end_tile) override
+	{
+		if (pt.x == -1) return;
+
+		assert(select_proc == DDSP_PLACE_HOUSE);
+
+		const HouseSpec *spec = HouseSpec::Get(HousePickerCallbacks::sel_type);
+		Command<Commands::PlaceHouseArea>::Post(STR_ERROR_CAN_T_BUILD_HOUSE, CcPlaySound_CONSTRUCTION_OTHER,
+			end_tile, start_tile, spec->Index(), BuildHouseWindow::house_protected, BuildHouseWindow::replace, _ctrl_pressed);
 	}
 
 	const IntervalTimer<TimerWindow> view_refresh_interval = {std::chrono::milliseconds(2500), [this](auto) {
@@ -1805,7 +1844,7 @@ struct BuildHouseWindow : public PickerWindow {
 };
 
 /** Nested widget definition for the build NewGRF rail waypoint window */
-static constexpr NWidgetPart _nested_build_house_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_build_house_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_HOUSE_PICKER_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -1819,14 +1858,10 @@ static constexpr NWidgetPart _nested_build_house_widgets[] = {
 			NWidget(WWT_PANEL, COLOUR_DARK_GREEN),
 				NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_picker, 0), SetPadding(WidgetDimensions::unscaled.picker),
 					NWidget(WWT_EMPTY, INVALID_COLOUR, WID_BH_INFO), SetFill(1, 1), SetMinimalTextLines(10, 0),
-					NWidget(WWT_LABEL, INVALID_COLOUR), SetStringTip(STR_HOUSE_PICKER_PROTECT_TITLE, STR_NULL), SetFill(1, 0),
-					NWidget(NWID_HORIZONTAL), SetPIPRatio(1, 0, 1),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BH_PROTECT_OFF), SetMinimalSize(60, 12), SetStringTip(STR_HOUSE_PICKER_PROTECT_OFF, STR_HOUSE_PICKER_PROTECT_TOOLTIP),
-						NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BH_PROTECT_ON), SetMinimalSize(60, 12), SetStringTip(STR_HOUSE_PICKER_PROTECT_ON, STR_HOUSE_PICKER_PROTECT_TOOLTIP),
-					EndContainer(),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BH_PROTECT_TOGGLE), SetMinimalSize(60, 12), SetStringTip(STR_HOUSE_PICKER_PROTECT, STR_HOUSE_PICKER_PROTECT_TOOLTIP),
+					NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_BH_REPLACE_TOGGLE), SetMinimalSize(60, 12), SetStringTip(STR_HOUSE_PICKER_REPLACE, STR_HOUSE_PICKER_REPLACE_TOOLTIP),
 				EndContainer(),
 			EndContainer(),
-
 		EndContainer(),
 		NWidgetFunction(MakePickerTypeWidgets),
 	EndContainer(),

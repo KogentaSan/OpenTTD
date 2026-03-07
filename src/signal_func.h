@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file signal_func.h Functions related to signals. */
@@ -18,6 +18,8 @@
 /**
  * Maps a trackdir to the bit that stores its status in the map arrays, in the
  * direction along with the trackdir.
+ * @param trackdir The track dir to consider.
+ * @return Bitmask of the storage of the signal in the associated trackdir in the map array.
  */
 inline uint8_t SignalAlongTrackdir(Trackdir trackdir)
 {
@@ -28,6 +30,8 @@ inline uint8_t SignalAlongTrackdir(Trackdir trackdir)
 /**
  * Maps a trackdir to the bit that stores its status in the map arrays, in the
  * direction against the trackdir.
+ * @param trackdir The track dir to consider.
+ * @return Bitmask of the storage of the signal in the associated trackdir in the map array.
  */
 inline uint8_t SignalAgainstTrackdir(Trackdir trackdir)
 {
@@ -38,6 +42,8 @@ inline uint8_t SignalAgainstTrackdir(Trackdir trackdir)
 /**
  * Maps a Track to the bits that store the status of the two signals that can
  * be present on the given track.
+ * @param track The track to consider.
+ * @return Bitmask of the storage of the signal in the associated track in the map array.
  */
 inline uint8_t SignalOnTrack(Track track)
 {

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /**
@@ -40,6 +40,7 @@
  */
 class NetworkEncryptionHandler {
 public:
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NetworkEncryptionHandler() = default;
 
 	/**
@@ -70,10 +71,12 @@ public:
  */
 class NetworkAuthenticationPasswordRequest {
 public:
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NetworkAuthenticationPasswordRequest() = default;
 
 	/**
 	 * Reply to the request with the given password.
+	 * @param password The requested password from the user.
 	 */
 	virtual void Reply(const std::string &password) = 0;
 };
@@ -88,7 +91,7 @@ protected:
 	std::string password; ///< The entered password.
 public:
 
-	virtual void Reply(const std::string &password) override;
+	void Reply(const std::string &password) override;
 
 	/**
 	 * Callback to trigger sending the response for the password request.
@@ -108,6 +111,7 @@ public:
  */
 class NetworkAuthenticationPasswordProvider {
 public:
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NetworkAuthenticationPasswordProvider() = default;
 
 	/**
@@ -139,6 +143,7 @@ public:
  */
 class NetworkAuthenticationAuthorizedKeyHandler {
 public:
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NetworkAuthenticationAuthorizedKeyHandler() = default;
 
 	/**
@@ -189,6 +194,7 @@ using NetworkAuthenticationMethodMask = EnumBitSet<NetworkAuthenticationMethod, 
  */
 class NetworkAuthenticationHandler {
 public:
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NetworkAuthenticationHandler() = default;
 
 	/**
@@ -245,6 +251,7 @@ public:
 	/**
 	 * Read the request to enable encryption from the server.
 	 * @param p The request from the server.
+	 * @return \c true when enough bytes could be read for the nonce, otherwise \c false.
 	 */
 	virtual bool ReceiveEnableEncryption(struct Packet &p) = 0;
 

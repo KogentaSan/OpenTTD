@@ -13,7 +13,7 @@
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
 
 
 ##id 0x0000
@@ -1477,6 +1477,8 @@ STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :மென்ம
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :கரடுமுரடான
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :மிகவும் கரடுமுரடான
 
+###length 4
+
 STR_CONFIG_SETTING_VARIETY                                      :பலவகை பரவல்: {STRING}
 
 STR_CONFIG_SETTING_RIVER_AMOUNT                                 :ஆறுகளின் எண்ணிக்கை: {STRING}
@@ -1916,7 +1918,7 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_FORCE_SI                  :SI (kN)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT                    :உயரங்கள் அலகுகள்: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_HELPTEXT           :பயனர் இடைமுகத்தில் ஒரு உயரம் காட்டப்படும் போதெல்லாம், தேர்ந்தெடுக்கப்பட்ட அலகுகளில் அதைக் காட்டுங்கள்
-###length 3
+###length 4
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :இம்பீரியல் (அடி)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :மெட்ரிக் (மீ)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :அனைத்துலக முறை அலகு (மீ)
@@ -2209,15 +2211,13 @@ STR_NETWORK_CONNECTING_WAITING                                  :{BLACK}{NUM} cl
 STR_NETWORK_CONNECTING_DOWNLOADING_1                            :{BLACK}{BYTES} இதுவரை பதிவிறக்கியது
 STR_NETWORK_CONNECTING_DOWNLOADING_2                            :{BLACK}{BYTES} / {BYTES} இதுவரை பதிவிறக்கியது
 
-###length 8
+###length 6
 STR_NETWORK_CONNECTING_1                                        :{BLACK}(1/6) இணைக்கப்படுகிறது...
 STR_NETWORK_CONNECTING_2                                        :{BLACK}(2/6) அனுமதிக்கப்படுகிறது...
 STR_NETWORK_CONNECTING_3                                        :{BLACK}(3/6) காத்திருக்கிறது...
 STR_NETWORK_CONNECTING_4                                        :{BLACK}(4/6) வரைபடம் பதிவிறக்கமாகிறது...
 STR_NETWORK_CONNECTING_5                                        :{BLACK}(5/6) தகவல் பரிசீலிக்கப்படுகின்றது...
 STR_NETWORK_CONNECTING_6                                        :{BLACK}(6/6) பதிவு செய்யப்படுகிறது...
-STR_NETWORK_CONNECTING_SPECIAL_1                                :{BLACK}ஆட்டத்தின் விவரங்கள் பெறப்படுகின்றது...
-STR_NETWORK_CONNECTING_SPECIAL_2                                :{BLACK}நிறுவனத்தின் விவரம் சேகரிக்கப்படுகிறது...
 
 STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}இணைப்பை துண்டி
 
@@ -2542,6 +2542,9 @@ STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}இழ�
 
 
 
+
+
+
 STR_STATION_CLASS_DFLT                                          :இயல்பிருப்பு
 STR_STATION_CLASS_DFLT_STATION                                  :இயல்பிருப்பு நிலையம்
 STR_STATION_CLASS_DFLT_ROADSTOP                                 :இயல்பிருப்பு சாலை நிறுத்தம்
@@ -2772,7 +2775,7 @@ STR_LAND_AREA_INFORMATION_AIRPORT_CLASS                         :{BLACK}வி�
 STR_LAND_AREA_INFORMATION_AIRPORT_NAME                          :{BLACK}விமான நிலைய பெயர்: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME                      :{BLACK}விமான நிலைய பெயர்: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: {LTBLUE}{STRING}
-STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}ஏற்றுக்கொள்ளப்படும் சரக்குகள்: {LTBLUE}
+STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}ஏற்றுக்கொள்ளப்படும் சரக்குகள்: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}இரயில் வகை: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}சாலை வகை: {LTBLUE}{STRING}
@@ -3023,6 +3026,8 @@ STR_MAPGEN_SOUTHWEST                                            :{BLACK}தெ�
 STR_MAPGEN_BORDER_FREEFORM                                      :{BLACK}இலவசமாக
 STR_MAPGEN_BORDER_WATER                                         :{BLACK}தண்ணீர்
 STR_MAPGEN_BORDER_RANDOM                                        :{BLACK}ஏதொவொன்று
+
+###length 3
 STR_MAPGEN_BORDER_RANDOMIZE                                     :{BLACK}ஏதோவொன்று
 STR_MAPGEN_BORDER_MANUAL                                        :{BLACK}எனது
 
@@ -3241,7 +3246,6 @@ STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}கு�
 STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}நகரங்கள் ({1:COMMA}இல் {0:COMMA})
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- ஒன்றுமில்லை -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
-STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (மாநகரம்){BLACK} ({COMMA})
 STR_TOWN_POPULATION                                             :{BLACK}உலக மக்கள்தொகை: {COMMA}
 
 # Town view window
@@ -3424,24 +3428,20 @@ STR_CARGO_RATING_EXCELLENT                                      :சிறப்
 STR_CARGO_RATING_OUTSTANDING                                    :மிகச்சிறப்பு
 
 STR_STATION_VIEW_CENTER_TOOLTIP                                 :{BLACK}நிலைய இருப்பிடத்தின் மையக் காட்சி. Ctrl + Click நிலைய இருப்பிடத்தில் புதிய காட்சிப்பலகையைத் திறக்கிறது
-STR_STATION_VIEW_RENAME_TOOLTIP                                 :{BLACK}நிலையத்தின் பெயரை மாற்று
 
 STR_STATION_VIEW_SCHEDULED_TRAINS_TOOLTIP                       :{BLACK}இந்த நிலையத்தினை அட்டவணையில் வைத்துள்ள அனைத்து இரயில்களையும் காட்டு
 STR_STATION_VIEW_SCHEDULED_ROAD_VEHICLES_TOOLTIP                :{BLACK}இந்த நிலையத்தினை அட்டவணையில் வைத்துள்ள அனைத்து சாலை வாகனங்களையும் காட்டு
 STR_STATION_VIEW_SCHEDULED_AIRCRAFT_TOOLTIP                     :{BLACK}இந்த நிலையத்தினை அட்டவணையில் வைத்துள்ள அனைத்து விமானங்களையும் காட்டு
 STR_STATION_VIEW_SCHEDULED_SHIPS_TOOLTIP                        :{BLACK}இந்த நிலையத்தினை அட்டவணையில் வைத்துள்ள அனைத்து கப்பல்களையும் காட்டு
 
-STR_STATION_VIEW_RENAME_STATION_CAPTION                         :நிலையம்/சரக்கேற்றும் பகுதியின் பெயரினை மாற்றவும்
 
 STR_STATION_VIEW_CLOSE_AIRPORT                                  :{BLACK}விமான நிலையத்தினை மூடு
 STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}விமானத்தை இந்த விமான நிலையத்தில் தரையிரங்க அனுமதிக்காதே
 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
-STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}பாதைப்புள்ளியின் பெயரை மாற்று
 STR_BUOY_VIEW_RENAME_TOOLTIP                                    :{BLACK}மிதவையின் பெயரை மாற்று
 
-STR_EDIT_WAYPOINT_NAME                                          :{WHITE}பாதைப்புள்ளியின் பெயரை திருத்து
 
 # Finances window
 STR_FINANCES_CAPTION                                            :{WHITE}{COMPANY} நிதிநிலைமை {BLACK}{COMPANY_NUM}
@@ -3552,12 +3552,12 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}தொழிற்சாலைகள் ({1:COMMA}இல் {0:COMMA})
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- ஒன்றுமில்லை -
-STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% கொண்டு செல்லப்பட்டது){BLACK}
+STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% கொண்டு செல்லப்பட்டது)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} மற்றும் {NUM} மேலும்...
+STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}, {STRING} மற்றும் {NUM} மேலும்...
 STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}தொழிற்சாலைகளின் பெயர்கள் - தொழிற்சாலயை முக்கிய காட்சியில் நடுவில் காட்ட பெயரில் கிளிக் செய்யவும். தொழிற்சாலையின் இடத்தில் புதிய காட்சியை திறக்க Ctrl+கிளிக் செய்யவும்.
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}ஏற்றுக்கொள்ளப்படும் சரக்குகள்: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}உற்பத்தி செய்யப்பட்ட சரக்குகள்: {SILVER}{STRING}
@@ -3572,9 +3572,9 @@ STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}தயாரிப்பு அளவு: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}தொழிற்சாலை உடனடியாக மூடப்படும் என்று அறிவிக்கப்பட்டுள்ளது!
 
-STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}வேண்டியவன: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}உற்பத்தி: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :, {STRING}{STRING}
+STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}வேண்டியவன: {YELLOW}{STRING}
+STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}உற்பத்தி: {YELLOW}{STRING}
+STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :{STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}வேண்டியவன:
 
@@ -3700,6 +3700,8 @@ STR_PURCHASE_INFO_ALL_BUT                                       :அனைத்
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}அதி. இழு திறன்: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}தூரம்: {GOLD}{COMMA} கட்டங்கள்
 STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}விமான வகை: {GOLD}{STRING}
+
+# Vehicle sort details
 
 ###length 3
 STR_CARGO_TYPE_FILTER_ALL                                       :அனைத்து சரக்கு வகைகள்
@@ -3848,6 +3850,7 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}நீ�
 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}வாகன உற்பத்தியாலரிடமிருந்து ஓர் தகவல்
+
 
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :இரயில்வே வாகனம்
 STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :மின்சார இரயில்
@@ -4054,7 +4057,7 @@ STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}ஒவ�
 STR_VEHICLE_DETAIL_TAB_TOTAL_CARGO                              :{BLACK}மொத்த சரக்கு
 STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK}இரயிலின் மொத்தக் கொள்ளளவினைக் காட்டு, சரக்கு வகைப்படி பிரித்தவாறு
 
-STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}கொள்ளளவு: {LTBLUE}
+STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}கொள்ளளவு: {LTBLUE}{STRING}
 
 # Vehicle refit
 STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE} (மாற்றியமை)
@@ -4512,7 +4515,6 @@ STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}எந�
 STR_ERROR_CAN_T_RENAME_TOWN                                     :{WHITE}நகரத்தின் பெயரினை மாற்ற இயலாது...
 STR_ERROR_CAN_T_FOUND_TOWN_HERE                                 :{WHITE}நகரத்தினை இங்கே நிறுவ இயலாது...
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :{WHITE}நகரத்தினை விரிவாக்க இயலாது...
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... படத்தின் எல்லைக்கு மிக அருகாமையில் உள்ளது
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... மற்றொரு நகரத்திற்கு மிகவும் அருகாமையில் உள்ளது
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... மிகவும் அதிகமான நகரங்கள்
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... படத்தில் வேறு வெற்றுஇடம் இல்லை

@@ -2,10 +2,12 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file freetypefontcache.cpp FreeType font cache implementation. */
+
+#ifdef WITH_FREETYPE
 
 #include "../stdafx.h"
 
@@ -20,13 +22,12 @@
 
 #include "../table/control_codes.h"
 
-#include "../safeguards.h"
-
-#ifdef WITH_FREETYPE
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_TRUETYPE_TABLES_H
+
+#include "../safeguards.h"
 
 /** Font cache for fonts that are based on a freetype font. */
 class FreeTypeFontCache : public TrueTypeFontCache {
@@ -38,7 +39,7 @@ private:
 
 public:
 	FreeTypeFontCache(FontSize fs, FT_Face face, int pixels);
-	~FreeTypeFontCache();
+	~FreeTypeFontCache() override;
 	void ClearFontCache() override;
 	GlyphID MapCharToGlyph(char32_t key, bool allow_fallback = true) override;
 	std::string GetFontName() override { return fmt::format("{}, {}", face->family_name, face->style_name); }
@@ -212,7 +213,8 @@ class FreeTypeFontCacheFactory : public FontCacheFactory {
 public:
 	FreeTypeFontCacheFactory() : FontCacheFactory("freetype", "FreeType font provider") {}
 
-	virtual ~FreeTypeFontCacheFactory()
+	/** Close the freetype library. */
+	~FreeTypeFontCacheFactory() override
 	{
 		FT_Done_FreeType(_ft_library);
 		_ft_library = nullptr;
@@ -224,8 +226,10 @@ public:
 	 * try to resolve the filename of the font using fontconfig, where the
 	 * format is 'font family name' or 'font family name, font style'.
 	 * @param fs The font size to load.
+	 * @param fonttype The type of font that is requested to be loaded.
+	 * @return The loaded font, or \c nullptr when none could be loaded.
 	 */
-	std::unique_ptr<FontCache> LoadFont(FontSize fs, FontType fonttype) override
+	std::unique_ptr<FontCache> LoadFont(FontSize fs, FontType fonttype) const override
 	{
 		if (fonttype != FontType::TrueType) return nullptr;
 
@@ -271,7 +275,7 @@ public:
 		return LoadFont(fs, face, font, GetFontCacheFontSize(fs));
 	}
 
-	bool FindFallbackFont(struct FontCacheSettings *settings, const std::string &language_isocode, class MissingGlyphSearcher *callback) override
+	bool FindFallbackFont(struct FontCacheSettings *settings, const std::string &language_isocode, class MissingGlyphSearcher *callback) const override
 	{
 #ifdef WITH_FONTCONFIG
 		if (FontConfigFindFallbackFont(settings, language_isocode, callback)) return true;

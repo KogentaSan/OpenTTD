@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file strings_internal.h Types and functions related to the internal workings of formatting OpenTTD's strings. */
@@ -29,12 +29,18 @@ public:
 	/**
 	 * Create a new StringParameters instance that can reference part of the data of
 	 * the given parent instance.
+	 * @param parent The parent we are a subset from.
+	 * @param size The number of elements from the parent at its offset to take.
 	 */
 	StringParameters(StringParameters &parent, size_t size) :
 		parent(&parent),
 		parameters(parent.parameters.subspan(parent.offset, size))
 	{}
 
+	/**
+	 * Create a new StringParameters instance with the given parameters.
+	 * @param parameters The actual parameters.
+	 */
 	StringParameters(std::span<StringParameter> parameters = {}) : parameters(parameters) {}
 
 	void SetTypeOfNextParameter(char32_t type) { this->next_type = type; }
@@ -149,19 +155,29 @@ public:
 		return StringParameters(this->parameters.subspan(offset, this->parameters.size() - offset));
 	}
 
-	/** Return the amount of elements which can still be read. */
+	/**
+	 * Return the amount of elements which can still be read.
+	 * @return The number of parameters minus the current offset.
+	 */
 	size_t GetDataLeft() const
 	{
 		return this->parameters.size() - this->offset;
 	}
 
-	/** Return the number of parameters. */
+	/**
+	 * Return the number of parameters.
+	 * @return The parameter count.
+	 */
 	size_t GetNumParameters() const
 	{
 		return this->parameters.size();
 	}
 
-	/** Get the type of a specific element. */
+	/**
+	 * Get the type of a specific element.
+	 * @param offset The offset to get the type for.
+	 * @return The type.
+	 */
 	char32_t GetTypeAtOffset(size_t offset) const
 	{
 		assert(offset < this->parameters.size());

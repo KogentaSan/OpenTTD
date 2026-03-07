@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file afterload.cpp Code updating data after game load */
+/** @file afterload.cpp Code updating data after game load. */
 
 #include "../stdafx.h"
 #include "../void_map.h"
@@ -86,7 +86,7 @@ extern void ClearOldOrders();
  * This as for example docks and shipdepots do not store
  * whether the tile used to be canal or 'normal' water.
  * @param t the tile to change.
- * @param include_invalid_water_class Also consider WATER_CLASS_INVALID, i.e. industry tiles on land
+ * @param include_invalid_water_class Also consider WaterClass::Invalid, i.e. industry tiles on land
  */
 void SetWaterClassDependingOnSurroundings(Tile t, bool include_invalid_water_class)
 {
@@ -94,7 +94,7 @@ void SetWaterClassDependingOnSurroundings(Tile t, bool include_invalid_water_cla
 	 * Note: Wrt. autosloping under industry tiles this is the most fool-proof behaviour. */
 	if (!IsTileFlat(t)) {
 		if (include_invalid_water_class) {
-			SetWaterClass(t, WATER_CLASS_INVALID);
+			SetWaterClass(t, WaterClass::Invalid);
 			return;
 		} else {
 			SlErrorCorrupt("Invalid water class for dry tile");
@@ -105,8 +105,8 @@ void SetWaterClassDependingOnSurroundings(Tile t, bool include_invalid_water_cla
 	MarkTileDirtyByTile(t);
 
 	if (TileX(t) == 0 || TileY(t) == 0 || TileX(t) == Map::MaxX() - 1 || TileY(t) == Map::MaxY() - 1) {
-		/* tiles at map borders are always WATER_CLASS_SEA */
-		SetWaterClass(t, WATER_CLASS_SEA);
+		/* tiles at map borders are always WaterClass::Sea */
+		SetWaterClass(t, WaterClass::Sea);
 		return;
 	}
 
@@ -117,28 +117,28 @@ void SetWaterClassDependingOnSurroundings(Tile t, bool include_invalid_water_cla
 	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
 		Tile neighbour = TileAddByDiagDir(t, dir);
 		switch (GetTileType(neighbour)) {
-			case MP_WATER:
+			case TileType::Water:
 				/* clear water and shipdepots have already a WaterClass associated */
 				if (IsCoast(neighbour)) {
 					has_water = true;
 				} else if (!IsLock(neighbour)) {
 					switch (GetWaterClass(neighbour)) {
-						case WATER_CLASS_SEA:   has_water = true; break;
-						case WATER_CLASS_CANAL: has_canal = true; break;
-						case WATER_CLASS_RIVER: has_river = true; break;
+						case WaterClass::Sea:   has_water = true; break;
+						case WaterClass::Canal: has_canal = true; break;
+						case WaterClass::River: has_river = true; break;
 						default: SlErrorCorrupt("Invalid water class for tile");
 					}
 				}
 				break;
 
-			case MP_RAILWAY:
+			case TileType::Railway:
 				/* Shore or flooded halftile */
-				has_water |= (GetRailGroundType(neighbour) == RAIL_GROUND_WATER);
+				has_water |= (GetRailGroundType(neighbour) == RailGroundType::HalfTileWater);
 				break;
 
-			case MP_TREES:
+			case TileType::Trees:
 				/* trees on shore */
-				has_water |= (GB(neighbour.m2(), 4, 2) == TREE_GROUND_SHORE);
+				has_water |= (static_cast<TreeGround>(GB(neighbour.m2(), 4, 2)) == TreeGround::Shore);
 				break;
 
 			default: break;
@@ -146,16 +146,16 @@ void SetWaterClassDependingOnSurroundings(Tile t, bool include_invalid_water_cla
 	}
 
 	if (!has_water && !has_canal && !has_river && include_invalid_water_class) {
-		SetWaterClass(t, WATER_CLASS_INVALID);
+		SetWaterClass(t, WaterClass::Invalid);
 		return;
 	}
 
 	if (has_river && !has_canal) {
-		SetWaterClass(t, WATER_CLASS_RIVER);
+		SetWaterClass(t, WaterClass::River);
 	} else if (has_canal || !has_water) {
-		SetWaterClass(t, WATER_CLASS_CANAL);
+		SetWaterClass(t, WaterClass::Canal);
 	} else {
-		SetWaterClass(t, WATER_CLASS_SEA);
+		SetWaterClass(t, WaterClass::Sea);
 	}
 }
 
@@ -163,13 +163,13 @@ static void ConvertTownOwner()
 {
 	for (auto tile : Map::Iterate()) {
 		switch (GetTileType(tile)) {
-			case MP_ROAD:
-				if (GB(tile.m5(), 4, 2) == ROAD_TILE_CROSSING && HasBit(tile.m3(), 7)) {
+			case TileType::Road:
+				if (GB(tile.m5(), 4, 2) == to_underlying(RoadTileType::Crossing) && HasBit(tile.m3(), 7)) {
 					tile.m3() = OWNER_TOWN.base();
 				}
 				[[fallthrough]];
 
-			case MP_TUNNELBRIDGE:
+			case TileType::TunnelBridge:
 				if (tile.m1() & 0x80) SetTileOwner(tile, OWNER_TOWN);
 				break;
 
@@ -178,7 +178,7 @@ static void ConvertTownOwner()
 	}
 }
 
-/* since savegame version 4.1, exclusive transport rights are stored at towns */
+/** Since savegame version 4.1, exclusive transport rights are stored at towns. */
 static void UpdateExclusiveRights()
 {
 	for (Town *t : Town::Iterate()) {
@@ -194,14 +194,15 @@ static const uint8_t convert_currency[] = {
 	18,  2, 20,
 };
 
-/* since savegame version 4.2 the currencies are arranged differently */
+/** Since savegame version 4.2 the currencies are arranged differently. */
 static void UpdateCurrencies()
 {
 	_settings_game.locale.currency = convert_currency[_settings_game.locale.currency];
 }
 
-/* Up to revision 1413 the invisible tiles at the southern border have not been
- * MP_VOID, even though they should have. This is fixed by this function
+/**
+ * Up to revision 1413 the invisible tiles at the southern border have not been
+ * TileType::Void, even though they should have. This is fixed by this function.
  */
 static void UpdateVoidTiles()
 {
@@ -454,17 +455,17 @@ static void FixOwnerOfRailTrack(Tile t)
 		bool hastram = HasBit(t.m7(), 7);
 
 		/* MakeRoadNormal */
-		SetTileType(t, MP_ROAD);
+		SetTileType(t, TileType::Road);
 		SetTileOwner(t, road);
 		t.m3() = (hasroad ? bits : 0);
-		t.m5() = (hastram ? bits : 0) | ROAD_TILE_NORMAL << 6;
+		t.m5() = (hastram ? bits : 0) | to_underlying(RoadTileType::Normal) << 6;
 		SB(t.m6(), 2, 4, 0);
 		SetRoadOwner(t, RTT_TRAM, tram);
 		return;
 	}
 
 	/* if it's not a crossing, make it clean land */
-	MakeClear(t, CLEAR_GRASS, 0);
+	MakeClear(t, ClearGround::Grass, 0);
 }
 
 /**
@@ -530,8 +531,8 @@ static void CheckGroundVehiclesAtCorrectZ()
  */
 static inline bool MayHaveBridgeAbove(Tile t)
 {
-	return IsTileType(t, MP_CLEAR) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_ROAD) ||
-			IsTileType(t, MP_WATER) || IsTileType(t, MP_TUNNELBRIDGE) || IsTileType(t, MP_OBJECT);
+	return IsTileType(t, TileType::Clear) || IsTileType(t, TileType::Railway) || IsTileType(t, TileType::Road) ||
+			IsTileType(t, TileType::Water) || IsTileType(t, TileType::TunnelBridge) || IsTileType(t, TileType::Object);
 }
 
 /**
@@ -611,7 +612,7 @@ bool AfterLoadGame()
 			st->train_station.w = st->train_station.h = 0;
 		}
 		for (auto t : Map::Iterate()) {
-			if (!IsTileType(t, MP_STATION)) continue;
+			if (!IsTileType(t, TileType::Station)) continue;
 			if (t.m5() > 7) continue; // is it a rail station tile?
 			Station *st = Station::Get(t.m2());
 			assert(st->train_station.tile != 0);
@@ -655,7 +656,7 @@ bool AfterLoadGame()
 	 * walk through the whole map.. */
 	if (IsSavegameVersionBefore(SLV_4, 3)) {
 		for (const auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_WATER) && GetTileOwner(t) >= MAX_COMPANIES) {
+			if (IsTileType(t, TileType::Water) && GetTileOwner(t) >= MAX_COMPANIES) {
 				SetTileOwner(t, OWNER_WATER);
 			}
 		}
@@ -733,7 +734,10 @@ bool AfterLoadGame()
 	TimerGameCalendar::SetDate(TimerGameCalendar::date, TimerGameCalendar::date_fract);
 
 	/* Only new games can use wallclock units. */
-	if (IsSavegameVersionBefore(SLV_ECONOMY_MODE_TIMEKEEPING_UNITS)) _settings_game.economy.timekeeping_units = TKU_CALENDAR;
+	if (IsSavegameVersionBefore(SLV_ECONOMY_MODE_TIMEKEEPING_UNITS)) _settings_game.economy.timekeeping_units = TimekeepingUnits::Calendar;
+
+	/* Set the correct default for 'minutes per year' if the savegame was created before the setting existed. */
+	if (IsSavegameVersionBefore(SLV_CALENDAR_SUB_DATE_FRACT)) _settings_game.economy.minutes_per_calendar_year = CalendarTime::DEF_MINUTES_PER_YEAR;
 
 	/* Update economy year. If we don't have a separate economy date saved, follow the calendar date. */
 	if (IsSavegameVersionBefore(SLV_ECONOMY_DATE)) {
@@ -778,10 +782,10 @@ bool AfterLoadGame()
 	}
 	if (IsSavegameVersionBefore(SLV_166))  _settings_game.economy.infrastructure_maintenance = false;
 	if (IsSavegameVersionBefore(SLV_183)) {
-		_settings_game.linkgraph.distribution_pax = DT_MANUAL;
-		_settings_game.linkgraph.distribution_mail = DT_MANUAL;
-		_settings_game.linkgraph.distribution_armoured = DT_MANUAL;
-		_settings_game.linkgraph.distribution_default = DT_MANUAL;
+		_settings_game.linkgraph.distribution_pax = DistributionType::Manual;
+		_settings_game.linkgraph.distribution_mail = DistributionType::Manual;
+		_settings_game.linkgraph.distribution_armoured = DistributionType::Manual;
+		_settings_game.linkgraph.distribution_default = DistributionType::Manual;
 	}
 
 	if (IsSavegameVersionBefore(SLV_ENDING_YEAR)) {
@@ -849,16 +853,16 @@ bool AfterLoadGame()
 		static constexpr uint8_t WBL_COAST_FLAG = 0; ///< Flag for coast.
 
 		for (auto t : Map::Iterate()) {
-			if (!IsTileType(t, MP_WATER)) continue;
+			if (!IsTileType(t, TileType::Water)) continue;
 
 			switch (GB(t.m5(), 4, 4)) {
 				case 0x0: /* Previously WBL_TYPE_NORMAL, Clear water or coast. */
-					SetWaterTileType(t, HasBit(t.m5(), WBL_COAST_FLAG) ? WATER_TILE_COAST : WATER_TILE_CLEAR);
+					SetWaterTileType(t, HasBit(t.m5(), WBL_COAST_FLAG) ? WaterTileType::Coast : WaterTileType::Clear);
 					break;
 
-				case 0x1: SetWaterTileType(t, WATER_TILE_LOCK); break; /* Previously WBL_TYPE_LOCK */
-				case 0x8: SetWaterTileType(t, WATER_TILE_DEPOT); break; /* Previously WBL_TYPE_DEPOT */
-				default: SetWaterTileType(t, WATER_TILE_CLEAR); break; /* Shouldn't happen... */
+				case 0x1: SetWaterTileType(t, WaterTileType::Lock); break; /* Previously WBL_TYPE_LOCK */
+				case 0x8: SetWaterTileType(t, WaterTileType::Depot); break; /* Previously WBL_TYPE_DEPOT */
+				default: SetWaterTileType(t, WaterTileType::Clear); break; /* Shouldn't happen... */
 			}
 		}
 	}
@@ -869,11 +873,11 @@ bool AfterLoadGame()
 			switch (GetTileType(t)) {
 				default: break;
 
-				case MP_WATER:
-					if (GetWaterTileType(t) == WATER_TILE_LOCK && GetTileOwner(t) == OWNER_WATER) SetTileOwner(t, OWNER_NONE);
+				case TileType::Water:
+					if (GetWaterTileType(t) == WaterTileType::Lock && GetTileOwner(t) == OWNER_WATER) SetTileOwner(t, OWNER_NONE);
 					break;
 
-				case MP_STATION: {
+				case TileType::Station: {
 					if (HasBit(t.m6(), 3)) SetBit(t.m6(), 2);
 					StationGfx gfx = GetStationGfx(t);
 					StationType st;
@@ -922,7 +926,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_INCREASE_STATION_TYPE_FIELD_SIZE)) {
 		/* Expansion of station type field in m6 */
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_STATION)) {
+			if (IsTileType(t, TileType::Station)) {
 				ClrBit(t.m6(), 6);
 			}
 		}
@@ -930,7 +934,7 @@ bool AfterLoadGame()
 
 	for (const auto t : Map::Iterate()) {
 		switch (GetTileType(t)) {
-			case MP_STATION: {
+			case TileType::Station: {
 				BaseStation *bst = BaseStation::GetByTile(t);
 
 				/* Sanity check */
@@ -958,7 +962,7 @@ bool AfterLoadGame()
 							/* From this version on there can be multiple road stops of the
 							 * same type per station. Convert the existing stops to the new
 							 * internal data structure. */
-							RoadStop *rs = new RoadStop(t);
+							RoadStop *rs = RoadStop::Create(t);
 
 							RoadStop **head =
 								IsTruckStop(t) ? &st->truck_stops : &st->bus_stops;
@@ -979,7 +983,7 @@ bool AfterLoadGame()
 						 * the map
 						 */
 						TileIndex t1 = TileAddXY(t, 0, 1);
-						if (!IsTileType(t1, MP_INDUSTRY) || GetIndustryGfx(t1) != GFX_OILRIG_1) {
+						if (!IsTileType(t1, TileType::Industry) || GetIndustryGfx(t1) != GFX_OILRIG_1) {
 							DeleteOilRig(t);
 						}
 						break;
@@ -1000,14 +1004,15 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_6, 1)) {
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_HOUSE:
+				case TileType::House:
 					t.m4() = t.m2();
 					SetTownIndex(t, CalcClosestTownFromTile(t)->index);
 					break;
 
-				case MP_ROAD:
+				case TileType::Road:
 					t.m4() |= (t.m2() << 4);
-					if ((GB(t.m5(), 4, 2) == ROAD_TILE_CROSSING ? (Owner)t.m3() : GetTileOwner(t)) == OWNER_TOWN) {
+					if (GB(t.m5(), 4, 2) == to_underlying(RoadTileType::Depot)) break;
+					if ((GB(t.m5(), 4, 2) == to_underlying(RoadTileType::Crossing) ? (Owner)t.m3() : GetTileOwner(t)) == OWNER_TOWN) {
 						SetTownIndex(t, CalcClosestTownFromTile(t)->index);
 					} else {
 						SetTownIndex(t, TownID::Begin());
@@ -1055,7 +1060,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_48)) {
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_RAILWAY:
+				case TileType::Railway:
 					if (IsPlainRail(t)) {
 						/* Swap ground type and signal type for plain rail tiles, so the
 						 * ground type uses the same bits as for depots and waypoints. */
@@ -1069,7 +1074,7 @@ bool AfterLoadGame()
 					}
 					break;
 
-				case MP_ROAD:
+				case TileType::Road:
 					/* Swap m3 and m4, so the track type for rail crossings is the
 					 * same as for normal rail. */
 					std::swap(t.m3(), t.m4());
@@ -1085,28 +1090,28 @@ bool AfterLoadGame()
 		bool old_bridge = IsSavegameVersionBefore(SLV_42);
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_ROAD:
+				case TileType::Road:
 					SB(t.m5(), 6, 2, GB(t.m5(), 4, 2));
 					switch (GetRoadTileType(t)) {
 						default: SlErrorCorrupt("Invalid road tile type");
-						case ROAD_TILE_NORMAL:
+						case RoadTileType::Normal:
 							SB(t.m4(), 0, 4, GB(t.m5(), 0, 4));
 							SB(t.m4(), 4, 4, 0);
 							SB(t.m6(), 2, 4, 0);
 							break;
-						case ROAD_TILE_CROSSING:
+						case RoadTileType::Crossing:
 							SB(t.m4(), 5, 2, GB(t.m5(), 2, 2));
 							break;
-						case ROAD_TILE_DEPOT:    break;
+						case RoadTileType::Depot:    break;
 					}
 					SB(t.m7(), 6, 2, 1); // Set pre-NRT road type bits for conversion later.
 					break;
 
-				case MP_STATION:
+				case TileType::Station:
 					if (IsStationRoadStop(t)) SB(t.m7(), 6, 2, 1);
 					break;
 
-				case MP_TUNNELBRIDGE:
+				case TileType::TunnelBridge:
 					/* Middle part of "old" bridges */
 					if (old_bridge && IsBridge(t) && HasBit(t.m5(), 6)) break;
 					if (((old_bridge && IsBridge(t)) ? (TransportType)GB(t.m5(), 1, 2) : GetTunnelBridgeTransportType(t)) == TRANSPORT_ROAD) {
@@ -1125,12 +1130,12 @@ bool AfterLoadGame()
 
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_ROAD:
+				case TileType::Road:
 					if (fix_roadtypes) SB(t.m7(), 6, 2, GB(t.m7(), 5, 3));
 					SB(t.m7(), 5, 1, GB(t.m3(), 7, 1)); // snow/desert
 					switch (GetRoadTileType(t)) {
 						default: SlErrorCorrupt("Invalid road tile type");
-						case ROAD_TILE_NORMAL:
+						case RoadTileType::Normal:
 							SB(t.m7(), 0, 4, GB(t.m3(), 0, 4));  // road works
 							SB(t.m6(), 3, 3, GB(t.m3(), 4, 3));  // ground
 							SB(t.m3(), 0, 4, GB(t.m4(), 4, 4));   // tram bits
@@ -1138,7 +1143,7 @@ bool AfterLoadGame()
 							SB(t.m5(), 0, 4, GB(t.m4(), 0, 4));   // road bits
 							break;
 
-						case ROAD_TILE_CROSSING:
+						case RoadTileType::Crossing:
 							SB(t.m7(), 0, 5, GB(t.m4(), 0, 5));  // road owner
 							SB(t.m6(), 3, 3, GB(t.m3(), 4, 3));  // ground
 							SB(t.m3(), 4, 4, GB(t.m5(), 0, 4));   // tram owner
@@ -1146,7 +1151,7 @@ bool AfterLoadGame()
 							SB(t.m5(), 5, 1, GB(t.m4(), 5, 1));   // crossing state
 							break;
 
-						case ROAD_TILE_DEPOT:
+						case RoadTileType::Depot:
 							break;
 					}
 					if (!IsRoadDepot(t) && !HasTownOwnedRoad(t)) {
@@ -1156,7 +1161,7 @@ bool AfterLoadGame()
 					t.m4() = 0;
 					break;
 
-				case MP_STATION:
+				case TileType::Station:
 					if (!IsStationRoadStop(t)) break;
 
 					if (fix_roadtypes) SB(t.m7(), 6, 2, GB(t.m3(), 0, 3));
@@ -1165,7 +1170,7 @@ bool AfterLoadGame()
 					t.m4() = 0;
 					break;
 
-				case MP_TUNNELBRIDGE:
+				case TileType::TunnelBridge:
 					if (old_bridge && IsBridge(t) && HasBit(t.m5(), 6)) break;
 					if (((old_bridge && IsBridge(t)) ? (TransportType)GB(t.m5(), 1, 2) : GetTunnelBridgeTransportType(t)) == TRANSPORT_ROAD) {
 						if (fix_roadtypes) SB(t.m7(), 6, 2, GB(t.m3(), 0, 3));
@@ -1190,23 +1195,23 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_EXTEND_RAILTYPES)) {
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_RAILWAY:
+				case TileType::Railway:
 					SetRailType(t, (RailType)GB(t.m3(), 0, 4));
 					break;
 
-				case MP_ROAD:
+				case TileType::Road:
 					if (IsLevelCrossing(t)) {
 						SetRailType(t, (RailType)GB(t.m3(), 0, 4));
 					}
 					break;
 
-				case MP_STATION:
+				case TileType::Station:
 					if (HasStationRail(t)) {
 						SetRailType(t, (RailType)GB(t.m3(), 0, 4));
 					}
 					break;
 
-				case MP_TUNNELBRIDGE:
+				case TileType::TunnelBridge:
 					if (GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL) {
 						SetRailType(t, (RailType)GB(t.m3(), 0, 4));
 					}
@@ -1237,17 +1242,17 @@ bool AfterLoadGame()
 							TownID town = IsTileOwner(t, OWNER_TOWN) ? ClosestTownFromTile(t, UINT_MAX)->index : TownID::Begin();
 
 							/* MakeRoadNormal */
-							SetTileType(t, MP_ROAD);
+							SetTileType(t, TileType::Road);
 							t.m2() = town.base();
 							t.m3() = 0;
-							t.m5() = (axis == AXIS_X ? ROAD_Y : ROAD_X) | ROAD_TILE_NORMAL << 6;
+							t.m5() = (axis == AXIS_X ? ROAD_Y : ROAD_X) | to_underlying(RoadTileType::Normal) << 6;
 							SB(t.m6(), 2, 4, 0);
 							t.m7() = 1 << 6;
 							SetRoadOwner(t, RTT_TRAM, OWNER_NONE);
 						}
 					} else {
 						if (GB(t.m5(), 3, 2) == 0) {
-							MakeClear(t, CLEAR_GRASS, 3);
+							MakeClear(t, ClearGround::Grass, 3);
 						} else {
 							if (!IsTileFlat(t)) {
 								MakeShore(t);
@@ -1304,13 +1309,13 @@ bool AfterLoadGame()
 		for (auto t : Map::Iterate()) {
 			bool has_road = false;
 			switch (GetTileType(t)) {
-				case MP_ROAD:
+				case TileType::Road:
 					has_road = true;
 					break;
-				case MP_STATION:
+				case TileType::Station:
 					has_road = IsAnyRoadStop(t);
 					break;
-				case MP_TUNNELBRIDGE:
+				case TileType::TunnelBridge:
 					has_road = GetTunnelBridgeTransportType(t) == TRANSPORT_ROAD;
 					break;
 				default:
@@ -1342,23 +1347,23 @@ bool AfterLoadGame()
 		/* .. so we convert the entire map from normal to elrail (so maintain "fairness") */
 		for (const auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_RAILWAY:
+				case TileType::Railway:
 					SetRailType(t, UpdateRailType(GetRailType(t), min_rail));
 					break;
 
-				case MP_ROAD:
+				case TileType::Road:
 					if (IsLevelCrossing(t)) {
 						SetRailType(t, UpdateRailType(GetRailType(t), min_rail));
 					}
 					break;
 
-				case MP_STATION:
+				case TileType::Station:
 					if (HasStationRail(t)) {
 						SetRailType(t, UpdateRailType(GetRailType(t), min_rail));
 					}
 					break;
 
-				case MP_TUNNELBRIDGE:
+				case TileType::TunnelBridge:
 					if (GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL) {
 						SetRailType(t, UpdateRailType(GetRailType(t), min_rail));
 					}
@@ -1389,7 +1394,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_21) && !IsSavegameVersionBefore(SLV_15)) {
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_RAILWAY:
+				case TileType::Railway:
 					if (HasSignals(t)) {
 						/* Original signal type/variant was stored in m4 but since saveload
 						 * version 48 they are in m2. The bits has been already moved to m2
@@ -1411,7 +1416,7 @@ bool AfterLoadGame()
 					}
 					break;
 
-				case MP_STATION: // Clear PBS reservation on station
+				case TileType::Station: // Clear PBS reservation on station
 					ClrBit(t.m3(), 6);
 					break;
 
@@ -1472,9 +1477,9 @@ bool AfterLoadGame()
 	 *  plant new ones. */
 	if (IsSavegameVersionBefore(SLV_32)) {
 		for (const auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_CLEAR) && IsClearGround(t, CLEAR_FIELDS)) {
+			if (IsTileType(t, TileType::Clear) && IsClearGround(t, ClearGround::Fields)) {
 				/* remove fields */
-				MakeClear(t, CLEAR_GRASS, 3);
+				MakeClear(t, ClearGround::Grass, 3);
 			}
 		}
 
@@ -1511,7 +1516,7 @@ bool AfterLoadGame()
 	 * space for newhouses grf features. A new byte, m7, was also added. */
 	if (IsSavegameVersionBefore(SLV_53)) {
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_HOUSE)) {
+			if (IsTileType(t, TileType::House)) {
 				if (GB(t.m3(), 6, 2) != TOWN_HOUSE_COMPLETED) {
 					/* Move the construction stage from m3[7..6] to m5[5..4].
 					 * The construction counter does not have to move. */
@@ -1545,7 +1550,7 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_INCREASE_HOUSE_LIMIT)) {
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_HOUSE)) {
+			if (IsTileType(t, TileType::House)) {
 				/* House type is moved from m4 + m3[6] to m8. */
 				SetHouseType(t, t.m4() | (GB(t.m3(), 6, 1) << 8));
 				t.m4() = 0;
@@ -1556,7 +1561,7 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_PROTECT_PLACED_HOUSES)) {
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_HOUSE)) {
+			if (IsTileType(t, TileType::House)) {
 				/* We now store house protection status in the map. Set this based on the house spec flags. */
 				const HouseSpec *hs = HouseSpec::Get(GetHouseType(t));
 				SetHouseProtected(t, hs->extra_flags.Test(HouseExtraFlag::BuildingIsProtected));
@@ -1569,7 +1574,7 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_43)) {
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_INDUSTRY)) {
+			if (IsTileType(t, TileType::Industry)) {
 				switch (GetIndustryGfx(t)) {
 					case GFX_POWERPLANT_SPARKS:
 						t.m3() = GB(t.m1(), 2, 5);
@@ -1650,7 +1655,7 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_52)) {
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_OBJECT) && t.m5() == OBJECT_STATUE) {
+			if (IsTileType(t, TileType::Object) && t.m5() == OBJECT_STATUE) {
 				t.m2() = CalcClosestTownFromTile(t)->index.base();
 			}
 		}
@@ -1698,8 +1703,8 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_58)) {
 		/* Setting difficulty industry_density other than zero get bumped to +1
 		 * since a new option (very low at position 1) has been added */
-		if (_settings_game.difficulty.industry_density > 0) {
-			_settings_game.difficulty.industry_density++;
+		if (_settings_game.difficulty.industry_density > IndustryDensity::FundedOnly) {
+			_settings_game.difficulty.industry_density = static_cast<IndustryDensity>(to_underlying(_settings_game.difficulty.industry_density) + 1);
 		}
 
 		/* Same goes for number of towns, although no test is needed, just an increment */
@@ -1710,7 +1715,7 @@ bool AfterLoadGame()
 		/* Since now we allow different signal types and variants on a single tile.
 		 * Move signal states to m4 to make room and clone the signal type/variant. */
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_RAILWAY) && HasSignals(t)) {
+			if (IsTileType(t, TileType::Railway) && HasSignals(t)) {
 				/* move signal states */
 				SetSignalStates(t, GB(t.m2(), 4, 4));
 				SB(t.m2(), 4, 4, 0);
@@ -1738,8 +1743,8 @@ bool AfterLoadGame()
 	    Replace the owner for those by OWNER_NONE. */
 	if (IsSavegameVersionBefore(SLV_82)) {
 		for (const auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_WATER) &&
-					GetWaterTileType(t) == WATER_TILE_CLEAR &&
+			if (IsTileType(t, TileType::Water) &&
+					GetWaterTileType(t) == WaterTileType::Clear &&
 					GetTileOwner(t) == OWNER_WATER &&
 					TileHeight(t) != 0) {
 				SetTileOwner(t, OWNER_NONE);
@@ -1765,7 +1770,7 @@ bool AfterLoadGame()
 		for (Station *st : Station::Iterate()) {
 			for (GoodsEntry &ge : st->goods) {
 				ge.last_speed = 0;
-				if (ge.HasData() && ge.GetData().cargo.AvailableCount() != 0) ge.status.Set(GoodsEntry::State::Rating);
+				if (ge.AvailableCount() != 0) ge.status.Set(GoodsEntry::State::Rating);
 			}
 		}
 	}
@@ -1798,9 +1803,9 @@ bool AfterLoadGame()
 	 * make all grassy/rough land trees have a density of 3. */
 	if (IsSavegameVersionBefore(SLV_81)) {
 		for (auto t : Map::Iterate()) {
-			if (GetTileType(t) == MP_TREES) {
+			if (GetTileType(t) == TileType::Trees) {
 				TreeGround ground_type = (TreeGround)GB(t.m2(), 4, 2);
-				if (ground_type != TREE_GROUND_SNOW_DESERT) SB(t.m2(), 6, 2, 3);
+				if (ground_type != TreeGround::SnowOrDesert) SB(t.m2(), 6, 2, 3);
 			}
 		}
 	}
@@ -1822,24 +1827,24 @@ bool AfterLoadGame()
 
 			v->current_order.ConvertFromOldSavegame();
 			if (v->type == VEH_ROAD && v->IsPrimaryVehicle() && v->FirstShared() == v) {
-				for (Order &order : v->Orders()) order.SetNonStopType(ONSF_NO_STOP_AT_INTERMEDIATE_STATIONS);
+				for (Order &order : v->Orders()) order.SetNonStopType(OrderNonStopFlag::NoIntermediate);
 			}
 		}
 	} else if (IsSavegameVersionBefore(SLV_94)) {
 		/* Unload and transfer are now mutual exclusive. */
 		for (OrderList *orderlist : OrderList::Iterate()) {
 			for (Order &order : orderlist->GetOrders()) {
-				if ((order.GetUnloadType() & (OUFB_UNLOAD | OUFB_TRANSFER)) == (OUFB_UNLOAD | OUFB_TRANSFER)) {
-					order.SetUnloadType(OUFB_TRANSFER);
-					order.SetLoadType(OLFB_NO_LOAD);
+				if (order.GetUnloadType() == OrderUnloadType{3}) { // 3 used to mean transfer and don't load.
+					order.SetUnloadType(OrderUnloadType::Transfer);
+					order.SetLoadType(OrderLoadType::NoLoad);
 				}
 			}
 		}
 
 		for (Vehicle *v : Vehicle::Iterate()) {
-			if ((v->current_order.GetUnloadType() & (OUFB_UNLOAD | OUFB_TRANSFER)) == (OUFB_UNLOAD | OUFB_TRANSFER)) {
-				v->current_order.SetUnloadType(OUFB_TRANSFER);
-				v->current_order.SetLoadType(OLFB_NO_LOAD);
+			if (v->current_order.GetUnloadType() == OrderUnloadType{3}) { // 3 used to mean transfer and don't load.
+				v->current_order.SetUnloadType(OrderUnloadType::Transfer);
+				v->current_order.SetLoadType(OrderLoadType::NoLoad);
 			}
 		}
 	} else if (IsSavegameVersionBefore(SLV_DEPOT_UNBUNCHING)) {
@@ -1847,13 +1852,13 @@ bool AfterLoadGame()
 		for (OrderList *orderlist : OrderList::Iterate()) {
 			for (Order &order : orderlist->GetOrders()) {
 				if (!order.IsType(OT_GOTO_DEPOT)) continue;
-				order.SetDepotActionType((OrderDepotActionFlags)(order.GetDepotActionType() >> 1));
+				order.SetDepotActionType(static_cast<OrderDepotActionFlags>(order.GetDepotActionType().base() >> 1));
 			}
 		}
 
 		for (Vehicle *v : Vehicle::Iterate()) {
 			if (!v->current_order.IsType(OT_GOTO_DEPOT)) continue;
-			v->current_order.SetDepotActionType((OrderDepotActionFlags)(v->current_order.GetDepotActionType() >> 1));
+			v->current_order.SetDepotActionType(static_cast<OrderDepotActionFlags>(v->current_order.GetDepotActionType().base() >> 1));
 		}
 	}
 
@@ -1861,7 +1866,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_146)) {
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_STATION:
+				case TileType::Station:
 					switch (GetStationType(t)) {
 						case StationType::Oilrig:
 						case StationType::Dock:
@@ -1871,18 +1876,18 @@ bool AfterLoadGame()
 							break;
 
 						default:
-							SetWaterClass(t, WATER_CLASS_INVALID);
+							SetWaterClass(t, WaterClass::Invalid);
 							break;
 					}
 					break;
 
-				case MP_WATER:
+				case TileType::Water:
 					SetWaterClass(t, (WaterClass)GB(t.m3(), 0, 2));
 					SB(t.m3(), 0, 2, 0);
 					break;
 
-				case MP_OBJECT:
-					SetWaterClass(t, WATER_CLASS_INVALID);
+				case TileType::Object:
+					SetWaterClass(t, WaterClass::Invalid);
 					break;
 
 				default:
@@ -1895,8 +1900,8 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_86)) {
 		for (auto t : Map::Iterate()) {
 			/* Move river flag and update canals to use water class */
-			if (IsTileType(t, MP_WATER)) {
-				if (GetWaterClass(t) != WATER_CLASS_RIVER) {
+			if (IsTileType(t, TileType::Water)) {
+				if (GetWaterClass(t) != WaterClass::River) {
 					if (IsWater(t)) {
 						Owner o = GetTileOwner(t);
 						if (o == OWNER_WATER) {
@@ -1906,7 +1911,7 @@ bool AfterLoadGame()
 						}
 					} else if (IsShipDepot(t)) {
 						Owner o = (Owner)t.m4(); // Original water owner
-						SetWaterClass(t, o == OWNER_WATER ? WATER_CLASS_SEA : WATER_CLASS_CANAL);
+						SetWaterClass(t, o == OWNER_WATER ? WaterClass::Sea : WaterClass::Canal);
 					}
 				}
 			}
@@ -1918,22 +1923,22 @@ bool AfterLoadGame()
 		for (const auto t : Map::Iterate()) {
 			if (!IsTileFlat(t)) continue;
 
-			if (IsTileType(t, MP_WATER) && IsLock(t)) SetWaterClassDependingOnSurroundings(t, false);
-			if (IsTileType(t, MP_STATION) && (IsDock(t) || IsBuoy(t))) SetWaterClassDependingOnSurroundings(t, false);
+			if (IsTileType(t, TileType::Water) && IsLock(t)) SetWaterClassDependingOnSurroundings(t, false);
+			if (IsTileType(t, TileType::Station) && (IsDock(t) || IsBuoy(t))) SetWaterClassDependingOnSurroundings(t, false);
 		}
 	}
 
 	if (IsSavegameVersionBefore(SLV_87)) {
 		for (const auto t : Map::Iterate()) {
 			/* skip oil rigs at borders! */
-			if ((IsTileType(t, MP_WATER) || IsBuoyTile(t)) &&
+			if ((IsTileType(t, TileType::Water) || IsBuoyTile(t)) &&
 					(TileX(t) == 0 || TileY(t) == 0 || TileX(t) == Map::MaxX() - 1 || TileY(t) == Map::MaxY() - 1)) {
 				/* Some version 86 savegames have wrong water class at map borders (under buoy, or after removing buoy).
 				 * This conversion has to be done before buoys with invalid owner are removed. */
-				SetWaterClass(t, WATER_CLASS_SEA);
+				SetWaterClass(t, WaterClass::Sea);
 			}
 
-			if (IsBuoyTile(t) || IsDriveThroughStopTile(t) || IsTileType(t, MP_WATER)) {
+			if (IsBuoyTile(t) || IsDriveThroughStopTile(t) || IsTileType(t, TileType::Water)) {
 				Owner o = GetTileOwner(t);
 				if (o < MAX_COMPANIES && !Company::IsValidID(o)) {
 					Backup<CompanyID> cur_company(_current_company, o);
@@ -1945,7 +1950,7 @@ bool AfterLoadGame()
 					 * (even if it is owned by active company) */
 					Waypoint::GetByTile(t)->owner = OWNER_NONE;
 				}
-			} else if (IsTileType(t, MP_ROAD)) {
+			} else if (IsTileType(t, TileType::Road)) {
 				/* works for all RoadTileType */
 				for (RoadTramType rtt : _roadtramtypes) {
 					/* update even non-existing road types to update tile owner too */
@@ -1973,7 +1978,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_91)) {
 		/* Increase HouseAnimationFrame from 5 to 7 bits */
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_HOUSE) && GetHouseType(t) >= NEW_HOUSE_OFFSET) {
+			if (IsTileType(t, TileType::House) && GetHouseType(t) >= NEW_HOUSE_OFFSET) {
 				SB(t.m6(), 2, 6, GB(t.m6(), 3, 5));
 				SB(t.m3(), 5, 1, 0);
 			}
@@ -1995,19 +2000,19 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_99)) {
 		for (auto t : Map::Iterate()) {
 			/* Set newly introduced WaterClass of industry tiles */
-			if (IsTileType(t, MP_STATION) && IsOilRig(t)) {
+			if (IsTileType(t, TileType::Station) && IsOilRig(t)) {
 				SetWaterClassDependingOnSurroundings(t, true);
 			}
-			if (IsTileType(t, MP_INDUSTRY)) {
+			if (IsTileType(t, TileType::Industry)) {
 				if (GetIndustrySpec(GetIndustryType(t))->behaviour.Test(IndustryBehaviour::BuiltOnWater)) {
 					SetWaterClassDependingOnSurroundings(t, true);
 				} else {
-					SetWaterClass(t, WATER_CLASS_INVALID);
+					SetWaterClass(t, WaterClass::Invalid);
 				}
 			}
 
 			/* Replace "house construction year" with "house age" */
-			if (IsTileType(t, MP_HOUSE) && IsHouseCompleted(t)) {
+			if (IsTileType(t, TileType::House) && IsHouseCompleted(t)) {
 				t.m5() = ClampTo<uint8_t>(TimerGameCalendar::year - (CalendarTime::ORIGINAL_BASE_YEAR + t.m5()));
 			}
 		}
@@ -2019,7 +2024,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_100)) {
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_RAILWAY:
+				case TileType::Railway:
 					if (HasSignals(t)) {
 						/* move the signal variant */
 						SetSignalVariant(t, TRACK_UPPER, HasBit(t.m2(), 2) ? SIG_SEMAPHORE : SIG_ELECTRIC);
@@ -2036,15 +2041,15 @@ bool AfterLoadGame()
 					}
 					break;
 
-				case MP_ROAD: // Clear PBS reservation on crossing
+				case TileType::Road: // Clear PBS reservation on crossing
 					if (IsLevelCrossing(t)) SetCrossingReservation(t, false);
 					break;
 
-				case MP_STATION: // Clear PBS reservation on station
+				case TileType::Station: // Clear PBS reservation on station
 					if (HasStationRail(t)) SetRailStationReservation(t, false);
 					break;
 
-				case MP_TUNNELBRIDGE: // Clear PBS reservation on tunnels/bridges
+				case TileType::TunnelBridge: // Clear PBS reservation on tunnels/bridges
 					if (GetTunnelBridgeTransportType(t) == TRANSPORT_RAIL) SetTunnelBridgeReservation(t, false);
 					break;
 
@@ -2103,7 +2108,7 @@ bool AfterLoadGame()
 		for (auto t : Map::Iterate()) {
 			/* Check for HQ bit being set, instead of using map accessor,
 			 * since we've already changed it code-wise */
-			if (IsTileType(t, MP_OBJECT) && HasBit(t.m5(), 7)) {
+			if (IsTileType(t, TileType::Object) && HasBit(t.m5(), 7)) {
 				/* Move size and part identification of HQ out of the m5 attribute,
 				 * on new locations */
 				t.m3() = GB(t.m5(), 0, 5);
@@ -2113,7 +2118,7 @@ bool AfterLoadGame()
 	}
 	if (IsSavegameVersionBefore(SLV_144)) {
 		for (auto t : Map::Iterate()) {
-			if (!IsTileType(t, MP_OBJECT)) continue;
+			if (!IsTileType(t, TileType::Object)) continue;
 
 			/* Reordering/generalisation of the object bits. */
 			ObjectType type = t.m5();
@@ -2129,7 +2134,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_147) && Object::GetNumItems() == 0) {
 		/* Make real objects for object tiles. */
 		for (auto t : Map::Iterate()) {
-			if (!IsTileType(t, MP_OBJECT)) continue;
+			if (!IsTileType(t, TileType::Object)) continue;
 
 			if (Town::GetNumItems() == 0) {
 				/* No towns, so remove all objects! */
@@ -2152,18 +2157,17 @@ bool AfterLoadGame()
 						SlError(STR_ERROR_TOO_MANY_OBJECTS);
 					}
 
-					Object *o = new Object();
+					Object *o = Object::Create();
 					o->location.tile = (TileIndex)t;
 					o->location.w    = size;
 					o->location.h    = size;
 					o->build_date    = TimerGameCalendar::date;
 					o->town          = type == OBJECT_STATUE ? Town::Get(t.m2()) : CalcClosestTownFromTile(t, UINT_MAX);
 					t.m2() = o->index.base();
-					Object::IncTypeCount(type);
 				} else {
 					/* We're at an offset, so get the ID from our "root". */
 					Tile northern_tile = t - TileXY(GB(offset, 0, 4), GB(offset, 4, 4));
-					assert(IsTileType(northern_tile, MP_OBJECT));
+					assert(IsTileType(northern_tile, TileType::Object));
 					t.m2() = northern_tile.m2();
 				}
 			}
@@ -2212,7 +2216,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_117)) {
 		for (OrderList *orderlist : OrderList::Iterate()) {
 			for (Order &o : orderlist->GetOrders()) {
-				if (o.IsType(OT_GOTO_STATION)) o.SetStopLocation(OSL_PLATFORM_FAR_END);
+				if (o.IsType(OT_GOTO_STATION)) o.SetStopLocation(OrderStopLocation::FarEnd);
 			}
 		}
 	}
@@ -2221,6 +2225,13 @@ bool AfterLoadGame()
 		extern VehicleDefaultSettings _old_vds;
 		for (Company *c : Company::Iterate()) {
 			c->settings.vehicle = _old_vds;
+		}
+	}
+
+	if (IsSavegameVersionBefore(SLV_BUOYS_AT_0_0)) {
+		/* Tile for no orders is now INVALID_TILE instead of 0. */
+		for (Vehicle *v : Vehicle::Iterate()) {
+			if (v->dest_tile == 0) v->SetDestTile(INVALID_TILE);
 		}
 	}
 
@@ -2247,7 +2258,7 @@ bool AfterLoadGame()
 				 * assert() in Pool::GetNew() happy by calling CanAllocateItem(). */
 				static_assert(CargoPaymentPool::MAX_SIZE == VehiclePool::MAX_SIZE);
 				assert(CargoPayment::CanAllocateItem());
-				if (v->cargo_payment == nullptr) v->cargo_payment = new CargoPayment(v);
+				if (v->cargo_payment == nullptr) v->cargo_payment = CargoPayment::Create(v);
 			}
 		}
 	}
@@ -2277,7 +2288,7 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_NONFLOODING_WATER_TILES)) {
 		for (auto t : Map::Iterate()) {
-			if (!IsTileType(t, MP_WATER)) continue;
+			if (!IsTileType(t, TileType::Water)) continue;
 			SetNonFloodingWaterTile(t, false);
 		}
 	}
@@ -2403,7 +2414,7 @@ bool AfterLoadGame()
 				continue;
 			}
 			tile.m2() = d->index.base();
-			if (IsTileType(tile, MP_WATER)) Tile(GetOtherShipDepotTile(tile)).m2() = d->index.base();
+			if (IsTileType(tile, TileType::Water)) Tile(GetOtherShipDepotTile(tile)).m2() = d->index.base();
 		}
 	}
 
@@ -2421,15 +2432,15 @@ bool AfterLoadGame()
 	 * been swapped (m2 bits 7..6 and 5..4. */
 	if (IsSavegameVersionBefore(SLV_135)) {
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_CLEAR)) {
-				if (GetClearGround(t) == CLEAR_SNOW) { // CLEAR_SNOW becomes CLEAR_GRASS with IsSnowTile() set.
-					SetClearGroundDensity(t, CLEAR_GRASS, GetClearDensity(t));
+			if (IsTileType(t, TileType::Clear)) {
+				if (GetClearGround(t) == ClearGround{4}) { // CLEAR_SNOW becomes ClearGround::Grass with IsSnowTile() set.
+					SetClearGroundDensity(t, ClearGround::Grass, GetClearDensity(t));
 					SetBit(t.m3(), 4);
 				} else {
 					ClrBit(t.m3(), 4);
 				}
 			}
-			if (IsTileType(t, MP_TREES)) {
+			if (IsTileType(t, TileType::Trees)) {
 				uint density = GB(t.m2(), 6, 2);
 				uint ground = GB(t.m2(), 4, 2);
 				t.m2() = ground << 6 | density << 4;
@@ -2506,7 +2517,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_141)) {
 		for (const auto t : Map::Iterate()) {
 			/* Reset tropic zone for VOID tiles, they shall not have any. */
-			if (IsTileType(t, MP_VOID)) SetTropicZone(t, TROPICZONE_NORMAL);
+			if (IsTileType(t, TileType::Void)) SetTropicZone(t, TROPICZONE_NORMAL);
 		}
 
 		/* We need to properly number/name the depots.
@@ -2553,7 +2564,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_147)) {
 		for (auto t : Map::Iterate()) {
 			switch (GetTileType(t)) {
-				case MP_HOUSE:
+				case TileType::House:
 					if (GetHouseType(t) >= NEW_HOUSE_OFFSET) {
 						uint per_proc = t.m7();
 						t.m7() = GB(t.m6(), 2, 6) | (GB(t.m3(), 5, 1) << 6);
@@ -2562,14 +2573,14 @@ bool AfterLoadGame()
 					}
 					break;
 
-				case MP_INDUSTRY: {
+				case TileType::Industry: {
 					uint rand = t.m7();
 					t.m7() = t.m3();
 					t.m3() = rand;
 					break;
 				}
 
-				case MP_OBJECT:
+				case TileType::Object:
 					t.m7() = t.m3();
 					t.m3() = 0;
 					break;
@@ -2591,9 +2602,9 @@ bool AfterLoadGame()
 
 	if (IsSavegameVersionBefore(SLV_149)) {
 		for (const auto t : Map::Iterate()) {
-			if (!IsTileType(t, MP_STATION)) continue;
+			if (!IsTileType(t, TileType::Station)) continue;
 			if (!IsBuoy(t) && !IsOilRig(t) && !(IsDock(t) && IsTileFlat(t))) {
-				SetWaterClass(t, WATER_CLASS_INVALID);
+				SetWaterClass(t, WaterClass::Invalid);
 			}
 		}
 
@@ -2839,8 +2850,8 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_160)) {
 		/* Setting difficulty industry_density other than zero get bumped to +1
 		 * since a new option (minimal at position 1) has been added */
-		if (_settings_game.difficulty.industry_density > 0) {
-			_settings_game.difficulty.industry_density++;
+		if (_settings_game.difficulty.industry_density > IndustryDensity::FundedOnly) {
+			_settings_game.difficulty.industry_density = static_cast<IndustryDensity>(to_underlying(_settings_game.difficulty.industry_density) + 1);
 		}
 	}
 
@@ -2902,14 +2913,14 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_164) && !IsSavegameVersionBefore(SLV_32)) {
 		/* We store 4 fences in the field tiles instead of only SE and SW. */
 		for (auto t : Map::Iterate()) {
-			if (!IsTileType(t, MP_CLEAR) && !IsTileType(t, MP_TREES)) continue;
-			if (IsTileType(t, MP_CLEAR) && IsClearGround(t, CLEAR_FIELDS)) continue;
+			if (!IsTileType(t, TileType::Clear) && !IsTileType(t, TileType::Trees)) continue;
+			if (IsTileType(t, TileType::Clear) && IsClearGround(t, ClearGround::Fields)) continue;
 			uint fence = GB(t.m4(), 5, 3);
-			if (fence != 0 && IsTileType(TileAddXY(t, 1, 0), MP_CLEAR) && IsClearGround(TileAddXY(t, 1, 0), CLEAR_FIELDS)) {
+			if (fence != 0 && IsTileType(TileAddXY(t, 1, 0), TileType::Clear) && IsClearGround(TileAddXY(t, 1, 0), ClearGround::Fields)) {
 				SetFence(TileAddXY(t, 1, 0), DIAGDIR_NE, fence);
 			}
 			fence = GB(t.m4(), 2, 3);
-			if (fence != 0 && IsTileType(TileAddXY(t, 0, 1), MP_CLEAR) && IsClearGround(TileAddXY(t, 0, 1), CLEAR_FIELDS)) {
+			if (fence != 0 && IsTileType(TileAddXY(t, 0, 1), TileType::Clear) && IsClearGround(TileAddXY(t, 0, 1), ClearGround::Fields)) {
 				SetFence(TileAddXY(t, 0, 1), DIAGDIR_NW, fence);
 			}
 			SB(t.m4(), 2, 3, 0);
@@ -3011,7 +3022,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_186)) {
 		/* Move ObjectType from map to pool */
 		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_OBJECT)) {
+			if (IsTileType(t, TileType::Object)) {
 				Object *o = Object::Get(t.m2());
 				o->type = t.m5();
 				t.m5() = 0; // zero upper bits of (now bigger) ObjectID
@@ -3120,7 +3131,7 @@ bool AfterLoadGame()
 		/* Convert towns growth_rate and grow_counter to ticks */
 		for (Town *t : Town::Iterate()) {
 			/* 0x8000 = TOWN_GROWTH_RATE_CUSTOM previously */
-			if (t->growth_rate & 0x8000) SetBit(t->flags, TOWN_CUSTOM_GROWTH);
+			if (t->growth_rate & 0x8000) t->flags.Set(TownFlag::CustomGrowth);
 			if (t->growth_rate != TOWN_GROWTH_RATE_NONE) {
 				t->growth_rate = TownTicksToGameTicks(t->growth_rate & ~0x8000);
 			}
@@ -3148,7 +3159,7 @@ bool AfterLoadGame()
 		/* Move ships from lock slope to upper or lower position. */
 		for (Ship *s : Ship::Iterate()) {
 			/* Suitable tile? */
-			if (!IsTileType(s->tile, MP_WATER) || !IsLock(s->tile) || GetLockPart(s->tile) != LOCK_PART_MIDDLE) continue;
+			if (!IsTileType(s->tile, TileType::Water) || !IsLock(s->tile) || GetLockPart(s->tile) != LockPart::Middle) continue;
 
 			/* We don't need to adjust position when at the tile centre */
 			int x = s->x_pos & 0xF;
@@ -3190,7 +3201,7 @@ bool AfterLoadGame()
 
 		/* Link oil rigs to their industry and back. */
 		for (Station *st : Station::Iterate()) {
-			if (IsTileType(st->xy, MP_STATION) && IsOilRig(st->xy)) {
+			if (IsTileType(st->xy, TileType::Station) && IsOilRig(st->xy)) {
 				/* Industry tile is always adjacent during construction by TileDiffXY(0, 1) */
 				st->industry = Industry::GetByTile(st->xy + TileDiffXY(0, 1));
 				st->industry->neutral_station = st;
@@ -3204,7 +3215,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_TREES_WATER_CLASS)) {
 		/* Update water class for trees. */
 		for (const auto t : Map::Iterate()) {
-			if (IsTileType(t, MP_TREES)) SetWaterClass(t, GetTreeGround(t) == TREE_GROUND_SHORE ? WATER_CLASS_SEA : WATER_CLASS_INVALID);
+			if (IsTileType(t, TileType::Trees)) SetWaterClass(t, GetTreeGround(t) == TreeGround::Shore ? WaterClass::Sea : WaterClass::Invalid);
 		}
 	}
 
@@ -3213,11 +3224,11 @@ bool AfterLoadGame()
 		for (const auto t : Map::Iterate()) {
 			/* Clear docking tile flag from relevant tiles as it
 			 * was not previously cleared. */
-			if (IsTileType(t, MP_WATER) || IsTileType(t, MP_RAILWAY) || IsTileType(t, MP_STATION) || IsTileType(t, MP_TUNNELBRIDGE)) {
+			if (IsTileType(t, TileType::Water) || IsTileType(t, TileType::Railway) || IsTileType(t, TileType::Station) || IsTileType(t, TileType::TunnelBridge)) {
 				SetDockingTile(t, false);
 			}
 			/* Add docks and oilrigs to Station::ship_station. */
-			if (IsTileType(t, MP_STATION)) {
+			if (IsTileType(t, TileType::Station)) {
 				if (IsDock(t) || IsOilRig(t)) Station::GetByTile(t)->ship_station.Add(t);
 			}
 		}
@@ -3306,7 +3317,7 @@ bool AfterLoadGame()
 		if (IsSavegameVersionBeforeOrAt(SLV_MULTITRACK_LEVEL_CROSSINGS)) {
 			/* Reset unused tree counters to reduce the savegame size. */
 			for (auto t : Map::Iterate()) {
-				if (IsTileType(t, MP_TREES)) {
+				if (IsTileType(t, TileType::Trees)) {
 					SB(t.m2(), 0, 4, 0);
 				}
 			}

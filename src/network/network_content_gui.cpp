@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file network_content_gui.cpp Implementation of the Network Content related GUIs. */
@@ -84,7 +84,7 @@ static void ShowContentTextfileWindow(Window *parent, TextfileType file_type, co
 }
 
 /** Nested widgets for the download window. */
-static constexpr NWidgetPart _nested_network_content_download_status_window_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_network_content_download_status_window_widgets = {
 	NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_CONTENT_DOWNLOAD_TITLE, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(NWID_VERTICAL), SetPIP(0, WidgetDimensions::unscaled.vsep_wide, 0), SetPadding(WidgetDimensions::unscaled.modalpopup),
@@ -386,6 +386,8 @@ class NetworkContentListWindow : public Window, ContentCallback {
 
 	/**
 	 * Callback function for disclaimer about entering external websites.
+	 * @param w The window to open the external search on.
+	 * @param accepted Whether the disclaimer was accepted.
 	 */
 	static void ExternalSearchDisclaimerCallback(Window *w, bool accepted)
 	{
@@ -423,7 +425,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 		this->ScrollToSelected();
 	}
 
-	/** Sort content by name. */
+	/** Sort content by name. @copydoc GUIList::Sorter */
 	static bool NameSorter(const ContentInfo * const &a, const ContentInfo * const &b)
 	{
 		int r = StrNaturalCompare(a->name, b->name, true); // Sort by name (natural sorting).
@@ -431,7 +433,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 		return r < 0;
 	}
 
-	/** Sort content by type. */
+	/** Sort content by type. @copydoc GUIList::Sorter */
 	static bool TypeSorter(const ContentInfo * const &a, const ContentInfo * const &b)
 	{
 		int r = 0;
@@ -442,7 +444,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 		return r < 0;
 	}
 
-	/** Sort content by state. */
+	/** Sort content by state. @copydoc GUIList::Sorter */
 	static bool StateSorter(const ContentInfo * const &a, const ContentInfo * const &b)
 	{
 		int r = to_underlying(a->state) - to_underlying(b->state);
@@ -459,24 +461,24 @@ class NetworkContentListWindow : public Window, ContentCallback {
 		if (idx >= 0) this->list_pos = idx;
 	}
 
-	/** Filter content by tags/name */
-	static bool TagNameFilter(const ContentInfo * const *a, ContentListFilterData &filter)
+	/** Filter content by tags/name. @copydoc GUIList::FilterFunction */
+	static bool TagNameFilter(const ContentInfo * const *item, ContentListFilterData &filter)
 	{
-		if ((*a)->state == ContentInfo::State::Selected || (*a)->state == ContentInfo::State::Autoselected) return true;
+		if ((*item)->state == ContentInfo::State::Selected || (*item)->state == ContentInfo::State::Autoselected) return true;
 
 		filter.string_filter.ResetState();
-		for (auto &tag : (*a)->tags) filter.string_filter.AddLine(tag);
+		for (auto &tag : (*item)->tags) filter.string_filter.AddLine(tag);
 
-		filter.string_filter.AddLine((*a)->name);
+		filter.string_filter.AddLine((*item)->name);
 		return filter.string_filter.GetState();
 	}
 
-	/** Filter content by type, but still show content selected for download. */
-	static bool TypeOrSelectedFilter(const ContentInfo * const *a, ContentListFilterData &filter)
+	/** Filter content by type, but still show content selected for download. @copydoc GUIList::FilterFunction */
+	static bool TypeOrSelectedFilter(const ContentInfo * const *item, ContentListFilterData &filter)
 	{
 		if (filter.types.None()) return true;
-		if (filter.types.Test((*a)->type)) return true;
-		return ((*a)->state == ContentInfo::State::Selected || (*a)->state == ContentInfo::State::Autoselected);
+		if (filter.types.Test((*item)->type)) return true;
+		return ((*item)->state == ContentInfo::State::Selected || (*item)->state == ContentInfo::State::Autoselected);
 	}
 
 	/** Filter the content list */
@@ -603,7 +605,7 @@ public:
 				break;
 
 			case WID_NCL_MATRIX:
-				fill.height = resize.height = std::max(this->checkbox_size.height, (uint)GetCharacterHeight(FS_NORMAL)) + padding.height;
+				fill.height = resize.height = std::max<uint>(std::max<uint>(this->checkbox_size.height, GetCharacterHeight(FS_NORMAL)), GetCharacterHeight(FS_SMALL)) + padding.height;
 				size.height = 10 * resize.height;
 				break;
 		}
@@ -673,7 +675,7 @@ public:
 				case ContentInfo::State::DoesNotExist: sprite = SPR_BLOT; pal = PALETTE_TO_RED; break;
 				default: NOT_REACHED();
 			}
-			DrawSpriteIgnorePadding(sprite, pal, {checkbox.left, mr.top, checkbox.right, mr.bottom}, SA_CENTER);
+			DrawSpriteIgnorePadding(sprite, pal, checkbox.WithY(mr), SA_CENTER);
 
 			StringID str = STR_CONTENT_TYPE_BASE_GRAPHICS + ci->type - CONTENT_TYPE_BASE_GRAPHICS;
 			DrawString(type.left, type.right, mr.top + text_y_offset, str, TC_BLACK, SA_HOR_CENTER);
@@ -1025,7 +1027,7 @@ void BuildContentTypeStringList()
 }
 
 /** The widgets for the content list. */
-static constexpr NWidgetPart _nested_network_content_list_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_network_content_list_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_LIGHT_BLUE),
 		NWidget(WWT_CAPTION, COLOUR_LIGHT_BLUE), SetStringTip(STR_CONTENT_TITLE),

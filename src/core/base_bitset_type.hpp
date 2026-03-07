@@ -2,13 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file base_bitset_type.hpp Base for bitset types that accept strong types,
- * i.e. types that need some casting like StrongType and enum class.
- */
+/** @file base_bitset_type.hpp Base for bitset types that accept strong types, ones that need some casting like StrongType and enum class. */
 
 #ifndef BASE_BITSET_TYPE_HPP
 #define BASE_BITSET_TYPE_HPP
@@ -28,7 +25,13 @@ public:
 	using BaseType = Tstorage; ///< Storage type of this BaseBitSet, be ConvertibleThroughBase
 	static constexpr Tstorage MASK = Tmask; ///< Mask of valid values.
 
+	/** Create an empty bitset. */
 	constexpr BaseBitSet() : data(0) {}
+
+	/**
+	 * Create a bitset with a given bits that are within the mask of valid values.
+	 * @param data The initial set bits.
+	 */
 	explicit constexpr BaseBitSet(Tstorage data) : data(data & Tmask) {}
 
 	constexpr auto operator <=>(const BaseBitSet &) const noexcept = default;
@@ -254,8 +257,17 @@ public:
 		return std::nullopt;
 	}
 
-	auto begin() const { return SetBitIterator<Tvalue_type>(this->data).begin(); }
-	auto end() const { return SetBitIterator<Tvalue_type>(this->data).end(); }
+	/**
+	 * Returns an iterator to begin of the set bits.
+	 * @return The iterator.
+	 */
+	auto begin() const { return SetBitIterator<Tvalue_type, Tstorage>(this->data).begin(); }
+
+	/**
+	 * Returns an iterator to the end of the set bits.
+	 * @return The iterator past the last set bit.
+	 */
+	auto end() const { return SetBitIterator<Tvalue_type, Tstorage>(this->data).end(); }
 
 private:
 	Tstorage data; ///< Bitmask of values.

@@ -2,12 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file tcp_listen.h Basic functions to listen for TCP connections.
- */
+/** @file tcp_listen.h Basic functions to listen for TCP connections. */
 
 #ifndef NETWORK_CORE_TCP_LISTEN_H
 #define NETWORK_CORE_TCP_LISTEN_H
@@ -16,7 +14,6 @@
 #include "../network.h"
 #include "../network_func.h"
 #include "../network_internal.h"
-#include "../../core/pool_type.hpp"
 #include "../../debug.h"
 
 #include "table/strings.h"
@@ -33,6 +30,12 @@ class TCPListenHandler {
 	static SocketList sockets;
 
 public:
+	/**
+	 * Check whether this client is allowed to connect, by both the banlist and maximum client count.
+	 * @param s The socket/network connection to the client.
+	 * @param address The address of the client.
+	 * @return \c true iff the client is allowed in.
+	 */
 	static bool ValidateClient(SOCKET s, NetworkAddress &address)
 	{
 		/* Check if the client is banned. */
@@ -173,6 +176,7 @@ public:
 	}
 };
 
+/** Instantiate the sockets. */
 template <class Tsocket, PacketType Tfull_packet, PacketType Tban_packet> SocketList TCPListenHandler<Tsocket, Tfull_packet, Tban_packet>::sockets;
 
 #endif /* NETWORK_CORE_TCP_LISTEN_H */

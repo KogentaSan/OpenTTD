@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_badge_config.cpp Functionality for NewGRF badge configuration. */
@@ -61,6 +61,7 @@ static BadgeClassConfig _badge_config;
 
 /**
  * Get the badge user configuration for a feature.
+ * @param feature The feature to load the configuration for.
  * @returns badge configuration for the given feature.
  */
 std::span<BadgeClassConfigItem> GetBadgeClassConfiguration(GrfSpecFeature feature)

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_canal.cpp Implementation of NewGRF canals. */
@@ -13,7 +13,6 @@
 #include "newgrf_canal.h"
 #include "water.h"
 #include "water_map.h"
-#include "spritecache.h"
 
 #include "safeguards.h"
 
@@ -56,7 +55,7 @@ struct CanalResolverObject : public ResolverObject {
 /* virtual */ uint32_t CanalScopeResolver::GetRandomBits() const
 {
 	/* Return random bits only for water tiles, not station tiles */
-	return IsTileType(this->tile, MP_WATER) ? GetWaterTileRandomBits(this->tile) : 0;
+	return IsTileType(this->tile, TileType::Water) ? GetWaterTileRandomBits(this->tile) : 0;
 }
 
 /* virtual */ uint32_t CanalScopeResolver::GetVariable(uint8_t variable, [[maybe_unused]] uint32_t parameter, bool &available) const
@@ -66,7 +65,7 @@ struct CanalResolverObject : public ResolverObject {
 		case 0x80: {
 			int z = GetTileZ(this->tile);
 			/* Return consistent height within locks */
-			if (IsTileType(this->tile, MP_WATER) && IsLock(this->tile) && GetLockPart(this->tile) == LOCK_PART_UPPER) z--;
+			if (IsTileType(this->tile, TileType::Water) && IsLock(this->tile) && GetLockPart(this->tile) == LockPart::Upper) z--;
 			return z;
 		}
 
@@ -97,7 +96,7 @@ struct CanalResolverObject : public ResolverObject {
 		}
 
 		/* Random data for river or canal tiles, otherwise zero */
-		case 0x83: return IsTileType(this->tile, MP_WATER) ? GetWaterTileRandomBits(this->tile) : 0;
+		case 0x83: return IsTileType(this->tile, TileType::Water) ? GetWaterTileRandomBits(this->tile) : 0;
 	}
 
 	Debug(grf, 1, "Unhandled canal variable 0x{:02X}", variable);

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file network_survey.cpp Opt-in survey part of the network protocol. */
@@ -19,14 +19,15 @@
 
 #include "../safeguards.h"
 
-NetworkSurveyHandler _survey = {};
-
+/** Mapping to a string representation of the Reason enumeration. */
 NLOHMANN_JSON_SERIALIZE_ENUM(NetworkSurveyHandler::Reason, {
-	{NetworkSurveyHandler::Reason::PREVIEW, "preview"},
-	{NetworkSurveyHandler::Reason::LEAVE, "leave"},
-	{NetworkSurveyHandler::Reason::EXIT, "exit"},
-	{NetworkSurveyHandler::Reason::CRASH, "crash"},
+	{NetworkSurveyHandler::Reason::Preview, "preview"},
+	{NetworkSurveyHandler::Reason::Leave, "leave"},
+	{NetworkSurveyHandler::Reason::Exit, "exit"},
+	{NetworkSurveyHandler::Reason::Crash, "crash"},
 })
+
+NetworkSurveyHandler _survey = {};
 
 /**
  * Create the payload for the survey.
@@ -90,7 +91,7 @@ void NetworkSurveyHandler::Transmit(Reason reason, bool blocking)
 		return;
 	}
 
-	if (_settings_client.network.participate_survey != PS_YES) {
+	if (_settings_client.network.participate_survey != ParticipateSurvey::Yes) {
 		Debug(net, 5, "Survey: user is not participating in survey; skipping survey");
 		return;
 	}

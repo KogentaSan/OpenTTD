@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_actd.cpp NewGRF Action 0x0D handler. */
@@ -40,7 +40,7 @@ void ResetGRM()
 	_grm_cargoes.fill(0);
 }
 
-/* Action 0x0D (GLS_SAFETYSCAN) */
+/* Action 0x0D (GrfLoadingStage::SafetyScan) */
 static void SafeParamSet(ByteReader &buf)
 {
 	uint8_t target = buf.ReadByte();
@@ -178,7 +178,10 @@ static uint32_t PerformGRM(std::span<uint32_t> grm, uint16_t count, uint8_t op, 
 	return UINT_MAX;
 }
 
-/** Action 0x0D: Set parameter */
+/**
+ * Action 0x0D - Set parameter.
+ * @param buf Reader of the NewGRF.
+ */
 static void ParamSet(ByteReader &buf)
 {
 	/* <0D> <target> <operation> <source1> <source2> [<data>]
@@ -237,7 +240,7 @@ static void ParamSet(ByteReader &buf)
 				GrfSpecFeature feature{static_cast<uint8_t>(GB(data, 8, 8))};
 				uint16_t count   = GB(data, 16, 16);
 
-				if (_cur_gps.stage == GLS_RESERVE) {
+				if (_cur_gps.stage == GrfLoadingStage::Reserve) {
 					if (feature == GSF_GLOBALVAR) {
 						/* General sprites */
 						if (op == 0) {
@@ -256,7 +259,7 @@ static void ParamSet(ByteReader &buf)
 					}
 					/* Ignore GRM result during reservation */
 					src1 = 0;
-				} else if (_cur_gps.stage == GLS_ACTIVATION) {
+				} else if (_cur_gps.stage == GrfLoadingStage::Activation) {
 					switch (feature) {
 						case GSF_TRAINS:
 						case GSF_ROADVEHICLES:
@@ -483,9 +486,15 @@ static void ParamSet(ByteReader &buf)
 	}
 }
 
+/** @copybrief GrfActionHandler::FileScan */
 template <> void GrfActionHandler<0x0D>::FileScan(ByteReader &) { }
+/** @copydoc GrfActionHandler::SafetyScan */
 template <> void GrfActionHandler<0x0D>::SafetyScan(ByteReader &buf) { SafeParamSet(buf); }
+/** @copybrief GrfActionHandler::LabelScan */
 template <> void GrfActionHandler<0x0D>::LabelScan(ByteReader &) { }
+/** @copydoc GrfActionHandler::Init */
 template <> void GrfActionHandler<0x0D>::Init(ByteReader &buf) { ParamSet(buf); }
+/** @copydoc GrfActionHandler::Reserve */
 template <> void GrfActionHandler<0x0D>::Reserve(ByteReader &buf) { ParamSet(buf); }
+/** @copydoc GrfActionHandler::Activation */
 template <> void GrfActionHandler<0x0D>::Activation(ByteReader &buf) { ParamSet(buf); }

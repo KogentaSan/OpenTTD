@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file sdl2_v.cpp Implementation of the SDL2 video driver. */
@@ -13,7 +13,6 @@
 #include "../blitter/factory.hpp"
 #include "../thread.h"
 #include "../progress.h"
-#include "../core/random_func.hpp"
 #include "../core/math_func.hpp"
 #include "../core/geometry_func.hpp"
 #include "../core/utf8.hpp"
@@ -121,6 +120,12 @@ static uint FindStartupDisplay(uint startup_display)
 	return 0;
 }
 
+/**
+ * Indicate to the driver the client-size might have changed.
+ * @param w The new width of the window.
+ * @param h The new height of the window.
+ * @param force Whether to force full reallocation, instead of not reallocating when size did not change.
+ */
 void VideoDriver_SDL_Base::ClientSizeChanged(int w, int h, bool force)
 {
 	/* Allocate backing store of the new size. */
@@ -196,13 +201,12 @@ bool VideoDriver_SDL_Base::CreateMainSurface(uint w, uint h, bool resize)
 	return true;
 }
 
-bool VideoDriver_SDL_Base::ClaimMousePointer()
+void VideoDriver_SDL_Base::ClaimMousePointer()
 {
 	/* Emscripten never claims the pointer, so we do not need to change the cursor visibility. */
 #ifndef __EMSCRIPTEN__
 	SDL_ShowCursor(0);
 #endif
-	return true;
 }
 
 /**
@@ -355,8 +359,9 @@ static uint ConvertSdlKeyIntoMy(SDL_Keysym *sym, char32_t *character)
 }
 
 /**
- * Like ConvertSdlKeyIntoMy(), but takes an SDL_Keycode as input
- * instead of an SDL_Keysym.
+ * Convert a SDL_Keycode into our own key codes.
+ * @param kc The SDL key code.
+ * @return OpenTTD's internal key code.
  */
 static uint ConvertSdlKeycodeIntoMy(SDL_Keycode kc)
 {
@@ -754,4 +759,13 @@ void VideoDriver_SDL_Base::UnlockVideoBuffer()
 	}
 
 	this->buffer_locked = false;
+}
+
+void VideoDriver_SDL_Base::SetScreensaverInhibited(bool inhibited)
+{
+	if (inhibited) {
+		SDL_DisableScreenSaver();
+	} else {
+		SDL_EnableScreenSaver();
+	}
 }

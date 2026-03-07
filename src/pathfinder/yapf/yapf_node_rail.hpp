@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file yapf_node_rail.hpp Node tailored for rail pathfinding. */
@@ -177,17 +177,17 @@ struct CYapfRailNode : CYapfNodeT<CYapfNodeKeyTrackDir, CYapfRailNode> {
 	template <class Tbase, class Tfunc, class Tpf>
 	bool IterateTiles(const Train *v, Tpf &yapf, Tbase &obj, bool (Tfunc::*func)(TileIndex, Trackdir)) const
 	{
-		typename Tbase::TrackFollower ft(v, yapf.GetCompatibleRailTypes());
+		typename Tbase::TrackFollower follower{v, yapf.GetCompatibleRailTypes()};
 		TileIndex cur = this->base::GetTile();
 		Trackdir  cur_td = this->base::GetTrackdir();
 
 		while (cur != this->GetLastTile() || cur_td != this->GetLastTrackdir()) {
 			if (!((obj.*func)(cur, cur_td))) return false;
 
-			if (!ft.Follow(cur, cur_td)) break;
-			cur = ft.new_tile;
-			assert(KillFirstBit(ft.new_td_bits) == TRACKDIR_BIT_NONE);
-			cur_td = FindFirstTrackdir(ft.new_td_bits);
+			if (!follower.Follow(cur, cur_td)) break;
+			cur = follower.new_tile;
+			assert(KillFirstBit(follower.new_td_bits) == TRACKDIR_BIT_NONE);
+			cur_td = FindFirstTrackdir(follower.new_td_bits);
 		}
 
 		return (obj.*func)(cur, cur_td);

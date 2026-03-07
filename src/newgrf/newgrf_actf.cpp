@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_actf.cpp NewGRF Action 0x0F handler. */
@@ -17,7 +17,10 @@
 
 #include "../safeguards.h"
 
-/** Action 0x0F - Define Town names */
+/**
+ * Action 0x0F - Define Town names.
+ * @param buf Reader of the NewGRF.
+ */
 static void FeatureTownName(ByteReader &buf)
 {
 	/* <0F> <id> <style-name> <num-parts> <parts>
@@ -95,9 +98,15 @@ static void FeatureTownName(ByteReader &buf)
 	}
 }
 
+/** @copybrief GrfActionHandler::FileScan */
 template <> void GrfActionHandler<0x0F>::FileScan(ByteReader &) { }
+/** @copydoc GrfActionHandler::SafetyScan */
 template <> void GrfActionHandler<0x0F>::SafetyScan(ByteReader &buf) { GRFUnsafe(buf); }
+/** @copybrief GrfActionHandler::LabelScan */
 template <> void GrfActionHandler<0x0F>::LabelScan(ByteReader &) { }
+/** @copydoc GrfActionHandler::Init */
 template <> void GrfActionHandler<0x0F>::Init(ByteReader &buf) { FeatureTownName(buf); }
+/** @copybrief GrfActionHandler::Reserve */
 template <> void GrfActionHandler<0x0F>::Reserve(ByteReader &) { }
+/** @copybrief GrfActionHandler::Activation */
 template <> void GrfActionHandler<0x0F>::Activation(ByteReader &) { }

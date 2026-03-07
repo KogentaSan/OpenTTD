@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_industries.cpp Handling of NewGRF industries. */
@@ -246,10 +246,8 @@ static uint32_t GetCountAndDistanceOfClosestInstance(const ResolverObject &objec
 
 			const Company *c = Company::GetIfValid(this->industry->founder);
 			if (c != nullptr) {
-				const Livery *l = &c->livery[LS_DEFAULT];
-
 				is_ai = c->is_ai;
-				colours = l->colour1 + l->colour2 * 16;
+				colours = c->GetCompanyRecolourOffset(LS_DEFAULT);
 			}
 
 			return this->industry->founder.base() | (is_ai ? 0x10000 : 0) | (colours << 24);
@@ -450,7 +448,7 @@ static uint32_t GetCountAndDistanceOfClosestInstance(const ResolverObject &objec
 		/* Create storage on first modification. */
 		const IndustrySpec *indsp = GetIndustrySpec(this->industry->type);
 		assert(PersistentStorage::CanAllocateItem());
-		this->industry->psa = new PersistentStorage(indsp->grf_prop.grfid, GSF_INDUSTRIES, this->industry->location.tile);
+		this->industry->psa = PersistentStorage::Create(indsp->grf_prop.grfid, GSF_INDUSTRIES, this->industry->location.tile);
 	}
 
 	this->industry->psa->StoreValue(pos, value);
@@ -548,8 +546,7 @@ CommandCost CheckIfCallBackAllowsCreation(TileIndex tile, IndustryType type, siz
 {
 	const IndustrySpec *indspec = GetIndustrySpec(type);
 
-	Industry ind;
-	ind.index = IndustryID::Invalid();
+	Industry ind(IndustryID::Invalid());
 	ind.location.tile = tile;
 	ind.location.w = 0; // important to mark the industry invalid
 	ind.type = type;
@@ -574,6 +571,7 @@ CommandCost CheckIfCallBackAllowsCreation(TileIndex tile, IndustryType type, siz
  * Check with callback #CBID_INDUSTRY_PROBABILITY whether the industry can be built.
  * @param type Industry type to check.
  * @param creation_type Reason to construct a new industry.
+ * @param default_prob The default probability if the NewGRF doesn't override it.
  * @return If the industry has no callback or allows building, \c true is returned. Otherwise, \c false is returned.
  */
 uint32_t GetIndustryProbabilityCallback(IndustryType type, IndustryAvailabilityCallType creation_type, uint32_t default_prob)

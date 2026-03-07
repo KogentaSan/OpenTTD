@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file yapf_ship.cpp Implementation of YAPF for ships. */
@@ -19,9 +19,9 @@
 #include "../../safeguards.h"
 
 constexpr int NUMBER_OR_WATER_REGIONS_LOOKAHEAD = 4;
-constexpr int MAX_SHIP_PF_NODES = (NUMBER_OR_WATER_REGIONS_LOOKAHEAD + 1) * WATER_REGION_NUMBER_OF_TILES * 4; // 4 possible exit dirs per tile.
+constexpr int MAX_SHIP_PF_NODES = (NUMBER_OR_WATER_REGIONS_LOOKAHEAD + 1) * WATER_REGION_NUMBER_OF_TILES * 4; ///< 4 possible exit dirs per tile.
 
-constexpr int SHIP_LOST_PATH_LENGTH = 8; // The length of the (aimless) path assigned when a ship is lost.
+constexpr int SHIP_LOST_PATH_LENGTH = 8; ///< The length of the (aimless) path assigned when a ship is lost.
 
 template <class Types>
 class CYapfDestinationTileWaterT {
@@ -49,8 +49,8 @@ public:
 			this->dest_trackdirs = INVALID_TRACKDIR_BIT;
 		} else {
 			this->dest_station = StationID::Invalid();
-			this->dest_tile = v->dest_tile;
-			this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(v->dest_tile, TRANSPORT_WATER, 0));
+			this->dest_tile = v->dest_tile == INVALID_TILE ? TileIndex{} : v->dest_tile;
+			this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(this->dest_tile, TRANSPORT_WATER, 0));
 		}
 	}
 
@@ -133,11 +133,11 @@ public:
 	 */
 	inline void PfFollowNode(Node &old_node)
 	{
-		TrackFollower F(Yapf().GetVehicle());
-		if (F.Follow(old_node.key.tile, old_node.key.td)) {
+		TrackFollower follower{Yapf().GetVehicle()};
+		if (follower.Follow(old_node.key.tile, old_node.key.td)) {
 			if (this->water_region_corridor.empty()
-					|| std::ranges::find(this->water_region_corridor, GetWaterRegionInfo(F.new_tile)) != this->water_region_corridor.end()) {
-				Yapf().AddMultipleNodes(&old_node, F);
+					|| std::ranges::find(this->water_region_corridor, GetWaterRegionInfo(follower.new_tile)) != this->water_region_corridor.end()) {
+				Yapf().AddMultipleNodes(&old_node, follower);
 			}
 		}
 	}
@@ -166,7 +166,7 @@ public:
 	/** Returns a random tile/trackdir that can be reached from the current tile/trackdir, or tile/INVALID_TRACK if none is available. */
 	static std::pair<TileIndex, Trackdir> GetRandomFollowUpTileTrackdir(const Ship *v, TileIndex tile, Trackdir dir)
 	{
-		TrackFollower follower(v);
+		TrackFollower follower{v};
 		if (follower.Follow(tile, dir)) {
 			TrackdirBits dirs = follower.new_td_bits;
 			const TrackdirBits dirs_without_90_degree = dirs & ~TrackdirCrossesTrackdirs(dir);
@@ -361,7 +361,7 @@ public:
 	 * Calculates only the cost of given node, adds it to the parent node cost
 	 * and stores the result into Node::cost member.
 	 */
-	inline bool PfCalcCost(Node &n, const TrackFollower *tf)
+	inline bool PfCalcCost(Node &n, const TrackFollower *follower)
 	{
 		/* Base tile cost depending on distance. */
 		int c = IsDiagonalTrackdir(n.GetTrackdir()) ? YAPF_TILE_LENGTH : YAPF_TILE_CORNER_LENGTH;
@@ -381,12 +381,19 @@ public:
 		if (!IsPreferredShipDirection(n.GetTile(), n.GetTrackdir())) c += YAPF_TILE_LENGTH;
 
 		/* Skipped tile cost for aqueducts. */
-		c += YAPF_TILE_LENGTH * tf->tiles_skipped;
+		c += YAPF_TILE_LENGTH * follower->tiles_skipped;
 
 		/* Ocean/canal speed penalty. */
 		const ShipVehicleInfo *svi = ShipVehInfo(Yapf().GetVehicle()->engine_type);
-		uint8_t speed_frac = (GetEffectiveWaterClass(n.GetTile()) == WATER_CLASS_SEA) ? svi->ocean_speed_frac : svi->canal_speed_frac;
-		if (speed_frac > 0) c += YAPF_TILE_LENGTH * (1 + tf->tiles_skipped) * speed_frac / (256 - speed_frac);
+		uint8_t speed_frac = (GetEffectiveWaterClass(n.GetTile()) == WaterClass::Sea) ? svi->ocean_speed_frac : svi->canal_speed_frac;
+		if (speed_frac > 0) c += YAPF_TILE_LENGTH * (1 + follower->tiles_skipped) * speed_frac / (256 - speed_frac);
+
+		/* Lock penalty. */
+		if (IsTileType(n.GetTile(), TileType::Water) && IsLock(n.GetTile()) && GetLockPart(n.GetTile()) == LockPart::Middle) {
+			const uint canal_speed = svi->ApplyWaterClassSpeedFrac(svi->max_speed, false);
+			/* Cost is proportional to the vehicle's speed as the vehicle stops in the lock. */
+			c += (TILE_HEIGHT * YAPF_TILE_LENGTH * canal_speed) / 128;
+		}
 
 		/* Apply it. */
 		n.cost = n.parent->cost + c;

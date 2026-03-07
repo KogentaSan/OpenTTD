@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file settings_sl.cpp Handles the saveload part of the settings. */
@@ -101,6 +101,7 @@ static std::vector<SaveLoad> GetSettingsDesc(const SettingTable &settings, bool 
  * @param settings SettingDesc struct containing all information
  * @param object can be either nullptr in which case we load global variables or
  * a pointer to a struct which is getting saved
+ * @param slct Savegame compatibility mapping table.
  */
 static void LoadSettings(const SettingTable &settings, void *object, const SaveLoadCompatTable &slct)
 {

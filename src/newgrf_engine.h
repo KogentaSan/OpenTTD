@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_engine.h Functions for NewGRF engines. */
@@ -101,11 +101,12 @@ bool UsesWagonOverride(const Vehicle *v);
 int GetVehicleProperty(const Vehicle *v, PropertyID property, int orig_value, bool is_signed = false);
 int GetEngineProperty(EngineID engine, PropertyID property, int orig_value, const Vehicle *v = nullptr, bool is_signed = false);
 
+/** Different types of modifications during the purchase of a vehicle to request the chance for using a NewGRF callback. */
 enum class BuildProbabilityType : uint8_t {
-	Reversed = 0,
+	Reversed = 0, ///< Change the rail vehicle should be reversed when purchased.
 };
 
-std::optional<bool> TestVehicleBuildProbability(Vehicle *v, EngineID engine, BuildProbabilityType type);
+std::optional<bool> TestVehicleBuildProbability(Vehicle *v, BuildProbabilityType type);
 
 void TriggerVehicleRandomisation(Vehicle *veh, VehicleRandomTrigger trigger);
 

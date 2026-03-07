@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file settings_gui.cpp GUI for settings. */
@@ -84,8 +84,6 @@ static const uint32_t _autosave_dropdown_to_minutes[] = {
 	120,
 };
 
-Dimension _setting_circle_size; ///< Dimension of the circle +/- icon. This is here as not all users are within the class of the settings window.
-
 /**
  * Get index of the current screen resolution.
  * @return Index of the current screen resolution if it is a known resolution, _resolutions.size() otherwise.
@@ -121,6 +119,7 @@ struct BaseSetTextfileWindow : public TextfileWindow {
 
 /**
  * Open the BaseSet version of the textfile window.
+ * @param parent The parent of this window,
  * @param file_type The type of textfile to display.
  * @param baseset The BaseSet to use.
  * @param content_type STR_CONTENT_TYPE_xxx for title.
@@ -136,6 +135,7 @@ void ShowBaseSetTextfileWindow(Window *parent, TextfileType file_type, const TBa
  * Get string to use when listing this set in the settings window.
  * If there are no invalid files, then this is just the set name,
  * otherwise a string is formatted including the number of invalid files.
+ * @param baseset The selected baseset.
  * @return the string to display.
  */
 template <typename TBaseSet>
@@ -173,8 +173,8 @@ static void AddCustomRefreshRates()
 	std::copy(monitor_rates.begin(), monitor_rates.end(), std::inserter(_refresh_rates, _refresh_rates.end()));
 }
 
-static const int SCALE_NMARKS = (MAX_INTERFACE_SCALE - MIN_INTERFACE_SCALE) / 25 + 1; // Show marks at 25% increments
-static const int VOLUME_NMARKS = 9; // Show 5 values and 4 empty marks.
+static const int SCALE_NMARKS = (MAX_INTERFACE_SCALE - MIN_INTERFACE_SCALE) / 25 + 1; ///< Show marks at 25% increments.
+static const int VOLUME_NMARKS = 9; ///< Show 5 values and 4 empty marks.
 
 static std::optional<std::string> ScaleMarkFunc(int, int, int value)
 {
@@ -204,7 +204,7 @@ static constexpr TextColour GAME_OPTIONS_LABEL = TC_LIGHT_BLUE;
 /** Colour for selected text of game options. */
 static constexpr TextColour GAME_OPTIONS_SELECTED = TC_WHITE;
 
-static constexpr NWidgetPart _nested_social_plugins_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_social_plugins_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_FRAME, GAME_OPTIONS_BACKGROUND, WID_GO_SOCIAL_PLUGIN_TITLE), SetTextStyle(GAME_OPTIONS_FRAME),
 			NWidget(NWID_HORIZONTAL), SetPIP(0, WidgetDimensions::unscaled.hsep_normal, 0),
@@ -219,7 +219,7 @@ static constexpr NWidgetPart _nested_social_plugins_widgets[] = {
 	EndContainer(),
 };
 
-static constexpr NWidgetPart _nested_social_plugins_none_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_social_plugins_none_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_TEXT, INVALID_COLOUR), SetResize(1, 0), SetFill(1, 0), SetStringTip(STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE), SetTextStyle(GAME_OPTIONS_LABEL),
 	EndContainer(),
@@ -357,13 +357,11 @@ private:
 	std::vector<SocialIntegrationPlugin *> plugins{};
 };
 
-/** Construct nested container widget for managing the list of social plugins. */
+/** Construct nested container widget for managing the list of social plugins. @copydoc NWidgetFunctionType */
 std::unique_ptr<NWidgetBase> MakeNWidgetSocialPlugins()
 {
 	return std::make_unique<NWidgetSocialPlugins>();
 }
-
-int SETTING_HEIGHT = 11;    ///< Height of a single setting in the tree view in pixels
 
 static const StringID _game_settings_restrict_dropdown[] = {
 	STR_CONFIG_SETTING_RESTRICT_BASIC,                            // RM_BASIC
@@ -417,10 +415,12 @@ struct GameOptionsWindow : Window {
 
 	GameSettings *opt = nullptr;
 	bool reload = false;
+	bool gui_scale_changed = false;
 	int gui_scale = 0;
+	static inline int previous_gui_scale = 0; ///< Previous GUI scale.
 	static inline WidgetID active_tab = WID_GO_TAB_GENERAL;
 
-	GameOptionsWindow(WindowDesc &desc) : Window(desc), filter_editbox(50), gui_scale(_gui_scale)
+	GameOptionsWindow(WindowDesc &desc) : Window(desc), filter_editbox(50)
 	{
 		this->opt = &GetGameSettings();
 
@@ -452,7 +452,10 @@ struct GameOptionsWindow : Window {
 
 	void OnInit() override
 	{
-		_setting_circle_size = maxdim(GetSpriteSize(SPR_CIRCLE_FOLDED), GetSpriteSize(SPR_CIRCLE_UNFOLDED));
+		BaseSettingEntry::circle_size = maxdim(GetSpriteSize(SPR_CIRCLE_FOLDED), GetSpriteSize(SPR_CIRCLE_UNFOLDED));
+		BaseSettingEntry::line_height = std::max({static_cast<int>(BaseSettingEntry::circle_size.height), SETTING_BUTTON_HEIGHT, GetCharacterHeight(FS_NORMAL)}) + WidgetDimensions::scaled.vsep_normal;
+
+		this->gui_scale = _gui_scale;
 	}
 
 	void Close([[maybe_unused]] int data = 0) override
@@ -707,7 +710,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_OPTIONSPANEL: {
 				Rect tr = r.Shrink(WidgetDimensions::scaled.frametext, WidgetDimensions::scaled.framerect);
-				tr.top += this->warn_lines * SETTING_HEIGHT;
+				tr.top += this->warn_lines * BaseSettingEntry::line_height;
 				uint last_row = this->vscroll->GetPosition() + this->vscroll->GetCapacity() - this->warn_lines;
 				int next_row = GetSettingsTree().Draw(settings_ptr, tr.left, tr.right, tr.top,
 						this->vscroll->GetPosition(), last_row, this->last_clicked);
@@ -856,7 +859,7 @@ struct GameOptionsWindow : Window {
 			}
 
 			case WID_GO_OPTIONSPANEL:
-				fill.height = resize.height = SETTING_HEIGHT = std::max({(int)_setting_circle_size.height, SETTING_BUTTON_HEIGHT, GetCharacterHeight(FS_NORMAL)}) + WidgetDimensions::scaled.vsep_normal;
+				fill.height = resize.height = BaseSettingEntry::line_height;
 				resize.width = 1;
 
 				size.height = 8 * resize.height + WidgetDimensions::scaled.framerect.Vertical();
@@ -891,7 +894,7 @@ struct GameOptionsWindow : Window {
 
 	void OnPaint() override
 	{
-		if (this->GetWidget<NWidgetStacked>(WID_GO_TAB_SELECTION)->shown_plane != 4) {
+		if (GameOptionsWindow::active_tab != WID_GO_TAB_ADVANCED) {
 			this->DrawWidgets();
 			return;
 		}
@@ -959,17 +962,17 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_SURVEY_PARTICIPATE_BUTTON:
 				switch (_settings_client.network.participate_survey) {
-					case PS_ASK:
-					case PS_NO:
-						_settings_client.network.participate_survey = PS_YES;
+					case ParticipateSurvey::Ask:
+					case ParticipateSurvey::No:
+						_settings_client.network.participate_survey = ParticipateSurvey::Yes;
 						break;
 
-					case PS_YES:
-						_settings_client.network.participate_survey = PS_NO;
+					case ParticipateSurvey::Yes:
+						_settings_client.network.participate_survey = ParticipateSurvey::No;
 						break;
 				}
 
-				this->SetWidgetLoweredState(WID_GO_SURVEY_PARTICIPATE_BUTTON, _settings_client.network.participate_survey == PS_YES);
+				this->SetWidgetLoweredState(WID_GO_SURVEY_PARTICIPATE_BUTTON, _settings_client.network.participate_survey == ParticipateSurvey::Yes);
 				this->SetWidgetDirty(WID_GO_SURVEY_PARTICIPATE_BUTTON);
 				this->SetWidgetDirty(WID_GO_SURVEY_PARTICIPATE_TEXT);
 				break;
@@ -1057,7 +1060,16 @@ struct GameOptionsWindow : Window {
 #endif /* HAS_TRUETYPE_FONT */
 
 			case WID_GO_GUI_SCALE:
+				/* Any click on the slider deactivates automatic interface scaling, setting it to the current value before being adjusted. */
+				if (_gui_scale_cfg == -1) {
+					_gui_scale_cfg = this->gui_scale;
+					this->SetWidgetLoweredState(WID_GO_GUI_SCALE_AUTO, false);
+					this->SetWidgetDirty(WID_GO_GUI_SCALE_AUTO);
+					this->SetWidgetDirty(WID_GO_GUI_SCALE_AUTO_TEXT);
+				}
+
 				if (ClickSliderWidget(this->GetWidget<NWidgetBase>(widget)->GetCurrentRect(), pt, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE, _ctrl_pressed ? 0 : SCALE_NMARKS, this->gui_scale)) {
+					this->gui_scale_changed = true;
 					this->SetWidgetDirty(widget);
 				}
 
@@ -1067,9 +1079,12 @@ struct GameOptionsWindow : Window {
 			case WID_GO_GUI_SCALE_AUTO:
 			{
 				if (_gui_scale_cfg == -1) {
-					_gui_scale_cfg = _gui_scale;
+					_gui_scale_cfg = this->previous_gui_scale; // Load the previous GUI scale
 					this->SetWidgetLoweredState(WID_GO_GUI_SCALE_AUTO, false);
+					if (AdjustGUIZoom(false)) ReInitAllWindows(true);
+					this->gui_scale = _gui_scale;
 				} else {
+					this->previous_gui_scale = _gui_scale; // Set the previous GUI scale value as the current one
 					_gui_scale_cfg = -1;
 					this->SetWidgetLoweredState(WID_GO_GUI_SCALE_AUTO, true);
 					if (AdjustGUIZoom(false)) ReInitAllWindows(true);
@@ -1260,7 +1275,7 @@ struct GameOptionsWindow : Window {
 				Rect wi_rect;
 				wi_rect.left = pt.x - (_current_text_dir == TD_RTL ? SETTING_BUTTON_WIDTH - 1 - x : x);
 				wi_rect.right = wi_rect.left + SETTING_BUTTON_WIDTH - 1;
-				wi_rect.top = pt.y - rel_y + (SETTING_HEIGHT - SETTING_BUTTON_HEIGHT) / 2;
+				wi_rect.top = pt.y - rel_y + (BaseSettingEntry::line_height - SETTING_BUTTON_HEIGHT) / 2;
 				wi_rect.bottom = wi_rect.top + SETTING_BUTTON_HEIGHT - 1;
 
 				/* For dropdowns we also have to check the y position thoroughly, the mouse may not above the just opening dropdown */
@@ -1383,8 +1398,9 @@ struct GameOptionsWindow : Window {
 
 	void OnMouseLoop() override
 	{
-		if (_left_button_down || this->gui_scale == _gui_scale) return;
+		if (_left_button_down || !this->gui_scale_changed) return;
 
+		this->gui_scale_changed = false;
 		_gui_scale_cfg = this->gui_scale;
 
 		if (AdjustGUIZoom(false)) {
@@ -1514,7 +1530,7 @@ struct GameOptionsWindow : Window {
 	void OnInvalidateData([[maybe_unused]] int data = 0, [[maybe_unused]] bool gui_scope = true) override
 	{
 		if (!gui_scope) return;
-		this->SetWidgetLoweredState(WID_GO_SURVEY_PARTICIPATE_BUTTON, _settings_client.network.participate_survey == PS_YES);
+		this->SetWidgetLoweredState(WID_GO_SURVEY_PARTICIPATE_BUTTON, _settings_client.network.participate_survey == ParticipateSurvey::Yes);
 		this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
 		this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
 		this->SetWidgetDisabledState(WID_GO_REFRESH_RATE_DROPDOWN, _video_vsync);
@@ -1588,7 +1604,7 @@ struct GameOptionsWindow : Window {
 	}
 };
 
-static constexpr NWidgetPart _nested_game_options_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_game_options_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, GAME_OPTIONS_BACKGROUND),
 		NWidget(WWT_CAPTION, GAME_OPTIONS_BACKGROUND), SetStringTip(STR_GAME_OPTIONS_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -2128,7 +2144,7 @@ struct CustomCurrencyWindow : Window {
 	}
 };
 
-static constexpr NWidgetPart _nested_cust_currency_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_cust_currency_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY), SetStringTip(STR_CURRENCY_WINDOW, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),

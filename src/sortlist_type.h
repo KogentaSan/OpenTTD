@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file sortlist_type.h Base types for having sorted lists in GUIs. */
@@ -42,8 +42,32 @@ struct Filtering {
 template <typename T, typename P = std::nullptr_t, typename F = std::string_view>
 class GUIList : public std::vector<T> {
 public:
+	/**
+	 * Comparison helper for the sorter, comparing \c a to \c b.
+	 * @param a The first element.
+	 * @param b The second element.
+	 * @return \c true if the first element is less than the second element.
+	 */
+	using Sorter = bool (const T &a, const T &b);
+
+	/**
+	 * Comparison helper for the sorter, comparing \c a to \c b taking the \c filter ino consideration.
+	 * @param a The first element.
+	 * @param b The second element.
+	 * @param filter Filter parameter for a subsection of the data, e.g. a specific cargo type when comparing industry production.
+	 * @return \c true if the first element is less than the second element.
+	 */
+	using SorterWithFilter = bool(const T &a, const T &b, const P filter);
+
 	using SortFunction = std::conditional_t<std::is_same_v<P, std::nullptr_t>, bool (const T&, const T&), bool (const T&, const T&, const P)>; ///< Signature of sort function.
-	using FilterFunction = bool(const T*, F); ///< Signature of filter function.
+
+	/**
+	 * Check whether an element should be kept in the list.
+	 * @param item The element to check.
+	 * @param filter The filter parameter.
+	 * @return \c true iff the element should be in the list.
+	 */
+	using FilterFunction = bool(const T *item, F filter); ///< Signature of filter function.
 
 protected:
 	std::span<SortFunction * const> sort_func_list;     ///< the sort criteria functions
@@ -53,10 +77,12 @@ protected:
 	uint8_t filter_type;                        ///< what criteria to filter on
 	uint16_t resort_timer;                      ///< resort list after a given amount of ticks if set
 
-	/* If sort parameters are used then params must be a reference, however if not then params cannot be a reference as
-	 * it will not be able to reference anything. */
+	/**
+	 * If sort parameters are used then params must be a reference,
+	 * however if not then params cannot be a reference as it will not be able to reference anything.
+	 */
 	using SortParameterReference = std::conditional_t<std::is_same_v<P, std::nullptr_t>, P, P&>;
-	const SortParameterReference params;
+	const SortParameterReference params; ///< @copydoc SortParameterReference
 
 	/**
 	 * Check if the list is sortable

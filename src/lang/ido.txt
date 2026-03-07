@@ -13,7 +13,7 @@
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
 
 
 ##id 0x0000
@@ -665,6 +665,8 @@ STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :normala
 
 ###length 4
 
+###length 4
+
 
 
 ###length 3
@@ -822,7 +824,7 @@ STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violkolora
 
 ###length 3
 
-###length 3
+###length 4
 
 
 
@@ -882,7 +884,7 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 # Network connecting window
 
 
-###length 8
+###length 6
 
 
 
@@ -955,6 +957,9 @@ STR_STATION_BUILD_ACCEPTS_CARGO                                 :{BLACK}Aceptas:
 # Rail waypoint construction window
 
 # Rail station construction window
+
+
+
 
 
 
@@ -1070,6 +1075,8 @@ STR_MAPGEN_BY                                                   :{BLACK}*
 ###length 21
 
 # Strings for map borders at game generation
+
+###length 3
 
 
 
@@ -1270,6 +1277,8 @@ STR_GROUP_DEFAULT_AIRCRAFTS                                     :Negrupigita aer
 ###length VEHICLE_TYPES
 
 
+# Vehicle sort details
+
 ###length 3
 
 ###length VEHICLE_TYPES
@@ -1330,6 +1339,7 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 
 
 # Engine preview window
+
 
 
 
@@ -1537,7 +1547,6 @@ STR_ERROR_ALREADY_LEVELLED                                      :{WHITE}... ja p
 
 # Town related errors
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :{WHITE}Ne povas expansar urbo...
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... tro proxim la bordo del mapo
 
 # Industry related errors
 STR_ERROR_TOO_MANY_INDUSTRIES                                   :{WHITE}... tro multa industrii

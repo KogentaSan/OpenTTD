@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file game_core.cpp Implementation of Game. */
@@ -205,9 +205,9 @@
 	Game::scanner_info->GetConsoleList(output_iterator, newest_only);
 }
 
-/* static */ void Game::GetConsoleLibraryList(std::back_insert_iterator<std::string> &output_iterator)
+/* static */ void Game::GetConsoleLibraryList(std::back_insert_iterator<std::string> &output_iterator, bool newest_only)
 {
-	Game::scanner_library->GetConsoleList(output_iterator, true);
+	Game::scanner_library->GetConsoleList(output_iterator, newest_only);
 }
 
 /* static */ const ScriptInfoList *Game::GetInfoList()
@@ -237,25 +237,40 @@
 }
 
 /**
- * Check whether we have an Game (library) with the exact characteristics as ci.
+ * Check whether we have an Game with the exact characteristics as ci.
  * @param ci the characteristics to search on (shortname and md5sum)
  * @param md5sum whether to check the MD5 checksum
- * @return true iff we have an Game (library) matching.
+ * @return true iff we have an Game matching.
  */
 /* static */ bool Game::HasGame(const ContentInfo &ci, bool md5sum)
 {
 	return Game::scanner_info->HasScript(ci, md5sum);
 }
 
+/**
+ * Check whether we have an Game library with the exact characteristics as ci.
+ * @param ci the characteristics to search on (shortname and md5sum)
+ * @param md5sum whether to check the MD5 checksum
+ * @return true iff we have an Game library matching.
+ */
 /* static */ bool Game::HasGameLibrary(const ContentInfo &ci, bool md5sum)
 {
 	return Game::scanner_library->HasScript(ci, md5sum);
 }
 
+/**
+ * Get the scanner info for Game scripts.
+ * @return The Game Script scanner info.
+ */
 /* static */ GameScannerInfo *Game::GetScannerInfo()
 {
 	return Game::scanner_info.get();
 }
+
+/**
+ * Get the scanner info for Game script libraries.
+ * @return The Game script library scanner info.
+ */
 /* static */ GameScannerLibrary *Game::GetScannerLibrary()
 {
 	return Game::scanner_library.get();

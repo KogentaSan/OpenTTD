@@ -13,7 +13,7 @@
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
 
 
 ##id 0x0000
@@ -885,6 +885,8 @@ STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            : वाहन �
 
 ###length 4
 
+###length 4
+
 
 
 ###length 3
@@ -1042,7 +1044,7 @@ STR_CONFIG_SETTING_STATUSBAR_POS                                :स्टेट
 
 ###length 3
 
-###length 3
+###length 4
 
 
 
@@ -1118,7 +1120,7 @@ STR_NETWORK_SERVER_LIST_DATE_CAPTION                            :{BLACK}ति�
 STR_NETWORK_CONNECTING_DOWNLOADING_1                            :{BLACK}आत्तापर्यंत {BYTES} डाऊनलोड झाल्या आहेत.
 STR_NETWORK_CONNECTING_DOWNLOADING_2                            :{BLACK}{BYTES} / {BYTES} डाऊनलोड झालं आहे
 
-###length 8
+###length 6
 
 
 
@@ -1190,6 +1192,9 @@ STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 # Rail waypoint construction window
 
 # Rail station construction window
+
+
+
 
 
 
@@ -1323,6 +1328,8 @@ STR_MAPGEN_TOWN_NAME_ITALIAN                                    :ईटेलि
 
 # Strings for map borders at game generation
 STR_MAPGEN_BORDER_WATER                                         :{BLACK}पाणी
+
+###length 3
 
 STR_MAPGEN_HEIGHTMAP_SIZE                                       :{ORANGE}{NUM} x {NUM}
 
@@ -1535,6 +1542,8 @@ STR_PURCHASE_INFO_COST                                          :{BLACK}कि�
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}वजन: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}किंमत: {GOLD}{CURRENCY_LONG}{BLACK} गती: {GOLD}{VELOCITY}
 
+# Vehicle sort details
+
 ###length 3
 
 ###length VEHICLE_TYPES
@@ -1593,6 +1602,7 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 
 
 # Engine preview window
+
 
 
 

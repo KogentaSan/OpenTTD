@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file autoreplace_gui.cpp GUI for autoreplace handling. */
@@ -37,6 +37,7 @@
 
 #include "safeguards.h"
 
+/** Compare the (NewGRF) list position. @copydoc GUIList::Sorter. */
 static bool EngineNumberSorter(const GUIEngineListItem &a, const GUIEngineListItem &b)
 {
 	return Engine::Get(a.engine_id)->list_position < Engine::Get(b.engine_id)->list_position;
@@ -140,7 +141,7 @@ class ReplaceVehicleWindow : public Window {
 				case VEH_ROAD:
 					if (draw_left && this->sel_roadtype != INVALID_ROADTYPE) {
 						/* Ensure that the roadtype is specific to the selected one */
-						if (e->u.road.roadtype != this->sel_roadtype) continue;
+						if (e->VehInfo<RoadVehicleInfo>().roadtype != this->sel_roadtype) continue;
 					}
 					break;
 
@@ -248,7 +249,7 @@ class ReplaceVehicleWindow : public Window {
 	{
 		EngineID veh_from = this->sel_engine[0];
 		EngineID veh_to = this->sel_engine[1];
-		Command<CMD_SET_AUTOREPLACE>::Post(this->sel_group, veh_from, veh_to, replace_when_old);
+		Command<Commands::SetAutoreplace>::Post(this->sel_group, veh_from, veh_to, replace_when_old);
 	}
 
 	/**
@@ -458,7 +459,7 @@ public:
 				int side = (widget == WID_RV_LEFT_MATRIX) ? 0 : 1;
 
 				/* Do the actual drawing */
-				DrawEngineList(this->window_number, r, this->engines[side], *this->vscroll[side], this->sel_engine[side], side == 0, this->sel_group, this->badge_classes);
+				DrawEngineList(this->window_number, r, this->engines[side], *this->vscroll[side], this->sel_engine[side], side == 0, this->sel_group, this->badge_classes, this->sort_criteria);
 				break;
 			}
 		}
@@ -549,10 +550,10 @@ public:
 			case WID_RV_TRAIN_WAGONREMOVE_TOGGLE: {
 				const Group *g = Group::GetIfValid(this->sel_group);
 				if (g != nullptr) {
-					Command<CMD_SET_GROUP_FLAG>::Post(this->sel_group, GroupFlag::ReplaceWagonRemoval, !g->flags.Test(GroupFlag::ReplaceWagonRemoval), _ctrl_pressed);
+					Command<Commands::SetGroupFlag>::Post(this->sel_group, GroupFlag::ReplaceWagonRemoval, !g->flags.Test(GroupFlag::ReplaceWagonRemoval), _ctrl_pressed);
 				} else {
 					/* toggle renew_keep_length */
-					Command<CMD_CHANGE_COMPANY_SETTING>::Post("company.renew_keep_length", Company::Get(_local_company)->settings.renew_keep_length ? 0 : 1);
+					Command<Commands::ChangeCompanySetting>::Post("company.renew_keep_length", Company::Get(_local_company)->settings.renew_keep_length ? 0 : 1);
 				}
 				break;
 			}
@@ -570,7 +571,7 @@ public:
 
 			case WID_RV_STOP_REPLACE: { // Stop replacing
 				EngineID veh_from = this->sel_engine[0];
-				Command<CMD_SET_AUTOREPLACE>::Post(this->sel_group, veh_from, EngineID::Invalid(), false);
+				Command<Commands::SetAutoreplace>::Post(this->sel_group, veh_from, EngineID::Invalid(), false);
 				break;
 			}
 
@@ -606,7 +607,7 @@ public:
 				if (click_side == 0 && _ctrl_pressed && e != EngineID::Invalid() &&
 					(GetGroupNumEngines(_local_company, sel_group, e) == 0 || GetGroupNumEngines(_local_company, ALL_GROUP, e) == 0)) {
 						EngineID veh_from = e;
-						Command<CMD_SET_AUTOREPLACE>::Post(this->sel_group, veh_from, EngineID::Invalid(), false);
+						Command<Commands::SetAutoreplace>::Post(this->sel_group, veh_from, EngineID::Invalid(), false);
 						break;
 				}
 
@@ -698,7 +699,7 @@ public:
 	}
 };
 
-static constexpr NWidgetPart _nested_replace_rail_vehicle_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_replace_rail_vehicle_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_RV_CAPTION),
@@ -762,7 +763,7 @@ static WindowDesc _replace_rail_vehicle_desc(
 	_nested_replace_rail_vehicle_widgets
 );
 
-static constexpr NWidgetPart _nested_replace_road_vehicle_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_replace_road_vehicle_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_RV_CAPTION),
@@ -820,7 +821,7 @@ static WindowDesc _replace_road_vehicle_desc(
 	_nested_replace_road_vehicle_widgets
 );
 
-static constexpr NWidgetPart _nested_replace_vehicle_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_replace_vehicle_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_RV_CAPTION), SetMinimalSize(433, 14),

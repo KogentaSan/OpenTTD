@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file console.cpp Handling of the in-game console. */
@@ -133,6 +133,7 @@ static std::string RemoveUnderscores(std::string name)
  * Register a new command to be used in the console
  * @param name name of the command that will be used
  * @param proc function that will be called upon execution of command
+ * @param hook Callback to check whether the command is allowed to run in the current context.
  */
 /* static */ void IConsole::CmdRegister(const std::string &name, IConsoleCmdProc *proc, IConsoleHook *hook)
 {
@@ -265,6 +266,7 @@ static void IConsoleAliasExec(const IConsoleAlias *alias, std::span<std::string>
  * Execute a given command passed to us. First chop it up into
  * individual tokens (separated by spaces), then execute it if possible
  * @param command_string string to be parsed and executed
+ * @param recurse_count The number of re-entrant calls to this function.
  */
 void IConsoleCmdExec(std::string_view command_string, const uint recurse_count)
 {

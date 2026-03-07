@@ -2,12 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file newgrf_roadstop.h NewGRF definitions and structures for road stops.
- */
+/** @file newgrf_roadstop.h NewGRF definitions and structures for road stops. */
 
 #ifndef NEWGRF_ROADSTATION_H
 #define NEWGRF_ROADSTATION_H
@@ -30,13 +28,11 @@ static const int NUM_ROADSTOPS_PER_GRF = UINT16_MAX - 1;
 static const uint32_t ROADSTOP_CLASS_LABEL_DEFAULT = 'DFLT';
 static const uint32_t ROADSTOP_CLASS_LABEL_WAYPOINT = 'WAYP';
 
-enum RoadStopClassID : uint16_t {
-	ROADSTOP_CLASS_BEGIN = 0, ///< The lowest valid value
-	ROADSTOP_CLASS_DFLT = 0, ///< Default road stop class.
-	ROADSTOP_CLASS_WAYP, ///< Waypoint class.
-	ROADSTOP_CLASS_MAX = UINT16_MAX, ///< Maximum number of classes.
-};
-DECLARE_INCREMENT_DECREMENT_OPERATORS(RoadStopClassID)
+/** Class IDs for stations. */
+using RoadStopClassID = PoolID<uint16_t, struct RoadStopClassIDTag, UINT16_MAX, UINT16_MAX>;
+
+static constexpr RoadStopClassID ROADSTOP_CLASS_DFLT{0}; ///< Default road stop class.
+static constexpr RoadStopClassID ROADSTOP_CLASS_WAYP{1}; ///< Waypoint class.
 
 /**
  * Various different options for availability, restricting
@@ -147,12 +143,14 @@ struct RoadStopSpec : NewGRFSpecBase<RoadStopClassID> {
 
 	/**
 	 * Get the cost for building a road stop of this type.
+	 * @param category The specific category to get the cost for.
 	 * @return The cost for building.
 	 */
 	Money GetBuildCost(Price category) const { return GetPrice(category, this->build_cost_multiplier, this->grf_prop.grffile, -4); }
 
 	/**
 	 * Get the cost for clearing a road stop of this type.
+	 * @param category The specific category to get the cost for.
 	 * @return The cost for clearing.
 	 */
 	Money GetClearCost(Price category) const { return GetPrice(category, this->clear_cost_multiplier, this->grf_prop.grffile, -4); }
@@ -160,7 +158,7 @@ struct RoadStopSpec : NewGRFSpecBase<RoadStopClassID> {
 	static const RoadStopSpec *Get(uint16_t index);
 };
 
-using RoadStopClass = NewGRFClass<RoadStopSpec, RoadStopClassID, ROADSTOP_CLASS_MAX>;
+using RoadStopClass = NewGRFClass<RoadStopSpec, RoadStopClassID>;
 
 std::optional<SpriteLayoutProcessor> GetRoadStopLayout(TileInfo *ti, const RoadStopSpec *spec, BaseStation *st, StationType type, int view, std::span<int32_t> regs100 = {});
 void DrawRoadStopTile(int x, int y, RoadType roadtype, const RoadStopSpec *spec, StationType type, int view);
@@ -177,7 +175,8 @@ bool GetIfClassHasNewStopsByType(const RoadStopClass *roadstopclass, RoadStopTyp
 bool GetIfStopIsForType(const RoadStopSpec *roadstopspec, RoadStopType rs, RoadType roadtype);
 
 const RoadStopSpec *GetRoadStopSpec(TileIndex t);
-std::optional<uint8_t> AllocateSpecToRoadStop(const RoadStopSpec *statspec, BaseStation *st, bool exec);
+std::optional<uint8_t> AllocateSpecToRoadStop(const RoadStopSpec *spec, BaseStation *st);
+void AssignSpecToRoadStop(const RoadStopSpec *spec, BaseStation *st, uint8_t specindex);
 void DeallocateSpecFromRoadStop(BaseStation *st, uint8_t specindex);
 void RoadStopUpdateCachedTriggers(BaseStation *st);
 

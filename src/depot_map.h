@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file depot_map.h Map related accessors for depots. */
@@ -15,6 +15,9 @@
 
 /**
  * Check if a tile is a depot and it is a depot of the given type.
+ * @param tile The tile to check.
+ * @param type The type of transport.
+ * @return \c true iff the given tile is a depot for the given transport type.
  */
 inline bool IsDepotTypeTile(Tile tile, TransportType type)
 {
@@ -79,10 +82,10 @@ inline VehicleType GetDepotVehicleType(Tile t)
 {
 	switch (GetTileType(t)) {
 		default: NOT_REACHED();
-		case MP_RAILWAY: return VEH_TRAIN;
-		case MP_ROAD:    return VEH_ROAD;
-		case MP_WATER:   return VEH_SHIP;
-		case MP_STATION: return VEH_AIRCRAFT;
+		case TileType::Railway: return VEH_TRAIN;
+		case TileType::Road:    return VEH_ROAD;
+		case TileType::Water:   return VEH_SHIP;
+		case TileType::Station: return VEH_AIRCRAFT;
 	}
 }
 

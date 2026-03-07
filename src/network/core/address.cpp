@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file core/address.cpp Implementation of the address. */
+/** @file address.cpp Implementation of the address. */
 
 #include "../../stdafx.h"
 
@@ -438,7 +438,7 @@ void NetworkAddress::Listen(int socktype, SocketList *sockets)
  *
  * @param connection_string The string to parse.
  * @param default_port The default port to set port to if not in connection_string.
- * @param company Pointer to the company variable to set iff indicated.
+ * @param company_id Pointer to the company variable to set iff indicated.
  * @return A valid ServerAddress of the parsed information.
  */
 /* static */ ServerAddress ServerAddress::Parse(std::string_view connection_string, uint16_t default_port, CompanyID *company_id)

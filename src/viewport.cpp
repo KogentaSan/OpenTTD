@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /**
@@ -650,14 +650,9 @@ static void AddCombinedSprite(SpriteID image, PaletteID pal, int x, int y, int z
  * @param pal the provided palette,
  * @param x position X (world) of the sprite,
  * @param y position Y (world) of the sprite,
- * @param w bounding box extent towards positive X (world),
- * @param h bounding box extent towards positive Y (world),
- * @param dz bounding box extent towards positive Z (world),
  * @param z position Z (world) of the sprite,
+ * @param bounds Bounding box extent towards positive X/Y/Z (world).
  * @param transparent if true, switch the palette between the provided palette and the transparent palette,
- * @param bb_offset_x bounding box extent towards negative X (world),
- * @param bb_offset_y bounding box extent towards negative Y (world),
- * @param bb_offset_z bounding box extent towards negative Z (world)
  * @param sub Only draw a part of the sprite.
  */
 void AddSortableSpriteToDraw(SpriteID image, PaletteID pal, int x, int y, int z, const SpriteBounds &bounds, bool transparent, const SubSprite *sub)
@@ -785,6 +780,7 @@ void EndSpriteCombine()
  * @param begin The begin of the interval.
  * @param end   The end of the interval.
  * @param check The value to check.
+ * @return \c true iff check is between begin and end, including both begin and end.
  */
 static bool IsInRangeInclusive(int begin, int end, int check)
 {
@@ -1009,7 +1005,9 @@ enum TileHighlightType : uint8_t {
 };
 
 const Station *_viewport_highlight_station; ///< Currently selected station for coverage area highlight
+const Station *_viewport_highlight_station_rect; ///< Currently selected station for rectangle highlight
 const Waypoint *_viewport_highlight_waypoint; ///< Currently selected waypoint for coverage area highlight
+const Waypoint *_viewport_highlight_waypoint_rect; ///< Currently selected waypoint for rectangle highlight
 const Town *_viewport_highlight_town; ///< Currently selected town for coverage area highlight
 
 /**
@@ -1020,15 +1018,28 @@ const Town *_viewport_highlight_town; ///< Currently selected town for coverage 
 static TileHighlightType GetTileHighlightType(TileIndex t)
 {
 	if (_viewport_highlight_station != nullptr) {
-		if (IsTileType(t, MP_STATION) && GetStationIndex(t) == _viewport_highlight_station->index) return THT_WHITE;
+		if (IsTileType(t, TileType::Station) && GetStationIndex(t) == _viewport_highlight_station->index) return THT_WHITE;
 		if (_viewport_highlight_station->TileIsInCatchment(t)) return THT_BLUE;
 	}
+
+	if (_viewport_highlight_station_rect != nullptr) {
+		if (IsTileType(t, TileType::Station) && GetStationIndex(t) == _viewport_highlight_station_rect->index) return THT_WHITE;
+		const StationRect *r = &_viewport_highlight_station_rect->rect;
+		if (r->PtInExtendedRect(TileX(t), TileY(t))) return THT_BLUE;
+	}
+
 	if (_viewport_highlight_waypoint != nullptr) {
-		if (IsTileType(t, MP_STATION) && GetStationIndex(t) == _viewport_highlight_waypoint->index) return THT_BLUE;
+		if (IsTileType(t, TileType::Station) && GetStationIndex(t) == _viewport_highlight_waypoint->index) return THT_BLUE;
+	}
+
+	if (_viewport_highlight_waypoint_rect != nullptr) {
+		if (IsTileType(t, TileType::Station) && GetStationIndex(t) == _viewport_highlight_waypoint_rect->index) return THT_WHITE;
+		const StationRect *r = &_viewport_highlight_waypoint_rect->rect;
+		if (r->PtInExtendedRect(TileX(t), TileY(t))) return THT_BLUE;
 	}
 
 	if (_viewport_highlight_town != nullptr) {
-		if (IsTileType(t, MP_HOUSE)) {
+		if (IsTileType(t, TileType::House)) {
 			if (GetTownIndex(t) == _viewport_highlight_town->index) {
 				TileHighlightType type = THT_RED;
 				for (const Station *st : _viewport_highlight_town->stations_near) {
@@ -1037,7 +1048,7 @@ static TileHighlightType GetTileHighlightType(TileIndex t)
 				}
 				return type;
 			}
-		} else if (IsTileType(t, MP_STATION)) {
+		} else if (IsTileType(t, TileType::Station)) {
 			for (const Station *st : _viewport_highlight_town->stations_near) {
 				if (st->owner != _current_company) continue;
 				if (GetStationIndex(t) == st->index) return THT_WHITE;
@@ -1075,7 +1086,7 @@ static void HighlightTownLocalAuthorityTiles(const TileInfo *ti)
 	if (_town_local_authority_kdtree.Count() == 0) return;
 
 	/* Tile belongs to town regardless of distance from town. */
-	if (GetTileType(ti->tile) == MP_HOUSE) {
+	if (GetTileType(ti->tile) == TileType::House) {
 		if (!Town::GetByTile(ti->tile)->show_zone) return;
 
 		DrawTileSelectionRect(ti, PALETTE_CRASH);
@@ -1246,10 +1257,10 @@ static void ViewportAddLandscape()
 				tile_type = GetTileType(_cur_ti.tile);
 			} else {
 				_cur_ti.tile = INVALID_TILE;
-				tile_type = MP_VOID;
+				tile_type = TileType::Void;
 			}
 
-			if (tile_type != MP_VOID) {
+			if (tile_type != TileType::Void) {
 				/* We are inside the map => paint landscape. */
 				std::tie(_cur_ti.tileh, _cur_ti.z) = GetTilePixelSlope(_cur_ti.tile);
 			} else {
@@ -1269,7 +1280,7 @@ static void ViewportAddLandscape()
 			int min_visible_height = viewport_y - (_vd.dpi.top + _vd.dpi.height);
 			bool tile_visible = min_visible_height <= 0;
 
-			if (tile_type != MP_VOID) {
+			if (tile_type != TileType::Void) {
 				/* Is tile with buildings visible? */
 				if (min_visible_height < MAX_TILE_EXTENT_TOP) tile_visible = true;
 
@@ -1389,12 +1400,18 @@ static void ViewportAddSignStrings(DrawPixelInfo *dpi, const std::vector<const S
 	if (small) flags.Set(ViewportStringFlag::Small);
 
 	/* Signs placed by a game script don't have a frame. */
-	ViewportStringFlags deity_flags{flags};
+	ViewportStringFlags deity_flags{ flags };
+	deity_flags.Set(ViewportStringFlag::TextColour);
+
 	flags.Set(IsTransparencySet(TO_SIGNS) ? ViewportStringFlag::TransparentRect : ViewportStringFlag::ColourRect);
 
 	for (const Sign *si : signs) {
+		/* Workaround to make sure white is actually white. The string drawing logic changes all
+		 * colours that are not INVALID_COLOUR slightly, turning white into a light gray. */
+		const Colours deity_colour = si->text_colour == COLOUR_WHITE ? INVALID_COLOUR : si->text_colour;
+
 		std::string *str = ViewportAddString(dpi, &si->sign, (si->owner == OWNER_DEITY) ? deity_flags : flags,
-			(si->owner == OWNER_NONE) ? COLOUR_GREY : (si->owner == OWNER_DEITY ? INVALID_COLOUR : _company_colours[si->owner]));
+			(si->owner == OWNER_NONE) ? COLOUR_GREY : (si->owner == OWNER_DEITY ? deity_colour : _company_colours[si->owner]));
 		if (str == nullptr) continue;
 
 		*str = GetString(STR_SIGN_NAME, si->index);
@@ -1571,13 +1588,10 @@ static void ViewportDrawTileSprites(const TileSpriteToDrawVector *tstdv)
 	}
 }
 
-/** This fallback sprite checker always exists. */
-static bool ViewportSortParentSpritesChecker()
-{
-	return true;
-}
-
-/** Sort parent sprites pointer array replicating the way original sorter did it. */
+/**
+ * Sort parent sprites pointer array replicating the way original sorter did it.
+ * @param psdv The sprites to sort.
+ */
 static void ViewportSortParentSprites(ParentSpriteToSortVector *psdv)
 {
 	if (psdv->size() < 2) return;
@@ -1637,8 +1651,8 @@ static void ViewportSortParentSprites(ParentSpriteToSortVector *psdv)
 		auto ssum = std::max(s->xmax, s->xmin) + std::max(s->ymax, s->ymin);
 		auto prev = sprite_list.before_begin();
 		auto x = sprite_list.begin();
-		while (x != sprite_list.end() && ((*x).first <= ssum)) {
-			auto p = (*x).second;
+		while (x != sprite_list.end() && x->first <= ssum) {
+			auto p = x->second;
 			if (p == s) {
 				/* We found the current sprite, remove it and move on. */
 				x = sprite_list.erase_after(prev);
@@ -2813,7 +2827,10 @@ void VpStartPlaceSizing(TileIndex tile, ViewportPlaceMethod method, ViewportDrag
 	_special_mouse_mode = WSM_SIZING;
 }
 
-/** Drag over the map while holding the left mouse down. */
+/**
+ * Drag over the map while holding the left mouse down.
+ * @param process The chosen selection process.
+ */
 void VpStartDragging(ViewportDragDropSelectionProcess process)
 {
 	_thd.select_method = VPM_X_AND_Y;
@@ -2860,34 +2877,37 @@ static void VpStartPreSizing()
 }
 
 /**
- * returns information about the 2x1 piece to be build.
- * The lower bits (0-3) are the track type.
+ * What would be the highlight style when trying to build a 2 tile long piece of rail.
+ * @param direction The rough direction the drag has been made in.
+ * @return The highlight style of the first tile.
+ * @note Depending on where on the start tile the click was, and some hysterasis, the
+ *       direction for dragging to the east could be either DIAGDIR_NE or DIAGDIR_SE.
  */
-static HighLightStyle Check2x1AutoRail(int mode)
+static HighLightStyle Check2x1AutoRail(DiagDirection direction)
 {
 	int fxpy = _tile_fract_coords.x + _tile_fract_coords.y;
 	int sxpy = (_thd.selend.x & TILE_UNIT_MASK) + (_thd.selend.y & TILE_UNIT_MASK);
 	int fxmy = _tile_fract_coords.x - _tile_fract_coords.y;
 	int sxmy = (_thd.selend.x & TILE_UNIT_MASK) - (_thd.selend.y & TILE_UNIT_MASK);
 
-	switch (mode) {
+	switch (direction) {
 		default: NOT_REACHED();
-		case 0: // end piece is lower right
+		case DIAGDIR_SE: // end piece is lower right
 			if (fxpy >= 20 && sxpy <= 12) return HT_DIR_HL;
 			if (fxmy < -3 && sxmy > 3) return HT_DIR_VR;
 			return HT_DIR_Y;
 
-		case 1:
+		case DIAGDIR_NW:
 			if (fxmy > 3 && sxmy < -3) return HT_DIR_VL;
 			if (fxpy <= 12 && sxpy >= 20) return HT_DIR_HU;
 			return HT_DIR_Y;
 
-		case 2:
+		case DIAGDIR_SW:
 			if (fxmy > 3 && sxmy < -3) return HT_DIR_VL;
 			if (fxpy >= 20 && sxpy <= 12) return HT_DIR_HL;
 			return HT_DIR_X;
 
-		case 3:
+		case DIAGDIR_NE:
 			if (fxmy < -3 && sxmy > 3) return HT_DIR_VR;
 			if (fxpy <= 12 && sxpy >= 20) return HT_DIR_HU;
 			return HT_DIR_X;
@@ -3158,18 +3178,18 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 		}
 	} else if (h == TILE_SIZE) { // Is this in X direction?
 		if (dx == (int)TILE_SIZE) { // 2x1 special handling
-			b = (Check2x1AutoRail(3)) | HT_LINE;
+			b = Check2x1AutoRail(DIAGDIR_NE) | HT_LINE;
 		} else if (dx == -(int)TILE_SIZE) {
-			b = (Check2x1AutoRail(2)) | HT_LINE;
+			b = Check2x1AutoRail(DIAGDIR_SW) | HT_LINE;
 		} else {
 			b = HT_LINE | HT_DIR_X;
 		}
 		y = _thd.selstart.y;
 	} else if (w == TILE_SIZE) { // Or Y direction?
 		if (dy == (int)TILE_SIZE) { // 2x1 special handling
-			b = (Check2x1AutoRail(1)) | HT_LINE;
+			b = Check2x1AutoRail(DIAGDIR_NW) | HT_LINE;
 		} else if (dy == -(int)TILE_SIZE) { // 2x1 other direction
-			b = (Check2x1AutoRail(0)) | HT_LINE;
+			b = Check2x1AutoRail(DIAGDIR_SE) | HT_LINE;
 		} else {
 			b = HT_LINE | HT_DIR_Y;
 		}
@@ -3546,12 +3566,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		VpStartPreSizing();
 	}
 
-	if ((icon & ANIMCURSOR_FLAG) != 0) {
-		SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
-	} else {
-		SetMouseCursor(icon, pal);
-	}
-
+	SetCursor(icon, pal);
 }
 
 /** Reset the cursor and mouse mode handling back to default (normal cursor, only clicking in windows). */
@@ -3583,7 +3598,7 @@ static const ViewportSSCSS _vp_sprite_sorters[] = {
 #ifdef WITH_SSE
 	{ &ViewportSortParentSpritesSSE41Checker, &ViewportSortParentSpritesSSE41 },
 #endif
-	{ &ViewportSortParentSpritesChecker, &ViewportSortParentSprites }
+	{ []() { return true; /* Always available */ }, &ViewportSortParentSprites }
 };
 
 /** Choose the "best" sprite sorter and set _vp_sprite_sorter. */
@@ -3635,6 +3650,7 @@ void MarkCatchmentTilesDirty()
 		MarkWholeScreenDirty();
 		return;
 	}
+
 	if (_viewport_highlight_station != nullptr) {
 		if (_viewport_highlight_station->catchment_tiles.tile == INVALID_TILE) {
 			MarkWholeScreenDirty();
@@ -3646,9 +3662,24 @@ void MarkCatchmentTilesDirty()
 			}
 		}
 	}
+
+	if (_viewport_highlight_station_rect != nullptr) {
+		if (!_viewport_highlight_station_rect->IsInUse()) {
+			_viewport_highlight_station_rect = nullptr;
+		}
+		MarkWholeScreenDirty();
+	}
+
 	if (_viewport_highlight_waypoint != nullptr) {
 		if (!_viewport_highlight_waypoint->IsInUse()) {
 			_viewport_highlight_waypoint = nullptr;
+		}
+		MarkWholeScreenDirty();
+	}
+
+	if (_viewport_highlight_waypoint_rect != nullptr) {
+		if (!_viewport_highlight_waypoint_rect->IsInUse()) {
+			_viewport_highlight_waypoint_rect = nullptr;
 		}
 		MarkWholeScreenDirty();
 	}
@@ -3657,7 +3688,9 @@ void MarkCatchmentTilesDirty()
 static void SetWindowDirtyForViewportCatchment()
 {
 	if (_viewport_highlight_station != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station->index);
+	if (_viewport_highlight_station_rect != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station_rect->index);
 	if (_viewport_highlight_waypoint != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint->index);
+	if (_viewport_highlight_waypoint_rect != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint_rect->index);
 	if (_viewport_highlight_town != nullptr) SetWindowDirty(WC_TOWN_VIEW, _viewport_highlight_town->index);
 }
 
@@ -3665,7 +3698,9 @@ static void ClearViewportCatchment()
 {
 	MarkCatchmentTilesDirty();
 	_viewport_highlight_station = nullptr;
+	_viewport_highlight_station_rect = nullptr;
 	_viewport_highlight_waypoint = nullptr;
+	_viewport_highlight_waypoint_rect = nullptr;
 	_viewport_highlight_town = nullptr;
 }
 
@@ -3678,15 +3713,41 @@ static void ClearViewportCatchment()
 void SetViewportCatchmentStation(const Station *st, bool sel)
 {
 	SetWindowDirtyForViewportCatchment();
+	/* Mark tiles dirty for redrawing and update selected station if a different station is already highlighted. */
 	if (sel && _viewport_highlight_station != st) {
 		ClearViewportCatchment();
 		_viewport_highlight_station = st;
 		MarkCatchmentTilesDirty();
+	/* Mark tiles dirty for redrawing and clear station selection if deselecting highlight. */
 	} else if (!sel && _viewport_highlight_station == st) {
 		MarkCatchmentTilesDirty();
 		_viewport_highlight_station = nullptr;
 	}
+	/* Redraw the currently selected station window */
 	if (_viewport_highlight_station != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station->index);
+}
+
+/**
+ * Select or deselect station for rectangle area highlight.
+ * Selecting a station will deselect a town.
+ * @param *st Station in question
+ * @param sel Select or deselect given station
+ */
+void SetViewportStationRect(const Station *st, bool sel)
+{
+	SetWindowDirtyForViewportCatchment();
+	/* Mark tiles dirty for redrawing and update selected station if a different station is already highlighted. */
+	if (sel && _viewport_highlight_station_rect != st) {
+		ClearViewportCatchment();
+		_viewport_highlight_station_rect = st;
+		MarkCatchmentTilesDirty();
+	/* Mark tiles dirty for redrawing and clear station selection if deselecting highlight. */
+	} else if (!sel && _viewport_highlight_station_rect == st) {
+		MarkCatchmentTilesDirty();
+		_viewport_highlight_station_rect = nullptr;
+	}
+	/* Redraw the currently selected station window */
+	if (_viewport_highlight_station_rect != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station_rect->index);
 }
 
 /**
@@ -3698,15 +3759,41 @@ void SetViewportCatchmentStation(const Station *st, bool sel)
 void SetViewportCatchmentWaypoint(const Waypoint *wp, bool sel)
 {
 	SetWindowDirtyForViewportCatchment();
+	/* Mark tiles dirty for redrawing and update selected waypoint if a different waypoint is already highlighted. */
 	if (sel && _viewport_highlight_waypoint != wp) {
 		ClearViewportCatchment();
 		_viewport_highlight_waypoint = wp;
 		MarkCatchmentTilesDirty();
+	/* Mark tiles dirty for redrawing and clear waypoint selection if deselecting highlight. */
 	} else if (!sel && _viewport_highlight_waypoint == wp) {
 		MarkCatchmentTilesDirty();
 		_viewport_highlight_waypoint = nullptr;
 	}
+	/* Redraw the currently selected waypoint window */
 	if (_viewport_highlight_waypoint != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint->index);
+}
+
+/**
+ * Select or deselect waypoint for rectangle area highlight.
+ * Selecting a waypoint will deselect a town.
+ * @param *wp Waypoint in question
+ * @param sel Select or deselect given waypoint
+ */
+void SetViewportWaypointRect(const Waypoint *wp, bool sel)
+{
+	SetWindowDirtyForViewportCatchment();
+	/* Mark tiles dirty for redrawing and update selected waypoint if a different waypoint is already highlighted. */
+	if (sel && _viewport_highlight_waypoint_rect != wp) {
+		ClearViewportCatchment();
+		_viewport_highlight_waypoint_rect = wp;
+		MarkCatchmentTilesDirty();
+	/* Mark tiles dirty for redrawing and clear waypoint selection if deselecting highlight. */
+	} else if (!sel && _viewport_highlight_waypoint_rect == wp) {
+		MarkCatchmentTilesDirty();
+		_viewport_highlight_waypoint_rect = nullptr;
+	}
+	/* Redraw the currently selected waypoint window */
+	if (_viewport_highlight_waypoint_rect != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint_rect->index);
 }
 
 /**
@@ -3718,14 +3805,17 @@ void SetViewportCatchmentWaypoint(const Waypoint *wp, bool sel)
 void SetViewportCatchmentTown(const Town *t, bool sel)
 {
 	SetWindowDirtyForViewportCatchment();
+	/* Mark tiles dirty for redrawing and update selected town if a different town is already highlighted. */
 	if (sel && _viewport_highlight_town != t) {
 		ClearViewportCatchment();
 		_viewport_highlight_town = t;
 		MarkWholeScreenDirty();
+	/* Mark tiles dirty for redrawing and clear town selection if deselecting highlight. */
 	} else if (!sel && _viewport_highlight_town == t) {
 		_viewport_highlight_town = nullptr;
 		MarkWholeScreenDirty();
 	}
+	/* Redraw the currently selected town window */
 	if (_viewport_highlight_town != nullptr) SetWindowDirty(WC_TOWN_VIEW, _viewport_highlight_town->index);
 }
 

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file yapf_road.cpp The road pathfinding. */
@@ -61,14 +61,14 @@ protected:
 		if (IsDiagonalTrackdir(trackdir)) {
 			cost += YAPF_TILE_LENGTH;
 			switch (GetTileType(tile)) {
-				case MP_ROAD:
+				case TileType::Road:
 					/* Increase the cost for level crossings */
 					if (IsLevelCrossing(tile)) {
 						cost += Yapf().PfGetSettings().road_crossing_penalty;
 					}
 					break;
 
-				case MP_STATION: {
+				case TileType::Station: {
 					if (IsRoadWaypoint(tile)) break;
 
 					const RoadStop *rs = RoadStop::GetByTile(tile, GetRoadStopType(tile));
@@ -251,8 +251,8 @@ public:
 			this->dest_trackdirs = INVALID_TRACKDIR_BIT;
 		} else {
 			this->dest_station = StationID::Invalid();
-			this->dest_tile = v->dest_tile;
-			this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(v->dest_tile, TRANSPORT_ROAD, GetRoadTramType(v->roadtype)));
+			this->dest_tile = v->dest_tile == INVALID_TILE ? TileIndex{} : v->dest_tile;
+			this->dest_trackdirs = TrackStatusToTrackdirBits(GetTileTrackStatus(this->dest_tile, TRANSPORT_ROAD, GetRoadTramType(v->roadtype)));
 		}
 	}
 
@@ -278,7 +278,7 @@ public:
 	inline bool PfDetectDestinationTile(TileIndex tile, Trackdir trackdir)
 	{
 		if (this->dest_station != StationID::Invalid()) {
-			return IsTileType(tile, MP_STATION) &&
+			return IsTileType(tile, TileType::Station) &&
 				GetStationIndex(tile) == this->dest_station &&
 				(this->station_type == GetStationType(tile)) &&
 				(this->non_artic || IsDriveThroughStopTile(tile));

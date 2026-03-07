@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file base_media_base.h Generic functions for replacing base data (graphics, sounds). */
@@ -48,6 +48,9 @@ template <class T> struct BaseSetTraits;
  */
 template <class T>
 struct BaseSet {
+	/** Ensure the destructor of the sub classes are called as well. */
+	virtual ~BaseSet() = default;
+
 	typedef std::unordered_map<std::string, std::string, StringHash, std::equal_to<>> TranslatedStrings;
 
 	/** Number of files in this set */
@@ -187,7 +190,10 @@ public:
 	 */
 	static bool DetermineBestSet();
 
-	/** Do the scan for files. */
+	/**
+	 * Do the scan for files.
+	 * @return The number of sets that have been found.
+	 */
 	static uint FindSets()
 	{
 		BaseMedia<Tbase_set> fs;
@@ -224,7 +230,7 @@ public:
  * Check whether there's a base set matching some information.
  * @param ci The content info to compare it to.
  * @param md5sum Should the MD5 checksum be tested as well?
- * @param s The list with sets.
+ * @param sets The span with sets.
  * @return The filename of the first file of the base set, or \c std::nullopt if there is no match.
  */
 template <class Tbase_set>

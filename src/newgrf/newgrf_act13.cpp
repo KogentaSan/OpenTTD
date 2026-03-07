@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_act13.cpp NewGRF Action 0x13 handler. */
@@ -18,7 +18,10 @@
 
 #include "../safeguards.h"
 
-/** Action 0x13 */
+/**
+ * Action 0x13 - Load translation.
+ * @param buf Reader of the NewGRF.
+ */
 static void TranslateGRFStrings(ByteReader &buf)
 {
 	/* <13> <grfid> <num-ent> <offset> <text...>
@@ -71,9 +74,15 @@ static void TranslateGRFStrings(ByteReader &buf)
 	}
 }
 
+/** @copybrief GrfActionHandler::FileScan */
 template <> void GrfActionHandler<0x13>::FileScan(ByteReader &) { }
+/** @copybrief GrfActionHandler::SafetyScan */
 template <> void GrfActionHandler<0x13>::SafetyScan(ByteReader &) { }
+/** @copybrief GrfActionHandler::LabelScan */
 template <> void GrfActionHandler<0x13>::LabelScan(ByteReader &) { }
+/** @copybrief GrfActionHandler::Init */
 template <> void GrfActionHandler<0x13>::Init(ByteReader &) { }
+/** @copybrief GrfActionHandler::Reserve */
 template <> void GrfActionHandler<0x13>::Reserve(ByteReader &) { }
+/** @copydoc GrfActionHandler::Activation */
 template <> void GrfActionHandler<0x13>::Activation(ByteReader &buf) { TranslateGRFStrings(buf); }

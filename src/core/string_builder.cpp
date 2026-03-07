@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file string_builder.cpp Implementation of string composing. */
@@ -14,6 +14,7 @@
 
 /**
  * Append binary uint8.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutUint8(uint8_t value)
 {
@@ -25,6 +26,7 @@ void BaseStringBuilder::PutUint8(uint8_t value)
 
 /**
  * Append binary int8.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutSint8(int8_t value)
 {
@@ -33,6 +35,7 @@ void BaseStringBuilder::PutSint8(int8_t value)
 
 /**
  * Append binary uint16 using little endian.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutUint16LE(uint16_t value)
 {
@@ -45,6 +48,7 @@ void BaseStringBuilder::PutUint16LE(uint16_t value)
 
 /**
  * Append binary int16 using little endian.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutSint16LE(int16_t value)
 {
@@ -53,6 +57,7 @@ void BaseStringBuilder::PutSint16LE(int16_t value)
 
 /**
  * Append binary uint32 using little endian.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutUint32LE(uint32_t value)
 {
@@ -67,6 +72,7 @@ void BaseStringBuilder::PutUint32LE(uint32_t value)
 
 /**
  * Append binary int32 using little endian.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutSint32LE(int32_t value)
 {
@@ -75,6 +81,7 @@ void BaseStringBuilder::PutSint32LE(int32_t value)
 
 /**
  * Append binary uint64 using little endian.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutUint64LE(uint64_t value)
 {
@@ -93,6 +100,7 @@ void BaseStringBuilder::PutUint64LE(uint64_t value)
 
 /**
  * Append binary int64 using little endian.
+ * @param value The value to append.
  */
 void BaseStringBuilder::PutSint64LE(int64_t value)
 {
@@ -101,6 +109,7 @@ void BaseStringBuilder::PutSint64LE(int64_t value)
 
 /**
  * Append 8-bit char.
+ * @param c The character to append.
  */
 void BaseStringBuilder::PutChar(char c)
 {
@@ -108,7 +117,8 @@ void BaseStringBuilder::PutChar(char c)
 }
 
 /**
- * Append UTF.8 char.
+ * Append UTF-8 char.
+ * @param c The character to append.
  */
 void BaseStringBuilder::PutUtf8(char32_t c)
 {
@@ -118,6 +128,7 @@ void BaseStringBuilder::PutUtf8(char32_t c)
 
 /**
  * Append buffer.
+ * @param str The string to append to the buffer.
  */
 void StringBuilder::PutBuffer(std::span<const char> str)
 {

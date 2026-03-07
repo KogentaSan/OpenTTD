@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file saveload_filter.h Declaration of filters used for saving and loading savegames. */
@@ -23,7 +23,7 @@ struct LoadFilter {
 	{
 	}
 
-	/** Make sure the writers are properly closed. */
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~LoadFilter() = default;
 
 	/**
@@ -47,6 +47,7 @@ struct LoadFilter {
  * Instantiator for a load filter.
  * @param chain The next filter in this chain.
  * @tparam T    The type of load filter to create.
+ * @return The created load filter.
  */
 template <typename T> std::shared_ptr<LoadFilter> CreateLoadFilter(std::shared_ptr<LoadFilter> chain)
 {
@@ -66,7 +67,7 @@ struct SaveFilter {
 	{
 	}
 
-	/** Make sure the writers are properly closed. */
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~SaveFilter() = default;
 
 	/**
@@ -90,6 +91,7 @@ struct SaveFilter {
  * @param chain             The next filter in this chain.
  * @param compression_level The requested level of compression.
  * @tparam T                The type of save filter to create.
+ * @return The created save filter.
  */
 template <typename T> std::shared_ptr<SaveFilter> CreateSaveFilter(std::shared_ptr<SaveFilter> chain, uint8_t compression_level)
 {

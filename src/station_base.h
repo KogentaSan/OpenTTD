@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file station_base.h Base classes/functions for stations. */
@@ -155,7 +155,7 @@ public:
 
 	void AddFlow(StationID origin, StationID via, uint amount);
 	void PassOnFlow(StationID origin, StationID via, uint amount);
-	StationIDStack DeleteFlows(StationID via);
+	std::vector<StationID> DeleteFlows(StationID via);
 	void RestrictFlows(StationID via);
 	void ReleaseFlows(StationID via);
 	void FinalizeLocalConsumption(StationID self);
@@ -302,7 +302,7 @@ struct GoodsEntry {
 	 * Test if this goods entry has optional cargo packet/flow data.
 	 * @returns true iff optional data is present.
 	 */
-	debug_inline bool HasData() const { return this->data != nullptr; }
+	[[debug_inline]] inline bool HasData() const { return this->data != nullptr; }
 
 	/**
 	 * Clear optional cargo packet/flow data.
@@ -314,7 +314,7 @@ struct GoodsEntry {
 	 * @pre HasData()
 	 * @returns cargo packet/flow data.
 	 */
-	debug_inline const GoodsEntryData &GetData() const
+	[[debug_inline]] inline const GoodsEntryData &GetData() const
 	{
 		assert(this->HasData());
 		return *this->data;
@@ -325,7 +325,7 @@ struct GoodsEntry {
 	 * @pre HasData()
 	 * @returns non-const cargo packet/flow data.
 	 */
-	debug_inline GoodsEntryData &GetData()
+	[[debug_inline]] inline GoodsEntryData &GetData()
 	{
 		assert(this->HasData());
 		return *this->data;
@@ -342,6 +342,26 @@ struct GoodsEntry {
 	}
 
 	uint8_t ConvertState() const;
+
+	/**
+	 * Returns sum of cargo still available for loading at the station.
+	 * (i.e. not counting cargo which is already reserved for loading)
+	 * @return Cargo on board the vehicle.
+	 */
+	inline uint AvailableCount() const
+	{
+		return this->HasData() ? this->GetData().cargo.AvailableCount() : 0;
+	}
+
+	/**
+	 * Returns total count of cargo at the station, including
+	 * cargo which is already reserved for loading.
+	 * @return Total cargo count.
+	 */
+	inline uint TotalCount() const
+	{
+		return this->HasData() ? this->GetData().cargo.TotalCount() : 0;
+	}
 
 private:
 	std::unique_ptr<GoodsEntryData> data = nullptr; ///< Optional cargo packet and flow data.
@@ -380,7 +400,10 @@ struct Airport : public TileArea {
 		return this->GetSpec()->fsm;
 	}
 
-	/** Check if this airport has at least one hangar. */
+	/**
+	 * Check if this airport has at least one hangar.
+	 * @return \c true iff there are one or more hangars.
+	 */
 	inline bool HasHangar() const
 	{
 		return !this->GetSpec()->depots.empty();
@@ -451,7 +474,10 @@ struct Airport : public TileArea {
 		return htt->hangar_num;
 	}
 
-	/** Get the number of hangars on this airport. */
+	/**
+	 * Get the number of hangars on this airport.
+	 * @return The number of unique hangars.
+	 */
 	inline uint GetNumHangars() const
 	{
 		uint num = 0;
@@ -495,6 +521,7 @@ struct IndustryCompare {
 };
 
 typedef std::set<IndustryListEntry, IndustryCompare> IndustryList;
+struct RoadVehicle;
 
 /** Station data structure */
 struct Station final : SpecializedStation<Station, false> {
@@ -504,7 +531,7 @@ public:
 		return type == RoadStopType::Bus ? bus_stops : truck_stops;
 	}
 
-	RoadStop *GetPrimaryRoadStop(const struct RoadVehicle *v) const;
+	RoadStop *GetPrimaryRoadStop(const RoadVehicle *v) const;
 
 	RoadStop *bus_stops = nullptr; ///< All the road stops
 	TileArea bus_station{}; ///< Tile area the bus 'station' part covers
@@ -532,8 +559,8 @@ public:
 	IndustryList industries_near{}; ///< Cached list of industries near the station that can accept cargo, @see DeliverGoodsToIndustry()
 	Industry *industry = nullptr; ///< NOSAVE: Associated industry for neutral stations. (Rebuilt on load from Industry->st)
 
-	Station(TileIndex tile = INVALID_TILE);
-	~Station();
+	Station(StationID index, TileIndex tile = INVALID_TILE);
+	~Station() override;
 
 	void AddFacility(StationFacility new_facility_bit, TileIndex facil_xy);
 
@@ -599,9 +626,9 @@ public:
 
 	inline TileIterator& operator ++() override
 	{
-		(*this).OrthogonalTileIterator::operator++();
+		this->OrthogonalTileIterator::operator++();
 		while (this->tile != INVALID_TILE && !st->TileBelongsToAirport(this->tile)) {
-			(*this).OrthogonalTileIterator::operator++();
+			this->OrthogonalTileIterator::operator++();
 		}
 		return *this;
 	}
@@ -617,7 +644,7 @@ void RebuildStationKdtree();
 /**
  * Call a function on all stations that have any part of the requested area within their catchment.
  * @tparam Func The type of function to call
- * @param area The TileArea to check
+ * @param ta The TileArea to check.
  * @param func The function to call, must take two parameters: Station* and TileIndex and return true
  *             if coverage of that tile is acceptable for a given station or false if search should continue
  */
@@ -635,7 +662,7 @@ void ForAllStationsAroundTiles(const TileArea &ta, Func func)
 	uint max_c = _settings_game.station.modified_catchment ? MAX_CATCHMENT : CA_UNMODIFIED;
 	TileArea ta_ext = TileArea(ta).Expand(max_c);
 	for (TileIndex tile : ta_ext) {
-		if (!IsTileType(tile, MP_STATION)) continue;
+		if (!IsTileType(tile, TileType::Station)) continue;
 		seen_stations.insert(GetStationIndex(tile));
 	}
 

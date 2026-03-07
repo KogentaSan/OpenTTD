@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file town_type.h Types related to towns. */
@@ -76,6 +76,9 @@ static constexpr int RATING_HOUSE_MINIMUM  = RATING_MINIMUM;
 static constexpr int RATING_BRIBE_UP_STEP = 200;
 static constexpr int RATING_BRIBE_MAXIMUM = 800;
 static constexpr int RATING_BRIBE_DOWN_TO = -50; // XXX SHOULD BE SOMETHING LOWER?
+
+static constexpr int RATING_WATER_RIVER_DOWN_STEP = -200; ///< removing a river tile
+static constexpr int RATING_WATER_MINIMUM = RATING_MINIMUM; ///< minimum rating after removing water features near town
 
 /** Town Layouts. It needs to be 8bits, because we save and load it as such */
 enum TownLayout : uint8_t {

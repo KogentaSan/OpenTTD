@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file subsidy_base.h %Subsidy base class. */
@@ -27,11 +27,8 @@ struct Subsidy : SubsidyPool::PoolItem<&_subsidy_pool> {
 	Source src{}; ///< Source of subsidised path
 	Source dst{}; ///< Destination of subsidised path
 
-	/**
-	 * We need an (empty) constructor so struct isn't zeroed (as C++ standard states)
-	 */
-	Subsidy() { }
-	Subsidy(CargoType cargo_type, Source src, Source dst, uint16_t remaining) : cargo_type(cargo_type), remaining(remaining), src(src), dst(dst) {}
+	Subsidy(SubsidyID index, CargoType cargo_type = INVALID_CARGO, Source src = {}, Source dst = {}, uint16_t remaining = 0) :
+		SubsidyPool::PoolItem<&_subsidy_pool>(index), cargo_type(cargo_type), remaining(remaining), src(src), dst(dst) {}
 
 	/**
 	 * (Empty) destructor has to be defined else operator delete might be called with nullptr parameter

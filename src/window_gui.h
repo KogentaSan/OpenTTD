@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file window_gui.h Functions, definitions and such used only by the GUI. */
@@ -158,6 +158,7 @@ enum class WindowDefaultFlag : uint8_t {
 using WindowDefaultFlags = EnumBitSet<WindowDefaultFlag, uint8_t>;
 
 Point GetToolbarAlignedWindowPosition(int window_width);
+Point AlignInitialConstructionToolbar(int window_width);
 
 struct HotkeyList;
 
@@ -323,7 +324,7 @@ public:
 	NWidgetStacked *shade_select = nullptr; ///< Selection widget (#NWID_SELECTION) to use for shading the window. If \c nullptr, window cannot shade.
 	Dimension unshaded_size{}; ///< Last known unshaded size (only valid while shaded).
 
-	WidgetID mouse_capture_widget = -1; ///< ID of current mouse capture widget (e.g. dragged scrollbar). -1 if no widget has mouse capture.
+	WidgetID mouse_capture_widget = INVALID_WIDGET; ///< ID of current mouse capture widget (e.g. dragged scrollbar). \c INVALID_WIDGET if no widget has mouse capture.
 
 	Window *parent = nullptr; ///< Parent window.
 	WindowList::iterator z_position{};
@@ -555,7 +556,10 @@ public:
 	void SetDirty() const;
 	void ReInit(int rx = 0, int ry = 0, bool reposition = false);
 
-	/** Is window shaded currently? */
+	/**
+	 * Is window shaded currently?
+	 * @return \c true iff the window supports shading and is shaded.
+	 */
 	inline bool IsShaded() const
 	{
 		return this->shade_select != nullptr && this->shade_select->shown_plane == SZSP_HORIZONTAL;
@@ -687,6 +691,7 @@ public:
 	 * Event to display a custom tooltip.
 	 * @param pt     The point where the mouse is located.
 	 * @param widget The widget where the mouse is located.
+	 * @param close_cond The conditions when to close the tooltip.
 	 * @return True if the event is handled, false if it is ignored.
 	 */
 	virtual bool OnTooltip([[maybe_unused]] Point pt, [[maybe_unused]] WidgetID widget, [[maybe_unused]] TooltipCloseCondition close_cond) { return false; }
@@ -746,6 +751,7 @@ public:
 
 	/**
 	 * Called periodically.
+	 * @param delta_ms The number of milliseconds since the last call.
 	 */
 	virtual void OnRealtimeTick([[maybe_unused]] uint delta_ms) {}
 
@@ -765,6 +771,7 @@ public:
 	 * A dropdown option associated to this window has been selected.
 	 * @param widget the widget (button) that the dropdown is associated with.
 	 * @param index  the element in the dropdown that is selected.
+	 * @param click_result dropdown element specific result data.
 	 */
 	virtual void OnDropdownSelect([[maybe_unused]] WidgetID widget, [[maybe_unused]] int index, [[maybe_unused]] int click_result) {}
 
@@ -809,7 +816,8 @@ public:
 
 	/**
 	 * The user clicked on a vehicle while HT_VEHICLE has been set.
-	 * @param v clicked vehicle
+	 * @param begin Begin iterator of the vehicle list.
+	 * @param end End iterator of the vehicle list.
 	 * @return True if the click is handled, false if it is ignored
 	 * @pre v->IsPrimaryVehicle() == true
 	 */
@@ -963,7 +971,7 @@ inline NWID *Window::GetWidget(WidgetID widnum)
 	return nwid;
 }
 
-/** Specialized case of #Window::GetWidget for the nested widget base class. */
+/** Specialized case of #Window::GetWidget for the nested widget base class. @copydoc Window::GetWidget */
 template <>
 inline const NWidgetBase *Window::GetWidget<NWidgetBase>(WidgetID widnum) const
 {
@@ -996,7 +1004,7 @@ public:
 		this->parent = parent;
 	}
 
-	void Close([[maybe_unused]] int data = 0) override;
+	void Close(int data = 0) override;
 };
 
 Window *BringWindowToFrontById(WindowClass cls, WindowNumber number);

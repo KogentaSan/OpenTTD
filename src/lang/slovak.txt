@@ -15,7 +15,7 @@
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
 
 
 ##id 0x0000
@@ -1649,6 +1649,8 @@ STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Rovný
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Členitý
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Veľmi členitý
 
+###length 4
+
 STR_CONFIG_SETTING_VARIETY                                      :Rozmanitosť distribúcie: {STRING}
 STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :Zvoliť, či mapa obsahuje oba terény aj horský aj nížinný. Čím väčšia rozmanitosť, tým väčšie budú rozdiely v prevýšeniach medzi rovinami a horami
 
@@ -2172,7 +2174,7 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_FORCE_SI                  :SI (kN)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT                    :Jednotky výšky: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_HELPTEXT           :Vždy, keď sa zobrazí výška v užívateľskom rozhraní, zobrazí sa vo vybraných jednotkách
-###length 3
+###length 4
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Imperialne (ft)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Metrické (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
@@ -2480,15 +2482,13 @@ STR_NETWORK_CONNECTING_WAITING                                  :{BLACK}{NUM} kl
 STR_NETWORK_CONNECTING_DOWNLOADING_1                            :{BLACK}{BYTES} zatiaľ stiahnuté
 STR_NETWORK_CONNECTING_DOWNLOADING_2                            :{BLACK}{BYTES} / {BYTES} stiahnuté
 
-###length 8
+###length 6
 STR_NETWORK_CONNECTING_1                                        :{BLACK}(1/6) Pripájam sa...
 STR_NETWORK_CONNECTING_2                                        :{BLACK}(2/6) Overujem...
 STR_NETWORK_CONNECTING_3                                        :{BLACK}(3/6) Čakám...
 STR_NETWORK_CONNECTING_4                                        :{BLACK}(4/6) Sťahovanie mapy...
 STR_NETWORK_CONNECTING_5                                        :{BLACK}(5/6) Spracovanie údajov...
 STR_NETWORK_CONNECTING_6                                        :{BLACK}(6/6) Registrácia...
-STR_NETWORK_CONNECTING_SPECIAL_1                                :{BLACK}Načitanie informácií o hre...
-STR_NETWORK_CONNECTING_SPECIAL_2                                :{BLACK}Načítanie informácií o spoločnosti...
 
 STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Odpojiť sa
 
@@ -2843,10 +2843,13 @@ STR_PICKER_MODE_USED                                            :Použité
 STR_PICKER_MODE_SAVED                                           :Uložené.
 
 
+
+
 STR_PICKER_HOUSE_CLASS_TOOLTIP                                  :Zvoľ veľkosť zóny mesta na zobrazenie
 
 
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :Okraj
+
 
 
 STR_STATION_CLASS_DFLT                                          :Pôvodná
@@ -3112,7 +3115,7 @@ STR_LAND_AREA_INFORMATION_AIRPORT_CLASS                         :{BLACK}Trieda l
 STR_LAND_AREA_INFORMATION_AIRPORT_NAME                          :{BLACK}Názov letiska: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME                      :{BLACK}Názov letiska: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: {LTBLUE}{STRING}
-STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Prijíma náklad: {LTBLUE}
+STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Prijíma náklad: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}Typ železnice: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}Typ cesty: {LTBLUE}{STRING}
@@ -3378,6 +3381,8 @@ STR_MAPGEN_SOUTHWEST                                            :{BLACK}Juho-zá
 STR_MAPGEN_BORDER_FREEFORM                                      :{BLACK}Náhodne
 STR_MAPGEN_BORDER_WATER                                         :{BLACK}Voda
 STR_MAPGEN_BORDER_RANDOM                                        :{BLACK}Náhodne
+
+###length 3
 STR_MAPGEN_BORDER_RANDOMIZE                                     :{BLACK}Náhodne
 STR_MAPGEN_BORDER_MANUAL                                        :{BLACK}Manuálne
 
@@ -3418,7 +3423,6 @@ STR_GENERATION_LANDSCAPE_GENERATION                             :Generujem kraji
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Generovanie riek
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Generovanie nerovností a skál
 STR_GENERATION_TOWN_GENERATION                                  :Vytváranie mesta
-STR_GENERATION_INDUSTRY_GENERATION                              :Vytváranie priemyslu
 STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Generovanie objektov
 STR_GENERATION_TREE_GENERATION                                  :{BLACK}Generovanie stromov
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Nastavovanie hry
@@ -3628,7 +3632,6 @@ STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}Zadajte 
 # Town directory window
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- Žiadne -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
-STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (Veľkomesto){BLACK} ({COMMA})
 STR_TOWN_DIRECTORY_LIST_TOOLTIP                                 :{BLACK}Názvy miest - kliknite na názov pre pohľad na mesto. Ctrl+Klik otvorí nové okno s pohľadom na mesto
 STR_TOWN_POPULATION                                             :{BLACK}Svetová populácia: {COMMA}
 
@@ -3828,14 +3831,12 @@ STR_CARGO_RATING_EXCELLENT                                      :Výborné
 STR_CARGO_RATING_OUTSTANDING                                    :Perfektné
 
 STR_STATION_VIEW_CENTER_TOOLTIP                                 :{BLACK}Vycentrovať pohľad na pozíciu stanice. Ctrl+Klik otvorí nové okno s pohľadom na stanicu
-STR_STATION_VIEW_RENAME_TOOLTIP                                 :{BLACK}Zmeniť názov stanice
 
 STR_STATION_VIEW_SCHEDULED_TRAINS_TOOLTIP                       :{BLACK}Zobraziť všetky vlaky, ktoré majú túto stanicu v cestovnom poriadku
 STR_STATION_VIEW_SCHEDULED_ROAD_VEHICLES_TOOLTIP                :{BLACK}Zobraziť všetky autá, ktoré majú túto stanicu v cestovnom poriadku
 STR_STATION_VIEW_SCHEDULED_AIRCRAFT_TOOLTIP                     :{BLACK}Zobraziť všetky lietadlá, ktoré majú túto stanicu v cestovnom poriadku
 STR_STATION_VIEW_SCHEDULED_SHIPS_TOOLTIP                        :{BLACK}Zobraziť všetky lode, ktoré majú túto stanicu v cestovnom poriadku
 
-STR_STATION_VIEW_RENAME_STATION_CAPTION                         :Premenovať stanicu/vykládku
 
 STR_STATION_VIEW_CLOSE_AIRPORT                                  :{BLACK}Uzavri letisko
 STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Zakáž lietadlám pristávať na tomto letisku
@@ -3843,11 +3844,9 @@ STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Zakáž 
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
 STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Vycentrovať pohľad na pozíciu smerového bodu. Ctrl+Klik otvorí nové okno s pohľadom na smerový bod
-STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Zmeniť meno smerového bodu
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Vycentrovať pohľad na pozíciu bóje. Ctrl+Klik otvorí nové okno s pohľadom na bóju
 STR_BUOY_VIEW_RENAME_TOOLTIP                                    :{BLACK}Zmeniť meno bóje
 
-STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Upraviť názvy smerových bodov
 
 # Finances window
 STR_FINANCES_CAPTION                                            :{WHITE}Financie spoločnosti {COMPANY} {BLACK}{COMPANY_NUM}
@@ -3960,12 +3959,12 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}{CURRENC
 
 # Industry directory
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Nič -
-STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% prepraven{P é é ých}){BLACK}
+STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% prepraven{P é é ých})
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} a {NUM} ďalšie...
+STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}, {STRING} a {NUM} ďalšie...
 STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}Názvy priemyslu - klikni na meno pre vycentrovanie pohľadu na priemysel. Ctrl+Klik otvorí nové okno s pohľadom na priemysel
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Prijímaný náklad: {SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Produkovaný náklad: {SILVER}{STRING}
@@ -3981,9 +3980,9 @@ STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}Vycentro
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Úroveň produkcie: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Priemysel oznámil blížiace sa uzatvorenie!
 
-STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}Vyžaduje: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Produkuje: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :, {STRING}{STRING}
+STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}Vyžaduje: {YELLOW}{STRING}
+STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Produkuje: {YELLOW}{STRING}
+STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :{STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Vyžaduje:
 
@@ -4111,6 +4110,8 @@ STR_PURCHASE_INFO_ALL_BUT                                       :Všetko okrem {
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Max. trakčná sila: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Dolet: {GOLD}{COMMA} políčok
 STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Typ lietadla: {GOLD}{STRING}
+
+# Vehicle sort details
 
 ###length 3
 STR_CARGO_TYPE_FILTER_ALL                                       :Všetky druhy nákladu
@@ -4272,6 +4273,7 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Chystá
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Správa od výrobcu dopravných prostriedkov
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Práve sme navrhli nov{G "ý" "ú" "é"} {STRING} - máte záujem o právo exkluzívneho používania na 1 rok? Chceme otestovať vlastnosti tohto modelu pred jeho uvedením na trh.
+
 
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=z}železničná lokomotíva
 STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :{G=z}elektrická lokomotíva
@@ -4503,7 +4505,7 @@ STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}Zobrazi�
 STR_VEHICLE_DETAIL_TAB_TOTAL_CARGO                              :{BLACK}Celkový náklad
 STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK}Zobraziť celkovú kapacitu vlaku, rozdelenú podľa typu nákladu
 
-STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}Kapacita: {LTBLUE}
+STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}Kapacita: {LTBLUE}{STRING}
 
 # Vehicle refit
 STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE} (Prestavať)
@@ -4988,7 +4990,6 @@ STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}Nie je m
 STR_ERROR_CAN_T_RENAME_TOWN                                     :{WHITE}Mesto nemôže byť odstránené...
 STR_ERROR_CAN_T_FOUND_TOWN_HERE                                 :{WHITE}Nemôžete tu založiť mesto...
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :{WHITE}Nemožno rozšíriť mesto...
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... príliš blízko okraja mapy
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... príliš blízko iného mesta
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... príliš veľa miest
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... nie je miesto na mape

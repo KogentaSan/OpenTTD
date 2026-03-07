@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file strings.cpp Handling of translated strings. */
@@ -265,7 +265,7 @@ static void FormatString(StringBuilder &builder, std::string_view str, std::span
 }
 
 struct LanguagePack : public LanguagePackHeader {
-	char data[]; // list of strings
+	char data[]; ///< List of strings.
 };
 
 struct LanguagePackDeleter {
@@ -406,7 +406,7 @@ void GetStringWithArgs(StringBuilder &builder, StringID string, StringParameters
  * Get a parsed string with most special stringcodes replaced by the string parameters.
  * @param builder The builder of the string.
  * @param string The ID of the string to parse.
- * @param args Span of arguments for the string.
+ * @param params Span of arguments for the string.
  * @param case_index The "case index". This will only be set when FormatString wants to print the string in a different case.
  * @param game_script The string is coming directly from a game script.
  */
@@ -916,6 +916,7 @@ static const Units _units_height[] = {
 	{ { 3.0 }, STR_UNITS_HEIGHT_IMPERIAL, 0 }, // "Wrong" conversion factor for more nicer GUI values
 	{ { 1.0 }, STR_UNITS_HEIGHT_METRIC,   0 },
 	{ { 1.0 }, STR_UNITS_HEIGHT_SI,       0 },
+	{ { .02 }, STR_UNITS_HEIGHT_GAMEUNITS,0 },
 };
 
 /** Unit conversions for time in calendar days or wallclock seconds */
@@ -961,7 +962,8 @@ static const Units GetVelocityUnits(VehicleType type)
 
 /**
  * Convert the given (internal) speed to the display speed.
- * @param speed the speed to convert
+ * @param speed The speed to convert.
+ * @param type The associated vehicle type.
  * @return the converted speed.
  */
 uint ConvertSpeedToDisplaySpeed(uint speed, VehicleType type)
@@ -974,7 +976,8 @@ uint ConvertSpeedToDisplaySpeed(uint speed, VehicleType type)
 
 /**
  * Convert the given display speed to the (internal) speed.
- * @param speed the speed to convert
+ * @param speed The speed to convert.
+ * @param type The associated vehicle type.
  * @return the converted speed.
  */
 uint ConvertDisplaySpeedToSpeed(uint speed, VehicleType type)
@@ -984,7 +987,8 @@ uint ConvertDisplaySpeedToSpeed(uint speed, VehicleType type)
 
 /**
  * Convert the given km/h-ish speed to the display speed.
- * @param speed the speed to convert
+ * @param speed The speed to convert.
+ * @param type The associated vehicle type.
  * @return the converted speed.
  */
 uint ConvertKmhishSpeedToDisplaySpeed(uint speed, VehicleType type)
@@ -994,7 +998,8 @@ uint ConvertKmhishSpeedToDisplaySpeed(uint speed, VehicleType type)
 
 /**
  * Convert the given display speed to the km/h-ish speed.
- * @param speed the speed to convert
+ * @param speed The speed to convert.
+ * @param type The associated vehicle type.
  * @return the converted speed.
  */
 uint ConvertDisplaySpeedToKmhishSpeed(uint speed, VehicleType type)
@@ -1073,15 +1078,39 @@ static void DecodeEncodedString(StringConsumer &consumer, bool game_script, Stri
 }
 
 /**
+ * Test if a string contains colour codes, and is not wrapped by push/pop codes.
+ * @param buffer String to test.
+ * @return True iff the string is colour safe.
+ */
+static bool IsColourSafe(std::string_view buffer)
+{
+	int safety = 0;
+	for (char32_t ch : Utf8View(buffer)) {
+		if (ch == SCC_PUSH_COLOUR) {
+			++safety;
+		} else if (ch == SCC_POP_COLOUR) {
+			--safety;
+			if (safety < 0) return false;
+		} else if ((ch >= SCC_BLUE && ch <= SCC_BLACK) || ch == SCC_COLOUR) {
+			if (safety == 0) return false;
+		}
+	}
+	return true;
+}
+
+/**
  * Parse most format codes within a string and write the result to a buffer.
  * @param builder The string builder to write the final string to.
  * @param str_arg The original string with format codes.
  * @param args    Pointer to extra arguments used by various string codes.
+ * @param orig_case_index The selected case when entering the function.
+ * @param game_script Whether this string originates from a game-script.
  * @param dry_run True when the args' type data is not yet initialized.
  */
 static void FormatString(StringBuilder &builder, std::string_view str_arg, StringParameters &args, uint orig_case_index, bool game_script, bool dry_run)
 {
 	size_t orig_first_param_offset = args.GetOffset();
+	bool emit_automatic_push_pop = false;
 
 	if (!dry_run) {
 		/*
@@ -1095,6 +1124,7 @@ static void FormatString(StringBuilder &builder, std::string_view str_arg, Strin
 		std::string buffer;
 		StringBuilder dry_run_builder(buffer);
 		FormatString(dry_run_builder, str_arg, args, orig_case_index, game_script, true);
+		emit_automatic_push_pop = !IsColourSafe(buffer);
 		/* We have to restore the original offset here to to read the correct values. */
 		args.SetOffset(orig_first_param_offset);
 	}
@@ -1110,6 +1140,8 @@ static void FormatString(StringBuilder &builder, std::string_view str_arg, Strin
 	};
 	std::stack<StrStackItem, std::vector<StrStackItem>> str_stack;
 	str_stack.emplace(str_arg, orig_first_param_offset, orig_case_index);
+
+	if (emit_automatic_push_pop) builder.PutUtf8(SCC_PUSH_COLOUR);
 
 	for (;;) {
 		try {
@@ -1838,6 +1870,8 @@ static void FormatString(StringBuilder &builder, std::string_view str_arg, Strin
 			builder += "(invalid parameter)";
 		}
 	}
+
+	if (emit_automatic_push_pop) builder.PutUtf8(SCC_POP_COLOUR);
 }
 
 
@@ -2005,6 +2039,7 @@ bool LanguagePackHeader::IsValid() const
 
 /**
  * Check whether a translation is sufficiently finished to offer it to the public.
+ * @return \c true iff there are less than 25% missing strings.
  */
 bool LanguagePackHeader::IsReasonablyFinished() const
 {
@@ -2356,15 +2391,14 @@ class LanguagePackGlyphSearcher : public MissingGlyphSearcher {
  * mean it might use characters that are not in the
  * font, which is the whole reason this check has
  * been added.
- * @param base_font Whether to look at the base font as well.
  * @param searcher  The methods to use to search for strings to check.
  *                  If nullptr the loaded language pack searcher is used.
  */
-void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
+void CheckForMissingGlyphs(MissingGlyphSearcher *searcher)
 {
 	static LanguagePackGlyphSearcher pack_searcher;
 	if (searcher == nullptr) searcher = &pack_searcher;
-	bool bad_font = !base_font || searcher->FindMissingGlyphs();
+	bool bad_font = searcher->FindMissingGlyphs();
 #if defined(WITH_FREETYPE) || defined(_WIN32) || defined(WITH_COCOA)
 	if (bad_font) {
 		/* We found an unprintable character... lets try whether we can find
@@ -2390,7 +2424,7 @@ void CheckForMissingGlyphs(bool base_font, MissingGlyphSearcher *searcher)
 			ShowErrorMessage(GetEncodedString(STR_JUST_RAW_STRING, std::move(err_str)), {}, WL_WARNING);
 		}
 
-		if (bad_font && base_font) {
+		if (bad_font) {
 			/* Our fallback font does miss characters too, so keep the
 			 * user chosen font as that is more likely to be any good than
 			 * the wild guess we made */

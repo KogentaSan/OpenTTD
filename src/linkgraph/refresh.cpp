@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file refresh.h Definition of link refreshing utility. */
+/** @file refresh.cpp Definition of link refreshing utility. */
 
 #include "../stdafx.h"
 #include "../core/bitmath_func.hpp"
@@ -203,7 +203,7 @@ void LinkRefresher::RefreshStats(VehicleOrderID cur, VehicleOrderID next)
 			}
 
 			/* A link is at least partly restricted if a vehicle can't load at its source. */
-			EdgeUpdateMode restricted_mode = (orders[cur].GetLoadType() & OLFB_NO_LOAD) == 0 ?
+			EdgeUpdateMode restricted_mode = orders[cur].GetLoadType() != OrderLoadType::NoLoad ?
 						EdgeUpdateMode::Unrestricted : EdgeUpdateMode::Restricted;
 			/* This estimates the travel time of the link as the time needed
 			 * to travel between the stations at half the max speed of the consist.

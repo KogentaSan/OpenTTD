@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file font_osx.cpp Functions related to font handling on MacOS. */
@@ -123,12 +123,7 @@ const Sprite *CoreTextFontCache::InternalGetGlyph(GlyphID key, bool use_aa)
 {
 	/* Get glyph size. */
 	CGGlyph glyph = (CGGlyph)key;
-	CGRect bounds = CGRectNull;
-	if (MacOSVersionIsAtLeast(10, 8, 0)) {
-		bounds = CTFontGetOpticalBoundsForGlyphs(this->font.get(), &glyph, nullptr, 1, 0);
-	} else {
-		bounds = CTFontGetBoundingRectsForGlyphs(this->font.get(), kCTFontOrientationDefault, &glyph, nullptr, 1);
-	}
+	CGRect bounds = CTFontGetOpticalBoundsForGlyphs(this->font.get(), &glyph, nullptr, 1, 0);
 	if (CGRectIsNull(bounds)) UserError("Unable to render font glyph");
 
 	uint bb_width = (uint)std::ceil(bounds.size.width) + 1; // Sometimes the glyph bounds are too tight and cut of the last pixel after rounding.
@@ -210,30 +205,20 @@ public:
 	 * If a CoreText font description is present, e.g. from the automatic font
 	 * fallback search, use it. Otherwise, try to resolve it by font name.
 	 * @param fs The font size to load.
+	 * @param fonttype The type of font that is being loaded.
+	 * @return FontCache of the font if loaded, or \c nullptr.
 	 */
-	std::unique_ptr<FontCache> LoadFont(FontSize fs, FontType fonttype) override
+	std::unique_ptr<FontCache> LoadFont(FontSize fs, FontType fonttype) const override
 	{
 		if (fonttype != FontType::TrueType) return nullptr;
-
-		FontCacheSubSetting *settings = GetFontCacheSubSetting(fs);
 
 		std::string font = GetFontCacheFontName(fs);
 		if (font.empty()) return nullptr;
 
-		CFAutoRelease<CTFontDescriptorRef> font_ref;
-
-		if (settings->os_handle != nullptr) {
-			font_ref.reset(static_cast<CTFontDescriptorRef>(const_cast<void *>(settings->os_handle)));
-			CFRetain(font_ref.get()); // Increase ref count to match a later release.
-		}
-
-		if (!font_ref && MacOSVersionIsAtLeast(10, 6, 0)) {
-			/* Might be a font file name, try load it. */
-			font_ref.reset(LoadFontFromFile(font));
-			if (!font_ref) ShowInfo("Unable to load file '{}' for {} font, using default OS font selection instead", font, FontSizeToName(fs));
-		}
-
+		/* Might be a font file name, try load it. */
+		CFAutoRelease<CTFontDescriptorRef> font_ref(LoadFontFromFile(font));
 		if (!font_ref) {
+			ShowInfo("Unable to load file '{}' for {} font, using default OS font selection instead", font, FontSizeToName(fs));
 			CFAutoRelease<CFStringRef> name(CFStringCreateWithCString(kCFAllocatorDefault, font.c_str(), kCFStringEncodingUTF8));
 
 			/* Simply creating the font using CTFontCreateWithNameAndSize will *always* return
@@ -259,7 +244,7 @@ public:
 		return std::make_unique<CoreTextFontCache>(fs, std::move(font_ref), GetFontCacheFontSize(fs));
 	}
 
-	bool FindFallbackFont(FontCacheSettings *settings, const std::string &language_isocode, MissingGlyphSearcher *callback) override
+	bool FindFallbackFont(FontCacheSettings *settings, const std::string &language_isocode, MissingGlyphSearcher *callback) const override
 	{
 		/* Determine fallback font using CoreText. This uses the language isocode
 		 * to find a suitable font. CoreText is available from 10.5 onwards. */
@@ -346,8 +331,6 @@ public:
 private:
 	static CTFontDescriptorRef LoadFontFromFile(const std::string &font_name)
 	{
-		if (!MacOSVersionIsAtLeast(10, 6, 0)) return nullptr;
-
 		/* Might be a font file name, try load it. Direct font loading is
 		 * only supported starting on OSX 10.6. */
 		CFAutoRelease<CFStringRef> path;

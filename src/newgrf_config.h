@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_config.h Functions to find and configure NewGRFs. */
@@ -17,15 +17,15 @@
 #include "3rdparty/md5/md5.h"
 
 /** GRF config bit flags */
-enum GRFConfigFlag : uint8_t {
-	System,     ///< GRF file is an openttd-internal system grf
-	Unsafe,     ///< GRF file is unsafe for static usage
-	Static,     ///< GRF file is used statically (can be used in any MP game)
+enum class GRFConfigFlag : uint8_t {
+	System, ///< GRF file is an openttd-internal system grf
+	Unsafe, ///< GRF file is unsafe for static usage
+	Static, ///< GRF file is used statically (can be used in any MP game)
 	Compatible, ///< GRF file does not exactly match the requested GRF (different MD5SUM), but grfid matches)
-	Copy,       ///< The data is copied from a grf in _all_grfs
-	InitOnly,   ///< GRF file is processed up to GLS_INIT
-	Reserved,   ///< GRF file passed GLS_RESERVE stage
-	Invalid,    ///< GRF is unusable with this version of OpenTTD
+	Copy, ///< The data is copied from a grf in _all_grfs
+	InitOnly, ///< GRF file is processed up to GrfLoadingStage::Init
+	Reserved, ///< GRF file passed GrfLoadingStage::Reserve stage
+	Invalid, ///< GRF is unusable with this version of OpenTTD
 };
 using GRFConfigFlags = EnumBitSet<GRFConfigFlag, uint8_t>;
 
@@ -107,12 +107,14 @@ struct GRFIdentifier {
 
 /** Information about why GRF had problems during initialisation */
 struct GRFError {
-	GRFError(StringID severity, StringID message = {});
+	GRFError(StringID severity, uint32_t nfo_line, StringID message = {})
+		: message(message), severity(severity), nfo_line(nfo_line) {}
 
 	std::string custom_message{}; ///< Custom message (if present)
 	std::string data{}; ///< Additional data for message and custom_message
 	StringID message{}; ///< Default message
 	StringID severity{}; ///< Info / Warning / Error / Fatal
+	uint32_t nfo_line; ///< Line within NewGRF of error.
 	std::array<uint32_t, 2> param_value{}; ///< Values of GRF parameters to show for message and custom_message
 };
 
@@ -169,7 +171,7 @@ struct GRFConfig {
 	GRFTextWrapper name{}; ///< NOSAVE: GRF name (Action 0x08)
 	GRFTextWrapper info{}; ///< NOSAVE: GRF info (author, copyright, ...) (Action 0x08)
 	GRFTextWrapper url{}; ///< NOSAVE: URL belonging to this GRF.
-	std::optional<GRFError> error = std::nullopt; ///< NOSAVE: Error/Warning during GRF loading (Action 0x0B)
+	std::vector<GRFError> errors; ///< NOSAVE: Error/Warning during GRF loading (Action 0x0B)
 
 	uint32_t version = 0; ///< NOSAVE: Version a NewGRF can set so only the newest NewGRF is shown
 	uint32_t min_loadable_version = 0; ///< NOSAVE: Minimum compatible version a NewGRF can define
@@ -218,7 +220,7 @@ extern uint _missing_extra_graphics;  ///< Number of sprites provided by the fal
 
 /** Callback for NewGRF scanning. */
 struct NewGRFScanCallback {
-	/** Make sure the right destructor gets called. */
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NewGRFScanCallback() = default;
 	/** Called whenever the NewGRF scan completed. */
 	virtual void OnNewGRFsScanned() = 0;
@@ -243,6 +245,6 @@ void ShowNewGRFSettings(bool editable, bool show_params, bool exec_changes, GRFC
 void OpenGRFParameterWindow(bool is_baseset, GRFConfig &c, bool editable);
 
 void UpdateNewGRFScanStatus(uint num, std::string &&name);
-void UpdateNewGRFConfigPalette(int32_t new_value = 0);
+void UpdateNewGRFConfigPalette();
 
 #endif /* NEWGRF_CONFIG_H */

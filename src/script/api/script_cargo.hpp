@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file script_cargo.hpp Everything to query cargoes. */
@@ -69,9 +69,9 @@ public:
 	 * Type of cargo distribution.
 	 */
 	enum DistributionType {
-		DT_MANUAL = ::DT_MANUAL,         ///< Manual distribution.
-		DT_ASYMMETRIC = ::DT_ASYMMETRIC, ///< Asymmetric distribution. Usually cargo will only travel in one direction.
-		DT_SYMMETRIC = ::DT_SYMMETRIC,   ///< Symmetric distribution. The same amount of cargo travels in each direction between each pair of nodes.
+		DT_MANUAL = to_underlying(::DistributionType::Manual), ///< Manual distribution.
+		DT_ASYMMETRIC = to_underlying(::DistributionType::Asymmetric), ///< Asymmetric distribution. Usually cargo will only travel in one direction.
+		DT_SYMMETRIC = to_underlying(::DistributionType::Symmetric), ///< Symmetric distribution. The same amount of cargo travels in each direction between each pair of nodes.
 		INVALID_DISTRIBUTION_TYPE = 0xFFFF, ///< Invalid distribution type.
 	};
 

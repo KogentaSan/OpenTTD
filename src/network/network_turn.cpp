@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file network_turn.cpp TURN sending/receiving part of the network protocol. */
@@ -23,6 +23,7 @@ private:
 public:
 	/**
 	 * Initiate the connecting.
+	 * @param handler Callback handler for denoting success or failure.
 	 * @param connection_string The address of the TURN server.
 	 */
 	NetworkTurnConnecter(ClientNetworkTurnSocketHandler *handler, std::string_view connection_string) : TCPConnecter(connection_string, NETWORK_TURN_SERVER_PORT), handler(handler) {}
@@ -46,20 +47,19 @@ public:
 	}
 };
 
-bool ClientNetworkTurnSocketHandler::Receive_TURN_ERROR(Packet &)
+bool ClientNetworkTurnSocketHandler::ReceiveServerError(Packet &)
 {
-	Debug(net, 9, "Receive_TURN_ERROR()");
+	Debug(net, 9, "ReceiveServerError()");
 
 	this->ConnectFailure();
 
 	return false;
 }
 
-bool ClientNetworkTurnSocketHandler::Receive_TURN_CONNECTED(Packet &p)
+bool ClientNetworkTurnSocketHandler::ReceiveServerConnected(Packet &p)
 {
-	Debug(net, 9, "Receive_TURN_CONNECTED()");
-
 	std::string hostname = p.Recv_string(NETWORK_HOSTNAME_LENGTH);
+	Debug(net, 9, "Turn::ReceiveServerConnected({})", hostname);
 
 	/* Act like we no longer have a socket, as we are handing it over to the
 	 * game handler. */
@@ -97,10 +97,11 @@ void ClientNetworkTurnSocketHandler::Connect()
 {
 	auto turn_handler = std::make_unique<ClientNetworkTurnSocketHandler>(token, tracking_number, connection_string);
 
-	auto p = std::make_unique<Packet>(turn_handler.get(), PACKET_TURN_SERCLI_CONNECT);
+	auto p = std::make_unique<Packet>(turn_handler.get(), PacketTurnType::ClientConnect);
 	p->Send_uint8(NETWORK_COORDINATOR_VERSION);
 	p->Send_string(ticket);
 
+	Debug(net, 9, "Turn::SendTurn({})", ticket);
 	turn_handler->SendPacket(std::move(p));
 
 	return turn_handler;
@@ -124,6 +125,7 @@ NetworkRecvStatus ClientNetworkTurnSocketHandler::CloseConnection(bool error)
 	return NETWORK_RECV_STATUS_OKAY;
 }
 
+/** Stop the attempt to connect. */
 ClientNetworkTurnSocketHandler::~ClientNetworkTurnSocketHandler()
 {
 	if (this->connecter != nullptr) {

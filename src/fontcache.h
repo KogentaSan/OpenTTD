@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file fontcache.h Functions to read fonts from files and cache them. */
@@ -10,9 +10,9 @@
 #ifndef FONTCACHE_H
 #define FONTCACHE_H
 
+#include "gfx_type.h"
 #include "provider_manager.h"
-#include "string_type.h"
-#include "spritecache.h"
+#include "spritecache_type.h"
 
 /** Glyphs are characters from a font. */
 typedef uint32_t GlyphID;
@@ -32,6 +32,7 @@ protected:
 	static void Register(std::unique_ptr<FontCache> &&fc);
 
 public:
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~FontCache() = default;
 
 	static void InitializeFontCaches();
@@ -137,6 +138,7 @@ public:
 
 	/**
 	 * Check whether the font cache has a parent.
+	 * @return \c true iff this font has a parent, i.e. is not the root.
 	 */
 	inline bool HasParent()
 	{
@@ -145,18 +147,29 @@ public:
 
 	/**
 	 * Is this a built-in sprite font?
+	 * @return \c true iff the font is the sprite font.
 	 */
 	virtual bool IsBuiltInFont() = 0;
 };
 
-/** Get the Sprite for a glyph */
+/**
+ * Get the Sprite for a glyph
+ * @param size The font size to look in.
+ * @param key The key to look up.
+ * @return The sprite.
+ */
 inline const Sprite *GetGlyph(FontSize size, char32_t key)
 {
 	FontCache *fc = FontCache::Get(size);
 	return fc->GetGlyph(fc->MapCharToGlyph(key));
 }
 
-/** Get the width of a glyph */
+/**
+ * Get the width of a glyph.
+ * @param size The font size to look in.
+ * @param key The key to look up.
+ * @return The sprite's width.
+ */
 inline uint GetGlyphWidth(FontSize size, char32_t key)
 {
 	FontCache *fc = FontCache::Get(size);
@@ -224,13 +237,30 @@ public:
 		ProviderManager<FontCacheFactory>::Register(*this);
 	}
 
-	virtual ~FontCacheFactory()
+	/** Unregister this factory. */
+	~FontCacheFactory() override
 	{
 		ProviderManager<FontCacheFactory>::Unregister(*this);
 	}
 
-	virtual std::unique_ptr<FontCache> LoadFont(FontSize fs, FontType fonttype) = 0;
-	virtual bool FindFallbackFont(struct FontCacheSettings *settings, const std::string &language_isocode, class MissingGlyphSearcher *callback) = 0;
+	/**
+	 * Try loading a font with this factory.
+	 * @param fs Font size to load.
+	 * @param fonttype Font type requested.
+	 * @return FontCache of the font if loaded, or nullptr.
+	 */
+	virtual std::unique_ptr<FontCache> LoadFont(FontSize fs, FontType fonttype) const = 0;
+
+	/**
+	 * We would like to have a fallback font as the current one
+	 * doesn't contain all characters we need.
+	 * This function must set all fonts of settings.
+	 * @param settings The settings to overwrite the fontname of.
+	 * @param language_isocode The language, e.g. en_GB.
+	 * @param callback The function to call to check for missing glyphs.
+	 * @return \c true if a font has been set, false otherwise.
+	 */
+	virtual bool FindFallbackFont(struct FontCacheSettings *settings, const std::string &language_isocode, class MissingGlyphSearcher *callback) const = 0;
 };
 
 class FontProviderManager : ProviderManager<FontCacheFactory> {

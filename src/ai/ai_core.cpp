@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file ai_core.cpp Implementation of AI. */
@@ -290,9 +290,9 @@
 	AI::scanner_info->GetConsoleList(output_iterator, newest_only);
 }
 
-/* static */ void AI::GetConsoleLibraryList(std::back_insert_iterator<std::string> &output_iterator)
+/* static */ void AI::GetConsoleLibraryList(std::back_insert_iterator<std::string> &output_iterator, bool newest_only)
 {
-	 AI::scanner_library->GetConsoleList(output_iterator, true);
+	 AI::scanner_library->GetConsoleList(output_iterator, newest_only);
 }
 
 /* static */ const ScriptInfoList *AI::GetInfoList()
@@ -329,26 +329,40 @@
 }
 
 /**
- * Check whether we have an AI (library) with the exact characteristics as ci.
+ * Check whether we have an AI with the exact characteristics as ci.
  * @param ci the characteristics to search on (shortname and md5sum)
  * @param md5sum whether to check the MD5 checksum
- * @return true iff we have an AI (library) matching.
+ * @return true iff we have an AI matching.
  */
 /* static */ bool AI::HasAI(const ContentInfo &ci, bool md5sum)
 {
 	return AI::scanner_info->HasScript(ci, md5sum);
 }
 
+/**
+ * Check whether we have an AI library with the exact characteristics as ci.
+ * @param ci the characteristics to search on (shortname and md5sum)
+ * @param md5sum whether to check the MD5 checksum
+ * @return true iff we have an AI library matching.
+ */
 /* static */ bool AI::HasAILibrary(const ContentInfo &ci, bool md5sum)
 {
 	return AI::scanner_library->HasScript(ci, md5sum);
 }
 
+/**
+ * Get the scanner info for AIs.
+ * @return The AI scanner info.
+ */
 /* static */ AIScannerInfo *AI::GetScannerInfo()
 {
 	return AI::scanner_info.get();
 }
 
+/**
+ * Get the scanner info for AI libraries.
+ * @return The AI library scanner info.
+ */
 /* static */ AIScannerLibrary *AI::GetScannerLibrary()
 {
 	return AI::scanner_library.get();

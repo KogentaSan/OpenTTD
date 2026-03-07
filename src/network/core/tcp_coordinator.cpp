@@ -2,12 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file tcp_coordinator.cpp Basic functions to receive and send Game Coordinator packets.
- */
+/** @file tcp_coordinator.cpp Basic functions to receive and send Game Coordinator packets. */
 
 #include "../../stdafx.h"
 #include "../../timer/timer_game_calendar.h"
@@ -24,7 +22,7 @@
  */
 bool NetworkCoordinatorSocketHandler::HandlePacket(Packet &p)
 {
-	PacketCoordinatorType type = (PacketCoordinatorType)p.Recv_uint8();
+	PacketCoordinatorType type = static_cast<PacketCoordinatorType>(p.Recv_uint8());
 
 	switch (type) {
 		case PACKET_COORDINATOR_GC_ERROR:              return this->Receive_GC_ERROR(p);

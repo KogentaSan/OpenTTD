@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file vehicle_cmd.h Command definitions for vehicles. */
@@ -29,20 +29,20 @@ CommandCost CmdMassStartStopVehicle(DoCommandFlags flags, TileIndex tile, bool d
 CommandCost CmdDepotSellAllVehicles(DoCommandFlags flags, TileIndex tile, VehicleType vehicle_type);
 CommandCost CmdDepotMassAutoReplace(DoCommandFlags flags, TileIndex tile, VehicleType vehicle_type);
 
-DEF_CMD_TRAIT(CMD_BUILD_VEHICLE,           CmdBuildVehicle,         CommandFlag::ClientID,                CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_SELL_VEHICLE,            CmdSellVehicle,          CommandFlags({CommandFlag::ClientID, CommandFlag::Location}), CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_REFIT_VEHICLE,           CmdRefitVehicle,         CommandFlag::Location,                 CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_SEND_VEHICLE_TO_DEPOT,   CmdSendVehicleToDepot,   {},                            CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_CHANGE_SERVICE_INT,      CmdChangeServiceInt,     {},                            CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_RENAME_VEHICLE,          CmdRenameVehicle,        {},                            CMDT_OTHER_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_CLONE_VEHICLE,           CmdCloneVehicle,         CommandFlag::NoTest,                  CMDT_VEHICLE_CONSTRUCTION) // NewGRF callbacks influence building and refitting making it impossible to correctly estimate the cost
-DEF_CMD_TRAIT(CMD_START_STOP_VEHICLE,      CmdStartStopVehicle,     CommandFlag::Location,                 CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_MASS_START_STOP,         CmdMassStartStopVehicle, {},                            CMDT_VEHICLE_MANAGEMENT)
-DEF_CMD_TRAIT(CMD_DEPOT_SELL_ALL_VEHICLES, CmdDepotSellAllVehicles, {},                            CMDT_VEHICLE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_DEPOT_MASS_AUTOREPLACE,  CmdDepotMassAutoReplace, {},                            CMDT_VEHICLE_CONSTRUCTION)
+DEF_CMD_TRAIT(Commands::BuildVehicle, CmdBuildVehicle, CommandFlag::ClientID, CommandType::VehicleConstruction)
+DEF_CMD_TRAIT(Commands::SellVehicle, CmdSellVehicle, CommandFlags({CommandFlag::ClientID, CommandFlag::Location}), CommandType::VehicleConstruction)
+DEF_CMD_TRAIT(Commands::RefitVehicle, CmdRefitVehicle, CommandFlag::Location, CommandType::VehicleConstruction)
+DEF_CMD_TRAIT(Commands::SendVehicleToDepot, CmdSendVehicleToDepot, {}, CommandType::VehicleManagement)
+DEF_CMD_TRAIT(Commands::ChangeServiceInterval, CmdChangeServiceInt, {}, CommandType::VehicleManagement)
+DEF_CMD_TRAIT(Commands::RenameVehicle, CmdRenameVehicle, {}, CommandType::OtherManagement)
+DEF_CMD_TRAIT(Commands::CloneVehicle, CmdCloneVehicle, CommandFlag::NoTest, CommandType::VehicleConstruction) // NewGRF callbacks influence building and refitting making it impossible to correctly estimate the cost
+DEF_CMD_TRAIT(Commands::StartStopVehicle, CmdStartStopVehicle, CommandFlag::Location, CommandType::VehicleManagement)
+DEF_CMD_TRAIT(Commands::MassStartStop, CmdMassStartStopVehicle, {}, CommandType::VehicleManagement)
+DEF_CMD_TRAIT(Commands::DepotMassSell, CmdDepotSellAllVehicles, {}, CommandType::VehicleConstruction)
+DEF_CMD_TRAIT(Commands::DepotMassAutoreplace, CmdDepotMassAutoReplace, {}, CommandType::VehicleConstruction)
 
-void CcBuildPrimaryVehicle(Commands cmd, const CommandCost &result, VehicleID new_veh_id, uint, uint16_t, CargoArray);
-void CcStartStopVehicle(Commands cmd, const CommandCost &result, VehicleID veh_id, bool);
+void CcBuildPrimaryVehicle(Commands, const CommandCost &result, VehicleID new_veh_id, uint, uint16_t, CargoArray);
+void CcStartStopVehicle(Commands, const CommandCost &result, VehicleID veh_id, bool);
 
 template <typename Tcont, typename Titer>
 inline EndianBufferWriter<Tcont, Titer> &operator <<(EndianBufferWriter<Tcont, Titer> &buffer, const CargoArray &cargo_array)

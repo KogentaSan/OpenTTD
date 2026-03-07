@@ -15,7 +15,7 @@
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
 
 
 ##id 0x0000
@@ -256,6 +256,7 @@ STR_UNITS_FORCE_SI                                              :{DECIMAL}{NBSP}
 STR_UNITS_HEIGHT_IMPERIAL                                       :{DECIMAL}{NBSP}fot
 STR_UNITS_HEIGHT_METRIC                                         :{DECIMAL}{NBSP}m
 STR_UNITS_HEIGHT_SI                                             :{DECIMAL}{NBSP}m
+STR_UNITS_HEIGHT_GAMEUNITS                                      :{DECIMAL}{NBSP}nivå{P "" er}
 
 # Time units used in string control characters
 STR_UNITS_DAYS                                                  :{COMMA}{NBSP}dag{P "" er}
@@ -313,6 +314,7 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}Ved å a
 STR_BUTTON_DEFAULT                                              :{BLACK}Standard
 STR_BUTTON_CANCEL                                               :{BLACK}Avbryt
 STR_BUTTON_OK                                                   :{BLACK}OK
+STR_BUTTON_MOVE                                                 :{BLACK}Flytt
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :`1234567890-= qwertyuiop[]asdfghjkl;'#\zxcvbnm,./ .
@@ -923,7 +925,7 @@ STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE
 
 # Order review system / warnings
 STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} har for få ordre på ordrelisten
-STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} har en tom ordre
+STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} har en ugyldig ordre
 STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} har doble ordre
 STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} har en ugyldig stasjon i ordrelisten
 STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE} har i sine ordrer en flyplass der rullebanen er for kort
@@ -1062,7 +1064,7 @@ STR_GAME_OPTIONS_LANGUAGE_TOOLTIP                               :Velg språk som
 STR_GAME_OPTIONS_LANGUAGE_PERCENTAGE                            :{STRING} ({NUM}% fullført)
 
 STR_GAME_OPTIONS_FULLSCREEN                                     :Fullskjerm
-STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Kryss av denne knappen for å spille OpenTTD i fullskjermmodus
+STR_GAME_OPTIONS_FULLSCREEN_TOOLTIP                             :Slå på for å spille OpenTTD i fullskjermmodus
 
 STR_GAME_OPTIONS_RESOLUTION                                     :Skjermoppløsning
 STR_GAME_OPTIONS_RESOLUTION_TOOLTIP                             :Velg skjermoppløsningen som skal brukes
@@ -1070,11 +1072,11 @@ STR_GAME_OPTIONS_RESOLUTION_OTHER                               :annet
 STR_GAME_OPTIONS_RESOLUTION_ITEM                                :{NUM}x{NUM}
 
 STR_GAME_OPTIONS_VIDEO_ACCELERATION                             :Maskinvareakselerasjon
-STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Merk av i denne boksen for å la OpenTTD prøve å bruke maskinvareakselerasjon. En endret innstilling blir bare brukt ved omstart av spillet
+STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :Slå på for å la OpenTTD prøve å bruke maskinvareakselerasjon. En endret innstilling blir bare brukt ved omstart av spillet
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}Innstillingen vil ikke tre i kraft før spillet er restartet
 
 STR_GAME_OPTIONS_VIDEO_VSYNC                                    :VSync
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Merk av i denne boksen for å aktivere VSync for skjermen. Endring av innstilling krever omstart av spillet. Fungerer bare med maskinvareakselerasjon aktivert
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :Slå på for å aktivere VSync for skjermen. Endring av innstilling krever omstart av spillet. Fungerer bare med maskinvareakselerasjon aktivert
 
 STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :Aktiv driver: {STRING}
 
@@ -1083,15 +1085,15 @@ STR_GAME_OPTIONS_INTERFACE                                      :Grensesnitt
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :Grensesnittstørrelse
 STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :Dra for å endre grensesnittstørrelse. Ctrl+dra for kontinuerlig justering
 STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :Detekter størrelse automatisk
-STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Kryss av denne knappen for å detektere grensesnittstørrelsen automatisk
+STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :Slå på for å detektere grensesnittstørrelsen automatisk
 
 STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :Skaler faser
-STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Kryss av denne knappen for å skalere faser med størrelsen på grensesnittet
+STR_GAME_OPTIONS_GUI_SCALE_BEVELS_TOOLTIP                       :Slå på for å skalere faser med størrelsen på grensesnittet
 
 STR_GAME_OPTIONS_GUI_FONT_SPRITE                                :Bruk tradisjonell sprite-skrift
-STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Kryss av denne knappen hvis du foretrekker den tradisjonelle sprite-skriften med fast størrelse
+STR_GAME_OPTIONS_GUI_FONT_SPRITE_TOOLTIP                        :Slå på hvis du foretrekker den tradisjonelle sprite-skriften med fast størrelse
 STR_GAME_OPTIONS_GUI_FONT_AA                                    :Kantutjevning av skrift
-STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Kryss av denne knappen for å kantutjevne skalerbar skrift
+STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :Slå på for å kantutjevne skalerbar skrift
 
 STR_GAME_OPTIONS_GUI_SCALE_MARK                                 :{DECIMAL}x
 
@@ -1115,7 +1117,7 @@ STR_GAME_OPTIONS_BASE_GRF_TOOLTIP                               :Velg grafikkset
 STR_GAME_OPTIONS_BASE_GRF_DESCRIPTION_TOOLTIP                   :Tilleggsinformasjon om grafikksettet
 
 STR_GAME_OPTIONS_BASE_SFX                                       :Lydsett
-STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Velg lydsett som skal brukes (kan ikke endres inne i spillet, bare fra hovedmenyen)
+STR_GAME_OPTIONS_BASE_SFX_TOOLTIP                               :Velg lydsett som skal brukes
 STR_GAME_OPTIONS_BASE_SFX_DESCRIPTION_TOOLTIP                   :Tilleggsinformasjon om lydsettet
 
 STR_GAME_OPTIONS_BASE_MUSIC                                     :Musikksett
@@ -1223,7 +1225,7 @@ STR_SUBSIDY_X4                                                  :x4
 STR_CLIMATE_TEMPERATE_LANDSCAPE                                 :Temperert landskap
 STR_CLIMATE_SUB_ARCTIC_LANDSCAPE                                :Subarktisk landskap
 STR_CLIMATE_SUB_TROPICAL_LANDSCAPE                              :Subtropisk landskap
-STR_CLIMATE_TOYLAND_LANDSCAPE                                   :Leketøylandskap
+STR_CLIMATE_TOYLAND_LANDSCAPE                                   :Leketøyland
 
 ###length 7
 STR_TERRAIN_TYPE_VERY_FLAT                                      :Veldig flatt
@@ -1248,7 +1250,7 @@ STR_CONFIG_SETTING_EXPAND_ALL                                   :Vis alle
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :Skjul alle
 STR_CONFIG_SETTING_RESET_ALL                                    :Tilbakestill alle verdier
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(ingen forklaring tilgjengelig)
-STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
+STR_CONFIG_SETTING_VALUE                                        :{ORANGE}{STRING}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Standard verdi: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Instillings type: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE_CLIENT                                  :Klient innstilling (ikke lagret i lagringsfilene, påvirker alle spill)
@@ -1598,7 +1600,7 @@ STR_CONFIG_SETTING_LAND_GENERATOR_HELPTEXT                      :Den opprinnelig
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Orginal
 STR_CONFIG_SETTING_LAND_GENERATOR_TERRA_GENESIS                 :TerraGenesis
 
-STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Terrengtype: {STRING}
+STR_CONFIG_SETTING_TERRAIN_TYPE                                 :Valgt maksimal høyde: {STRING}
 STR_CONFIG_SETTING_TERRAIN_TYPE_HELPTEXT                        :Velg høyden til bakker og fjell i landskapet
 
 STR_CONFIG_SETTING_INDUSTRY_DENSITY                             :Industritetthet: {STRING}
@@ -1625,6 +1627,14 @@ STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :Veldig jevnt
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :Jevnt
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :Ulendt
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :Veldig ulendt
+
+STR_CONFIG_SETTING_AVERAGE_HEIGHT                               :Gjennomsnittshøyde: {STRING}
+STR_CONFIG_SETTING_AVERAGE_HEIGHT_HELPTEXT                      :Velg gjennomsnittshøyde for land. 'Automatisk' er basert på valgt klima: 'Lavland' for subtropisk, 'Normal' for temperert og leketøyland, og 'Platå' for subarktisk.
+###length 4
+STR_CONFIG_SETTING_AVERAGE_HEIGHT_AUTO                          :Automatisk
+STR_CONFIG_SETTING_AVERAGE_HEIGHT_LOWLANDS                      :Lavland
+STR_CONFIG_SETTING_AVERAGE_HEIGHT_NORMAL                        :Normal
+STR_CONFIG_SETTING_AVERAGE_HEIGHT_PLATEAUS                      :Platå
 
 STR_CONFIG_SETTING_VARIETY                                      :Variasjonsspredning: {STRING}
 STR_CONFIG_SETTING_VARIETY_HELPTEXT                             :Velg om kartet inneholder både fjellrike og flate områder. Jo høyere variasjon, dess større forskjeller i høyde mellom fjellrike og flate områder
@@ -2068,7 +2078,7 @@ STR_CONFIG_SETTING_ZOOM_LVL_OUT_4X                              :4x
 STR_CONFIG_SETTING_ZOOM_LVL_OUT_8X                              :8x
 
 STR_CONFIG_SETTING_SPRITE_ZOOM_MIN                              :Høyeste oppløsning effekter kan bruke: {STRING}
-STR_CONFIG_SETTING_SPRITE_ZOOM_MIN_HELPTEXT                     :Begrens største oppløsning spritene kan bruke. Å begrense oppløsningen vil unngå å bruke høyoppløst grafikk selv når det er tilgjengelig. Dette kan bidra til gjøre spillets uttrykk enhetlig når en blanding av GRF-filer med og uten høyoppløst grafikk er i bruk
+STR_CONFIG_SETTING_SPRITE_ZOOM_MIN_HELPTEXT                     :Begrens største oppløsning spritene kan bruke. Å begrense oppløsningen vil unngå å bruke høyoppløst grafikk selv når det er tilgjengelig. Dette kan bidra til gjøre spillets uttrykk enhetlig når en blanding av NewGRF-filer med og uten høyoppløst grafikk er i bruk
 ###length 3
 STR_CONFIG_SETTING_SPRITE_ZOOM_LVL_MIN                          :4x
 STR_CONFIG_SETTING_SPRITE_ZOOM_LVL_IN_2X                        :2x
@@ -2090,6 +2100,8 @@ STR_CONFIG_SETTING_LARGER_TOWNS_VALUE                           :1 av {COMMA}
 STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :ingen
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :Innledende bystørrelsesmultiplikator: {STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Gjennomsnittsstørrelse på (stor)byer i forhold til vanlige byer ved begynnelsen av spillet
+STR_CONFIG_SETTING_TOWN_MIN_DISTANCE                            :Minste avstand mellom byer: {STRING}
+STR_CONFIG_SETTING_TOWN_MIN_DISTANCE_HELPTEXT                   :Sett minsteavstand i ruter mellom byer for kartgenerering og tilfeldige grunnleggelser
 
 STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL                    :Oppdater distribusjonsgraf hvert {STRING}
 STR_CONFIG_SETTING_LINKGRAPH_RECALC_INTERVAL_HELPTEXT           :Tid mellom hver rekalkulering av koblingsgrafen. Hver rekalkulering kalkulerer planene for en komponent på grafen. Dette betyr at verdi X for denne innstillingen ikke innebærer at hele grafen vil bli oppdatert hvert X sekund. Kun noen komponenter vil. Jo kortere du setter den, jo mer CPU-tid vil være nødvendig for å kalkulere den. Jo lenger du setter den, jo lenger vil det ta før varedistribusjonen kommer i gang på nye ruter
@@ -2160,10 +2172,11 @@ STR_CONFIG_SETTING_LOCALISATION_UNITS_FORCE_SI                  :SI (kN)
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT                    :Høydeenheter: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_HELPTEXT           :Når en høyde vises i brukergrensesnittet, vis den i de valgte enhetene
-###length 3
+###length 4
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Imperisk (fot)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Metrisk (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_GAMEUNITS          :Spillenheter (nivåer)
 
 STR_CONFIG_SETTING_LOCALISATION                                 :Lokalisering
 STR_CONFIG_SETTING_GRAPHICS                                     :Grafikk
@@ -2203,7 +2216,7 @@ STR_CONFIG_ERROR                                                :{WHITE}Feil med
 STR_CONFIG_ERROR_ARRAY                                          :{WHITE}... feil i matrise '{STRING}'
 STR_CONFIG_ERROR_INVALID_VALUE                                  :{WHITE}... ugyldig verdi '{STRING}' for '{STRING}'
 STR_CONFIG_ERROR_TRAILING_CHARACTERS                            :{WHITE}... etterslengende bokstaver i slutten av innstilling '{STRING}'
-STR_CONFIG_ERROR_DUPLICATE_GRFID                                :{WHITE}... ignorerer NewGRF '{STRING}': duplikat GRF ID med '{STRING}'
+STR_CONFIG_ERROR_DUPLICATE_GRFID                                :{WHITE}... ignorerer NewGRF '{STRING}': duplikat NewGRF ID med '{STRING}'
 STR_CONFIG_ERROR_INVALID_GRF                                    :{WHITE}... ignorerer ugyldig NewGRF '{STRING}': {STRING}
 STR_CONFIG_ERROR_INVALID_GRF_NOT_FOUND                          :ikke funnet
 STR_CONFIG_ERROR_INVALID_GRF_UNSAFE                             :usikker for statisk bruk
@@ -2356,12 +2369,12 @@ STR_FACE_SIMPLE                                                 :{BLACK}Enkelt
 STR_FACE_SIMPLE_TOOLTIP                                         :{BLACK}Enkelt ansiktsvalg
 STR_FACE_LOAD                                                   :{BLACK}Last inn
 STR_FACE_LOAD_TOOLTIP                                           :{BLACK}Last inn favorittansikt
-STR_FACE_LOAD_DONE                                              :{WHITE}Ditt favorittansikt har blitt lastet inn fra OpenTTDs konfigurasjonsfil
+STR_FACE_LOAD_DONE                                              :Ditt favorittansikt har blitt lastet inn fra OpenTTDs konfigurasjonsfil
 STR_FACE_FACECODE                                               :{BLACK}Ansiktskode
 STR_FACE_FACECODE_TOOLTIP                                       :{BLACK}Vis og/eller endre ansiktskoden til selskapets president
 STR_FACE_FACECODE_CAPTION                                       :{WHITE}Vis og/eller endre lederens ansiktskode
-STR_FACE_FACECODE_SET                                           :{WHITE}Nytt presidentansikt har blitt satt
-STR_FACE_FACECODE_ERR                                           :{WHITE}Kunne ikke endre lederens ansiktskode - må være et gyldig merke og nummer
+STR_FACE_FACECODE_SET                                           :Nytt presidentansikt har blitt satt
+STR_FACE_FACECODE_ERR                                           :Kunne ikke endre lederens ansiktskode - må være et gyldig merke og nummer
 STR_FACE_SAVE                                                   :{BLACK}Lagre
 STR_FACE_SAVE_TOOLTIP                                           :{BLACK}Lagre favorittansikt
 STR_FACE_SAVE_DONE                                              :{WHITE}Dette ansiktet vil bli lagret som din favoritt i OpenTTDs konfigurasjonsfil
@@ -2474,15 +2487,13 @@ STR_NETWORK_CONNECTING_WAITING                                  :{BLACK}{NUM} kl
 STR_NETWORK_CONNECTING_DOWNLOADING_1                            :{BLACK}{BYTES} nedlastet hittil
 STR_NETWORK_CONNECTING_DOWNLOADING_2                            :{BLACK}{BYTES} / {BYTES} nedlastet hittil
 
-###length 8
+###length 6
 STR_NETWORK_CONNECTING_1                                        :{BLACK}(1/6) Kobler til...
 STR_NETWORK_CONNECTING_2                                        :{BLACK}(2/6) Godkjenner...
 STR_NETWORK_CONNECTING_3                                        :{BLACK}(3/6) Venter...
 STR_NETWORK_CONNECTING_4                                        :{BLACK}(4/6) Laster ned kart...
 STR_NETWORK_CONNECTING_5                                        :{BLACK}(5/6) Behandler data...
 STR_NETWORK_CONNECTING_6                                        :{BLACK}(6/6) Registrerer...
-STR_NETWORK_CONNECTING_SPECIAL_1                                :{BLACK}Henter spillinformasjon...
-STR_NETWORK_CONNECTING_SPECIAL_2                                :{BLACK}Henter selskapsinformasjon...
 
 STR_NETWORK_CONNECTION_DISCONNECT                               :{BLACK}Koble fra
 
@@ -2582,15 +2593,15 @@ STR_NETWORK_ERROR_NEWGRF_MISMATCH                               :{WHITE}Kunne ik
 STR_NETWORK_ERROR_DESYNC                                        :{WHITE}Synkronisering av nettverksspill mislyktes
 STR_NETWORK_ERROR_LOSTCONNECTION                                :{WHITE}Mistet tilkobling til nettverksspill
 STR_NETWORK_ERROR_SAVEGAMEERROR                                 :{WHITE}Kunne ikke laste inn lagret spill
-STR_NETWORK_ERROR_SERVER_START                                  :{WHITE}Kunne ikke starte tjeneren
-STR_NETWORK_ERROR_SERVER_ERROR                                  :{WHITE}Forbindelsen ble brutt pga. en protokollfeil
-STR_NETWORK_ERROR_BAD_PLAYER_NAME                               :{WHITE}Spillernavnet ditt er ikke angitt. Navnet kan angis øverst i flerspillervinduet
+STR_NETWORK_ERROR_SERVER_START                                  :Kunne ikke starte tjeneren
+STR_NETWORK_ERROR_SERVER_ERROR                                  :Forbindelsen ble brutt pga. en protokollfeil
+STR_NETWORK_ERROR_BAD_PLAYER_NAME                               :Spillernavnet ditt er ikke angitt. Navnet kan angis øverst i flerspillervinduet
 STR_NETWORK_ERROR_BAD_SERVER_NAME                               :{WHITE}Du har ikke valgt tjenernavn. Navnet kan velges øverst i flerspillervinduet
 STR_NETWORK_ERROR_WRONG_REVISION                                :{WHITE}Klientversjonen er ikke den samme som tjenerversjonen
 STR_NETWORK_ERROR_WRONG_PASSWORD                                :{WHITE}Feil passord
 STR_NETWORK_ERROR_NOT_ON_ALLOW_LIST                             :{WHITE}Du står ikke på listen over tillatte klienter
-STR_NETWORK_ERROR_SERVER_FULL                                   :{WHITE}Tjeneren er full
-STR_NETWORK_ERROR_SERVER_BANNED                                 :{WHITE}Du er bannlyst fra denne tjeneren
+STR_NETWORK_ERROR_SERVER_FULL                                   :Tjeneren er full
+STR_NETWORK_ERROR_SERVER_BANNED                                 :Du er bannlyst fra denne tjeneren
 STR_NETWORK_ERROR_KICKED                                        :{WHITE}Du ble kastet ut av spillet
 STR_NETWORK_ERROR_KICK_MESSAGE                                  :{WHITE}Grunn: {STRING}
 STR_NETWORK_ERROR_CHEATER                                       :{WHITE}Juksing er ikke tillatt på denne tjeneren
@@ -2706,8 +2717,8 @@ STR_CONTENT_DETAIL_FILESIZE                                     :{SILVER}Nedlast
 STR_CONTENT_DETAIL_SELECTED_BECAUSE_OF                          :{SILVER}Valgt pga.: {WHITE}{STRING}
 STR_CONTENT_DETAIL_DEPENDENCIES                                 :{SILVER}Avhengig av: {WHITE}{STRING}
 STR_CONTENT_DETAIL_TAGS                                         :{SILVER}Merker: {WHITE}{STRING}
-STR_CONTENT_NO_ZLIB                                             :{WHITE}OpenTTD er bygget uten støtte for «zlib»...
-STR_CONTENT_NO_ZLIB_SUB                                         :{WHITE}...{NBSP}det er ikke mulig å laste ned innhold!
+STR_CONTENT_NO_ZLIB                                             :OpenTTD er bygget uten støtte for «zlib»...
+STR_CONTENT_NO_ZLIB_SUB                                         :det er ikke mulig å laste ned innhold!
 
 # Order of these is important!
 STR_CONTENT_TYPE_BASE_GRAPHICS                                  :Grafikk
@@ -2729,9 +2740,9 @@ STR_CONTENT_DOWNLOAD_COMPLETE                                   :{WHITE}Nedlastn
 STR_CONTENT_DOWNLOAD_PROGRESS_SIZE                              :{WHITE}{BYTES} av {BYTES} lastet ned ({NUM}{NBSP}%)
 
 # Content downloading error messages
-STR_CONTENT_ERROR_COULD_NOT_CONNECT                             :{WHITE}Kunne ikke koble til innholdstjener...
-STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD                            :{WHITE}Nedlastning mislyktes...
-STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD_FILE_NOT_WRITABLE          :{WHITE}...{NBSP}kunne ikke skrive til fil
+STR_CONTENT_ERROR_COULD_NOT_CONNECT                             :Kunne ikke koble til innholdstjener...
+STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD                            :Nedlastning mislyktes...
+STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD_FILE_NOT_WRITABLE          :kunne ikke skrive til fil
 STR_CONTENT_ERROR_COULD_NOT_EXTRACT                             :{WHITE}Kunne ikke pakke ut den nedlastede filen
 
 STR_MISSING_GRAPHICS_SET_CAPTION                                :{WHITE}Manglende grafikk
@@ -2847,29 +2858,49 @@ STR_PICKER_PREVIEW_SHRINK_TOOLTIP                               :Reduser høyden
 STR_PICKER_PREVIEW_EXPAND                                       :+
 STR_PICKER_PREVIEW_EXPAND_TOOLTIP                               :Øk høyden på forhåndsvisninger. Ctrl+klikk for så stor som mulig
 
+STR_PICKER_DEFAULT_COLLECTION                                   :Standard samling
+STR_PICKER_SELECT_COLLECTION_TOOLTIP                            :Velg en samling
+STR_PICKER_COLLECTION_ADD                                       :Legg til
+STR_PICKER_COLLECTION_ADD_TOOLTIP                               :Lag ny samling
+STR_PICKER_COLLECTION_RENAME                                    :Gi nytt navn
+STR_PICKER_COLLECTION_RENAME_TOOLTIP                            :Gi samling nytt navn
+STR_PICKER_COLLECTION_DELETE                                    :Slett
+STR_PICKER_COLLECTION_DELETE_TOOLTIP                            :Slett en samling
+
+STR_PICKER_COLLECTION_RENAME_QUERY                              :Gi denne samlingen nytt navn
+STR_PICKER_COLLECTION_DELETE_QUERY                              :Slett samling
+STR_PICKER_COLLECTION_DELETE_QUERY_TEXT                         :{YELLOW}Er du sikker på at du vil slette denne samlingen?
+STR_PICKER_COLLECTION_DELETE_QUERY_DISABLED_TEXT                :{YELLOW}Er du sikker på at du vil slette denne samlingen? Det er elementer fra deaktiverte NewGRF i den!
+
 STR_PICKER_STATION_CLASS_TOOLTIP                                :Velg stasjonsklassen du vil vise
 STR_PICKER_STATION_TYPE_TOOLTIP                                 :Velg type stasjon å bygge. Ctrl+klikk for å legge til eller fjerne lagrede elementer
+STR_PICKER_STATION_COLLECTION_TOOLTIP                           :Velg en samling av stasjoner å vise
 STR_PICKER_WAYPOINT_CLASS_TOOLTIP                               :Velg veipunktklassen du vil vise
 STR_PICKER_WAYPOINT_TYPE_TOOLTIP                                :Velg type veipunkt å bygge. Ctrl+klikk for å legge til eller fjerne lagrede elementer
+STR_PICKER_WAYPOINT_COLLECTION_TOOLTIP                          :Velg en samling av veipunkt å vise
 STR_PICKER_ROADSTOP_BUS_CLASS_TOOLTIP                           :Velg type busterminal du vil vise
 STR_PICKER_ROADSTOP_BUS_TYPE_TOOLTIP                            :Velg type bussterminal å bygge. Ctrl+klikk for å legge til eller fjerne lagrede elementer
+STR_PICKER_ROADSTOP_BUS_COLLECTION_TOOLTIP                      :Velg en samling av bussterminaler å vise
 STR_PICKER_ROADSTOP_TRUCK_CLASS_TOOLTIP                         :Velg en type godsterminal du vil vise
 STR_PICKER_ROADSTOP_TRUCK_TYPE_TOOLTIP                          :Velg type godsterminal å bygge. Ctrl+klikk for å legge til eller fjerne lagrede elementer
+STR_PICKER_ROADSTOP_TRUCK_COLLECTION_TOOLTIP                    :Velg en samling av godsterminaler å vise
 STR_PICKER_OBJECT_CLASS_TOOLTIP                                 :Velg objektklassen du vil vise
 STR_PICKER_OBJECT_TYPE_TOOLTIP                                  :Velg type objekt å bygge. Ctrl+klikk for å legge til eller fjerne lagrede elementer. Ctrl+klikk+dra for å velge areal diagonalt. Trykk også Shift for å kun vise kostnadsestimat
+STR_PICKER_OBJECT_COLLECTION_TOOLTIP                            :Velg en samling av objekter å vise
 STR_PICKER_HOUSE_CLASS_TOOLTIP                                  :Velg byområdet du vil vise
 STR_PICKER_HOUSE_TYPE_TOOLTIP                                   :Velg type hus å bygge. Ctrl+klikk for å legge til eller fjerne lagrede elementer
+STR_PICKER_HOUSE_COLLECTION_TOOLTIP                             :Velg en samling av hus å vise
 
 STR_HOUSE_PICKER_CAPTION                                        :Husvalg
-STR_HOUSE_PICKER_NAME                                           :{BLACK}Navn: {ORANGE}{STRING}
-STR_HOUSE_PICKER_POPULATION                                     :{BLACK}Beboere: {ORANGE}{NUM}
-STR_HOUSE_PICKER_YEARS                                          :{BLACK}År: {ORANGE}{NUM}-{NUM}
-STR_HOUSE_PICKER_YEARS_ANY                                      :{BLACK}År: {ORANGE}Ethvert
-STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}År: {ORANGE}Fra {NUM}
-STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}År: {ORANGE}Til {NUM}
-STR_HOUSE_PICKER_SIZE                                           :{BLACK}Størrelse: {ORANGE}{NUM}x{NUM} ruter
-STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}Godtatte varer: {ORANGE}
-STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}Varer produsert: {ORANGE}{CARGO_LIST}
+STR_HOUSE_PICKER_NAME                                           :{BLACK}Navn: {GOLD}{STRING}
+STR_HOUSE_PICKER_POPULATION                                     :{BLACK}Beboere: {GOLD}{NUM}
+STR_HOUSE_PICKER_YEARS                                          :{BLACK}År: {GOLD}{NUM}-{NUM}
+STR_HOUSE_PICKER_YEARS_ANY                                      :{BLACK}År: {GOLD}Ethvert
+STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}År: {GOLD}Fra {NUM}
+STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}År: {GOLD}Til {NUM}
+STR_HOUSE_PICKER_SIZE                                           :{BLACK}Størrelse: {GOLD}{NUM}x{NUM} ruter
+STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}Godtatte varer: {GOLD}{STRING}
+STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}Varer produsert: {GOLD}{CARGO_LIST}
 
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :Kant
 STR_HOUSE_PICKER_CLASS_ZONE2                                    :Ytterkant
@@ -2877,10 +2908,11 @@ STR_HOUSE_PICKER_CLASS_ZONE3                                    :Ytre forsteder
 STR_HOUSE_PICKER_CLASS_ZONE4                                    :Indre forsteder
 STR_HOUSE_PICKER_CLASS_ZONE5                                    :Bysentrum
 
-STR_HOUSE_PICKER_PROTECT_TITLE                                  :Forhindre oppgraderinger
+STR_HOUSE_PICKER_PROTECT                                        :Forhindre oppgraderinger
 STR_HOUSE_PICKER_PROTECT_TOOLTIP                                :Velg hvorvidt dette huset skal være beskyttet mot å bli byttet ut når byen vokser
-STR_HOUSE_PICKER_PROTECT_OFF                                    :Av
-STR_HOUSE_PICKER_PROTECT_ON                                     :På
+
+STR_HOUSE_PICKER_REPLACE                                        :Erstatt eksisterende
+STR_HOUSE_PICKER_REPLACE_TOOLTIP                                :Velg hvorvidt eksisterende hus skal fjernes automatisk på ruten hvor dette huset blir plassert
 
 STR_STATION_CLASS_DFLT                                          :Standard
 STR_STATION_CLASS_DFLT_STATION                                  :Standard stasjon
@@ -3155,7 +3187,7 @@ STR_LAND_AREA_INFORMATION_AIRPORT_CLASS                         :{BLACK}Flyplass
 STR_LAND_AREA_INFORMATION_AIRPORT_NAME                          :{BLACK}Navn på flyplass: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME                      :{BLACK}Flyplassrutens navn: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: {LTBLUE}{STRING}
-STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Godtatte varer: {LTBLUE}
+STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Godtatte varer: {LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}Skinnetype: {LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}Veitype: {LTBLUE}{STRING}
@@ -3350,6 +3382,8 @@ STR_SAVELOAD_DETAIL_GRFSTATUS                                   :{SILVER}NewGRF:
 STR_SAVELOAD_FILTER_TITLE                                       :{BLACK}Filtrer:
 STR_SAVELOAD_OVERWRITE_TITLE                                    :{WHITE}Overskriv fil
 STR_SAVELOAD_OVERWRITE_WARNING                                  :{YELLOW}Er du sikker på at du vil overskrive eksisterende fil?
+STR_SAVELOAD_DELETE_TITLE                                       :{WHITE}Slett fil
+STR_SAVELOAD_DELETE_WARNING                                     :{YELLOW}Er du sikker på at du vil slette filen?
 STR_SAVELOAD_DIRECTORY                                          :{STRING} (Liste)
 STR_SAVELOAD_PARENT_DIRECTORY                                   :{STRING} (Foreldrekatalog)
 
@@ -3380,7 +3414,8 @@ STR_MAPGEN_DESERT_COVERAGE                                      :{BLACK}Ørkende
 STR_MAPGEN_DESERT_COVERAGE_UP_TOOLTIP                           :{BLACK}Øk ørkendekningen med ti prosent
 STR_MAPGEN_DESERT_COVERAGE_DOWN_TOOLTIP                         :{BLACK}Reduser ørkendekning med 10 prosent
 STR_MAPGEN_DESERT_COVERAGE_TEXT                                 :{BLACK}{NUM}%
-STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Terrengtype:
+STR_MAPGEN_TERRAIN_TYPE                                         :{BLACK}Maksimal høyde:
+STR_MAPGEN_AVERAGE_HEIGHT                                       :{BLACK}Gjennomsnittshøyde:
 STR_MAPGEN_SEA_LEVEL                                            :{BLACK}Havnivå:
 STR_MAPGEN_SEA_LEVEL_TOOLTIP                                    :{BLACK}Velg havnivået
 STR_MAPGEN_QUANTITY_OF_RIVERS                                   :{BLACK}Elver:
@@ -3425,11 +3460,18 @@ STR_MAPGEN_NORTHWEST                                            :{BLACK}Nordvest
 STR_MAPGEN_NORTHEAST                                            :{BLACK}Nordøst
 STR_MAPGEN_SOUTHEAST                                            :{BLACK}Sørøst
 STR_MAPGEN_SOUTHWEST                                            :{BLACK}Sørvest
+STR_MAPGEN_NORTHWEST_TOOLTIP                                    :Veksle mellom vann eller fri kant ved nordvestre kartkant
+STR_MAPGEN_NORTHEAST_TOOLTIP                                    :Veksle mellom vann eller fri kant ved nordøstre kartkant
+STR_MAPGEN_SOUTHEAST_TOOLTIP                                    :Veksle mellom vann eller fri kant ved sørøstre kartkant
+STR_MAPGEN_SOUTHWEST_TOOLTIP                                    :Veksle mellom vann eller fri kant ved sørvestre kartkant
 STR_MAPGEN_BORDER_FREEFORM                                      :{BLACK}Frihånds
 STR_MAPGEN_BORDER_WATER                                         :{BLACK}Sjø
 STR_MAPGEN_BORDER_RANDOM                                        :{BLACK}Tilfeldig
-STR_MAPGEN_BORDER_RANDOMIZE                                     :{BLACK}Tilfeldige
-STR_MAPGEN_BORDER_MANUAL                                        :{BLACK}Manuelle
+
+###length 3
+STR_MAPGEN_BORDER_RANDOMIZE                                     :Tilfeldige
+STR_MAPGEN_BORDER_MANUAL                                        :Manuelle
+STR_MAPGEN_BORDER_INFINITE_WATER                                :Uendelig vann
 
 STR_MAPGEN_HEIGHTMAP_ROTATION                                   :{BLACK}Høydekartrotering:
 STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Høydekartnavn:
@@ -3465,10 +3507,11 @@ STR_GENERATION_PROGRESS                                         :{WHITE}{NUM}{NB
 STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / {NUM}
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}Generer en verden
 STR_GENERATION_LANDSCAPE_GENERATION                             :{BLACK}Landskapsgenerering
-STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Skap elver
+STR_GENERATION_RIVER_GENERATION                                 :{BLACK}Elvegenerering
 STR_GENERATION_CLEARING_TILES                                   :{BLACK}Generering av ulendt og steinete område
 STR_GENERATION_TOWN_GENERATION                                  :{BLACK}Bygenerering
-STR_GENERATION_INDUSTRY_GENERATION                              :{BLACK}Industrigenerering
+STR_GENERATION_LAND_INDUSTRY_GENERATION                         :{BLACK}Landindustrigenerering
+STR_GENERATION_WATER_INDUSTRY_GENERATION                        :{BLACK}Vannindustrigenerering
 STR_GENERATION_OBJECT_GENERATION                                :{BLACK}Objektgenerering
 STR_GENERATION_TREE_GENERATION                                  :{BLACK}Tregenerering
 STR_GENERATION_SETTINGUP_GAME                                   :{BLACK}Klargjør spillet
@@ -3608,7 +3651,7 @@ STR_NEWGRF_ERROR_INVALID_PARAMETER                              :Ugyldig paramet
 STR_NEWGRF_ERROR_LOAD_BEFORE                                    :{1:STRING} må lastes inn før {2:STRING}.
 STR_NEWGRF_ERROR_LOAD_AFTER                                     :{1:STRING} må lastes inn etter {2:STRING}.
 STR_NEWGRF_ERROR_OTTD_VERSION_NUMBER                            :{1:STRING} krever OpenTTD versjon {2:STRING} eller nyere
-STR_NEWGRF_ERROR_AFTER_TRANSLATED_FILE                          :GRF-filen den var laget for å oversette
+STR_NEWGRF_ERROR_AFTER_TRANSLATED_FILE                          :NewGRF-filen den var laget for å oversette
 STR_NEWGRF_ERROR_TOO_MANY_NEWGRFS_LOADED                        :For mange NewGRF-er er innlastet
 STR_NEWGRF_ERROR_STATIC_GRF_CAUSES_DESYNC                       :Å laste inn {1:STRING} som statisk NewGRF med {2:STRING} kan forårsake synkroniseringsfeil
 STR_NEWGRF_ERROR_UNEXPECTED_SPRITE                              :Uventet sprite (sprite {3:NUM})
@@ -3617,7 +3660,7 @@ STR_NEWGRF_ERROR_INVALID_ID                                     :Forsøk på å 
 STR_NEWGRF_ERROR_CORRUPT_SPRITE                                 :{YELLOW}{STRING} inneholder en ødelagt sprite. Alle ødelagte spriter blir vist som røde spørsmålstegn (?).
 STR_NEWGRF_ERROR_MULTIPLE_ACTION_8                              :Inneholder flere Handling 8-oppføringer (sprite {3:NUM})
 STR_NEWGRF_ERROR_READ_BOUNDS                                    :Leste forbi slutten av pseudo-sprite (sprite {3:NUM})
-STR_NEWGRF_ERROR_GRM_FAILED                                     :Etterspurte GRF-ressurser ikke tilgjengelig (sprite {3:NUM})
+STR_NEWGRF_ERROR_GRM_FAILED                                     :Etterspurte NewGRF-ressurser ikke tilgjengelig (sprite {3:NUM})
 STR_NEWGRF_ERROR_FORCEFULLY_DISABLED                            :{1:STRING} ble deaktivert av {STRING}
 STR_NEWGRF_ERROR_INVALID_SPRITE_LAYOUT                          :Ugyldig/ukjent sprite layoutformat (sprite {3:NUM})
 STR_NEWGRF_ERROR_LIST_PROPERTY_TOO_LONG                         :For mange elementer i fortegnelse over eiendomsverdier (sprite {3:NUM}, property {4:HEX})
@@ -3627,13 +3670,13 @@ STR_NEWGRF_ERROR_INDPROD_CALLBACK                               :Ugyldig industr
 STR_NEWGRF_POPUP_CAUTION_CAPTION                                :{WHITE}Advarsel!
 STR_NEWGRF_CONFIRMATION_TEXT                                    :{YELLOW}Du er i ferd med å gjøre forandringer i et kjørende spill. Dette kan krasje OpenTTD. Ikke send inn bug-rapporter om slike feil.{}Er du helt sikker på at du vil gjøre dette?
 
-STR_NEWGRF_DUPLICATE_GRFID                                      :{WHITE}Kan ikke legge til fil: GRF ID finnes allerede
-STR_NEWGRF_COMPATIBLE_LOADED                                    :{ORANGE}Matchende fil ble ikke funnet (kompatibel GRF-fil lastet inn)
+STR_NEWGRF_DUPLICATE_GRFID                                      :{WHITE}Kan ikke legge til fil: NewGRF ID finnes allerede
+STR_NEWGRF_COMPATIBLE_LOADED                                    :{ORANGE}Matchende fil ble ikke funnet (kompatibel NewGRF-fil lastet inn)
 STR_NEWGRF_TOO_MANY_NEWGRFS                                     :{WHITE}Kan ikke legge til fil: Grense nådd for NewGRF-filer
 
-STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :{WHITE}Kompatibel GRF(er) lastet for manglende filer
-STR_NEWGRF_DISABLED_WARNING                                     :{WHITE}Manglende GRF-fil(er) har blitt deaktivert
-STR_NEWGRF_UNPAUSE_WARNING_TITLE                                :{YELLOW}Mangler GRF-fil(er)
+STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :{WHITE}Kompatibel NewGRF(er) lastet for manglende filer
+STR_NEWGRF_DISABLED_WARNING                                     :{WHITE}Manglende NewGRF-fil(er) har blitt deaktivert
+STR_NEWGRF_UNPAUSE_WARNING_TITLE                                :{YELLOW}Mangler NewGRF-fil(er)
 STR_NEWGRF_UNPAUSE_WARNING                                      :{WHITE}Å slå av pause kan medføre at OpenTTD krasjer. Ikke rapporter feil for etterfølgende krasjer.{}Er du sikker på at du vil slå av pause?
 
 # NewGRF status
@@ -3644,17 +3687,17 @@ STR_NEWGRF_LIST_COMPATIBLE                                      :{YELLOW}Fant ko
 STR_NEWGRF_LIST_MISSING                                         :{RED}Manglende filer
 
 # NewGRF 'it's broken' warnings
-STR_NEWGRF_BROKEN                                               :{WHITE}Atferden til NewGRF '{PUSH_COLOUR}{0:STRING}{POP_COLOUR}' vil trolig forårsake synkroniseringsfeil og/eller krasj.
-STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Det endret maskinvogntilstand for '{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' når det er utenfor en togstall
-STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Det endret kjøretøylengde for ''{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' når utenfor en togstall
-STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Det endret kjøretøykapasitet for '{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' når ikke i et depot eller under ombygging
+STR_NEWGRF_BROKEN                                               :{WHITE}Atferden til NewGRF '{0:STRING}' vil trolig forårsake synkroniseringsfeil og/eller krasj.
+STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Det endret maskinvogntilstand for '{1:ENGINE}' når det er utenfor en togstall
+STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Det endret kjøretøylengde for '{1:ENGINE}' når utenfor en togstall
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Det endret kjøretøykapasitet for '{1:ENGINE}' når ikke i et depot eller under ombygging
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Tog '{VEHICLE}' tilhørende '{COMPANY}' har ugyldig lengde. Dette skyldes trolig problemer med NewGRF-er. Spillet kan bli usynkronisert eller krasje.
 
-STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{PUSH_COLOUR}{0:STRING}{POP_COLOUR}' gir feilaktig informasjon
-STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}Vare-/ombyggingsinformasjon for '{PUSH_COLOUR}{1:ENGINE}{POP_COLOUR}' er forskjellig fra kjøpelisten etter bygging. Dette kan resultere i at automatisk fornyelse ikke fungerer på riktig måte
-STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}'{PUSH_COLOUR}{1:STRING}{POP_COLOUR}' forårsaket en uendelig løkke i produksjons-callback
-STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}Tilbakekall {1:HEX} rapporterte ukjent/ugyldig resultat {2:HEX}
-STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}'{PUSH_COLOUR}{1:STRING}{POP_COLOUR}' returnerte ugyldig varetype i produksjons-callback i {2:HEX}
+STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{0:STRING}' gir feilaktig informasjon
+STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}Vare-/ombyggingsinformasjon for '{1:ENGINE}' er forskjellig fra kjøpelisten etter bygging. Dette kan resultere i at automatisk fornyelse ikke fungerer på riktig måte
+STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}'{1:STRING}' forårsaket en uendelig løkke i produksjons-callback
+STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :Tilbakekall {1:HEX} rapporterte ukjent/ugyldig resultat {2:HEX}
+STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}'{1:STRING}' returnerte ugyldig varetype i produksjons-callback i {2:HEX}
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
 STR_NEWGRF_INVALID_CARGO                                        :<invalid cargo>
@@ -3677,10 +3720,11 @@ STR_SIGN_LIST_MATCH_CASE                                        :{BLACK}Skriftfo
 STR_SIGN_LIST_MATCH_CASE_TOOLTIP                                :{BLACK}Veksle mellom skriftformgjenkjennelse ved sammenligning av skiltnavn mot filterstrengen
 
 # Sign window
-STR_EDIT_SIGN_CAPTION                                           :{WHITE}Skriv inn skilttekst
+STR_EDIT_SIGN_CAPTION                                           :{WHITE}Endre skilt
 STR_EDIT_SIGN_LOCATION_TOOLTIP                                  :{BLACK}Sentrer hovedvinduet på skiltets lokasjon. Ctrl+klikk for å åpne et nytt tilleggsvindu på skiltets lokasjon
 STR_EDIT_SIGN_NEXT_SIGN_TOOLTIP                                 :{BLACK}Gå til neste skilt
 STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK}Gå til forrige skilt
+STR_EDIT_SIGN_TEXT_COLOUR_TOOLTIP                               :{BLACK}Tekstfarge på skilt
 
 STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}Skriv inn et navn på skiltet
 
@@ -3688,7 +3732,7 @@ STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}Skriv in
 STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}Byer ({COMMA} av {COMMA})
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- Ingen -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
-STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (By){BLACK} ({COMMA})
+STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{BLACK} ({COMMA}) {YELLOW}{CITY_ICON}
 STR_TOWN_DIRECTORY_LIST_TOOLTIP                                 :{BLACK}Bynavn - klikk på navnet for å gå til byen. Ctrl+klikk for å åpne et nytt tilleggsvindu over byen
 STR_TOWN_POPULATION                                             :{BLACK}Verdensbefolkning: {COMMA}
 
@@ -3894,14 +3938,14 @@ STR_CARGO_RATING_EXCELLENT                                      :Utmerket
 STR_CARGO_RATING_OUTSTANDING                                    :Fremragende
 
 STR_STATION_VIEW_CENTER_TOOLTIP                                 :{BLACK}Sentrer hovedvisningen på stasjonslokasjon. Ctrl+klikk for å åpne et nytt tilleggsvindu på stasjonslokasjon
-STR_STATION_VIEW_RENAME_TOOLTIP                                 :{BLACK}Endre stasjonens navn
+STR_STATION_VIEW_EDIT_TOOLTIP                                   :{BLACK}Endre stasjonsnavn eller flytt skilt
 
 STR_STATION_VIEW_SCHEDULED_TRAINS_TOOLTIP                       :{BLACK}Vis alle tog som har denne stasjonen på sin ordreliste
 STR_STATION_VIEW_SCHEDULED_ROAD_VEHICLES_TOOLTIP                :{BLACK}Vis alle kjøretøy som har denne stasjonen på sin ordreliste
 STR_STATION_VIEW_SCHEDULED_AIRCRAFT_TOOLTIP                     :{BLACK}Vis alle luftfartøy som har denne stasjonen på sin ordreliste
 STR_STATION_VIEW_SCHEDULED_SHIPS_TOOLTIP                        :{BLACK}Vis alle skip som har denne stasjonen på sin ordreliste
 
-STR_STATION_VIEW_RENAME_STATION_CAPTION                         :Endre navnet til stasjon/godsterminal
+STR_STATION_VIEW_EDIT_STATION_SIGN                              :{WHITE}Rediger stasjonsskilt
 
 STR_STATION_VIEW_CLOSE_AIRPORT                                  :{BLACK}Steng flyplass
 STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Hindre fly i å lande på denne flyplassen.
@@ -3909,11 +3953,11 @@ STR_STATION_VIEW_CLOSE_AIRPORT_TOOLTIP                          :{BLACK}Hindre f
 # Waypoint/buoy view window
 STR_WAYPOINT_VIEW_CAPTION                                       :{WHITE}{WAYPOINT}
 STR_WAYPOINT_VIEW_CENTER_TOOLTIP                                :{BLACK}Sentrer hovedvinduet på veipunktets lokasjon. Ctrl+klikk for å åpne et nytt tilleggsvindu på veipunktets lokasjon
-STR_WAYPOINT_VIEW_CHANGE_WAYPOINT_NAME                          :{BLACK}Endre veipunktets navn
+STR_WAYPOINT_VIEW_EDIT_TOOLTIP                                  :{BLACK}Gi veipunkt nytt navn eller flytt skilt
 STR_BUOY_VIEW_CENTER_TOOLTIP                                    :{BLACK}Sentrer hovedvinduet på bøyens lokasjon. Ctrl+klikk for å åpne et nytt tilleggsvindu på bøyens lokasjon
 STR_BUOY_VIEW_RENAME_TOOLTIP                                    :{BLACK}Endre navn på bøye
 
-STR_EDIT_WAYPOINT_NAME                                          :{WHITE}Endre navn på veipunkt
+STR_WAYPOINT_VIEW_EDIT_WAYPOINT_SIGN                            :{WHITE}Rediger veipunktsskilt
 
 # Finances window
 STR_FINANCES_CAPTION                                            :{WHITE}{COMPANY}s regnskap{BLACK}{COMPANY_NUM}
@@ -4028,12 +4072,12 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}{CURRENC
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}Industrier ({COMMA} av {COMMA})
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- Ingen -
-STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% transportert){BLACK}
+STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW} ({COMMA}% transportert)
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {STRING}, {STRING}, {STRING} og {NUM} flere...
+STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}, {STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {BLACK}{STRING}, {STRING}, {STRING} og {NUM} flere...
 STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}Industrinavn - klikk på navn for å sentrere hovedvisningen på industrien. Ctrl+klikk for å åpne et nytt tilleggsvindu på industrilokasjonen
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}Godtatte varer:{SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}Produserte varer: {SILVER}{STRING}
@@ -4051,9 +4095,9 @@ STR_INDUSTRY_VIEW_CARGO_GRAPH_TOOLTIP                           :{BLACK}Viser gr
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}Produksjonsnivå: {YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}Næringen har annonsert snarlig nedleggelse!
 
-STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}Trenger: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Produserer: {YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :, {STRING}{STRING}
+STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}Trenger: {YELLOW}{STRING}
+STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}Produserer: {YELLOW}{STRING}
+STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :{STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}Krever:
 STR_INDUSTRY_VIEW_ACCEPT_CARGO_SUFFIX                           :{YELLOW}{0:STRING}{BLACK}{3:STRING}
@@ -4185,6 +4229,20 @@ STR_PURCHASE_INFO_ALL_BUT                                       :Alt utenom {CAR
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}Største trekkraft: {GOLD}{FORCE}
 STR_PURCHASE_INFO_AIRCRAFT_RANGE                                :{BLACK}Rekkevidde: {GOLD}{COMMA} ruter
 STR_PURCHASE_INFO_AIRCRAFT_TYPE                                 :{BLACK}Flytype: {GOLD}{STRING}
+STR_PURCHASE_INFO_RAILTYPES                                     :{BLACK}Jernbanetyper: {GOLD}{STRING}
+
+# Vehicle sort details
+STR_PURCHASE_SORT_DETAILS_COST                                  :{CURRENCY_LONG}
+STR_PURCHASE_SORT_DETAILS_SPEED                                 :{VELOCITY}
+STR_PURCHASE_SORT_DETAILS_POWER                                 :{POWER}
+STR_PURCHASE_SORT_DETAILS_MAX_TE                                :{FORCE}
+STR_PURCHASE_SORT_DETAILS_INTRO_DATE                            :{NUM}
+STR_PURCHASE_SORT_DETAILS_RUNNINGCOST_YEAR                      :{CURRENCY_LONG}/år
+STR_PURCHASE_SORT_DETAILS_RUNNINGCOST_PERIOD                    :{CURRENCY_LONG}/periode
+STR_PURCHASE_SORT_DETAILS_RELIABILITY                           :{COMMA}%
+STR_PURCHASE_SORT_DETAILS_POWER_VS_RUNNING_COST                 :{DECIMAL}
+STR_PURCHASE_SORT_DETAILS_AIRCRAFT_RANGE                        :{COMMA} ruter
+STR_PURCHASE_SORT_DETAILS_CAPACITY                              :{COMMA}
 
 ###length 3
 STR_CARGO_TYPE_FILTER_ALL                                       :Alle varetyper
@@ -4345,7 +4403,15 @@ STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Du er n
 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Melding fra kjøretøysprodusent
+STR_ENGINE_PREVIEW_CAPTION_COUNT                                :{WHITE}Melding fra kjøretøysprodusent ({COMMA} av {COMMA})
 STR_ENGINE_PREVIEW_MESSAGE                                      :{GOLD}Vi har nettopp designet e{G n i t} ny{G "" "" tt} {STRING} - er du interessert i ett års ekslusivt bruk av de{G 0 n n t}, slik at vi kan se hvordan de{G 0 n n t} virker før de{G 0 n n t} blir allment tilgjengelig?
+
+STR_ENGINE_PREVIEW_PREVIOUS                                     :Forrige
+STR_ENGINE_PREVIEW_PREVIOUS_TOOLTIP                             :Klikk for å gå til forrige nye kjøretøy
+STR_ENGINE_PREVIEW_NEXT                                         :Neste
+STR_ENGINE_PREVIEW_NEXT_TOOLTIP                                 :Klikk for å gå til neste nye kjøretøy
+STR_ENGINE_PREVIEW_ENGINE_LIST                                  :{COMMA}: {ENGINE}
+STR_ENGINE_PREVIEW_ENGINE_LIST_TOOLTIP                          :Klikk for å hoppe til et nytt kjøretøy
 
 STR_ENGINE_PREVIEW_RAILROAD_LOCOMOTIVE                          :{G=neuter}lokomotiv
 STR_ENGINE_PREVIEW_ELRAIL_LOCOMOTIVE                            :{G=neuter}elektrisk lokomotiv
@@ -4368,6 +4434,7 @@ STR_ENGINE_PREVIEW_RUNCOST_YEAR                                 :Running Cost: {
 STR_ENGINE_PREVIEW_RUNCOST_PERIOD                               :Driftskostnader: {CURRENCY_LONG}/periode
 STR_ENGINE_PREVIEW_CAPACITY                                     :Kapasitet: {CARGO_LONG}
 STR_ENGINE_PREVIEW_CAPACITY_2                                   :Kapasitet: {CARGO_LONG}, {CARGO_LONG}
+STR_ENGINE_PREVIEW_RAILTYPES                                    :Jernbanetyper: {STRING}
 
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Erstatte {STRING} - {STRING}
@@ -4577,7 +4644,7 @@ STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}Vis kapa
 STR_VEHICLE_DETAIL_TAB_TOTAL_CARGO                              :{BLACK}Total last
 STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK}Vis total kapasitet på toget fordelt på varetype
 
-STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}Kapasitet: {LTBLUE}
+STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}Kapasitet: {LTBLUE}{STRING}
 
 # Vehicle refit
 STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE} (Bygg om)
@@ -5051,6 +5118,7 @@ STR_ERROR_ALREADY_AT_SEA_LEVEL                                  :{WHITE}... alle
 STR_ERROR_TOO_HIGH                                              :{WHITE}... for høyt
 STR_ERROR_ALREADY_LEVELLED                                      :{WHITE}... allerede flatt
 STR_ERROR_BRIDGE_TOO_HIGH_AFTER_LOWER_LAND                      :{WHITE}Etterpå vil broen over den være for høy.
+STR_ERROR_MUST_DEMOLISH_RIVER_FIRST                             :{WHITE}Må fjerne elv først
 
 # Company related errors
 STR_ERROR_CAN_T_CHANGE_COMPANY_NAME                             :{WHITE}Kan ikke endre selskapets navn...
@@ -5071,7 +5139,6 @@ STR_ERROR_CAN_T_GENERATE_TOWN                                   :{WHITE}Kan ikke
 STR_ERROR_CAN_T_RENAME_TOWN                                     :{WHITE}Kan ikke endre navn på byen...
 STR_ERROR_CAN_T_FOUND_TOWN_HERE                                 :{WHITE}Kan ikke grunnlegge by her...
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :{WHITE}Kan ikke utvide byen...
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}...{NBSP}for nær kanten av kartet
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}...{NBSP}for nær en annen by
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}...{NBSP}for mange byer
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... det er ikke mer plass på kartet
@@ -5089,12 +5156,12 @@ STR_ERROR_CAN_T_PROSPECT_INDUSTRY                               :{WHITE}Kan ikke
 STR_ERROR_INDUSTRY_TOO_CLOSE                                    :{WHITE}... for nærme en annen industri
 STR_ERROR_MUST_FOUND_TOWN_FIRST                                 :{WHITE}... må grunnlegge en by først
 STR_ERROR_ONLY_ONE_ALLOWED_PER_TOWN                             :{WHITE}...{NBSP}kun én tillates per by
-STR_ERROR_CAN_ONLY_BE_BUILT_IN_TOWNS_WITH_POPULATION_OF_1200    :{WHITE}...{NBSP}kan kun bygges i byer med minst 1{NBSP}200 innbyggere
-STR_ERROR_CAN_ONLY_BE_BUILT_IN_RAINFOREST                       :{WHITE}...{NBSP}kan kun bygges i regnskogområder
-STR_ERROR_CAN_ONLY_BE_BUILT_IN_DESERT                           :{WHITE}... kan kun bygges i ørkenområder
-STR_ERROR_CAN_ONLY_BE_BUILT_IN_TOWNS                            :{WHITE}...{NBSP}kan kun bygges i byer (erstatter hus)
+STR_ERROR_CAN_ONLY_BE_BUILT_IN_TOWNS_WITH_POPULATION_OF_1200    :kan kun bygges i byer med minst 1200 innbyggere
+STR_ERROR_CAN_ONLY_BE_BUILT_IN_RAINFOREST                       :kan kun bygges i regnskogområder
+STR_ERROR_CAN_ONLY_BE_BUILT_IN_DESERT                           :kan kun bygges i ørkenområder
+STR_ERROR_CAN_ONLY_BE_BUILT_IN_TOWNS                            :kan kun bygges i byer (erstatter hus)
 STR_ERROR_CAN_ONLY_BE_BUILT_NEAR_TOWN_CENTER                    :{WHITE}... kan bare bli bygd nær midten av byer
-STR_ERROR_CAN_ONLY_BE_BUILT_IN_LOW_AREAS                        :{WHITE}... kan kun bygges i lavtliggende områder
+STR_ERROR_CAN_ONLY_BE_BUILT_IN_LOW_AREAS                        :kan kun bygges i lavtliggende områder
 STR_ERROR_CAN_ONLY_BE_POSITIONED                                :{WHITE}... kan kun plasseres i nærheten av kartkanten
 STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :{WHITE}... skog kan bare plantes over snøgrensen
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :{WHITE}... kan kun bygges over snøgrensen
@@ -5107,12 +5174,12 @@ STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION         :{WHITE}Endre pa
 
 # Station construction related errors
 STR_ERROR_CAN_T_BUILD_RAILROAD_STATION                          :{WHITE}Kan ikke bygge jernbanestasjon her...
-STR_ERROR_CAN_T_BUILD_BUS_STATION                               :{WHITE}Kan ikke bygge busstasjon...
+STR_ERROR_CAN_T_BUILD_BUS_STATION                               :Kan ikke bygge busstasjon...
 STR_ERROR_CAN_T_BUILD_TRUCK_STATION                             :{WHITE}Kan ikke bygge godsterminal...
 STR_ERROR_CAN_T_BUILD_PASSENGER_TRAM_STATION                    :{WHITE}Kan ikke bygge trikkestopp for passasjerer...
-STR_ERROR_CAN_T_BUILD_CARGO_TRAM_STATION                        :{WHITE}Kan ikke bygge trikkestopp for varer...
+STR_ERROR_CAN_T_BUILD_CARGO_TRAM_STATION                        :Kan ikke bygge trikkestopp for varer...
 STR_ERROR_CAN_T_BUILD_DOCK_HERE                                 :{WHITE}Kan ikke bygge havn her...
-STR_ERROR_CAN_T_BUILD_AIRPORT_HERE                              :{WHITE}Kan ikke bygge lufthavn her...
+STR_ERROR_CAN_T_BUILD_AIRPORT_HERE                              :Kan ikke bygge lufthavn her...
 
 STR_ERROR_ADJOINS_MORE_THAN_ONE_EXISTING                        :{WHITE}Grenser til mer enn én eksisterende stasjon/godsterminal
 STR_ERROR_STATION_TOO_SPREAD_OUT                                :{WHITE}...{NBSP}stasjonen er spredd for mye
@@ -5125,6 +5192,7 @@ STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :{WHITE}For mang
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :{WHITE}For nærme enn annen havn
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :{WHITE}For nærme en annen flyplass
 STR_ERROR_CAN_T_RENAME_STATION                                  :{WHITE}Kan ikke endre stasjonens navn...
+STR_ERROR_CAN_T_MOVE_STATION_NAME                               :{WHITE}Kan ikke flytte stasjonskilt...
 STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :{WHITE}... veien er eid av en by
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :{WHITE}... veien vender i feil retning
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :{WHITE}... gjennomkjøringsstopper kan ikke ha hjørner
@@ -5156,6 +5224,7 @@ STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT                             :{WHITE}Kan ikke
 STR_ERROR_CAN_T_BUILD_ROAD_WAYPOINT                             :{WHITE}Kan ikke bygge veipunkt for vei her...
 STR_ERROR_CAN_T_POSITION_BUOY_HERE                              :{WHITE}Kan ikke plassere bøye her...
 STR_ERROR_CAN_T_CHANGE_WAYPOINT_NAME                            :{WHITE}Kan ikke endre navn på veipunkt...
+STR_ERROR_CAN_T_MOVE_WAYPOINT_NAME                              :{WHITE}Kan ikke flytte veipunktskilt...
 
 STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT                            :{WHITE}Kan ikke fjerne veipunkt for tog her...
 STR_ERROR_CAN_T_REMOVE_ROAD_WAYPOINT                            :{WHITE}Kan ikke fjerne veipunkt for vei her...
@@ -5205,7 +5274,7 @@ STR_ERROR_AUTOREPLACE_INCOMPATIBLE_CARGO                        :{WHITE}Nytt kj�
 STR_ERROR_AUTOREPLACE_INCOMPATIBLE_REFIT                        :{WHITE}Nytt transportmiddel kan ikke bygges om i ordre {NUM}
 
 # Rail construction errors
-STR_ERROR_IMPOSSIBLE_TRACK_COMBINATION                          :{WHITE}Umulig sporkombinasjon
+STR_ERROR_IMPOSSIBLE_TRACK_COMBINATION                          :Umulig sporkombinasjon
 STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :{WHITE}Må fjerne signaler først
 STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :{WHITE}Ingen passende jernbanespor
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :{WHITE}Må fjerne jernbanespor først
@@ -5237,7 +5306,7 @@ STR_ERROR_NO_SUITABLE_ROAD                                      :{WHITE}Ingen pa
 STR_ERROR_NO_SUITABLE_TRAMWAY                                   :{WHITE}Ingen passende trikkespor
 
 # Waterway construction errors
-STR_ERROR_CAN_T_BUILD_CANALS                                    :{WHITE}Kan ikke bygge kanaler her...
+STR_ERROR_CAN_T_BUILD_CANALS                                    :Kan ikke bygge kanaler her...
 STR_ERROR_CAN_T_BUILD_LOCKS                                     :{WHITE}Kan ikke bygge sluser her...
 STR_ERROR_CAN_T_PLACE_RIVERS                                    :{WHITE}Kan ikke plassere elver her...
 STR_ERROR_MUST_BE_BUILT_ON_WATER                                :{WHITE}... må bygges i sjøen
@@ -5246,7 +5315,7 @@ STR_ERROR_CAN_T_BUILD_ON_SEA                                    :{WHITE}... kan 
 STR_ERROR_CAN_T_BUILD_ON_CANAL                                  :{WHITE}... kan ikke bygge på en kanal
 STR_ERROR_CAN_T_BUILD_ON_RIVER                                  :{WHITE}... kan ikke bygge på en elv
 STR_ERROR_MUST_DEMOLISH_CANAL_FIRST                             :{WHITE}Må fjerne kanal først
-STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE                             :{WHITE}Kan ikke bygge akvedukt her...
+STR_ERROR_CAN_T_BUILD_AQUEDUCT_HERE                             :Kan ikke bygge akvedukt her...
 
 # Tree related errors
 STR_ERROR_TREE_ALREADY_HERE                                     :{WHITE}... det er allerede et tre her
@@ -5254,7 +5323,7 @@ STR_ERROR_TREE_WRONG_TERRAIN_FOR_TREE_TYPE                      :{WHITE}... feil
 STR_ERROR_CAN_T_PLANT_TREE_HERE                                 :{WHITE}Kan ikke plante trær her...
 
 # Bridge related errors
-STR_ERROR_CAN_T_BUILD_BRIDGE_HERE                               :{WHITE}Kan ikke bygge bro her...
+STR_ERROR_CAN_T_BUILD_BRIDGE_HERE                               :Kan ikke bygge bro her...
 STR_ERROR_MUST_DEMOLISH_BRIDGE_FIRST                            :{WHITE}Må rive bro først
 STR_ERROR_CAN_T_START_AND_END_ON                                :{WHITE}Kan ikke starte og slutte på samme felt
 STR_ERROR_BRIDGEHEADS_NOT_SAME_HEIGHT                           :{WHITE}Broender er ikke på samme nivå
@@ -5264,13 +5333,13 @@ STR_ERROR_START_AND_END_MUST_BE_IN                              :{WHITE}Start og
 STR_ERROR_ENDS_OF_BRIDGE_MUST_BOTH                              :{WHITE}...{NBSP}broens ender må være på land
 STR_ERROR_BRIDGE_TOO_LONG                                       :{WHITE}... broen er for lang
 STR_ERROR_BRIDGE_THROUGH_MAP_BORDER                             :{WHITE}Bro vil ende utenfor kartet
-STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}Broen er for lav for en stasjon
-STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}Broen er for lav for en holdeplass
-STR_ERROR_BRIDGE_TOO_LOW_FOR_DOCK                               :{WHITE}Broen er for lav for en havn
-STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}Broen er for lav for en bøye
-STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}Broen er for lav for et veipunkt
-STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}Broen er for lav for et veipunkt
-STR_ERROR_BRIDGE_TOO_LOW_FOR_LOCK                               :{WHITE}Broen er for lav for en sluse
+STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION                            :{WHITE}Broen er {HEIGHT} for lav for en stasjon
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP                           :{WHITE}Broen er {HEIGHT} for lav for en holdeplass
+STR_ERROR_BRIDGE_TOO_LOW_FOR_DOCK                               :{WHITE}Broen er {HEIGHT} for lav for en havn
+STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :{WHITE}Broen er {HEIGHT} for lav for en bøye
+STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :{WHITE}Broen er {HEIGHT} for lav for et veipunkt
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :{WHITE}Broen er {HEIGHT} for lav for et veipunkt
+STR_ERROR_BRIDGE_TOO_LOW_FOR_LOCK                               :{WHITE}Broen er {HEIGHT} for lav for en sluse
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :{WHITE}Kan ikke bygge tunnel her...
@@ -5288,7 +5357,7 @@ STR_ERROR_OBJECT_IN_THE_WAY                                     :{WHITE}Objekt e
 STR_ERROR_COMPANY_HEADQUARTERS_IN                               :{WHITE}... selskapets hovedkontor er i veien
 STR_ERROR_CAN_T_PURCHASE_THIS_LAND                              :{WHITE}Kan ikke kjøpe dette landområdet...
 STR_ERROR_YOU_ALREADY_OWN_IT                                    :{WHITE}... du eier det allerede!
-STR_ERROR_BUILD_OBJECT_LIMIT_REACHED                            :{WHITE}... nådd grense for byggetiltak
+STR_ERROR_BUILD_OBJECT_LIMIT_REACHED                            :nådd grense for byggetiltak
 
 # Group related errors
 STR_ERROR_GROUP_CAN_T_CREATE                                    :{WHITE}Kan ikke opprette gruppe...
@@ -5351,16 +5420,16 @@ STR_ERROR_CAN_T_RENAME_SHIP_TYPE                                :{WHITE}Kan ikke
 STR_ERROR_CAN_T_RENAME_AIRCRAFT_TYPE                            :{WHITE}Kan ikke gi luftfartøytypen nytt navn...
 
 ###length VEHICLE_TYPES
-STR_ERROR_CAN_T_SELL_TRAIN                                      :{WHITE}Kan ikke selge jernbanemateriell...
-STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :{WHITE}Kan ikke selge kjøretøy...
-STR_ERROR_CAN_T_SELL_SHIP                                       :{WHITE}Kan ikke selge skip...
-STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :{WHITE}Kan ikke selge luftfartøy...
+STR_ERROR_CAN_T_SELL_TRAIN                                      :Kan ikke selge jernbanemateriell...
+STR_ERROR_CAN_T_SELL_ROAD_VEHICLE                               :Kan ikke selge kjøretøy...
+STR_ERROR_CAN_T_SELL_SHIP                                       :Kan ikke selge skip...
+STR_ERROR_CAN_T_SELL_AIRCRAFT                                   :Kan ikke selge luftfartøy...
 
 ###length VEHICLE_TYPES
-STR_ERROR_CAN_T_SELL_ALL_TRAIN                                  :{WHITE}Kan ikke selge alt jernbanemateriell...
-STR_ERROR_CAN_T_SELL_ALL_ROAD_VEHICLE                           :{WHITE}Kan ikke selge alle kjøretøy...
-STR_ERROR_CAN_T_SELL_ALL_SHIP                                   :{WHITE}Kan ikke selge alle skip...
-STR_ERROR_CAN_T_SELL_ALL_AIRCRAFT                               :{WHITE}Kan ikke selge alle luftfartøy...
+STR_ERROR_CAN_T_SELL_ALL_TRAIN                                  :Kan ikke selge alt jernbanemateriell...
+STR_ERROR_CAN_T_SELL_ALL_ROAD_VEHICLE                           :Kan ikke selge alle kjøretøy...
+STR_ERROR_CAN_T_SELL_ALL_SHIP                                   :Kan ikke selge alle skip...
+STR_ERROR_CAN_T_SELL_ALL_AIRCRAFT                               :Kan ikke selge alle luftfartøy...
 
 ###length VEHICLE_TYPES
 STR_ERROR_CAN_T_AUTOREPLACE_TRAIN                               :{WHITE}Kan ikke bytte ut jernbanemateriell automatisk...
@@ -5404,8 +5473,8 @@ STR_ERROR_CAN_T_MOVE_THIS_ORDER                                 :{WHITE}Kan ikke
 STR_ERROR_CAN_T_SKIP_ORDER                                      :{WHITE}Kan ikke hoppe over nåværende ordre...
 STR_ERROR_CAN_T_SKIP_TO_ORDER                                   :{WHITE}Kan ikke hoppe til den valgte ordren...
 STR_ERROR_CAN_T_COPY_SHARE_ORDER                                :{WHITE}... kjøretøyet kan ikke nå alle stasjoner
-STR_ERROR_CAN_T_ADD_ORDER                                       :{WHITE}... kjøretøyet kan ikke gå til den stasjonen
-STR_ERROR_CAN_T_ADD_ORDER_SHARED                                :{WHITE}... et kjøretøy som deler denne ordren kan ikke gå til den stasjonen
+STR_ERROR_CAN_T_ADD_ORDER                                       :kjøretøyet kan ikke gå til den stasjonen
+STR_ERROR_CAN_T_ADD_ORDER_SHARED                                :et kjøretøy som deler denne ordren kan ikke gå til den stasjonen
 STR_ERROR_CAN_T_COPY_ORDER_VEHICLE_LIST                         :{WHITE}... ikke alle kjøretøyene har like ordre
 STR_ERROR_CAN_T_SHARE_ORDER_VEHICLE_LIST                        :{WHITE}... Alle transportmidler deler ikke ordre
 
@@ -5959,4 +6028,3 @@ STR_BADGE_CONFIG_FILTERS                                        :{WHITE}Merkefil
 STR_BADGE_CONFIG_PREVIEW                                        :Forhåndsvis bilde
 STR_BADGE_CONFIG_NAME                                           :Navn
 STR_BADGE_FILTER_ANY_LABEL                                      :Vilkårlig {STRING}
-STR_BADGE_FILTER_IS_LABEL                                       :{STRING} er {STRING}

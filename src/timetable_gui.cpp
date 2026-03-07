@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file timetable_gui.cpp GUI for time tabling. */
@@ -110,7 +110,7 @@ static bool CanDetermineTimeTaken(const Order &order, bool travelling)
 	if (travelling && !order.IsTravelTimetabled()) return false;
 	/* No wait time but we are loading at this timetabled station */
 	if (!travelling && !order.IsWaitTimetabled() && order.IsType(OT_GOTO_STATION) &&
-			!(order.GetNonStopType() & ONSF_NO_STOP_AT_DESTINATION_STATION)) {
+			!order.GetNonStopType().Test(OrderNonStopFlag::NoDestination)) {
 		return false;
 	}
 
@@ -208,7 +208,7 @@ struct TimetableWindow : Window {
 	{
 		assert(v->vehicle_flags.Test(VehicleFlag::TimetableStarted));
 
-		bool travelling = (!v->current_order.IsType(OT_LOADING) || v->current_order.GetNonStopType() == ONSF_STOP_EVERYWHERE);
+		bool travelling = (!v->current_order.IsType(OT_LOADING) || v->current_order.GetNonStopType().None());
 		TimerGameTick::Ticks start_time = -v->current_order_time;
 
 		/* If arrival and departure times are in days, compensate for the current date_fract. */
@@ -240,7 +240,6 @@ struct TimetableWindow : Window {
 				}
 				[[fallthrough]];
 
-			case WID_VT_ARRIVAL_DEPARTURE_SELECTION:
 			case WID_VT_TIMETABLE_PANEL:
 				fill.height = resize.height = GetCharacterHeight(FS_NORMAL);
 				size.height = 8 * resize.height + padding.height;
@@ -349,7 +348,7 @@ struct TimetableWindow : Window {
 				if (selected % 2 != 0) {
 					disable = order != nullptr && (order->IsType(OT_CONDITIONAL) || order->IsType(OT_IMPLICIT));
 				} else {
-					disable = order == nullptr || ((!order->IsType(OT_GOTO_STATION) || (order->GetNonStopType() & ONSF_NO_STOP_AT_DESTINATION_STATION)) && !order->IsType(OT_CONDITIONAL));
+					disable = order == nullptr || ((!order->IsType(OT_GOTO_STATION) || order->GetNonStopType().Test(OrderNonStopFlag::NoDestination)) && !order->IsType(OT_CONDITIONAL));
 				}
 			}
 			bool disable_speed = disable || selected % 2 == 0 || v->type == VEH_AIRCRAFT;
@@ -640,7 +639,7 @@ struct TimetableWindow : Window {
 				} else {
 					ShowSetDateWindow(this, v->index.base(), TimerGameEconomy::date, TimerGameEconomy::year, TimerGameEconomy::year + MAX_TIMETABLE_START_YEARS,
 						[ctrl=_ctrl_pressed](const Window *w, TimerGameEconomy::Date date) {
-							Command<CMD_SET_TIMETABLE_START>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, w->window_number, ctrl, GetStartTickFromDate(date));
+							Command<Commands::SetTimetableStart>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, w->window_number, ctrl, GetStartTickFromDate(date));
 						}
 					);
 				}
@@ -693,9 +692,9 @@ struct TimetableWindow : Window {
 			case WID_VT_CLEAR_TIME: { // Clear waiting time.
 				auto [order_id, mtf] = PackTimetableArgs(v, this->sel_index, false);
 				if (_ctrl_pressed) {
-					Command<CMD_BULK_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, 0);
+					Command<Commands::ChangeTimetableBulk>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, 0);
 				} else {
-					Command<CMD_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, 0);
+					Command<Commands::ChangeTimetable>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, 0);
 				}
 				break;
 			}
@@ -703,19 +702,19 @@ struct TimetableWindow : Window {
 			case WID_VT_CLEAR_SPEED: { // Clear max speed button.
 				auto [order_id, mtf] = PackTimetableArgs(v, this->sel_index, true);
 				if (_ctrl_pressed) {
-					Command<CMD_BULK_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, UINT16_MAX);
+					Command<Commands::ChangeTimetableBulk>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, UINT16_MAX);
 				} else {
-					Command<CMD_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, UINT16_MAX);
+					Command<Commands::ChangeTimetable>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, UINT16_MAX);
 				}
 				break;
 			}
 
 			case WID_VT_RESET_LATENESS: // Reset the vehicle's late counter.
-				Command<CMD_SET_VEHICLE_ON_TIME>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, _ctrl_pressed);
+				Command<Commands::SetVehicleOnTime>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, _ctrl_pressed);
 				break;
 
 			case WID_VT_AUTOFILL: { // Autofill the timetable.
-				Command<CMD_AUTOFILL_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, !v->vehicle_flags.Test(VehicleFlag::AutofillTimetable), _ctrl_pressed);
+				Command<Commands::AutofillTimetable>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, !v->vehicle_flags.Test(VehicleFlag::AutofillTimetable), _ctrl_pressed);
 				break;
 			}
 
@@ -744,9 +743,9 @@ struct TimetableWindow : Window {
 				val = ConvertDisplaySpeedToKmhishSpeed(val, v->type);
 
 				if (this->change_timetable_all) {
-					Command<CMD_BULK_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, ClampTo<uint16_t>(val));
+					Command<Commands::ChangeTimetableBulk>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, ClampTo<uint16_t>(val));
 				} else {
-					Command<CMD_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, ClampTo<uint16_t>(val));
+					Command<Commands::ChangeTimetable>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, ClampTo<uint16_t>(val));
 				}
 				break;
 			}
@@ -755,15 +754,15 @@ struct TimetableWindow : Window {
 				val *= TicksPerTimetableUnit();
 
 				if (this->change_timetable_all) {
-					Command<CMD_BULK_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, ClampTo<uint16_t>(val));
+					Command<Commands::ChangeTimetableBulk>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, mtf, ClampTo<uint16_t>(val));
 				} else {
-					Command<CMD_CHANGE_TIMETABLE>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, ClampTo<uint16_t>(val));
+					Command<Commands::ChangeTimetable>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, order_id, mtf, ClampTo<uint16_t>(val));
 				}
 				break;
 
 			case WID_VT_START_DATE: {
 				TimerGameTick::TickCounter start_tick = TimerGameTick::counter + (val * Ticks::TICKS_PER_SECOND);
-				Command<CMD_SET_TIMETABLE_START>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, this->change_timetable_all, start_tick);
+				Command<Commands::SetTimetableStart>::Post(STR_ERROR_CAN_T_TIMETABLE_VEHICLE, v->index, this->change_timetable_all, start_tick);
 				break;
 			}
 
@@ -790,14 +789,14 @@ struct TimetableWindow : Window {
 	/**
 	 * In real-time mode, the timetable GUI shows relative times and needs to be redrawn every second.
 	 */
-	const IntervalTimer<TimerGameTick> redraw_interval = { { TimerGameTick::Priority::NONE, Ticks::TICKS_PER_SECOND }, [this](auto) {
+	const IntervalTimer<TimerGameTick> redraw_interval = { { TimerGameTick::Priority::None, Ticks::TICKS_PER_SECOND }, [this](auto) {
 		if (_settings_client.gui.timetable_mode == TimetableMode::Seconds) {
 			this->SetDirty();
 		}
 	}};
 };
 
-static constexpr NWidgetPart _nested_timetable_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_timetable_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_GREY),
 		NWidget(WWT_CAPTION, COLOUR_GREY, WID_VT_CAPTION),

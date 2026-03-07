@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file road_func.h Functions related to roads. */
@@ -125,12 +125,13 @@ inline RoadBits AxisToRoadBits(Axis a)
 inline Money RoadMaintenanceCost(RoadType roadtype, uint32_t num, uint32_t total_num)
 {
 	assert(roadtype < ROADTYPE_END);
-	return (_price[PR_INFRASTRUCTURE_ROAD] * GetRoadTypeInfo(roadtype)->maintenance_multiplier * num * (1 + IntSqrt(total_num))) >> 12;
+	return (_price[Price::InfrastructureRoad] * GetRoadTypeInfo(roadtype)->maintenance_multiplier * num * (1 + IntSqrt(total_num))) >> 12;
 }
 
 /**
  * Test if a road type has catenary
  * @param roadtype Road type to test
+ * @return \c true iff the road should have catenary.
  */
 inline bool HasRoadCatenary(RoadType roadtype)
 {
@@ -141,6 +142,7 @@ inline bool HasRoadCatenary(RoadType roadtype)
 /**
  * Test if we should draw road catenary
  * @param roadtype Road type to test
+ * @return \c true iff the road should have catenary and catenary is visible.
  */
 inline bool HasRoadCatenaryDrawn(RoadType roadtype)
 {
@@ -159,7 +161,7 @@ void UpdateAdjacentLevelCrossingTilesOnLevelCrossingRemoval(TileIndex tile, Axis
 void UpdateCompanyRoadInfrastructure(RoadType rt, Owner o, int count);
 
 struct TileInfo;
-enum Roadside : uint8_t;
+enum class Roadside : uint8_t;
 void DrawRoadOverlays(const TileInfo *ti, PaletteID pal, const RoadTypeInfo *road_rti, const RoadTypeInfo *tram_rit, uint road_offset, uint tram_offset, bool draw_underlay = true);
 void DrawRoadGroundSprites(const TileInfo *ti, RoadBits road, RoadBits tram, const RoadTypeInfo *road_rti, const RoadTypeInfo *tram_rti, Roadside roadside, bool snow_or_desert);
 

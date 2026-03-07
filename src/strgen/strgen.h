@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file strgen.h Structures related to strgen. */
@@ -63,6 +63,7 @@ struct StringReader {
 	bool translation; ///< Are we reading a translation, implies !master. However, the base translation will have this false.
 
 	StringReader(StringData &data, const std::string &file, bool master, bool translation);
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~StringReader() = default;
 	void HandleString(std::string_view str);
 
@@ -74,7 +75,8 @@ struct StringReader {
 
 	/**
 	 * Handle the pragma of the file.
-	 * @param str    The pragma string to parse.
+	 * @param str The pragma string to parse.
+	 * @param lang The header metadata to write the parsed pragma data to.
 	 */
 	virtual void HandlePragma(std::string_view str, LanguagePackHeader &lang);
 
@@ -99,7 +101,7 @@ struct HeaderWriter {
 	 */
 	virtual void Finalise(const StringData &data) = 0;
 
-	/** Especially destroy the subclasses. */
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~HeaderWriter() = default;
 
 	void WriteHeader(const StringData &data);
@@ -125,7 +127,7 @@ struct LanguageWriter {
 	 */
 	virtual void Finalise() = 0;
 
-	/** Especially destroy the subclasses. */
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~LanguageWriter() = default;
 
 	virtual void WriteLength(size_t length);
@@ -137,11 +139,13 @@ struct CmdStruct;
 struct CmdPair {
 	const CmdStruct *cmd;
 	std::string param;
+
+	auto operator<=>(const CmdPair &other) const = default;
 };
 
 struct ParsedCommandStruct {
 	std::vector<CmdPair> non_consuming_commands;
-	std::array<const CmdStruct*, 32> consuming_commands{ nullptr }; // ordered by param #
+	std::array<const CmdStruct*, 32> consuming_commands{ nullptr }; ///< Ordered by param #.
 };
 
 const CmdStruct *TranslateCmdForCompare(const CmdStruct *a);

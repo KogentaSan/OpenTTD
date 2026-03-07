@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file water.h Functions related to water (management) */
+/** @file water.h Functions related to water management. */
 
 #ifndef WATER_H
 #define WATER_H
@@ -39,6 +39,8 @@ void MakeWaterKeepingClass(TileIndex tile, Owner o);
 void CheckForDockingTile(TileIndex t);
 
 void MakeRiverAndModifyDesertZoneAround(TileIndex tile);
+void RiverMakeWider(TileIndex tile, TileIndex origin_tile);
+bool RiverFlowsDown(TileIndex begin, TileIndex end);
 static const uint RIVER_OFFSET_DESERT_DISTANCE = 5; ///< Circular tile search diameter to create non-desert around a river tile.
 
 bool IsWateredTile(TileIndex tile, Direction from);
@@ -50,7 +52,7 @@ bool IsWateredTile(TileIndex tile, Direction from);
  */
 inline Money CanalMaintenanceCost(uint32_t num)
 {
-	return (_price[PR_INFRASTRUCTURE_WATER] * num * (1 + IntSqrt(num))) >> 6; // 6 bits scaling.
+	return (_price[Price::InfrastructureWater] * num * (1 + IntSqrt(num))) >> 6; // 6 bits scaling.
 }
 
 #endif /* WATER_H */

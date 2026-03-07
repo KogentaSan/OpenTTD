@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_airport.h NewGRF handling of airports. */
@@ -58,7 +58,10 @@ public:
 		return *this;
 	}
 
-	/** Get the StationGfx for the current tile. */
+	/**
+	 * Get the StationGfx for the current tile.
+	 * @return The identifier of the graphics for this tile.
+	 */
 	StationGfx GetStationGfx() const
 	{
 		return this->iter->gfx;
@@ -70,18 +73,13 @@ public:
 	}
 };
 
-/** List of default airport classes. */
-enum AirportClassID : uint8_t {
-	APC_BEGIN     = 0,  ///< Lowest valid airport class id
-	APC_SMALL     = 0,  ///< id for small airports class
-	APC_LARGE,          ///< id for large airports class
-	APC_HUB,            ///< id for hub airports class
-	APC_HELIPORT,       ///< id for heliports
-	APC_MAX       = 16, ///< maximum number of airport classes
-};
+/** Class IDs for airports. */
+using AirportClassID = PoolID<uint8_t, struct AirportClassIDTag, 16, UINT8_MAX>;
 
-/** Allow incrementing of AirportClassID variables */
-DECLARE_INCREMENT_DECREMENT_OPERATORS(AirportClassID)
+static constexpr AirportClassID APC_SMALL{0}; ///< id for small airports class.
+static constexpr AirportClassID APC_LARGE{1}; ///< id for large airports class.
+static constexpr AirportClassID APC_HUB{2}; ///< id for hub airports class.
+static constexpr AirportClassID APC_HELIPORT{3}; ///< id for heliports.
 
 /** TTDP airport types. Used to map our types to TTDPatch's */
 enum TTDPAirportType : uint8_t {
@@ -133,7 +131,10 @@ struct AirportSpec : NewGRFSpecBase<AirportClassID> {
 
 	static void ResetAirports();
 
-	/** Get the index of this spec. */
+	/**
+	 * Get the index of this spec.
+	 * @return The offset in the specs table.
+	 */
 	uint8_t GetIndex() const
 	{
 		assert(this >= std::begin(specs) && this < std::end(specs));
@@ -149,7 +150,7 @@ private:
 };
 
 /** Information related to airport classes. */
-using AirportClass = NewGRFClass<AirportSpec, AirportClassID, APC_MAX>;
+using AirportClass = NewGRFClass<AirportSpec, AirportClassID>;
 
 void BindAirportSpecs();
 

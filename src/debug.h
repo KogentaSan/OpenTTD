@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file debug.h Functions related to debugging. */
@@ -86,6 +86,7 @@ struct TicToc {
 			GetStates().push_back(this);
 		}
 
+		/** Remove ourselves from the thread local states. */
 		~State()
 		{
 			/* Container might be already destroyed. */
@@ -111,6 +112,7 @@ struct TicToc {
 
 	inline TicToc(State &state) : state(state), chrono_start(std::chrono::high_resolution_clock::now()) { }
 
+	/** Update the state with the time since the constructor call. */
 	inline ~TicToc()
 	{
 		this->state.chrono_sum += (std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - this->chrono_start)).count();

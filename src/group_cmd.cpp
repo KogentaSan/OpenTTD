@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file group_cmd.cpp Handling of the engine groups */
+/** @file group_cmd.cpp Handling of the engine groups. */
 
 #include "stdafx.h"
 #include "command_func.h"
@@ -47,7 +47,16 @@ void GroupStatistics::Clear()
 void UpdateGroupChildren()
 {
 	for (Group *g : Group::Iterate()) {
-		if (g->parent != GroupID::Invalid()) Group::Get(g->parent)->children.insert(g->index);
+		if (g->parent == GroupID::Invalid()) continue;
+		Group *pg = Group::GetIfValid(g->parent);
+		if (pg == nullptr || pg->owner != g->owner || pg->vehicle_type != g->vehicle_type) {
+			/* Due to a bug, groups which should have been deleted could be left with an invalid parent.
+			 * Keep the group but clear the invalid parent so that the game is recoverable. */
+			Debug(misc, 2, "Group {} has invalid parent {}", g->index, g->parent);
+			g->parent = GroupID::Invalid();
+		} else {
+			pg->children.insert(g->index);
+		}
 	}
 }
 
@@ -174,6 +183,7 @@ uint16_t GroupStatistics::GetNumEngines(EngineID engine) const
 
 /**
  * Add a vehicle's last year profit to the profit sum of its group.
+ * @param v The vehicle to update the statistics for.
  */
 /* static */ void GroupStatistics::AddProfitLastYear(const Vehicle *v)
 {
@@ -186,6 +196,7 @@ uint16_t GroupStatistics::GetNumEngines(EngineID engine) const
 
 /**
  * Add a vehicle to the profit sum of its group.
+ * @param v The vehicle to update the statistics for.
  */
 /* static */ void GroupStatistics::VehicleReachedMinAge(const Vehicle *v)
 {
@@ -306,8 +317,8 @@ static void PropagateChildLivery(const Group *g, bool reset_cache)
 
 	for (const GroupID &childgroup : g->children) {
 		Group *cg = Group::Get(childgroup);
-		if (!HasBit(cg->livery.in_use, 0)) cg->livery.colour1 = g->livery.colour1;
-		if (!HasBit(cg->livery.in_use, 1)) cg->livery.colour2 = g->livery.colour2;
+		if (!cg->livery.in_use.Test(Livery::Flag::Primary)) cg->livery.colour1 = g->livery.colour1;
+		if (!cg->livery.in_use.Test(Livery::Flag::Secondary)) cg->livery.colour2 = g->livery.colour2;
 		PropagateChildLivery(cg, reset_cache);
 	}
 }
@@ -321,8 +332,8 @@ void UpdateCompanyGroupLiveries(const Company *c)
 {
 	for (Group *g : Group::Iterate()) {
 		if (g->owner == c->index && g->parent == GroupID::Invalid()) {
-			if (!HasBit(g->livery.in_use, 0)) g->livery.colour1 = c->livery[LS_DEFAULT].colour1;
-			if (!HasBit(g->livery.in_use, 1)) g->livery.colour2 = c->livery[LS_DEFAULT].colour2;
+			if (!g->livery.in_use.Test(Livery::Flag::Primary)) g->livery.colour1 = c->livery[LS_DEFAULT].colour1;
+			if (!g->livery.in_use.Test(Livery::Flag::Secondary)) g->livery.colour2 = c->livery[LS_DEFAULT].colour2;
 			PropagateChildLivery(g, false);
 		}
 	}
@@ -349,7 +360,7 @@ std::tuple<CommandCost, GroupID> CmdCreateGroup(DoCommandFlags flags, VehicleTyp
 	}
 
 	if (flags.Test(DoCommandFlag::Execute)) {
-		Group *g = new Group(_current_company, vt);
+		Group *g = Group::Create(_current_company, vt);
 
 		Company *c = Company::Get(g->owner);
 		g->number = c->freegroups.UseID(c->freegroups.NextID());
@@ -387,11 +398,12 @@ CommandCost CmdDeleteGroup(DoCommandFlags flags, GroupID group_id)
 	if (g == nullptr || g->owner != _current_company) return CMD_ERROR;
 
 	/* Remove all vehicles from the group */
-	Command<CMD_REMOVE_ALL_VEHICLES_GROUP>::Do(flags, group_id);
+	Command<Commands::RemoveAllVehiclesGroup>::Do(flags, group_id);
 
-	/* Delete sub-groups */
-	for (const GroupID &childgroup : g->children) {
-		Command<CMD_DELETE_GROUP>::Do(flags, childgroup);
+	/* Delete sub-groups, using a copy to avoid invalid iteration. */
+	FlatSet<GroupID> children = g->children;
+	for (const GroupID &childgroup : children) {
+		Command<Commands::DeleteGroup>::Do(flags, childgroup);
 	}
 
 	if (flags.Test(DoCommandFlag::Execute)) {
@@ -402,7 +414,7 @@ CommandCost CmdDeleteGroup(DoCommandFlags flags, GroupID group_id)
 			Company *c = Company::Get(g->owner);
 
 			/* If we set an autoreplace for the group we delete, remove it. */
-			for (EngineRenew *er : EngineRenew::Iterate()) {
+			for (const EngineRenew *er : EngineRenew::Iterate()) {
 				if (er->group_id == g->index) RemoveEngineReplacementForCompany(c, er->from, g->index, flags);
 			}
 
@@ -480,11 +492,11 @@ CommandCost CmdAlterGroup(DoCommandFlags flags, AlterGroupMode mode, GroupID gro
 
 			GroupStatistics::UpdateAutoreplace(g->owner);
 
-			if (!HasBit(g->livery.in_use, 0) || !HasBit(g->livery.in_use, 1)) {
+			if (!g->livery.in_use.All({Livery::Flag::Primary, Livery::Flag::Secondary})) {
 				/* Update livery with new parent's colours if either colour is default. */
 				const Livery *livery = GetParentLivery(g);
-				if (!HasBit(g->livery.in_use, 0)) g->livery.colour1 = livery->colour1;
-				if (!HasBit(g->livery.in_use, 1)) g->livery.colour2 = livery->colour2;
+				if (!g->livery.in_use.Test(Livery::Flag::Primary)) g->livery.colour1 = livery->colour1;
+				if (!g->livery.in_use.Test(Livery::Flag::Secondary)) g->livery.colour2 = livery->colour2;
 
 				PropagateChildLivery(g, true);
 				MarkWholeScreenDirty();
@@ -546,6 +558,7 @@ static void AddVehicleToGroup(Vehicle *v, GroupID new_g)
  * @param group_id index of group
  * @param veh_id vehicle to add to a group
  * @param add_shared Add shared vehicles as well.
+ * @param vli The list of vehicles that should be added to the group (can be empty).
  * @return the cost of this operation or an error
  */
 std::tuple<CommandCost, GroupID> CmdAddVehicleGroup(DoCommandFlags flags, GroupID group_id, VehicleID veh_id, bool add_shared, const VehicleListIdentifier &vli)
@@ -557,7 +570,7 @@ std::tuple<CommandCost, GroupID> CmdAddVehicleGroup(DoCommandFlags flags, GroupI
 	if (veh_id == VehicleID::Invalid() && vli.Valid()) {
 		if (!GenerateVehicleSortList(&list, vli) || list.empty()) return { CMD_ERROR, GroupID::Invalid() };
 	} else {
-		Vehicle *v = Vehicle::GetIfValid(veh_id);
+		const Vehicle *v = Vehicle::GetIfValid(veh_id);
 		if (v == nullptr) return { CMD_ERROR, GroupID::Invalid() };
 		list.push_back(v);
 	}
@@ -568,7 +581,7 @@ std::tuple<CommandCost, GroupID> CmdAddVehicleGroup(DoCommandFlags flags, GroupI
 	}
 
 	if (Group::IsValidID(new_g)) {
-		Group *g = Group::Get(new_g);
+		const Group *g = Group::Get(new_g);
 		if (g->owner != _current_company || g->vehicle_type != vtype) return { CMD_ERROR, GroupID::Invalid() };
 	}
 
@@ -626,7 +639,7 @@ CommandCost CmdAddSharedVehicleGroup(DoCommandFlags flags, GroupID id_g, Vehicle
 
 				/* For each shared vehicles add it to the group */
 				for (Vehicle *v2 = v->FirstShared(); v2 != nullptr; v2 = v2->NextShared()) {
-					if (v2->group_id != id_g) Command<CMD_ADD_VEHICLE_GROUP>::Do(flags, id_g, v2->index, false, VehicleListIdentifier{});
+					if (v2->group_id != id_g) Command<Commands::AddVehicleToGroup>::Do(flags, id_g, v2->index, false, VehicleListIdentifier{});
 				}
 			}
 		}
@@ -646,7 +659,7 @@ CommandCost CmdAddSharedVehicleGroup(DoCommandFlags flags, GroupID id_g, Vehicle
  */
 CommandCost CmdRemoveAllVehiclesGroup(DoCommandFlags flags, GroupID group_id)
 {
-	Group *g = Group::GetIfValid(group_id);
+	const Group *g = Group::GetIfValid(group_id);
 
 	if (g == nullptr || g->owner != _current_company) return CMD_ERROR;
 
@@ -657,7 +670,7 @@ CommandCost CmdRemoveAllVehiclesGroup(DoCommandFlags flags, GroupID group_id)
 				if (v->group_id != group_id) continue;
 
 				/* Add The Vehicle to the default group */
-				Command<CMD_ADD_VEHICLE_GROUP>::Do(flags, DEFAULT_GROUP, v->index, false, VehicleListIdentifier{});
+				Command<Commands::AddVehicleToGroup>::Do(flags, DEFAULT_GROUP, v->index, false, VehicleListIdentifier{});
 			}
 		}
 
@@ -673,6 +686,7 @@ CommandCost CmdRemoveAllVehiclesGroup(DoCommandFlags flags, GroupID group_id)
  * @param group_id Group ID.
  * @param primary Set primary instead of secondary colour
  * @param colour Colour.
+ * @return The (zero) cost or error.
  */
 CommandCost CmdSetGroupLivery(DoCommandFlags flags, GroupID group_id, bool primary, Colours colour)
 {
@@ -684,11 +698,11 @@ CommandCost CmdSetGroupLivery(DoCommandFlags flags, GroupID group_id, bool prima
 
 	if (flags.Test(DoCommandFlag::Execute)) {
 		if (primary) {
-			AssignBit(g->livery.in_use, 0, colour != INVALID_COLOUR);
+			g->livery.in_use.Set(Livery::Flag::Primary, colour != INVALID_COLOUR);
 			if (colour == INVALID_COLOUR) colour = GetParentLivery(g)->colour1;
 			g->livery.colour1 = colour;
 		} else {
-			AssignBit(g->livery.in_use, 1, colour != INVALID_COLOUR);
+			g->livery.in_use.Set(Livery::Flag::Secondary, colour != INVALID_COLOUR);
 			if (colour == INVALID_COLOUR) colour = GetParentLivery(g)->colour2;
 			g->livery.colour2 = colour;
 		}
@@ -703,7 +717,9 @@ CommandCost CmdSetGroupLivery(DoCommandFlags flags, GroupID group_id, bool prima
 /**
  * Set group flag for a group and its sub-groups.
  * @param g initial group.
- * @param set 1 to set or 0 to clear protection.
+ * @param flag The flag to set.
+ * @param set \c true to set or \c false to clear protection.
+ * @param children Whether to propagate the change to the children.
  */
 static void SetGroupFlag(Group *g, GroupFlag flag, bool set, bool children)
 {
@@ -810,7 +826,7 @@ uint GetGroupNumEngines(CompanyID company, GroupID id_g, EngineID id_e)
 {
 	uint count = 0;
 
-	if (Group *g = Group::GetIfValid(id_g); g != nullptr) {
+	if (const Group *g = Group::GetIfValid(id_g); g != nullptr) {
 		for (const GroupID &childgroup : g->children) {
 			count += GetGroupNumEngines(company, childgroup, id_e);
 		}
@@ -831,7 +847,7 @@ uint GetGroupNumVehicle(CompanyID company, GroupID id_g, VehicleType type)
 {
 	uint count = 0;
 
-	if (Group *g = Group::GetIfValid(id_g); g != nullptr) {
+	if (const Group *g = Group::GetIfValid(id_g); g != nullptr) {
 		for (const GroupID &childgroup : g->children) {
 			count += GetGroupNumVehicle(company, childgroup, type);
 		}
@@ -852,7 +868,7 @@ uint GetGroupNumVehicleMinAge(CompanyID company, GroupID id_g, VehicleType type)
 {
 	uint count = 0;
 
-	if (Group *g = Group::GetIfValid(id_g); g != nullptr) {
+	if (const Group *g = Group::GetIfValid(id_g); g != nullptr) {
 		for (const GroupID &childgroup : g->children) {
 			count += GetGroupNumVehicleMinAge(company, childgroup, type);
 		}
@@ -873,7 +889,7 @@ Money GetGroupProfitLastYearMinAge(CompanyID company, GroupID id_g, VehicleType 
 {
 	Money sum = 0;
 
-	if (Group *g = Group::GetIfValid(id_g); g != nullptr) {
+	if (const Group *g = Group::GetIfValid(id_g); g != nullptr) {
 		for (const GroupID &childgroup : g->children) {
 			sum += GetGroupProfitLastYearMinAge(company, childgroup, type);
 		}

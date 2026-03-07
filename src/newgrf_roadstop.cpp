@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file command.cpp Handling of NewGRF road stops. */
+/** @file newgrf_roadstop.cpp Handling of NewGRF road stops. */
 
 #include "stdafx.h"
 #include "debug.h"
@@ -49,7 +49,7 @@ bool RoadStopClass::IsUIAvailable(uint) const
 }
 
 /* Instantiate RoadStopClass. */
-template class NewGRFClass<RoadStopSpec, RoadStopClassID, ROADSTOP_CLASS_MAX>;
+template class NewGRFClass<RoadStopSpec, RoadStopClassID>;
 
 static const uint NUM_ROADSTOPSPECS_PER_STATION = 63; ///< Maximum number of parts per station.
 
@@ -66,7 +66,14 @@ uint32_t RoadStopScopeResolver::GetRandomBits() const
 
 uint32_t RoadStopScopeResolver::GetRandomTriggers() const
 {
-	return this->st == nullptr ? 0 : this->st->waiting_random_triggers.base();
+	if (this->st == nullptr) return 0;
+
+	StationRandomTriggers triggers = st->waiting_random_triggers;
+
+	auto it = this->st->tile_waiting_random_triggers.find(this->tile);
+	if (it != std::end(this->st->tile_waiting_random_triggers)) triggers.Set(it->second);
+
+	return triggers.base();
 }
 
 uint32_t RoadStopScopeResolver::GetVariable(uint8_t variable, [[maybe_unused]] uint32_t parameter, bool &available) const
@@ -231,7 +238,7 @@ RoadStopResolverObject::RoadStopResolverObject(const RoadStopSpec *roadstopspec,
 		const Station *station = Station::From(st);
 		/* Pick the first cargo that we have waiting */
 		for (const auto &[cargo, spritegroup] : roadstopspec->grf_prop.spritegroups) {
-			if (cargo < NUM_CARGO && station->goods[cargo].HasData() && station->goods[cargo].GetData().cargo.TotalCount() > 0) {
+			if (cargo < NUM_CARGO && station->goods[cargo].TotalCount() > 0) {
 				ctype = cargo;
 				this->root_spritegroup = spritegroup;
 				break;
@@ -274,10 +281,10 @@ uint16_t GetRoadStopCallback(CallbackID callback, uint32_t param1, uint32_t para
  * Draw representation of a road stop tile for GUI purposes.
  * @param x position x of image.
  * @param y position y of image.
- * @param image an int offset for the sprite.
  * @param roadtype the RoadType of the underlying road.
  * @param spec the RoadStop's spec.
- * @return true of the tile was drawn (allows for fallback to default graphics)
+ * @param type The type of station.
+ * @param view The road stop's view.
  */
 void DrawRoadStopTile(int x, int y, RoadType roadtype, const RoadStopSpec *spec, StationType type, int view)
 {
@@ -350,7 +357,16 @@ std::optional<SpriteLayoutProcessor> GetRoadStopLayout(TileInfo *ti, const RoadS
 	return group->ProcessRegisters(object, nullptr);
 }
 
-/** Wrapper for animation control, see GetRoadStopCallback. */
+/**
+ * Perform the road stop callback in the context of the AnimationBase callback.
+ * @param callback The identifier of the callback.
+ * @param param1 The first parameter of the NewGRF callback.
+ * @param param2 The second parameter of the NewGRF callback.
+ * @param roadstopspec The specification to run the callback on.
+ * @param st The station the road stop is part of.
+ * @param tile The tile the road stop is at.
+ * @return The NewGRF result of the callback.
+ */
 uint16_t GetAnimRoadStopCallback(CallbackID callback, uint32_t param1, uint32_t param2, const RoadStopSpec *roadstopspec, BaseStation *st, TileIndex tile, int)
 {
 	return GetRoadStopCallback(callback, param1, param2, roadstopspec, st, tile, INVALID_ROADTYPE, GetStationType(tile), GetStationGfx(tile));
@@ -417,6 +433,17 @@ void TriggerRoadStopAnimation(BaseStation *st, TileIndex trigger_tile, StationAn
  */
 void TriggerRoadStopRandomisation(BaseStation *st, TileIndex tile, StationRandomTrigger trigger, CargoType cargo_type)
 {
+	enum TriggerArea : uint8_t {
+		TA_TILE,
+		TA_PLATFORM,
+		TA_WHOLE,
+	};
+
+	/* List of coverage areas for each animation trigger */
+	static constexpr TriggerArea tas[] = {
+		TA_WHOLE, TA_WHOLE, TA_PLATFORM, TA_PLATFORM, TA_PLATFORM, TA_PLATFORM
+	};
+
 	assert(st != nullptr);
 
 	/* Check the cached cargo trigger bitmask to see if we need
@@ -425,7 +452,9 @@ void TriggerRoadStopRandomisation(BaseStation *st, TileIndex tile, StationRandom
 	if (st->cached_roadstop_cargo_triggers == 0) return;
 	if (IsValidCargoType(cargo_type) && !HasBit(st->cached_roadstop_cargo_triggers, cargo_type)) return;
 
-	st->waiting_random_triggers.Set(trigger);
+	TriggerArea ta = tas[to_underlying(trigger)];
+	if (ta == TA_WHOLE) st->waiting_random_triggers.Set(trigger);
+	StationRandomTriggers used_random_triggers;
 
 	uint32_t whole_reseed = 0;
 
@@ -435,10 +464,11 @@ void TriggerRoadStopRandomisation(BaseStation *st, TileIndex tile, StationRandom
 		empty_mask = GetEmptyMask(Station::From(st));
 	}
 
-	StationRandomTriggers used_random_triggers;
 	auto process_tile = [&](TileIndex cur_tile) {
 		const RoadStopSpec *ss = GetRoadStopSpec(cur_tile);
 		if (ss == nullptr) return;
+
+		st->tile_waiting_random_triggers[tile].Set(trigger);
 
 		/* Cargo taken "will only be triggered if all of those
 		 * cargo types have no more cargo waiting." */
@@ -448,10 +478,11 @@ void TriggerRoadStopRandomisation(BaseStation *st, TileIndex tile, StationRandom
 
 		if (!IsValidCargoType(cargo_type) || HasBit(ss->cargo_triggers, cargo_type)) {
 			RoadStopResolverObject object(ss, st, cur_tile, INVALID_ROADTYPE, GetStationType(cur_tile), GetStationGfx(cur_tile));
-			object.SetWaitingRandomTriggers(st->waiting_random_triggers);
+			object.SetWaitingRandomTriggers(st->waiting_random_triggers | st->tile_waiting_random_triggers[tile]);
 
 			object.ResolveRerandomisation();
 
+			st->tile_waiting_random_triggers[tile].Reset(object.GetUsedRandomTriggers());
 			used_random_triggers.Set(object.GetUsedRandomTriggers());
 
 			uint32_t reseed = object.GetReseedSum();
@@ -469,7 +500,7 @@ void TriggerRoadStopRandomisation(BaseStation *st, TileIndex tile, StationRandom
 			}
 		}
 	};
-	if (trigger == StationRandomTrigger::NewCargo || trigger == StationRandomTrigger::CargoTaken) {
+	if (ta == TA_WHOLE) {
 		for (const RoadStopTileData &tile_data : st->custom_roadstop_tile_data) {
 			process_tile(tile_data.tile);
 		}
@@ -561,20 +592,22 @@ const RoadStopSpec *GetRoadStopSpec(TileIndex t)
 
 /**
  * Allocate a RoadStopSpec to a Station. This is called once per build operation.
- * @param statspec RoadStopSpec to allocate.
+ * @param spec RoadStopSpec to allocate.
  * @param st Station to allocate it to.
- * @param exec Whether to actually allocate the spec.
  * @return Index within the Station's road stop spec list, or std::nullopt if the allocation failed.
  */
-std::optional<uint8_t> AllocateSpecToRoadStop(const RoadStopSpec *statspec, BaseStation *st, bool exec)
+std::optional<uint8_t> AllocateSpecToRoadStop(const RoadStopSpec *spec, BaseStation *st)
 {
 	uint i;
 
-	if (statspec == nullptr || st == nullptr) return 0;
+	if (spec == nullptr) return 0;
+
+	/* If station doesn't exist yet then the first slot is available. */
+	if (st == nullptr) return 1;
 
 	/* Try to find the same spec and return that one */
 	for (i = 1; i < st->roadstop_speclist.size() && i < NUM_ROADSTOPSPECS_PER_STATION; i++) {
-		if (st->roadstop_speclist[i].spec == statspec) return i;
+		if (st->roadstop_speclist[i].spec == spec) return i;
 	}
 
 	/* Try to find an unused spec slot */
@@ -587,16 +620,25 @@ std::optional<uint8_t> AllocateSpecToRoadStop(const RoadStopSpec *statspec, Base
 		return std::nullopt;
 	}
 
-	if (exec) {
-		if (i >= st->roadstop_speclist.size()) st->roadstop_speclist.resize(i + 1);
-		st->roadstop_speclist[i].spec     = statspec;
-		st->roadstop_speclist[i].grfid    = statspec->grf_prop.grfid;
-		st->roadstop_speclist[i].localidx = statspec->grf_prop.local_id;
-
-		RoadStopUpdateCachedTriggers(st);
-	}
-
 	return i;
+}
+
+/**
+ * Assign a previously allocated RoadStopSpec specindex to a Station.
+ * @param spec RoadStopSpec to assign..
+ * @param st Station to allocate it to.
+ * @param specindex Spec index of allocation.
+ */
+void AssignSpecToRoadStop(const RoadStopSpec *spec, BaseStation *st, uint8_t specindex)
+{
+	if (specindex == 0) return;
+	if (specindex >= st->roadstop_speclist.size()) st->roadstop_speclist.resize(specindex + 1);
+
+	st->roadstop_speclist[specindex].spec = spec;
+	st->roadstop_speclist[specindex].grfid = spec->grf_prop.grfid;
+	st->roadstop_speclist[specindex].localidx = spec->grf_prop.local_id;
+
+	RoadStopUpdateCachedTriggers(st);
 }
 
 /**

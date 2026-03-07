@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file yapf_costrail.hpp Cost determination for rails. */
@@ -28,14 +28,14 @@ public:
 
 protected:
 
-	/* Structure used inside PfCalcCost() to keep basic tile information. */
+	/** Structure used inside PfCalcCost() to keep basic tile information. */
 	struct TILE {
 		TileIndex   tile;
 		Trackdir    td;
 		TileType    tile_type;
 		RailType    rail_type;
 
-		TILE() : tile(INVALID_TILE), td(INVALID_TRACKDIR), tile_type(MP_VOID), rail_type(INVALID_RAILTYPE) { }
+		TILE() : tile(INVALID_TILE), td(INVALID_TRACKDIR), tile_type(TileType::Void), rail_type(INVALID_RAILTYPE) { }
 
 		TILE(TileIndex tile, Trackdir td) : tile(tile), td(td), tile_type(GetTileType(tile)), rail_type(GetTileRailType(tile)) { }
 	};
@@ -128,7 +128,7 @@ public:
 		if (IsDiagonalTrackdir(trackdir)) {
 			cost += YAPF_TILE_LENGTH;
 			switch (GetTileType(tile)) {
-				case MP_ROAD:
+				case TileType::Road:
 					/* Increase the cost for level crossings */
 					if (IsLevelCrossing(tile)) {
 						cost += Yapf().PfGetSettings().rail_crossing_penalty;
@@ -175,7 +175,7 @@ public:
 	{
 		int cost = 0;
 		/* if there is one-way signal in the opposite direction, then it is not our way */
-		if (IsTileType(tile, MP_RAILWAY)) {
+		if (IsTileType(tile, TileType::Railway)) {
 			bool has_signal_against = HasSignalOnTrackdir(tile, ReverseTrackdir(trackdir));
 			bool has_signal_along = HasSignalOnTrackdir(tile, trackdir);
 			if (has_signal_against && !has_signal_along && IsOnewaySignal(tile, TrackdirToTrack(trackdir))) {
@@ -271,11 +271,11 @@ public:
 	 *  Calculates only the cost of given node, adds it to the parent node cost
 	 *  and stores the result into Node::cost member
 	 */
-	inline bool PfCalcCost(Node &n, const TrackFollower *tf)
+	inline bool PfCalcCost(Node &n, const TrackFollower *follower)
 	{
 		assert(!n.flags_u.flags_s.target_seen);
-		assert(tf->new_tile == n.key.tile);
-		assert((HasTrackdir(tf->new_td_bits, n.key.td)));
+		assert(follower->new_tile == n.key.tile);
+		assert((HasTrackdir(follower->new_td_bits, n.key.td)));
 
 		/* Does the node have some parent node? */
 		bool has_parent = (n.parent != nullptr);
@@ -326,7 +326,7 @@ public:
 
 		EndSegmentReasons end_segment_reason{};
 
-		TrackFollower tf_local(v, Yapf().GetCompatibleRailTypes());
+		TrackFollower follower_local{v, Yapf().GetCompatibleRailTypes()};
 
 		if (!has_parent) {
 			/* We will jump to the middle of the cost calculator assuming that segment cache is not used. */
@@ -345,7 +345,6 @@ public:
 			if (segment_cost == 0) {
 				/* We just entered the loop. First transition cost goes to segment entry cost)*/
 				segment_entry_cost = transition_cost;
-				transition_cost = 0;
 
 				/* It is the right time now to look if we can reuse the cached segment cost. */
 				if (is_cached_segment) {
@@ -378,7 +377,7 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 			segment_cost += Yapf().OneTileCost(cur.tile, cur.td);
 
 			/* If we skipped some tunnel/bridge/station tiles, add their base cost */
-			segment_cost += YAPF_TILE_LENGTH * tf->tiles_skipped;
+			segment_cost += YAPF_TILE_LENGTH * follower->tiles_skipped;
 
 			/* Slope cost. */
 			segment_cost += Yapf().SlopeCost(cur.tile, cur.td);
@@ -387,7 +386,7 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 			segment_cost += Yapf().SignalCost(n, cur.tile, cur.td);
 
 			/* Reserved tiles. */
-			segment_cost += Yapf().ReservationCost(n, cur.tile, cur.td, tf->tiles_skipped);
+			segment_cost += Yapf().ReservationCost(n, cur.tile, cur.td, follower->tiles_skipped);
 
 			end_segment_reason = segment.end_segment_reason;
 
@@ -401,7 +400,7 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 				/* We will end in this pass (depot is possible target) */
 				end_segment_reason.Set(EndSegmentReason::Depot);
 
-			} else if (cur.tile_type == MP_STATION && IsRailWaypoint(cur.tile)) {
+			} else if (cur.tile_type == TileType::Station && IsRailWaypoint(cur.tile)) {
 				if (v->current_order.IsType(OT_GOTO_WAYPOINT) &&
 						GetStationIndex(cur.tile) == v->current_order.GetDestination() &&
 						!Waypoint::Get(v->current_order.GetDestination().ToStationID())->IsSingleTile()) {
@@ -445,16 +444,16 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 				/* Waypoint is also a good reason to finish. */
 				end_segment_reason.Set(EndSegmentReason::Waypoint);
 
-			} else if (tf->is_station) {
+			} else if (follower->is_station) {
 				/* Station penalties. */
-				uint platform_length = tf->tiles_skipped + 1;
+				uint platform_length = follower->tiles_skipped + 1;
 				/* We don't know yet if the station is our target or not. Act like
 				 * if it is pass-through station (not our destination). */
 				segment_cost += Yapf().PfGetSettings().rail_station_penalty * platform_length;
 				/* We will end in this pass (station is possible target) */
 				end_segment_reason.Set(EndSegmentReason::Station);
 
-			} else if (TrackFollower::DoTrackMasking() && cur.tile_type == MP_RAILWAY) {
+			} else if (TrackFollower::DoTrackMasking() && cur.tile_type == TileType::Railway) {
 				/* Searching for a safe tile? */
 				if (HasSignalOnTrackdir(cur.tile, cur.td) && !IsPbsSignal(GetSignalType(cur.tile, TrackdirToTrack(cur.td)))) {
 					end_segment_reason.Set(EndSegmentReason::SafeTile);
@@ -466,10 +465,10 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 			if (n.num_signals_passed < this->sig_look_ahead_costs.size())
 			{
 				int min_speed = 0;
-				int max_speed = tf->GetSpeedLimit(&min_speed);
+				int max_speed = follower->GetSpeedLimit(&min_speed);
 				int max_veh_speed = std::min<int>(v->GetDisplayMaxSpeed(), v->current_order.GetMaxSpeed());
 				if (max_speed < max_veh_speed) {
-					extra_cost += YAPF_TILE_LENGTH * (max_veh_speed - max_speed) * (4 + tf->tiles_skipped) / max_veh_speed;
+					extra_cost += YAPF_TILE_LENGTH * (max_veh_speed - max_speed) * (4 + follower->tiles_skipped) / max_veh_speed;
 				}
 				if (min_speed > max_veh_speed) {
 					extra_cost += YAPF_TILE_LENGTH * (min_speed - max_veh_speed);
@@ -483,13 +482,13 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 			}
 
 			/* Move to the next tile/trackdir. */
-			tf = &tf_local;
-			tf_local.Init(v, Yapf().GetCompatibleRailTypes());
+			follower = &follower_local;
+			follower_local.Init(v, Yapf().GetCompatibleRailTypes());
 
-			if (!tf_local.Follow(cur.tile, cur.td)) {
-				assert(tf_local.err != TrackFollower::EC_NONE);
+			if (!follower_local.Follow(cur.tile, cur.td)) {
+				assert(follower_local.err != TrackFollower::EC_NONE);
 				/* Can't move to the next tile (EOL?). */
-				if (tf_local.err == TrackFollower::EC_RAIL_ROAD_TYPE) {
+				if (follower_local.err == TrackFollower::EC_RAIL_ROAD_TYPE) {
 					end_segment_reason.Set(EndSegmentReason::RailType);
 				} else {
 					end_segment_reason.Set(EndSegmentReason::DeadEnd);
@@ -502,16 +501,16 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 			}
 
 			/* Check if the next tile is not a choice. */
-			if (KillFirstBit(tf_local.new_td_bits) != TRACKDIR_BIT_NONE) {
+			if (KillFirstBit(follower_local.new_td_bits) != TRACKDIR_BIT_NONE) {
 				/* More than one segment will follow. Close this one. */
 				end_segment_reason.Set(EndSegmentReason::ChoiceFollows);
 				break;
 			}
 
 			/* Gather the next tile/trackdir/tile_type/rail_type. */
-			TILE next(tf_local.new_tile, (Trackdir)FindFirstBit(tf_local.new_td_bits));
+			TILE next(follower_local.new_tile, (Trackdir)FindFirstBit(follower_local.new_td_bits));
 
-			if (TrackFollower::DoTrackMasking() && IsTileType(next.tile, MP_RAILWAY)) {
+			if (TrackFollower::DoTrackMasking() && IsTileType(next.tile, TileType::Railway)) {
 				if (HasSignalOnTrackdir(next.tile, next.td) && IsPbsSignal(GetSignalType(next.tile, TrackdirToTrack(next.td)))) {
 					/* Possible safe tile. */
 					end_segment_reason.Set(EndSegmentReason::SafeTile);
@@ -538,7 +537,7 @@ no_entry_cost: // jump here at the beginning if the node has no parent (it is th
 			if (segment_cost > MAX_SEGMENT_COST) {
 				/* Potentially in the infinite loop (or only very long segment?). We should
 				 * not force it to finish prematurely unless we are on a regular tile. */
-				if (IsTileType(tf->new_tile, MP_RAILWAY)) {
+				if (IsTileType(follower->new_tile, TileType::Railway)) {
 					end_segment_reason.Set(EndSegmentReason::SegmentTooLong);
 					break;
 				}

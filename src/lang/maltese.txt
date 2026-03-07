@@ -13,7 +13,7 @@
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
 
 
 ##id 0x0000
@@ -596,6 +596,8 @@ STR_CONFIG_SETTING_WARN_LOST_VEHICLE                            :Avza jekk jinti
 
 ###length 4
 
+###length 4
+
 
 
 ###length 3
@@ -754,7 +756,7 @@ STR_CONFIG_SETTING_ADVANCED_VEHICLE_LISTS_HELPTEXT              :Ippermetti l-uz
 
 ###length 3
 
-###length 3
+###length 4
 
 
 
@@ -811,7 +813,7 @@ STR_NETWORK_SERVER_LIST_MAP_SIZE_SHORT                          :{BLACK}{COMMA}x
 STR_NETWORK_CONNECTING_DOWNLOADING_1                            :{BLACK}{BYTES} imnizzlin s'issa
 STR_NETWORK_CONNECTING_DOWNLOADING_2                            :{BLACK}{BYTES} / {BYTES} imnizzlin s'issa
 
-###length 8
+###length 6
 
 
 
@@ -884,6 +886,9 @@ STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
 # Rail waypoint construction window
 
 # Rail station construction window
+
+
+
 
 
 
@@ -973,6 +978,8 @@ STR_MAPGEN_BY                                                   :{BLACK}*
 ###length 21
 
 # Strings for map borders at game generation
+
+###length 3
 
 
 
@@ -1144,6 +1151,8 @@ STR_FINANCES_POSITIVE_INCOME                                    :{BLACK}+{CURREN
 ###length VEHICLE_TYPES
 
 
+# Vehicle sort details
+
 ###length 3
 
 ###length VEHICLE_TYPES
@@ -1204,6 +1213,7 @@ STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG} 
 
 
 # Engine preview window
+
 
 
 

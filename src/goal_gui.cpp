@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file goal_gui.cpp GUI for goals. */
@@ -185,7 +185,6 @@ struct GoalListWindow : public Window {
 	 * @param column Which column to draw.
 	 * @param wid Pointer to the goal list widget.
 	 * @param progress_col_width Width of the progress column.
-	 * @return max width of drawn text
 	 */
 	void DrawListColumn(GoalColumn column, NWidgetBase *wid, uint progress_col_width) const
 	{
@@ -275,7 +274,7 @@ struct GoalListWindow : public Window {
 };
 
 /** Widgets of the #GoalListWindow. */
-static constexpr NWidgetPart _nested_goals_list_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_goals_list_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_BROWN),
 		NWidget(WWT_CAPTION, COLOUR_BROWN, WID_GOAL_CAPTION),
@@ -367,17 +366,17 @@ struct GoalQuestionWindow : public Window {
 	{
 		switch (widget) {
 			case WID_GQ_BUTTON_1:
-				Command<CMD_GOAL_QUESTION_ANSWER>::Post(this->window_number, this->button[0]);
+				Command<Commands::GoalQuestionAnswer>::Post(this->window_number, this->button[0]);
 				this->Close();
 				break;
 
 			case WID_GQ_BUTTON_2:
-				Command<CMD_GOAL_QUESTION_ANSWER>::Post(this->window_number, this->button[1]);
+				Command<Commands::GoalQuestionAnswer>::Post(this->window_number, this->button[1]);
 				this->Close();
 				break;
 
 			case WID_GQ_BUTTON_3:
-				Command<CMD_GOAL_QUESTION_ANSWER>::Post(this->window_number, this->button[2]);
+				Command<Commands::GoalQuestionAnswer>::Post(this->window_number, this->button[2]);
 				this->Close();
 				break;
 		}

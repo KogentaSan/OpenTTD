@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_spritegroup.cpp Handling of primarily NewGRF action 2. */
@@ -110,8 +110,10 @@ static inline uint32_t GetVariable(const ResolverObject &object, ScopeResolver *
 
 /**
  * Store a value into the persistent storage area (PSA). Default implementation does nothing (for newgrf classes without storage).
+ * @param pos The position into the storage area.
+ * @param value The new value to store.
  */
-/* virtual */ void ScopeResolver::StorePSA(uint, int32_t) {}
+/* virtual */ void ScopeResolver::StorePSA([[maybe_unused]] uint pos, [[maybe_unused]] int32_t value) {}
 
 /**
  * Get the real sprites of the grf.
@@ -128,9 +130,11 @@ static inline uint32_t GetVariable(const ResolverObject &object, ScopeResolver *
 
 /**
  * Get a resolver for the \a scope.
+ * @param scope The scope to resolve.
+ * @param relative The relative in case of a #VSG_SCOPE_RELATIVE.
  * @return The resolver for the requested scope.
  */
-/* virtual */ ScopeResolver *ResolverObject::GetScope(VarSpriteGroupScope, uint8_t)
+/* virtual */ ScopeResolver *ResolverObject::GetScope([[maybe_unused]] VarSpriteGroupScope scope, [[maybe_unused]] uint8_t relative)
 {
 	return &this->default_scope;
 }

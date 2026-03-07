@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file slider.cpp Implementation of the horizontal slider widget. */
@@ -88,7 +88,7 @@ void DrawSliderWidget(Rect r, Colours wedge_colour, Colours handle_colour, TextC
  * @param min_value Minimum value of slider
  * @param max_value Maximum value of slider
  * @param nmarks Number of marks displayed. Value will be rounded to nearest mark.
- * @param value[in,out] Value to modify
+ * @param[in,out] value Value to modify
  * @return       True if the value setting was modified
  */
 bool ClickSliderWidget(Rect r, Point pt, int min_value, int max_value, int nmarks, int &value)

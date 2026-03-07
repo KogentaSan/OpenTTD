@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file news_type.h Types related to news. */
@@ -59,7 +59,7 @@ enum class AdviceType : uint8_t {
 	VehicleUnprofitable, ///< The vehicle is costing you money.
 	VehicleWaiting, ///< The vehicle is waiting in the depot.
 
-	Invalid
+	Invalid, ///< Invalid marker.
 };
 
 /**
@@ -129,6 +129,7 @@ struct NewsTypeData {
 
 /** Container for any custom data that must be deleted after the news item has reached end-of-life. */
 struct NewsAllocatedData {
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~NewsAllocatedData() = default;
 };
 
@@ -140,7 +141,7 @@ struct NewsItem {
 	TimerGameEconomy::Date economy_date; ///< Economy date of the news item, never shown but used to calculate age
 	NewsType type;                ///< Type of the news
 	AdviceType advice_type; ///< The type of advice, to be able to remove specific advices later on.
-	NewsStyle style; /// Window style for the news.
+	NewsStyle style; ///< Window style for the news.
 	NewsFlags flags;               ///< NewsFlags bits @see NewsFlag
 
 	NewsReference ref1; ///< Reference 1 to some object: Used for a possible viewport, scrolling after clicking on the news, and for deleting the news when the object is deleted.

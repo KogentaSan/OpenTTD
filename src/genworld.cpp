@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file genworld.cpp Functions to generate a map. */
@@ -139,11 +139,13 @@ static void _GenerateWorld()
 			if (_game_mode != GM_MENU) FlatEmptyWorld(_settings_game.game_creation.se_flat_world_height);
 
 			ConvertGroundTilesIntoWaterTiles();
+			Map::CountLandTiles();
 			IncreaseGeneratingWorldProgress(GWP_OBJECT);
 
 			_settings_game.game_creation.snow_line_height = DEF_SNOWLINE_HEIGHT;
 		} else {
 			GenerateClearTile();
+			Map::CountLandTiles();
 
 			/* Only generate towns, tree and industries in newgame mode. */
 			if (_game_mode != GM_EDITOR) {
@@ -459,7 +461,7 @@ void LoadTownData()
 		/* Try founding on the target tile, and if that doesn't work, find the nearest suitable tile up to 16 tiles away.
 		 * The target might be on water, blocked somehow, or on a steep slope that can't be terraformed by the founding command. */
 		for (auto tile : SpiralTileSequence(target_tile, 16, 0, 0)) {
-			std::tuple<CommandCost, Money, TownID> result = Command<CMD_FOUND_TOWN>::Do(DoCommandFlag::Execute, tile, TSZ_SMALL, is_city, _settings_game.economy.town_layout, false, 0, name);
+			std::tuple<CommandCost, Money, TownID> result = Command<Commands::FoundTown>::Do(DoCommandFlag::Execute, tile, TSZ_SMALL, is_city, _settings_game.economy.town_layout, false, 0, name);
 
 			town_id = std::get<TownID>(result);
 
@@ -470,7 +472,7 @@ void LoadTownData()
 		/* If we still fail to found the town, we'll create a sign at the intended location and tell the player how many towns we failed to create in an error message.
 		 * This allows the player to diagnose a heightmap misalignment, if towns end up in the sea, or place towns manually, if in rough terrain. */
 		if (town_id == TownID::Invalid()) {
-			Command<CMD_PLACE_SIGN>::Post(target_tile, name);
+			Command<Commands::PlaceSign>::Post(target_tile, name);
 			failed_towns++;
 			continue;
 		}
@@ -501,7 +503,7 @@ void LoadTownData()
 
 		do {
 			uint before = t->cache.num_houses;
-			Command<CMD_EXPAND_TOWN>::Post(t->index, HOUSES_TO_GROW, {TownExpandMode::Buildings, TownExpandMode::Roads});
+			Command<Commands::ExpandTown>::Post(t->index, HOUSES_TO_GROW, {TownExpandMode::Buildings, TownExpandMode::Roads});
 			if (t->cache.num_houses <= before) fail_limit--;
 		} while (fail_limit > 0 && try_limit-- > 0 && t->cache.population < population);
 	}

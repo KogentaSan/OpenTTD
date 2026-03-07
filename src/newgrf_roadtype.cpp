@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_roadtype.cpp NewGRF handling of road types. */
@@ -30,6 +30,9 @@
  * Special values for rr, tt, RR:
  * - 0xFF: Track not present on tile.
  * - 0xFE: Track present, but no matching entry in translation table.
+ * @param tile The tile to consider.
+ * @param grffile The NewGRF the types are for.
+ * @return The track types.
  */
 uint32_t GetTrackTypes(TileIndex tile, const GRFFile *grffile)
 {
@@ -69,7 +72,7 @@ uint32_t GetTrackTypes(TileIndex tile, const GRFFile *grffile)
 			case 0x43: return TimerGameCalendar::date.base();
 			case 0x44: return to_underlying(HouseZone::TownEdge);
 			case 0x45: {
-				auto rt = GetRoadTypeInfoIndex(this->rti);
+				RoadType rt = this->rti->Index();
 				uint8_t local = GetReverseRoadTypeTranslation(rt, this->ro.grffile);
 				if (local == 0xFF) local = 0xFE;
 				if (RoadTypeIsRoad(rt)) {
@@ -142,7 +145,7 @@ RoadTypeResolverObject::RoadTypeResolverObject(const RoadTypeInfo *rti, TileInde
  * @param rti The road type data (spec).
  * @param tile The tile to get the sprite for.
  * @param rtsg The type of sprite to draw.
- * @param content Where are we drawing the tile?
+ * @param context Where are we drawing the tile?
  * @param [out] num_results If not nullptr, return the number of sprites in the spriteset.
  * @return The sprite to draw.
  */
@@ -241,19 +244,19 @@ void ConvertRoadTypes()
 
 	for (TileIndex t : Map::Iterate()) {
 		switch (GetTileType(t)) {
-			case MP_ROAD:
+			case TileType::Road:
 				if (RoadType rt = GetRoadTypeRoad(t); rt != INVALID_ROADTYPE) SetRoadTypeRoad(t, roadtype_conversion_map[rt]);
 				if (RoadType rt = GetRoadTypeTram(t); rt != INVALID_ROADTYPE) SetRoadTypeTram(t, roadtype_conversion_map[rt]);
 				break;
 
-			case MP_STATION:
+			case TileType::Station:
 				if (IsAnyRoadStop(t)) {
 					if (RoadType rt = GetRoadTypeRoad(t); rt != INVALID_ROADTYPE) SetRoadTypeRoad(t, roadtype_conversion_map[rt]);
 					if (RoadType rt = GetRoadTypeTram(t); rt != INVALID_ROADTYPE) SetRoadTypeTram(t, roadtype_conversion_map[rt]);
 				}
 				break;
 
-			case MP_TUNNELBRIDGE:
+			case TileType::TunnelBridge:
 				if (GetTunnelBridgeTransportType(t) == TRANSPORT_ROAD) {
 					if (RoadType rt = GetRoadTypeRoad(t); rt != INVALID_ROADTYPE) SetRoadTypeRoad(t, roadtype_conversion_map[rt]);
 					if (RoadType rt = GetRoadTypeTram(t); rt != INVALID_ROADTYPE) SetRoadTypeTram(t, roadtype_conversion_map[rt]);

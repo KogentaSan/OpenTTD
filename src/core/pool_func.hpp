@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file pool_func.hpp Some methods of Pool are placed here in order to reduce compilation time and binary size. */
@@ -82,8 +82,9 @@ DEFINE_POOL_METHOD(inline size_t)::FindFirstFree()
  * @param index index of item
  * @pre index < this->size
  * @pre this->Get(index) == nullptr
+ * @return The resulting allocation and pool-type index.
  */
-DEFINE_POOL_METHOD(inline void *)::AllocateItem(size_t size, size_t index)
+DEFINE_POOL_METHOD(inline AllocationResult<Tindex>)::AllocateItem(size_t size, size_t index)
 {
 	assert(this->data[index] == nullptr);
 
@@ -101,17 +102,16 @@ DEFINE_POOL_METHOD(inline void *)::AllocateItem(size_t size, size_t index)
 	this->data[index] = item;
 	SetBit(this->used_bitmap[index / BITMAP_SIZE], index % BITMAP_SIZE);
 	/* MSVC complains about casting to narrower type, so first cast to the base type... then to the strong type. */
-	item->index = static_cast<Tindex>(static_cast<Tindex::BaseType>(index));
-	return item;
+	return {item, static_cast<Tindex>(static_cast<Tindex::BaseType>(index))};
 }
 
 /**
  * Allocates new item
  * @param size size of item
- * @return pointer to allocated item
+ * @return The resulting allocation and pool-type index.
  * @note FatalError() on failure! (no free item)
  */
-DEFINE_POOL_METHOD(void *)::GetNew(size_t size)
+DEFINE_POOL_METHOD(AllocationResult<Tindex>)::GetNew(size_t size)
 {
 	size_t index = this->FindFirstFree();
 
@@ -131,10 +131,10 @@ DEFINE_POOL_METHOD(void *)::GetNew(size_t size)
  * Allocates new item with given index
  * @param size size of item
  * @param index index of item
- * @return pointer to allocated item
+ * @return The resulting allocation and pool-type index.
  * @note SlErrorCorruptFmt() on failure! (index out of range or already used)
  */
-DEFINE_POOL_METHOD(void *)::GetNew(size_t size, size_t index)
+DEFINE_POOL_METHOD(AllocationResult<Tindex>)::GetNew(size_t size, size_t index)
 {
 	if (index >= MAX_SIZE) {
 		SlErrorCorruptFmt("{} index {} out of range ({})", this->name, index, MAX_SIZE);
@@ -208,8 +208,8 @@ DEFINE_POOL_METHOD(void)::CleanPool()
  * forcefully instantiated.
  */
 #define INSTANTIATE_POOL_METHODS(name) \
-	template void * name ## Pool::GetNew(size_t size); \
-	template void * name ## Pool::GetNew(size_t size, size_t index); \
+	template AllocationResult<name ## Pool::IndexType> name ## Pool::GetNew(size_t size); \
+	template AllocationResult<name ## Pool::IndexType> name ## Pool::GetNew(size_t size, size_t index); \
 	template void name ## Pool::FreeItem(size_t size, size_t index); \
 	template void name ## Pool::CleanPool();
 

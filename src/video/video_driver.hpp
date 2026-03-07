@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file video_driver.hpp Base of all video drivers. */
@@ -83,10 +83,10 @@ public:
 		return true;
 	}
 
-	virtual bool ClaimMousePointer()
-	{
-		return true;
-	}
+	/**
+	 * Claim the exclusive rights for the mouse pointer.
+	 */
+	virtual void ClaimMousePointer() {}
 
 	/**
 	 * Get whether the mouse cursor is drawn by the video driver.
@@ -167,15 +167,9 @@ public:
 	}
 
 	/**
-	 * Get a suggested default GUI scale taking screen DPI into account.
+	 * Get some information about the selected driver/backend to be shown to the user.
+	 * @return The information.
 	 */
-	virtual int GetSuggestedUIScale()
-	{
-		float dpi_scale = this->GetDPIScale();
-
-		return Clamp(dpi_scale * 100, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE);
-	}
-
 	virtual std::string_view GetInfoString() const
 	{
 		return this->GetName();
@@ -197,11 +191,19 @@ public:
 	void GameLoopPause();
 
 	/**
+	 * Prevents the system from going to sleep.
+	 *
+	 * @param inhibited If true, sleep will be disabled. If false, sleep will be enabled.
+	 */
+	virtual void SetScreensaverInhibited([[maybe_unused]] bool inhibited) {}
+
+	/**
 	 * Get the currently active instance of the video driver.
+	 * @return The instance.
 	 */
 	static VideoDriver *GetInstance()
 	{
-		return static_cast<VideoDriver *>(DriverFactoryBase::GetActiveDriver(Driver::DT_VIDEO).get());
+		return static_cast<VideoDriver *>(DriverFactoryBase::GetActiveDriver(Driver::Type::Video).get());
 	}
 
 	static std::string GetCaption();
@@ -211,11 +213,13 @@ public:
 	 * will make sure the buffer is unlocked no matter how the scope is exited.
 	 */
 	struct VideoBufferLocker {
+		/** Lock the video buffer. */
 		VideoBufferLocker()
 		{
 			this->unlock = VideoDriver::GetInstance()->LockVideoBuffer();
 		}
 
+		/** Release the video buffer. */
 		~VideoBufferLocker()
 		{
 			if (this->unlock) VideoDriver::GetInstance()->UnlockVideoBuffer();
@@ -230,14 +234,9 @@ protected:
 
 	/**
 	 * Get the resolution of the main screen.
+	 * @return The dimension of the screen in pixels.
 	 */
 	virtual Dimension GetScreenSize() const { return { DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT }; }
-
-	/**
-	 * Get DPI scaling factor of the screen OTTD is displayed on.
-	 * @return 1.0 for default platform DPI, > 1.0 for higher DPI values, and < 1.0 for smaller DPI values.
-	 */
-	virtual float GetDPIScale() { return 1.0f; }
 
 	/**
 	 * Apply resolution auto-detection and clamp to sensible defaults.

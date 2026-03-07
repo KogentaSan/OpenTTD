@@ -2,13 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file railtypes.h
- * All the railtype-specific information is stored here.
- */
+/** @file railtypes.h All the railtype-specific information is stored here. */
 
 #ifndef RAILTYPES_H
 #define RAILTYPES_H
@@ -25,7 +22,7 @@ static const RailTypeInfo _original_railtypes[] = {
 			SPR_RAIL_SINGLE_NORTH, SPR_RAIL_SINGLE_SOUTH, SPR_RAIL_SINGLE_EAST, SPR_RAIL_SINGLE_WEST,
 			SPR_TRACKS_FOR_SLOPES_RAIL_BASE,
 			SPR_CROSSING_OFF_X_RAIL,
-			SPR_TUNNEL_ENTRY_REAR_RAIL
+			SPR_TUNNEL_ENTRY_REAR_RAIL, SPR_BRIDGE_DECKS_RAIL,
 		},
 
 		/* GUI sprites */
@@ -123,7 +120,7 @@ static const RailTypeInfo _original_railtypes[] = {
 			SPR_RAIL_SINGLE_NORTH, SPR_RAIL_SINGLE_SOUTH, SPR_RAIL_SINGLE_EAST, SPR_RAIL_SINGLE_WEST,
 			SPR_TRACKS_FOR_SLOPES_RAIL_BASE,
 			SPR_CROSSING_OFF_X_RAIL,
-			SPR_TUNNEL_ENTRY_REAR_RAIL
+			SPR_TUNNEL_ENTRY_REAR_RAIL, SPR_BRIDGE_DECKS_RAIL,
 		},
 
 		/* GUI sprites */
@@ -225,7 +222,7 @@ static const RailTypeInfo _original_railtypes[] = {
 			SPR_MONO_SINGLE_NORTH, SPR_MONO_SINGLE_SOUTH, SPR_MONO_SINGLE_EAST, SPR_MONO_SINGLE_WEST,
 			SPR_TRACKS_FOR_SLOPES_MONO_BASE,
 			SPR_CROSSING_OFF_X_MONO,
-			SPR_TUNNEL_ENTRY_REAR_MONO
+			SPR_TUNNEL_ENTRY_REAR_MONO, SPR_BRIDGE_DECKS_MONO,
 		},
 
 		/* GUI sprites */
@@ -323,7 +320,7 @@ static const RailTypeInfo _original_railtypes[] = {
 			SPR_MGLV_SINGLE_NORTH, SPR_MGLV_SINGLE_SOUTH, SPR_MGLV_SINGLE_EAST, SPR_MGLV_SINGLE_WEST,
 			SPR_TRACKS_FOR_SLOPES_MAGLEV_BASE,
 			SPR_CROSSING_OFF_X_MAGLEV,
-			SPR_TUNNEL_ENTRY_REAR_MAGLEV
+			SPR_TUNNEL_ENTRY_REAR_MAGLEV, SPR_BRIDGE_DECKS_MGLV,
 		},
 
 		/* GUI sprites */

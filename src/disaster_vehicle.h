@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file disaster_vehicle.h All disaster vehicles. */
@@ -11,6 +11,7 @@
 #define DISASTER_VEHICLE_H
 
 #include "vehicle_base.h"
+#include "aircraft.h"
 
 /** Different sub types of disaster vehicles. */
 enum DisasterSubType : uint8_t {
@@ -37,14 +38,17 @@ enum DisasterSubType : uint8_t {
 struct DisasterVehicle final : public SpecializedVehicle<DisasterVehicle, VEH_DISASTER> {
 	SpriteID image_override{}; ///< Override for the default disaster vehicle sprite.
 	VehicleID big_ufo_destroyer_target = VehicleID::Invalid(); ///< The big UFO that this destroyer is supposed to bomb.
-	uint8_t flags = 0; ///< Flags about the state of the vehicle, @see AirVehicleFlags
+	VehicleAirFlags flags{}; ///< Flags about the state of the vehicle, @see VehicleAirFlags
 	uint16_t state = 0; ///< Action stage of the disaster vehicle.
 
-	/** For use by saveload. */
-	DisasterVehicle() : SpecializedVehicleBase() {}
-	DisasterVehicle(int x, int y, Direction direction, DisasterSubType subtype, VehicleID big_ufo_destroyer_target = VehicleID::Invalid());
+	/**
+	 * For use by saveload.
+	 * @param index The index within the vehicle pool.
+	 */
+	DisasterVehicle(VehicleID index) : SpecializedVehicleBase(index) {}
+	DisasterVehicle(VehicleID index, int x, int y, Direction direction, DisasterSubType subtype, VehicleID big_ufo_destroyer_target = VehicleID::Invalid());
 	/** We want to 'destruct' the right class. */
-	virtual ~DisasterVehicle() = default;
+	~DisasterVehicle() override = default;
 
 	void UpdatePosition(int x, int y, int z);
 	void UpdateDeltaXY() override;

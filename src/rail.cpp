@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file rail.cpp Implementation of rail specific functions. */
@@ -20,24 +20,38 @@
 #include "safeguards.h"
 
 /**
+ * Get the RailType for this RailTypeInfo.
+ * @return RailType in static RailTypeInfo definitions.
+ */
+RailType RailTypeInfo::Index() const
+{
+	extern RailTypeInfo _railtypes[RAILTYPE_END];
+	size_t index = this - _railtypes;
+	assert(index < RAILTYPE_END);
+	return static_cast<RailType>(index);
+}
+
+/**
  * Return the rail type of tile, or INVALID_RAILTYPE if this is no rail tile.
+ * @param tile An arbitrary tile.
+ * @return The rail type, or \c INVALID_RAILTYPE.
  */
 RailType GetTileRailType(Tile tile)
 {
 	switch (GetTileType(tile)) {
-		case MP_RAILWAY:
+		case TileType::Railway:
 			return GetRailType(tile);
 
-		case MP_ROAD:
+		case TileType::Road:
 			/* rail/road crossing */
 			if (IsLevelCrossing(tile)) return GetRailType(tile);
 			break;
 
-		case MP_STATION:
+		case TileType::Station:
 			if (HasStationRail(tile)) return GetRailType(tile);
 			break;
 
-		case MP_TUNNELBRIDGE:
+		case TileType::TunnelBridge:
 			if (GetTunnelBridgeTransportType(tile) == TRANSPORT_RAIL) return GetRailType(tile);
 			break;
 
@@ -129,7 +143,7 @@ RailTypes GetCompanyRailTypes(CompanyID company, bool introduces)
 
 		if (ei->climates.Test(_settings_game.game_creation.landscape) &&
 				(e->company_avail.Test(company) || TimerGameCalendar::date >= e->intro_date + CalendarTime::DAYS_IN_YEAR)) {
-			const RailVehicleInfo *rvi = &e->u.rail;
+			const RailVehicleInfo *rvi = &e->VehInfo<RailVehicleInfo>();
 
 			if (rvi->railveh_type != RAILVEH_WAGON) {
 				assert(rvi->railtypes.Any());
@@ -159,7 +173,7 @@ RailTypes GetRailTypes(bool introduces)
 		const EngineInfo *ei = &e->info;
 		if (!ei->climates.Test(_settings_game.game_creation.landscape)) continue;
 
-		const RailVehicleInfo *rvi = &e->u.rail;
+		const RailVehicleInfo *rvi = &e->VehInfo<RailVehicleInfo>();
 		if (rvi->railveh_type != RAILVEH_WAGON) {
 			assert(rvi->railtypes.Any());
 			if (introduces) {
@@ -182,21 +196,16 @@ RailTypes GetRailTypes(bool introduces)
  */
 RailType GetRailTypeByLabel(RailTypeLabel label, bool allow_alternate_labels)
 {
+	extern RailTypeInfo _railtypes[RAILTYPE_END];
 	if (label == 0) return INVALID_RAILTYPE;
 
-	/* Loop through each rail type until the label is found */
-	for (RailType r = RAILTYPE_BEGIN; r != RAILTYPE_END; r++) {
-		const RailTypeInfo *rti = GetRailTypeInfo(r);
-		if (rti->label == label) return r;
+	auto it = std::ranges::find(_railtypes, label, &RailTypeInfo::label);
+	if (it == std::end(_railtypes) && allow_alternate_labels) {
+		/* Test if any rail type defines the label as an alternate. */
+		it = std::ranges::find_if(_railtypes, [label](const RailTypeInfo &rti) { return rti.alternate_labels.contains(label); });
 	}
 
-	if (allow_alternate_labels) {
-		/* Test if any rail type defines the label as an alternate. */
-		for (RailType r = RAILTYPE_BEGIN; r != RAILTYPE_END; r++) {
-			const RailTypeInfo *rti = GetRailTypeInfo(r);
-			if (std::ranges::find(rti->alternate_labels, label) != rti->alternate_labels.end()) return r;
-		}
-	}
+	if (it != std::end(_railtypes)) return it->Index();
 
 	/* No matching label was found, so it is invalid */
 	return INVALID_RAILTYPE;

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file oldloader.cpp Functions for handling of TTO/TTD/TTDP savegames. */
@@ -52,9 +52,9 @@ static inline uint8_t CalcOldVarLen(OldChunkType type)
 }
 
 /**
- *
- * Reads a byte from a file (do not call yourself, use ReadByte())
- *
+ * Reads a byte from a file (do not call yourself, use ReadByte()).
+ * @param ls The state for loading the save game.
+ * @return A single byte.
  */
 static uint8_t ReadByteFromFile(LoadgameState &ls)
 {
@@ -79,9 +79,9 @@ static uint8_t ReadByteFromFile(LoadgameState &ls)
 }
 
 /**
- *
- * Reads a byte from the buffer and decompress if needed
- *
+ * Reads a byte from the buffer and decompress if needed.
+ * @param ls The state for loading the save game.
+ * @return A single byte.
  */
 uint8_t ReadByte(LoadgameState &ls)
 {
@@ -113,9 +113,11 @@ uint8_t ReadByte(LoadgameState &ls)
 }
 
 /**
- *
- * Loads a chunk from the old savegame
- *
+ * Loads a chunk from the old savegame.
+ * @param ls The state for loading the save game.
+ * @param base The pointer to the object to load the data into, or \c nullptr for global objects.
+ * @param chunks The definition of the elements to load for this object.
+ * @return \c true if the chunk was loaded without problems.
  */
 bool LoadChunk(LoadgameState &ls, void *base, const OldChunks *chunks)
 {

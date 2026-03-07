@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file hotkeys.cpp Implementation of hotkey related functions */
+/** @file hotkeys.cpp Implementation of hotkey related functions. */
 
 #include "stdafx.h"
 #include "openttd.h"
@@ -257,6 +257,7 @@ HotkeyList::HotkeyList(const std::string &ini_group, const std::vector<Hotkey> &
 	_hotkey_lists->push_back(this);
 }
 
+/** Remove outselves from the global hotkey list. */
 HotkeyList::~HotkeyList()
 {
 	_hotkey_lists->erase(std::ranges::find(*_hotkey_lists, this));

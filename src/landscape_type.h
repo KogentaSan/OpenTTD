@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file landscape_type.h Types related to the landscape. */
@@ -14,10 +14,10 @@
 
 /** Landscape types */
 enum class LandscapeType : uint8_t {
-	Temperate = 0,
-	Arctic    = 1,
-	Tropic    = 2,
-	Toyland   = 3,
+	Temperate = 0, ///< Base landscape.
+	Arctic = 1, ///< Landscape with snow levels.
+	Tropic = 2, ///< Landscape with distinct rainforests and deserts,
+	Toyland = 3, ///< Landscape with funky industries and vehicles.
 };
 using LandscapeTypes = EnumBitSet<LandscapeType, uint8_t>;
 

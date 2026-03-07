@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file console_func.h Console functions used outside of the console code. */
@@ -13,7 +13,7 @@
 #include "console_type.h"
 #include "core/format.hpp"
 
-/* console modes */
+/** Console modes. */
 extern IConsoleModes _iconsole_mode;
 
 /* console functions */
@@ -31,7 +31,7 @@ void IConsolePrint(TextColour colour_code, const std::string &string);
  * are also logged. All lines to print are added to a temporary buffer which can be
  * used as a history to print them onscreen
  * @param colour_code The colour of the command.
- * @param format_string The formatting string to tell what to do with the remaining arguments.
+ * @param format The formatting string to tell what to do with the remaining arguments.
  * @param first_arg The first argument to the format.
  * @param other_args The other arguments to the format.
  * @tparam A The type of the first argument.

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file main_gui.cpp Handling of the main viewport. */
@@ -177,7 +177,7 @@ void FixTitleGameZoom(int zoom_adjust)
 	vp.virtual_height = ScaleByZoom(vp.height, vp.zoom);
 }
 
-static constexpr NWidgetPart _nested_main_window_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_main_window_widgets = {
 	NWidget(NWID_VIEWPORT, INVALID_COLOUR, WID_M_VIEWPORT), SetResize(1, 1),
 };
 
@@ -344,7 +344,7 @@ struct MainWindow : Window
 
 			case GHK_MONEY: // Gimme money
 				/* You can only cheat for money in singleplayer mode. */
-				if (!_networking) Command<CMD_MONEY_CHEAT>::Post(10000000);
+				if (!_networking) Command<Commands::MoneyCheat>::Post(10000000);
 				break;
 
 			case GHK_UPDATE_COORDS: // Update the coordinates of all station signs
@@ -439,7 +439,7 @@ struct MainWindow : Window
 	void OnMouseWheel(int wheel, WidgetID widget) override
 	{
 		if (widget != WID_M_VIEWPORT) return;
-		if (_settings_client.gui.scrollwheel_scrolling != SWS_OFF) {
+		if (_settings_client.gui.scrollwheel_scrolling != ScrollWheelScrolling::Off) {
 			bool in = wheel < 0;
 
 			/* When following, only change zoom - otherwise zoom to the cursor. */

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file road_cmd.h Road related functions. */
@@ -15,8 +15,7 @@
 #include "command_type.h"
 #include "station_type.h"
 #include "town_type.h"
-
-enum RoadStopClassID : uint16_t;
+#include "newgrf_roadstop.h"
 
 void DrawRoadDepotSprite(int x, int y, DiagDirection dir, RoadType rt);
 void UpdateNearestTownForRoadTiles(bool invalidate);
@@ -27,15 +26,15 @@ CommandCost CmdBuildRoad(DoCommandFlags flags, TileIndex tile, RoadBits pieces, 
 CommandCost CmdBuildRoadDepot(DoCommandFlags flags, TileIndex tile, RoadType rt, DiagDirection dir);
 CommandCost CmdConvertRoad(DoCommandFlags flags, TileIndex tile, TileIndex area_start, RoadType to_type, bool diagonal);
 
-DEF_CMD_TRAIT(CMD_BUILD_LONG_ROAD,  CmdBuildLongRoad,  CommandFlags({CommandFlag::Auto, CommandFlag::NoWater, CommandFlag::Deity}), CMDT_LANDSCAPE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_REMOVE_LONG_ROAD, CmdRemoveLongRoad, CommandFlags({CommandFlag::Auto, CommandFlag::NoTest}),              CMDT_LANDSCAPE_CONSTRUCTION) // towns may disallow removing road bits (as they are connected) in test, but in exec they're removed and thus removing is allowed.
-DEF_CMD_TRAIT(CMD_BUILD_ROAD,       CmdBuildRoad,      CommandFlags({CommandFlag::Auto, CommandFlag::NoWater, CommandFlag::Deity}), CMDT_LANDSCAPE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_BUILD_ROAD_DEPOT, CmdBuildRoadDepot, CommandFlags({CommandFlag::Auto, CommandFlag::NoWater}),             CMDT_LANDSCAPE_CONSTRUCTION)
-DEF_CMD_TRAIT(CMD_CONVERT_ROAD,     CmdConvertRoad,    {},                                                                  CMDT_LANDSCAPE_CONSTRUCTION)
+DEF_CMD_TRAIT(Commands::BuildRoadLong, CmdBuildLongRoad, CommandFlags({CommandFlag::Auto, CommandFlag::NoWater, CommandFlag::Deity}), CommandType::LandscapeConstruction)
+DEF_CMD_TRAIT(Commands::RemoveRoadLong, CmdRemoveLongRoad, CommandFlags({CommandFlag::Auto, CommandFlag::NoTest}), CommandType::LandscapeConstruction) // towns may disallow removing road bits (as they are connected) in test, but in exec they're removed and thus removing is allowed.
+DEF_CMD_TRAIT(Commands::BuildRoad, CmdBuildRoad, CommandFlags({CommandFlag::Auto, CommandFlag::NoWater, CommandFlag::Deity}), CommandType::LandscapeConstruction)
+DEF_CMD_TRAIT(Commands::BuildRoadDepot, CmdBuildRoadDepot, CommandFlags({CommandFlag::Auto, CommandFlag::NoWater}), CommandType::LandscapeConstruction)
+DEF_CMD_TRAIT(Commands::ConvertRoad, CmdConvertRoad, {}, CommandType::LandscapeConstruction)
 
 CommandCallback CcPlaySound_CONSTRUCTION_OTHER;
 CommandCallback CcBuildRoadTunnel;
 void CcRoadDepot(Commands cmd, const CommandCost &result, TileIndex tile, RoadType rt, DiagDirection dir);
-void CcRoadStop(Commands cmd, const CommandCost &result, TileIndex tile, uint8_t width, uint8_t length, RoadStopType, bool is_drive_through, DiagDirection dir, RoadType, RoadStopClassID spec_class, uint16_t spec_index, StationID, bool);
+void CcRoadStop(Commands, const CommandCost &result, TileIndex tile, uint8_t width, uint8_t length, RoadStopType, bool is_drive_through, DiagDirection dir, RoadType, RoadStopClassID spec_class, uint16_t spec_index, StationID, bool);
 
 #endif /* ROAD_CMD_H */

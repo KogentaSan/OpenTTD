@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file viewport_type.h Types related to viewports. */
@@ -65,6 +65,10 @@ struct TrackedViewportSign : ViewportSign {
 	/**
 	 * Update the position of the viewport sign.
 	 * Note that this function hides the base class function.
+	 * @param center The (preferred) center of the viewport sign.
+	 * @param top The new top of the sign.
+	 * @param str The string to show in the sign.
+	 * @param str_small The string to show when zoomed out. If the string is empty then the \a str is used.
 	 */
 	void UpdatePosition(int center, int top, std::string_view str, std::string_view str_small = {})
 	{
@@ -124,6 +128,7 @@ enum ViewportDragDropSelectionProcess : uint8_t {
 	DDSP_PLANT_TREES,          ///< Plant trees
 	DDSP_BUILD_BRIDGE,         ///< Bridge placement
 	DDSP_BUILD_OBJECT,         ///< Build an object
+	DDSP_PLACE_HOUSE,          ///< Place a house
 
 	/* Rail specific actions */
 	DDSP_PLACE_RAIL,           ///< Rail placement

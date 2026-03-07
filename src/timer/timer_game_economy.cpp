@@ -2,15 +2,12 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /**
- * @file timer_game_economy.cpp
- * This file implements the timer logic for the game-economy-timer.
- */
-
-/**
+ * @file timer_game_economy.cpp This file implements the timer logic for the game-economy-timer.
+ *
  * Economy time is used for the regular pace of the game, including:
  * - Industry and house production/consumption
  * - Industry production changes, closure, and spawning
@@ -97,9 +94,9 @@ uint TimerGameEconomy::days_since_last_month = {};
  */
 /* static */ bool TimerGameEconomy::UsingWallclockUnits(bool newgame)
 {
-	if (newgame) return (_settings_newgame.economy.timekeeping_units == TKU_WALLCLOCK);
+	if (newgame) return (_settings_newgame.economy.timekeeping_units == TimekeepingUnits::Wallclock);
 
-	return (_settings_game.economy.timekeeping_units == TKU_WALLCLOCK);
+	return (_settings_game.economy.timekeeping_units == TimekeepingUnits::Wallclock);
 }
 
 template <>
@@ -122,10 +119,8 @@ void TimeoutTimer<TimerGameEconomy>::Elapsed(TimerGameEconomy::TElapsed trigger)
 }
 
 template <>
-bool TimerManager<TimerGameEconomy>::Elapsed([[maybe_unused]] TimerGameEconomy::TElapsed delta)
+bool TimerManager<TimerGameEconomy>::Elapsed(TimerGameEconomy::TElapsed)
 {
-	assert(delta == 1);
-
 	if (_game_mode == GM_MENU) return false;
 
 	TimerGameEconomy::date_fract++;
@@ -152,30 +147,30 @@ bool TimerManager<TimerGameEconomy>::Elapsed([[maybe_unused]] TimerGameEconomy::
 	auto timers = TimerManager<TimerGameEconomy>::GetTimers();
 
 	for (auto timer : timers) {
-		timer->Elapsed(TimerGameEconomy::DAY);
+		timer->Elapsed(TimerGameEconomy::Trigger::Day);
 	}
 
 	if ((TimerGameEconomy::date.base() % 7) == 3) {
 		for (auto timer : timers) {
-			timer->Elapsed(TimerGameEconomy::WEEK);
+			timer->Elapsed(TimerGameEconomy::Trigger::Week);
 		}
 	}
 
 	if (new_month) {
 		for (auto timer : timers) {
-			timer->Elapsed(TimerGameEconomy::MONTH);
+			timer->Elapsed(TimerGameEconomy::Trigger::Month);
 		}
 
 		if ((TimerGameEconomy::month % 3) == 0) {
 			for (auto timer : timers) {
-				timer->Elapsed(TimerGameEconomy::QUARTER);
+				timer->Elapsed(TimerGameEconomy::Trigger::Quarter);
 			}
 		}
 	}
 
 	if (new_year) {
 		for (auto timer : timers) {
-			timer->Elapsed(TimerGameEconomy::YEAR);
+			timer->Elapsed(TimerGameEconomy::Trigger::Year);
 		}
 	}
 
@@ -197,7 +192,7 @@ bool TimerManager<TimerGameEconomy>::Elapsed([[maybe_unused]] TimerGameEconomy::
 template <>
 void TimerManager<TimerGameEconomy>::Validate(TimerGameEconomy::TPeriod period)
 {
-	if (period.priority == TimerGameEconomy::Priority::NONE) return;
+	if (period.priority == TimerGameEconomy::Priority::None) return;
 
 	/* Validate we didn't make a developer error and scheduled more than one
 	 * entry on the same priority/trigger. There can only be one timer on

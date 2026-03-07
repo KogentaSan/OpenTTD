@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file company_base.h Definition of stuff that is very close to a company, like the company struct itself. */
@@ -39,14 +39,19 @@ struct CompanyInfrastructure {
 
 	auto operator<=>(const CompanyInfrastructure &) const = default;
 
-	/** Get total sum of all owned track bits. */
+	/**
+	 * Get total sum of all owned track bits.
+	 * @return The number of owned track bits.
+	 */
 	uint32_t GetRailTotal() const
 	{
 		return std::accumulate(std::begin(this->rail), std::end(this->rail), 0U);
 	}
 
-	uint32_t GetRoadTotal() const;
-	uint32_t GetTramTotal() const;
+	uint32_t GetRoadTramTotal(RoadTramType rtt) const;
+
+	inline uint32_t GetRoadTotal() const { return GetRoadTramTotal(RTT_ROAD); }
+	inline uint32_t GetTramTotal() const { return GetRoadTramTotal(RTT_TRAM); }
 };
 
 class FreeUnitIDGenerator {
@@ -76,6 +81,7 @@ struct CompanyProperties {
 	std::string president_name{}; ///< Name of the president if the user changed it.
 
 	NetworkAuthorizedKeys allow_list{}; ///< Public keys of clients that are allowed to join this company.
+	bool allow_any = false; ///< Set if anyone is allowed to join this company.
 
 	CompanyManagerFace face{}; ///< Face description of the president.
 
@@ -103,7 +109,7 @@ struct CompanyProperties {
 	uint32_t terraform_limit = 0; ///< Amount of tileheights we can (still) terraform (times 65536).
 	uint32_t clear_limit = 0; ///< Amount of tiles we can (still) clear (times 65536).
 	uint32_t tree_limit = 0; ///< Amount of trees we can (still) plant (times 65536).
-	uint32_t build_object_limit = 0; ///< Amount of tiles we can (still) build objects on (times 65536). Also applies to buying land.
+	uint32_t build_object_limit = 0; ///< Amount of tiles we can (still) build objects on (times 65536). Also applies to buying land and placing houses.
 
 	/**
 	 * If \c true, the company is (also) controlled by the computer (a NoAI program).
@@ -123,7 +129,7 @@ struct CompanyProperties {
 };
 
 struct Company : CompanyProperties, CompanyPool::PoolItem<&_company_pool> {
-	Company(StringID name_1 = {}, bool is_ai = false);
+	Company(CompanyID index, StringID name_1 = {}, bool is_ai = false);
 	~Company();
 
 	RailTypes avail_railtypes{}; ///< Rail types available to this company.
@@ -176,6 +182,18 @@ struct Company : CompanyProperties, CompanyPool::PoolItem<&_company_pool> {
 	static inline bool IsHumanID(auto index)
 	{
 		return !Company::Get(index)->is_ai;
+	}
+
+	/**
+	 * Get offset for recolour palette of specific company.
+	 * @param livery_scheme Scheme to use for recolour.
+	 * @param use_secondary Specify whether to add secondary colour offset to the result.
+	 * @return palette offset.
+	 */
+	inline uint8_t GetCompanyRecolourOffset(LiveryScheme livery_scheme, bool use_secondary = true) const
+	{
+		const Livery &l = this->livery[livery_scheme];
+		return use_secondary ? l.colour1 + l.colour2 * 16 : l.colour1;
 	}
 
 	static void PostDestructor(size_t index);

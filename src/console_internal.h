@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file console_internal.h Internally used functions for the console. */
@@ -22,6 +22,20 @@ enum ConsoleHookResult : uint8_t {
 };
 
 /**
+ * Entrypoint of a console command.
+ * @param argv The arguments to the command.
+ * @return \c true iff the command is handled correctly, i.e. \c false to show a help message.
+ */
+using IConsoleCmdProc = bool(std::span<std::string_view> argv);
+
+/**
+ * Checks whether the command may be executed.
+ * @param echo Whether to print an error message or not.
+ * @return Whether to allow the command or not.
+ */
+using IConsoleHook = ConsoleHookResult(bool echo);
+
+/**
  * --Commands--
  * Commands are commands, or functions. They get executed once and any
  * effect they produce are carried out. The arguments to the commands
@@ -29,8 +43,6 @@ enum ConsoleHookResult : uint8_t {
  * If you want to handle multiple words as one, enclose them in double-quotes
  * eg. 'say "hello everybody"'
  */
-using IConsoleCmdProc = bool(std::span<std::string_view>);
-using IConsoleHook = ConsoleHookResult(bool);
 struct IConsoleCmd {
 	IConsoleCmd(const std::string &name, IConsoleCmdProc *proc, IConsoleHook *hook) : name(name), proc(proc), hook(hook) {}
 

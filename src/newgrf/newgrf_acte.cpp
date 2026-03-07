@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_acte.cpp NewGRF Action 0x0E handler. */
@@ -16,7 +16,7 @@
 
 #include "../safeguards.h"
 
-/* Action 0x0E (GLS_SAFETYSCAN) */
+/* Action 0x0E (GrfLoadingStage::SafetyScan) */
 static void SafeGRFInhibit(ByteReader &buf)
 {
 	/* <0E> <num> <grfids...>
@@ -60,9 +60,15 @@ static void GRFInhibit(ByteReader &buf)
 	}
 }
 
+/** @copybrief GrfActionHandler::FileScan */
 template <> void GrfActionHandler<0x0E>::FileScan(ByteReader &) { }
+/** @copydoc GrfActionHandler::SafetyScan */
 template <> void GrfActionHandler<0x0E>::SafetyScan(ByteReader &buf) { SafeGRFInhibit(buf); }
+/** @copybrief GrfActionHandler::LabelScan */
 template <> void GrfActionHandler<0x0E>::LabelScan(ByteReader &) { }
+/** @copydoc GrfActionHandler::Init */
 template <> void GrfActionHandler<0x0E>::Init(ByteReader &buf) { GRFInhibit(buf); }
+/** @copydoc GrfActionHandler::Reserve */
 template <> void GrfActionHandler<0x0E>::Reserve(ByteReader &buf) { GRFInhibit(buf); }
+/** @copydoc GrfActionHandler::Activation */
 template <> void GrfActionHandler<0x0E>::Activation(ByteReader &buf) { GRFInhibit(buf); }

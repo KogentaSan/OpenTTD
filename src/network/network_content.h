@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file network_content.h Part of the network protocol handling content distribution. */
@@ -53,7 +53,7 @@ struct ContentCallback {
 	 */
 	virtual void OnDownloadComplete([[maybe_unused]] ContentID cid) {}
 
-	/** Silentium */
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~ContentCallback() = default;
 };
 
@@ -79,8 +79,8 @@ protected:
 
 	friend class NetworkContentConnecter;
 
-	bool Receive_SERVER_INFO(Packet &p) override;
-	bool Receive_SERVER_CONTENT(Packet &p) override;
+	bool ReceiveServerInfo(Packet &p) override;
+	bool ReceiveServerContent(Packet &p) override;
 
 	ContentInfo *GetContent(ContentID cid) const;
 	void DownloadContentInfo(ContentID cid);
@@ -135,9 +135,16 @@ public:
 
 	void Clear();
 
-	/** Add a callback to this class */
+	/**
+	 * Add a callback to this class, if it doesn't already exist.
+	 * @param cb The callback to add.
+	 */
 	void AddCallback(ContentCallback *cb) { include(this->callbacks, cb); }
-	/** Remove a callback */
+
+	/**
+	 * Remove a callback.
+	 * @param cb The callback to remove.
+	 */
 	void RemoveCallback(ContentCallback *cb) { this->callbacks.erase(std::ranges::find(this->callbacks, cb)); }
 };
 

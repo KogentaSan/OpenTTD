@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file survey.cpp Functions to survey the current game / system, for crashlog and network-survey. */
@@ -115,6 +115,7 @@ static const std::string _vehicle_type_to_string[] = {
  * - _company_settings
  * - _win32_settings
  * As such, they are not part of this list.
+ * @return The table of generic settings.
  */
 static auto &GenericSettingTables()
 {
@@ -160,6 +161,7 @@ static void SurveySettingsTable(nlohmann::json &survey, const SettingTable &tabl
  * Convert settings to JSON.
  *
  * @param survey The JSON object.
+ * @param skip_if_default If true, skip any settings that are on their default value.
  */
 void SurveySettings(nlohmann::json &survey, bool skip_if_default)
 {

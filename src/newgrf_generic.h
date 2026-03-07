@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_generic.h Functions related to generic callbacks. */
@@ -50,7 +50,10 @@ void AddGenericCallback(GrfSpecFeature feature, const GRFFile *file, const Sprit
 std::pair<const GRFFile *, uint16_t> GetAiPurchaseCallbackResult(GrfSpecFeature feature, CargoType cargo_type, uint8_t default_selection, IndustryType src_industry, IndustryType dst_industry, uint8_t distance, AIConstructionEvent event, uint8_t count, uint8_t station_size);
 void AmbientSoundEffectCallback(TileIndex tile);
 
-/** Play an ambient sound effect for an empty tile. */
+/**
+ * Play an ambient sound effect for an empty tile.
+ * @param tile The tile to play the sound at.
+ */
 inline void AmbientSoundEffect(TileIndex tile)
 {
 	/* Only run callback if enabled. */

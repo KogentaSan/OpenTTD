@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file linkgraph_type.h Declaration of link graph types used for cargo distribution. */
@@ -18,16 +18,16 @@ using LinkGraphJobID = PoolID<uint16_t, struct LinkGraphJobIDTag, 0xFFFF, 0xFFFF
 typedef uint16_t NodeID;
 static const NodeID INVALID_NODE = UINT16_MAX;
 
-enum DistributionType : uint8_t {
-	DT_BEGIN = 0,
-	DT_MIN = 0,
-	DT_MANUAL = 0,           ///< Manual distribution. No link graph calculations are run.
-	DT_ASYMMETRIC = 1,       ///< Asymmetric distribution. Usually cargo will only travel in one direction.
-	DT_MAX_NONSYMMETRIC = 1, ///< Maximum non-symmetric distribution.
-	DT_SYMMETRIC = 2,        ///< Symmetric distribution. The same amount of cargo travels in each direction between each pair of nodes.
-	DT_MAX = 2,
-	DT_NUM = 3,
-	DT_END = 3
+/**
+ * Distribution types.
+ */
+enum class DistributionType : uint8_t {
+	Min = 0, ///< Minimal value of Distribution type.
+	Manual = 0, ///< Manual distribution. No link graph calculations are run.
+	Asymmetric = 1, ///< Asymmetric distribution. Usually cargo will only travel in one direction.
+	MaxNonSymmetric = 1, ///< Maximum non-symmetric distribution.
+	Symmetric = 2, ///< Symmetric distribution. The same amount of cargo travels in each direction between each pair of nodes.
+	Max = 2, ///< Maximal value of Distribution type.
 };
 
 /**

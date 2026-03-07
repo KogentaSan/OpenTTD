@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file company_type.h Types related to companies. */
@@ -10,7 +10,7 @@
 #ifndef COMPANY_TYPE_H
 #define COMPANY_TYPE_H
 
-#include "core/enum_type.hpp"
+#include "core/base_bitset_type.hpp"
 #include "core/pool_type.hpp"
 
 using CompanyID = PoolID<uint8_t, struct CompanyIDTag, 0xF, 0xFF>;
@@ -57,31 +57,29 @@ struct CompanyManagerFace {
 };
 
 /** The reason why the company was removed. */
-enum CompanyRemoveReason : uint8_t {
-	CRR_MANUAL,    ///< The company is manually removed.
-	CRR_AUTOCLEAN, ///< The company is removed due to autoclean.
-	CRR_BANKRUPT,  ///< The company went belly-up.
+enum class CompanyRemoveReason : uint8_t {
+	Manual, ///< The company is manually removed.
+	Autoclean, ///< The company is removed due to autoclean.
+	Bankrupt, ///< The company went belly-up.
 
-	CRR_END,       ///< Sentinel for end.
+	End, ///< Sentinel for end.
 
-	CRR_NONE = CRR_MANUAL, ///< Dummy reason for actions that don't need one.
+	None = Manual, ///< Dummy reason for actions that don't need one.
 };
 
-/** The action to do with CMD_COMPANY_CTRL. */
-enum CompanyCtrlAction : uint8_t {
-	CCA_NEW,    ///< Create a new company.
-	CCA_NEW_AI, ///< Create a new AI company.
-	CCA_DELETE, ///< Delete a company.
-
-	CCA_END,    ///< Sentinel for end.
+/** The action to do with Commands::CompanyControl. */
+enum class CompanyCtrlAction : uint8_t {
+	New, ///< Create a new company.
+	NewAI, ///< Create a new AI company.
+	Delete, ///< Delete a company.
 };
 
-/** The action to do with CMD_COMPANY_ALLOW_LIST_CTRL. */
-enum CompanyAllowListCtrlAction : uint8_t {
-	CALCA_ADD, ///< Create a public key.
-	CALCA_REMOVE, ///< Remove a public key.
-
-	CALCA_END,    ///< Sentinel for end.
+/** The action to do with Commands::CompanyAllowListControl. */
+enum class CompanyAllowListCtrlAction : uint8_t {
+	AddKey, ///< Create a public key.
+	RemoveKey, ///< Remove a public key.
+	AllowAny, ///< Allow joining the company without a key.
+	AllowListed, ///< Allow only listed keys to join the company.
 };
 
 #endif /* COMPANY_TYPE_H */

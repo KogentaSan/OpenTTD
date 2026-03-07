@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file bridge_map.h Map accessor functions for bridges. */
@@ -18,12 +18,12 @@
 /**
  * Checks if this is a bridge, instead of a tunnel
  * @param t The tile to analyze
- * @pre IsTileType(t, MP_TUNNELBRIDGE)
+ * @pre IsTileType(t, TileType::TunnelBridge)
  * @return true if the structure is a bridge one
  */
 inline bool IsBridge(Tile t)
 {
-	assert(IsTileType(t, MP_TUNNELBRIDGE));
+	assert(IsTileType(t, TileType::TunnelBridge));
 	return HasBit(t.m5(), 7);
 }
 
@@ -34,7 +34,7 @@ inline bool IsBridge(Tile t)
  */
 inline bool IsBridgeTile(Tile t)
 {
-	return IsTileType(t, MP_TUNNELBRIDGE) && IsBridge(t);
+	return IsTileType(t, TileType::TunnelBridge) && IsBridge(t);
 }
 
 /**
@@ -127,7 +127,7 @@ inline void SetBridgeMiddle(Tile t, Axis a)
  */
 inline void MakeBridgeRamp(Tile t, Owner o, BridgeType bridgetype, DiagDirection d, TransportType tt)
 {
-	SetTileType(t, MP_TUNNELBRIDGE);
+	SetTileType(t, TileType::TunnelBridge);
 	SetTileOwner(t, o);
 	SetDockingTile(t, false);
 	t.m2() = 0;
@@ -135,6 +135,7 @@ inline void MakeBridgeRamp(Tile t, Owner o, BridgeType bridgetype, DiagDirection
 	t.m4() = 0;
 	t.m5() = 1 << 7 | tt << 2 | d;
 	SB(t.m6(), 2, 4, bridgetype);
+	SB(t.m6(), 6, 2, 0);
 	t.m7() = 0;
 	t.m8() = 0;
 }

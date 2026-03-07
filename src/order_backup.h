@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file order_backup.h Functions related to order backups. */
@@ -25,12 +25,14 @@ struct OrderBackup;
 using OrderBackupPool = Pool<OrderBackup, OrderBackupID, 1>;
 /** The pool with order backups. */
 extern OrderBackupPool _order_backup_pool;
+/** An item in the OrderBackupPool. */
+using OrderBackupPoolItem = OrderBackupPool::PoolItem<&_order_backup_pool>;
 
 /**
  * Data for backing up an order of a vehicle so it can be
  * restored after a vehicle is rebuilt in the same depot.
  */
-struct OrderBackup : OrderBackupPool::PoolItem<&_order_backup_pool>, BaseConsist {
+struct OrderBackup : OrderBackupPoolItem, BaseConsist {
 private:
 	friend SaveLoadTable GetOrderBackupDescription(); ///< Saving and loading of order backups.
 	friend struct BKORChunkHandler; ///< Creating empty orders upon savegame loading.
@@ -45,11 +47,11 @@ private:
 	std::vector<Order> orders; ///< The actual orders if the vehicle was not a clone.
 	uint32_t old_order_index = 0;
 
-	/** Creation for savegame restoration. */
-	OrderBackup() = default;
-	OrderBackup(const Vehicle *v, uint32_t user);
-
 	void DoRestore(Vehicle *v);
+
+	friend OrderBackupPoolItem; ///< Loading of order backups.
+	OrderBackup(OrderBackupID index);
+	OrderBackup(OrderBackupID index, const Vehicle *v, uint32_t user);
 
 public:
 	~OrderBackup();

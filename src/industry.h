@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file industry.h Base of all industries. */
@@ -52,7 +52,7 @@ enum class IndustryControlFlag : uint8_t {
 	NoClosure = 2,
 	/** Indicates that the production level of the industry is externally controlled. */
 	ExternalProdLevel = 3,
-	End,
+	End, ///< End marker.
 };
 using IndustryControlFlags = EnumBitSet<IndustryControlFlag, uint8_t, IndustryControlFlag::End>;
 
@@ -78,8 +78,8 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	};
 
 	struct AcceptedHistory {
-		uint16_t accepted = 0; /// Total accepted.
-		uint16_t waiting = 0; /// Average waiting.
+		uint16_t accepted = 0; ///< Total accepted.
+		uint16_t waiting = 0; ///< Average waiting.
 	};
 
 	struct AcceptedCargo {
@@ -135,7 +135,7 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 
 	PersistentStorage *psa = nullptr; ///< Persistent storage for NewGRF industries.
 
-	Industry(TileIndex tile = INVALID_TILE) : location(tile, 0, 0) {}
+	Industry(IndustryID index, TileIndex tile = INVALID_TILE) : IndustryPool::PoolItem<&_industry_pool>(index), location(tile, 0, 0) {}
 	~Industry();
 
 	void RecomputeProductionMultipliers();
@@ -147,7 +147,7 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	 */
 	inline bool TileBelongsToIndustry(TileIndex tile) const
 	{
-		return IsTileType(tile, MP_INDUSTRY) && GetIndustryIndex(tile) == this->index;
+		return IsTileType(tile, TileType::Industry) && GetIndustryIndex(tile) == this->index;
 	}
 
 	/**
@@ -245,7 +245,7 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	/**
 	 * Get the industry of the given tile
 	 * @param tile the tile to get the industry from
-	 * @pre IsTileType(t, MP_INDUSTRY)
+	 * @pre IsTileType(t, TileType::Industry)
 	 * @return the industry
 	 */
 	static inline Industry *GetByTile(TileIndex tile)
@@ -260,6 +260,7 @@ struct Industry : IndustryPool::PoolItem<&_industry_pool> {
 	 * Get the count of industries for this type.
 	 * @param type IndustryType to query
 	 * @pre type < NUM_INDUSTRYTYPES
+	 * @return The number of industries of the given type.
 	 */
 	static inline uint16_t GetIndustryTypeCount(IndustryType type)
 	{

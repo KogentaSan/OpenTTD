@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file gfx.cpp Handling of drawing text and other gfx related stuff. */
@@ -22,10 +22,10 @@
 #include "window_func.h"
 #include "newgrf_debug.h"
 #include "core/backup_type.hpp"
-#include "core/container_func.hpp"
 #include "core/geometry_func.hpp"
 #include "viewport_func.h"
 
+#include "table/animcursors.h"
 #include "table/string_colours.h"
 #include "table/sprites.h"
 #include "table/control_codes.h"
@@ -342,6 +342,9 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 		margin  *= 2; // account for rounding errors
 	}
 
+	/* Prevent division by zero. */
+	if (grade_x == 0) grade_x = 1;
+
 	/* Imagine that the line is infinitely long and it intersects with
 	 * infinitely long left and right edges of the clipping rectangle.
 	 * If both intersection points are outside the clipping rectangle
@@ -589,7 +592,7 @@ static int DrawLayoutLine(const ParagraphLayouter::Line &line, int y, int left, 
 		int dpi_right = dpi->left + dpi->width - 1;
 		TextColour last_colour = initial_colour;
 
-		for (int run_index = 0; run_index < line.CountRuns(); run_index++) {
+		for (size_t run_index = 0; run_index < line.CountRuns(); run_index++) {
 			const ParagraphLayouter::VisualRun &run = line.GetVisualRun(run_index);
 			const auto &glyphs = run.GetGlyphs();
 			const auto &positions = run.GetPositions();
@@ -604,7 +607,7 @@ static int DrawLayoutLine(const ParagraphLayouter::Line &line, int y, int left, 
 			if (do_shadow && (!fc->GetDrawGlyphShadow() || !colour_has_shadow)) continue;
 			SetColourRemap(do_shadow ? TC_BLACK : colour);
 
-			for (int i = 0; i < run.GetGlyphCount(); i++) {
+			for (size_t i = 0; i < run.GetGlyphCount(); i++) {
 				GlyphID glyph = glyphs[i];
 
 				/* Not a valid glyph (empty) */
@@ -708,6 +711,7 @@ int DrawString(int left, int right, int top, StringID str, TextColour colour, St
  * Calculates height of string (in pixels). The string is changed to a multiline string if needed.
  * @param str string to check
  * @param maxw maximum string width
+ * @param fontsize The size of the initial characters.
  * @return height of pixels of string when it is drawn
  */
 int GetStringHeight(std::string_view str, int maxw, FontSize fontsize)
@@ -756,6 +760,7 @@ Dimension GetStringMultiLineBoundingBox(StringID str, const Dimension &suggestio
  * Calculate string bounding box for multi-line strings.
  * @param str        String to check.
  * @param suggestion Suggested bounding box.
+ * @param fontsize The size of the initial characters.
  * @return Bounding box for the multi-line string, may be bigger than \a suggestion.
  */
 Dimension GetStringMultiLineBoundingBox(std::string_view str, const Dimension &suggestion, FontSize fontsize)
@@ -902,6 +907,7 @@ Dimension GetStringBoundingBox(std::string_view str, FontSize start_fontsize)
  * Get bounding box of a string.
  * Has the same restrictions as #GetStringBoundingBox(std::string_view str, FontSize start_fontsize).
  * @param strid String to examine.
+ * @param start_fontsize Fontsize to start the text with.
  * @return Width and height of the bounding box for the string in pixels.
  */
 Dimension GetStringBoundingBox(StringID strid, FontSize start_fontsize)
@@ -1055,6 +1061,7 @@ void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub,
  * @param y The Y location to draw.
  * @param mode The settings for the blitter to pass.
  * @param sub Whether to only draw a sub set of the sprite.
+ * @param sprite_id The unique identifier of the sprite for NewGRF debug purposes.
  * @param zoom The zoom level at which to draw the sprites.
  * @param dst Optional parameter for a different blitting destination.
  * @tparam ZOOM_BASE The factor required to get the sub sprite information into the right size.
@@ -1325,6 +1332,10 @@ void ScreenSizeChanged()
 
 	/* screen size changed and the old bitmap is invalid now, so we don't want to undraw it */
 	_cursor.visible = false;
+
+	if (VideoDriver::GetInstance() != nullptr) {
+		if (AdjustGUIZoom(true)) ReInitAllWindows(true);
+	}
 }
 
 void UndrawMouseCursor()
@@ -1720,6 +1731,20 @@ void SetAnimatedMouseCursor(std::span<const AnimCursor> table)
 }
 
 /**
+ * Assign an animation or a non-animated sprite to the cursor.
+ * @param icon New shape of the mouse cursor.
+ * @param pal Palette to use.
+ */
+void SetCursor(CursorID icon, PaletteID pal)
+{
+	if ((icon & ANIMCURSOR_FLAG) != 0) {
+		SetAnimatedMouseCursor(_animcursors[icon & ~ANIMCURSOR_FLAG]);
+	} else {
+		SetMouseCursor(icon, pal);
+	}
+}
+
+/**
  * Update cursor position based on a relative change.
  *
  * @param delta_x How much change in the X position.
@@ -1785,7 +1810,12 @@ void UpdateGUIZoom()
 {
 	/* Determine real GUI zoom to use. */
 	if (_gui_scale_cfg == -1) {
-		_gui_scale = VideoDriver::GetInstance()->GetSuggestedUIScale();
+		/* Minimum design size of the game is 640x480. */
+		float xs = _screen.width / 640.f;
+		float ys = _screen.height / 480.f;
+		int scale = std::min(xs, ys) * 100;
+		/* Round down scaling to 25% increments and clamp to limits. */
+		_gui_scale = Clamp((scale / 25) * 25, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE);
 	} else {
 		_gui_scale = Clamp(_gui_scale_cfg, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE);
 	}
@@ -1806,6 +1836,8 @@ void UpdateGUIZoom()
  */
 bool AdjustGUIZoom(bool automatic)
 {
+	if (VideoDriver::GetInstance() == nullptr) return false;
+
 	ZoomLevel old_gui_zoom = _gui_zoom;
 	ZoomLevel old_font_zoom = _font_zoom;
 	int old_scale = _gui_scale;

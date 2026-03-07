@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file linkgraph_gui.cpp Implementation of linkgraph overlay GUI. */
@@ -235,9 +235,11 @@ void LinkGraphOverlay::AddLinks(const Station *from, const Station *to)
  * Add information from a given pair of link stat and flow stat to the given
  * link properties. The shown usage or plan is always the maximum of all link
  * stats involved.
+ * @param new_cargo Cargo type of the new link.
  * @param new_cap Capacity of the new link.
  * @param new_usg Usage of the new link.
  * @param new_plan Planned flow for the new link.
+ * @param time Travel time of the new link.
  * @param new_shared If the new link is shared.
  * @param cargo LinkProperties to write the information to.
  */
@@ -318,6 +320,7 @@ void LinkGraphOverlay::DrawContent(Point pta, Point ptb, const LinkProperties &c
 /**
  * Draw dots for stations into the smallmap. The dots' sizes are determined by the amount of
  * cargo produced there, their colours by the type of cargo produced.
+ * @param dpi The context to draw the overlay in.
  */
 void LinkGraphOverlay::DrawStationDots(const DrawPixelInfo *dpi) const
 {
@@ -443,7 +446,7 @@ void LinkGraphOverlay::SetCompanyMask(CompanyMask company_mask)
 	this->window->GetWidget<NWidgetBase>(this->widget_id)->SetDirty(this->window);
 }
 
-/** Make a number of rows with buttons for each company for the linkgraph legend window. */
+/** Make a number of rows with buttons for each company for the linkgraph legend window. @copydoc NWidgetFunctionType */
 std::unique_ptr<NWidgetBase> MakeCompanyButtonRowsLinkGraphGUI()
 {
 	return MakeCompanyButtonRows(WID_LGL_COMPANY_FIRST, WID_LGL_COMPANY_LAST, COLOUR_GREY, 3, STR_NULL);
@@ -496,7 +499,7 @@ std::unique_ptr<NWidgetBase> MakeCargoesLegendLinkGraphGUI()
 }
 
 
-static constexpr NWidgetPart _nested_linkgraph_legend_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_linkgraph_legend_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN, WID_LGL_CAPTION), SetStringTip(STR_LINKGRAPH_LEGEND_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),

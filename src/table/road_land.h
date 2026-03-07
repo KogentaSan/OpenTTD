@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file road_land.h Sprite constructs for road depots. */
@@ -34,8 +34,10 @@ static const DrawTileSpriteSpan _road_depot[] = {
 	{ {0xA4A, PAL_NONE}, _road_depot_NW }
 };
 
-/* Sprite layout for level crossings. The SpriteIDs are actually offsets
- * from the base SpriteID returned from the NewGRF sprite resolver. */
+/**
+ * Sprite layout for level crossings.
+ * The SpriteIDs are actually offsets from the base SpriteID returned from the NewGRF sprite resolver.
+ */
 static const DrawTileSeqStruct _crossing_layout_ALL[] = {
 	TILE_SEQ_LINE(2, PAL_NONE,  0,  0, 3, 3)
 	TILE_SEQ_LINE(4, PAL_NONE,  0, 13, 3, 3)

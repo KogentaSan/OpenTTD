@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file driver.h Base for all drivers (video, sound, music, etc). */
@@ -32,15 +32,16 @@ public:
 	 */
 	virtual void Stop() = 0;
 
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~Driver() = default;
 
 	/** The type of driver */
-	enum Type : uint8_t {
-		DT_BEGIN = 0, ///< Helper for iteration
-		DT_MUSIC = 0, ///< A music driver, needs to be before sound to properly shut down extmidi forked music players
-		DT_SOUND,     ///< A sound driver
-		DT_VIDEO,     ///< A video driver
-		DT_END,       ///< Helper for iteration
+	enum class Type : uint8_t {
+		Begin = 0, ///< Helper for iteration
+		Music = 0, ///< A music driver, needs to be before sound to properly shut down extmidi forked music players
+		Sound, ///< A sound driver
+		Video, ///< A video driver
+		End, ///< Helper for iteration
 	};
 
 	/**
@@ -69,6 +70,7 @@ private:
 
 	/**
 	 * Get the map with drivers.
+	 * @return A reference to the drivers.
 	 */
 	static Drivers &GetDrivers()
 	{
@@ -83,8 +85,8 @@ private:
 	 */
 	static std::unique_ptr<Driver> &GetActiveDriver(Driver::Type type)
 	{
-		static std::array<std::unique_ptr<Driver>, Driver::DT_END> s_driver{};
-		return s_driver[type];
+		static std::array<std::unique_ptr<Driver>, to_underlying(Driver::Type::End)> s_driver{};
+		return s_driver[to_underlying(type)];
 	}
 
 	/**
@@ -95,7 +97,7 @@ private:
 	static std::string_view GetDriverTypeName(Driver::Type type)
 	{
 		static const std::string_view driver_type_name[] = { "music", "sound", "video" };
-		return driver_type_name[type];
+		return driver_type_name[to_underlying(type)];
 	}
 
 	static bool SelectDriverImpl(const std::string &name, Driver::Type type);
@@ -105,6 +107,7 @@ private:
 protected:
 	DriverFactoryBase(Driver::Type type, int priority, std::string_view name, std::string_view description);
 
+	/** Ensure the destructor of the sub classes are called as well. */
 	virtual ~DriverFactoryBase();
 
 	/**
@@ -122,7 +125,7 @@ public:
 	 */
 	static void ShutdownDrivers()
 	{
-		for (Driver::Type dt = Driver::DT_BEGIN; dt < Driver::DT_END; dt++) {
+		for (Driver::Type dt = Driver::Type::Begin; dt != Driver::Type::End; ++dt) {
 			auto &driver = GetActiveDriver(dt);
 			if (driver != nullptr) driver->Stop();
 		}

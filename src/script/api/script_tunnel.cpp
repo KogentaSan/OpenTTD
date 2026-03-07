@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file script_tunnel.cpp Implementation of ScriptTunnel. */
@@ -90,10 +90,10 @@ static void _DoCommandReturnBuildTunnel1(class ScriptInstance &instance)
 
 	if (vehicle_type == ScriptVehicle::VT_RAIL) {
 		/* For rail we do nothing special */
-		return ScriptObject::Command<CMD_BUILD_TUNNEL>::Do(start, TRANSPORT_RAIL, ScriptRail::GetCurrentRailType());
+		return ScriptObject::Command<Commands::BuildTunnel>::Do(start, TRANSPORT_RAIL, ScriptRail::GetCurrentRailType());
 	} else {
 		ScriptObject::SetCallbackVariable(0, start.base());
-		return ScriptObject::Command<CMD_BUILD_TUNNEL>::Do(&::_DoCommandReturnBuildTunnel1, start, TRANSPORT_ROAD, ScriptRoad::GetCurrentRoadType());
+		return ScriptObject::Command<Commands::BuildTunnel>::Do(&::_DoCommandReturnBuildTunnel1, start, TRANSPORT_ROAD, ScriptRoad::GetCurrentRoadType());
 	}
 }
 
@@ -108,7 +108,7 @@ static void _DoCommandReturnBuildTunnel1(class ScriptInstance &instance)
 	DiagDirection dir_1 = ::DiagdirBetweenTiles(end, start);
 	DiagDirection dir_2 = ::ReverseDiagDir(dir_1);
 
-	return ScriptObject::Command<CMD_BUILD_ROAD>::Do(&::_DoCommandReturnBuildTunnel2, start + ::TileOffsByDiagDir(dir_1), ::DiagDirToRoadBits(dir_2), ScriptRoad::GetRoadType(), DRD_NONE, TownID::Invalid());
+	return ScriptObject::Command<Commands::BuildRoad>::Do(&::_DoCommandReturnBuildTunnel2, start + ::TileOffsByDiagDir(dir_1), ::DiagDirToRoadBits(dir_2), ScriptRoad::GetRoadType(), DRD_NONE, TownID::Invalid());
 }
 
 /* static */ bool ScriptTunnel::_BuildTunnelRoad2()
@@ -122,7 +122,7 @@ static void _DoCommandReturnBuildTunnel1(class ScriptInstance &instance)
 	DiagDirection dir_1 = ::DiagdirBetweenTiles(end, start);
 	DiagDirection dir_2 = ::ReverseDiagDir(dir_1);
 
-	return ScriptObject::Command<CMD_BUILD_ROAD>::Do(end + ::TileOffsByDiagDir(dir_2), ::DiagDirToRoadBits(dir_1), ScriptRoad::GetRoadType(), DRD_NONE, TownID::Invalid());
+	return ScriptObject::Command<Commands::BuildRoad>::Do(end + ::TileOffsByDiagDir(dir_2), ::DiagDirToRoadBits(dir_1), ScriptRoad::GetRoadType(), DRD_NONE, TownID::Invalid());
 }
 
 /* static */ bool ScriptTunnel::RemoveTunnel(TileIndex tile)
@@ -130,5 +130,5 @@ static void _DoCommandReturnBuildTunnel1(class ScriptInstance &instance)
 	EnforceCompanyModeValid(false);
 	EnforcePrecondition(false, IsTunnelTile(tile));
 
-	return ScriptObject::Command<CMD_LANDSCAPE_CLEAR>::Do(tile);
+	return ScriptObject::Command<Commands::LandscapeClear>::Do(tile);
 }

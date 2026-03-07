@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file network_server.h Server part of the network protocol. */
@@ -74,8 +74,8 @@ public:
 	std::shared_ptr<struct PacketWriter> savegame = nullptr; ///< Writer used to write the savegame.
 	NetworkAddress client_address{}; ///< IP-address of the client (so they can be banned)
 
-	ServerNetworkGameSocketHandler(SOCKET s);
-	~ServerNetworkGameSocketHandler();
+	ServerNetworkGameSocketHandler(ClientPoolID index, SOCKET s);
+	~ServerNetworkGameSocketHandler() override;
 
 	std::unique_ptr<Packet> ReceivePacket() override;
 	NetworkRecvStatus CloseConnection(NetworkRecvStatus status) override;

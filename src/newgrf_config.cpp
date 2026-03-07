@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_config.cpp Finding NewGRFs and configuring them. */
@@ -40,7 +40,7 @@ GRFConfig::GRFConfig(const GRFConfig &config) :
 	name(config.name),
 	info(config.info),
 	url(config.url),
-	error(config.error),
+	errors(config.errors),
 	version(config.version),
 	min_loadable_version(config.min_loadable_version),
 	flags(config.flags),
@@ -62,6 +62,8 @@ void GRFConfig::SetParams(std::span<const uint32_t> pars)
 
 /**
  * Return whether this NewGRF can replace an older version of the same NewGRF.
+ * @param old_version The older version of the NewGRF (savegame loading).
+ * @return Whether the NewGRF says that this version can be loaded for games with the old version.
  */
 bool GRFConfig::IsCompatible(uint32_t old_version) const
 {
@@ -157,15 +159,6 @@ GRFConfigList _grfconfig_static;
 uint _missing_extra_graphics = 0;
 
 /**
- * Construct a new GRFError.
- * @param severity The severity of this error.
- * @param message The actual error-string.
- */
-GRFError::GRFError(StringID severity, StringID message) : message(message), severity(severity)
-{
-}
-
-/**
  * Get the value of the given user-changeable parameter.
  * @param info The grf parameter info to get the value for.
  * @return The value of this parameter.
@@ -221,7 +214,7 @@ void GRFParameterInfo::Finalize()
  * Update the palettes of the graphics from the config file.
  * Called when changing the default palette in advanced settings.
  */
-void UpdateNewGRFConfigPalette(int32_t)
+void UpdateNewGRFConfigPalette()
 {
 	for (const auto &c : _grfconfig_newgame) c->SetSuitablePalette();
 	for (const auto &c : _grfconfig_static ) c->SetSuitablePalette();
@@ -306,7 +299,7 @@ bool FillGRFDetails(GRFConfig &config, bool is_static, Subdirectory subdir)
 	}
 
 	/* Find and load the Action 8 information */
-	LoadNewGRFFile(config, GLS_FILESCAN, subdir, true);
+	LoadNewGRFFile(config, GrfLoadingStage::FileScan, subdir, true);
 	config.SetSuitablePalette();
 	config.FinalizeParameterInfo();
 
@@ -315,9 +308,9 @@ bool FillGRFDetails(GRFConfig &config, bool is_static, Subdirectory subdir)
 
 	if (is_static) {
 		/* Perform a 'safety scan' for static GRFs */
-		LoadNewGRFFile(config, GLS_SAFETYSCAN, subdir, true);
+		LoadNewGRFFile(config, GrfLoadingStage::SafetyScan, subdir, true);
 
-		/* GRFConfigFlag::Unsafe is set if GLS_SAFETYSCAN finds unsafe actions */
+		/* GRFConfigFlag::Unsafe is set if GrfLoadingStage::SafetyScan finds unsafe actions */
 		if (config.flags.Test(GRFConfigFlag::Unsafe)) return false;
 	}
 
@@ -339,7 +332,7 @@ void ClearGRFConfigList(GRFConfigList &config)
  * Append a GRF Config list onto another list.
  * @param dst The destination list
  * @param src The source list
- * @param init_only the copied GRF will be processed up to GLS_INIT
+ * @param init_only the copied GRF will be processed up to GrfLoadingStage::Init
  */
 static void AppendGRFConfigList(GRFConfigList &dst, const GRFConfigList &src, bool init_only)
 {
@@ -357,7 +350,7 @@ static void AppendGRFConfigList(GRFConfigList &dst, const GRFConfigList &src, bo
  * Copy a GRF Config list.
  * @param dst The destination list
  * @param src The source list
- * @param init_only the copied GRF will be processed up to GLS_INIT
+ * @param init_only the copied GRF will be processed up to GrfLoadingStage::Init
  */
 void CopyGRFConfigList(GRFConfigList &dst, const GRFConfigList &src, bool init_only)
 {
@@ -412,7 +405,10 @@ void AppendToGRFConfigList(GRFConfigList &dst, std::unique_ptr<GRFConfig> &&el)
 }
 
 
-/** Reset the current GRF Config to either blank or newgame settings. */
+/**
+ * Reset the current GRF Config to either blank or newgame settings.
+ * @param defaults Whether configure to fully load the copied NewGRFs.
+ */
 void ResetGRFConfig(bool defaults)
 {
 	CopyGRFConfigList(_grfconfig, _grfconfig_newgame, !defaults);
@@ -472,7 +468,7 @@ compatible_grf:
 				c->ident.md5sum = f->ident.md5sum;
 				c->name = f->name;
 				c->info = f->name;
-				c->error.reset();
+				c->errors.clear();
 				c->version = f->version;
 				c->min_loadable_version = f->min_loadable_version;
 				c->num_valid_params = f->num_valid_params;
@@ -502,7 +498,10 @@ public:
 
 	bool AddFile(const std::string &filename, size_t basepath_length, const std::string &tar_filename) override;
 
-	/** Do the scan for GRFs. */
+	/**
+	 * Do the scan for GRFs.
+	 * @return The number of GRFs that have been found.
+	 */
 	static uint DoScan()
 	{
 		if (_skip_all_newgrf_scanning > 0) {
@@ -544,14 +543,10 @@ bool GRFFileScanner::AddFile(const std::string &filename, size_t basepath_length
 }
 
 /**
- * Simple sorter for GRFS
- * @param c1 the first GRFConfig *
- * @param c2 the second GRFConfig *
- * @return true if the name of first NewGRF is before the name of the second.
- */
-static bool GRFSorter(std::unique_ptr<GRFConfig> const &c1, std::unique_ptr<GRFConfig> const &c2)
+ * Simple sorter for GRFS. @copydoc GUIList::Sorter */
+static bool GRFSorter(std::unique_ptr<GRFConfig> const &a, std::unique_ptr<GRFConfig> const &b)
 {
-	return StrNaturalCompare(c1->GetName(), c2->GetName()) < 0;
+	return StrNaturalCompare(a->GetName(), b->GetName()) < 0;
 }
 
 /**
@@ -637,7 +632,11 @@ GRFConfig *GetGRFConfig(uint32_t grfid, uint32_t mask)
 }
 
 
-/** Build a string containing space separated parameter values, and terminate */
+/**
+ * Build a string containing space separated parameter values.
+ * @param c The GRFConfig to create the parameter list for.
+ * @return The parameter list.
+ */
 std::string GRFBuildParamList(const GRFConfig &c)
 {
 	std::string result;

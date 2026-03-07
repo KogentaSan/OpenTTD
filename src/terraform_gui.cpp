@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file terraform_gui.cpp GUI related to terraforming the map. */
@@ -55,7 +55,11 @@ void CcTerraform(Commands, const CommandCost &result, Money, TileIndex tile)
 }
 
 
-/** Scenario editor command that generates desert areas */
+/**
+ * Scenario editor command that generates desert areas.
+ * @param end The end tile of the map drag.
+ * @param start The start tile of the map drag.
+ */
 static void GenerateDesertArea(TileIndex end, TileIndex start)
 {
 	if (_game_mode != GM_EDITOR) return;
@@ -65,14 +69,18 @@ static void GenerateDesertArea(TileIndex end, TileIndex start)
 	TileArea ta(start, end);
 	for (TileIndex tile : ta) {
 		SetTropicZone(tile, (_ctrl_pressed) ? TROPICZONE_NORMAL : TROPICZONE_DESERT);
-		Command<CMD_LANDSCAPE_CLEAR>::Post(tile);
+		Command<Commands::LandscapeClear>::Post(tile);
 		MarkTileDirtyByTile(tile);
 	}
 	old_generating_world.Restore();
 	InvalidateWindowClassesData(WC_TOWN_VIEW, 0);
 }
 
-/** Scenario editor command that generates rocky areas */
+/**
+ * Scenario editor command that generates rocky areas.
+ * @param end The end tile of the map drag.
+ * @param start The start tile of the map drag.
+ */
 static void GenerateRockyArea(TileIndex end, TileIndex start)
 {
 	if (_game_mode != GM_EDITOR) return;
@@ -82,12 +90,12 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 
 	for (TileIndex tile : ta) {
 		switch (GetTileType(tile)) {
-			case MP_TREES:
-				if (GetTreeGround(tile) == TREE_GROUND_SHORE) continue;
+			case TileType::Trees:
+				if (GetTreeGround(tile) == TreeGround::Shore) continue;
 				[[fallthrough]];
 
-			case MP_CLEAR:
-				MakeClear(tile, CLEAR_ROCKS, 3);
+			case TileType::Clear:
+				MakeClear(tile, ClearGround::Rocks, 3);
 				break;
 
 			default:
@@ -112,7 +120,7 @@ static void GenerateRockyArea(TileIndex end, TileIndex start)
 bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_tile, TileIndex end_tile)
 {
 	if (!_settings_game.construction.freeform_edges) {
-		/* When end_tile is MP_VOID, the error tile will not be visible to the
+		/* When end_tile is TileType::Void, the error tile will not be visible to the
 		 * user. This happens when terraforming at the southern border. */
 		if (TileX(end_tile) == Map::MaxX()) end_tile += TileDiffXY(-1, 0);
 		if (TileY(end_tile) == Map::MaxY()) end_tile += TileDiffXY(0, -1);
@@ -120,16 +128,16 @@ bool GUIPlaceProcDragXY(ViewportDragDropSelectionProcess proc, TileIndex start_t
 
 	switch (proc) {
 		case DDSP_DEMOLISH_AREA:
-			Command<CMD_CLEAR_AREA>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, end_tile, start_tile, _ctrl_pressed);
+			Command<Commands::ClearArea>::Post(STR_ERROR_CAN_T_CLEAR_THIS_AREA, CcPlaySound_EXPLOSION, end_tile, start_tile, _ctrl_pressed);
 			break;
 		case DDSP_RAISE_AND_LEVEL_AREA:
-			Command<CMD_LEVEL_LAND>::Post(STR_ERROR_CAN_T_RAISE_LAND_HERE, CcTerraform, end_tile, start_tile, _ctrl_pressed, LM_RAISE);
+			Command<Commands::LevelLand>::Post(STR_ERROR_CAN_T_RAISE_LAND_HERE, CcTerraform, end_tile, start_tile, _ctrl_pressed, LM_RAISE);
 			break;
 		case DDSP_LOWER_AND_LEVEL_AREA:
-			Command<CMD_LEVEL_LAND>::Post(STR_ERROR_CAN_T_LOWER_LAND_HERE, CcTerraform, end_tile, start_tile, _ctrl_pressed, LM_LOWER);
+			Command<Commands::LevelLand>::Post(STR_ERROR_CAN_T_LOWER_LAND_HERE, CcTerraform, end_tile, start_tile, _ctrl_pressed, LM_LOWER);
 			break;
 		case DDSP_LEVEL_AREA:
-			Command<CMD_LEVEL_LAND>::Post(STR_ERROR_CAN_T_LEVEL_LAND_HERE, CcTerraform, end_tile, start_tile, _ctrl_pressed, LM_LEVEL);
+			Command<Commands::LevelLand>::Post(STR_ERROR_CAN_T_LEVEL_LAND_HERE, CcTerraform, end_tile, start_tile, _ctrl_pressed, LM_LEVEL);
 			break;
 		case DDSP_CREATE_ROCKS:
 			GenerateRockyArea(end_tile, start_tile);
@@ -155,7 +163,7 @@ void PlaceProc_DemolishArea(TileIndex tile)
 
 /** Terra form toolbar managing class. */
 struct TerraformToolbarWindow : Window {
-	int last_user_action = INVALID_WID_TT; ///< Last started user action.
+	WidgetID last_user_action = INVALID_WIDGET; ///< Last started user action.
 
 	TerraformToolbarWindow(WindowDesc &desc, WindowNumber window_number) : Window(desc)
 	{
@@ -257,7 +265,8 @@ struct TerraformToolbarWindow : Window {
 	Point OnInitialPosition([[maybe_unused]] int16_t sm_width, [[maybe_unused]] int16_t sm_height, [[maybe_unused]] int window_number) override
 	{
 		Point pt = GetToolbarAlignedWindowPosition(sm_width);
-		pt.y += sm_height;
+		if (FindWindowByClass(WC_BUILD_TOOLBAR) != nullptr && !_settings_client.gui.link_terraform_toolbar) pt.y += sm_height;
+
 		return pt;
 	}
 
@@ -274,13 +283,13 @@ struct TerraformToolbarWindow : Window {
 					break;
 				case DDSP_BUILD_OBJECT:
 					if (!_settings_game.construction.freeform_edges) {
-						/* When end_tile is MP_VOID, the error tile will not be visible to the
+						/* When end_tile is TileType::Void, the error tile will not be visible to the
 						 * user. This happens when terraforming at the southern border. */
 						if (TileX(end_tile) == Map::MaxX()) end_tile += TileDiffXY(-1, 0);
 						if (TileY(end_tile) == Map::MaxY()) end_tile += TileDiffXY(0, -1);
 					}
-					Command<CMD_BUILD_OBJECT_AREA>::Post(STR_ERROR_CAN_T_PURCHASE_THIS_LAND, CcPlaySound_CONSTRUCTION_RAIL,
-						end_tile, start_tile, OBJECT_OWNED_LAND, 0, (_ctrl_pressed ? true : false));
+					Command<Commands::BuildObjectArea>::Post(STR_ERROR_CAN_T_PURCHASE_THIS_LAND, CcPlaySound_CONSTRUCTION_RAIL,
+						end_tile, start_tile, OBJECT_OWNED_LAND, 0, _ctrl_pressed);
 					break;
 			}
 		}
@@ -316,7 +325,7 @@ struct TerraformToolbarWindow : Window {
 	}, TerraformToolbarGlobalHotkeys};
 };
 
-static constexpr NWidgetPart _nested_terraform_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_terraform_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_LANDSCAPING_TOOLBAR, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -364,19 +373,13 @@ Window *ShowTerraformToolbar(Window *link)
 {
 	if (!Company::IsValidID(_local_company)) return nullptr;
 
-	Window *w;
-	if (link == nullptr) {
-		w = AllocateWindowDescFront<TerraformToolbarWindow>(_terraform_desc, 0);
-		return w;
-	}
-
 	/* Delete the terraform toolbar to place it again. */
 	CloseWindowById(WC_SCEN_LAND_GEN, 0, true);
-	w = AllocateWindowDescFront<TerraformToolbarWindow>(_terraform_desc, 0);
-	/* Align the terraform toolbar under the main toolbar. */
-	w->top -= w->height;
-	w->SetDirty();
-	/* Put the linked toolbar to the left / right of it. */
+
+	if (link == nullptr) return AllocateWindowDescFront<TerraformToolbarWindow>(_terraform_desc, 0);
+
+	Window *w = AllocateWindowDescFront<TerraformToolbarWindow>(_terraform_desc, 0);
+	/* Put the linked toolbar to the left / right of the main toolbar. */
 	link->left = w->left + (_current_text_dir == TD_RTL ? w->width : -link->width);
 	link->top  = w->top;
 	link->SetDirty();
@@ -401,7 +404,7 @@ static void CommonRaiseLowerBigLand(TileIndex tile, bool mode)
 		StringID msg =
 			mode ? STR_ERROR_CAN_T_RAISE_LAND_HERE : STR_ERROR_CAN_T_LOWER_LAND_HERE;
 
-		Command<CMD_TERRAFORM_LAND>::Post(msg, CcTerraform, tile, SLOPE_N, mode);
+		Command<Commands::TerraformLand>::Post(msg, CcTerraform, tile, SLOPE_N, mode);
 	} else {
 		assert(_terraform_size != 0);
 		TileArea ta(tile, _terraform_size, _terraform_size);
@@ -428,7 +431,7 @@ static void CommonRaiseLowerBigLand(TileIndex tile, bool mode)
 
 		for (TileIndex tile2 : ta) {
 			if (TileHeight(tile2) == h) {
-				Command<CMD_TERRAFORM_LAND>::Post(tile2, SLOPE_N, mode);
+				Command<Commands::TerraformLand>::Post(tile2, SLOPE_N, mode);
 			}
 		}
 	}
@@ -445,7 +448,7 @@ static const int8_t _multi_terraform_coords[][2] = {
 	{-28,  0}, {-24, -2}, {-20, -4}, {-16, -6}, {-12, -8}, { -8,-10}, { -4,-12}, {  0,-14}, {  4,-12}, {  8,-10}, { 12, -8}, { 16, -6}, { 20, -4}, { 24, -2}, { 28,  0},
 };
 
-static constexpr NWidgetPart _nested_scen_edit_land_gen_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_scen_edit_land_gen_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, COLOUR_DARK_GREEN),
 		NWidget(WWT_CAPTION, COLOUR_DARK_GREEN), SetStringTip(STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION, STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS),
@@ -516,7 +519,7 @@ static void ResetLandscapeConfirmationCallback(Window *, bool confirmed)
 		/* Delete all station signs */
 		for (BaseStation *st : BaseStation::Iterate()) {
 			/* There can be buoys, remove them */
-			if (IsBuoyTile(st->xy)) Command<CMD_LANDSCAPE_CLEAR>::Do({DoCommandFlag::Execute, DoCommandFlag::Bankrupt}, st->xy);
+			if (IsBuoyTile(st->xy)) Command<Commands::LandscapeClear>::Do({DoCommandFlag::Execute, DoCommandFlag::Bankrupt}, st->xy);
 			if (!st->IsInUse()) delete st;
 		}
 
@@ -529,7 +532,7 @@ static void ResetLandscapeConfirmationCallback(Window *, bool confirmed)
 
 /** Landscape generation window handler in the scenario editor. */
 struct ScenarioEditorLandscapeGenerationWindow : Window {
-	int last_user_action = INVALID_WID_ETT; ///< Last started user action.
+	WidgetID last_user_action = INVALID_WIDGET; ///< Last started user action.
 
 	ScenarioEditorLandscapeGenerationWindow(WindowDesc &desc, WindowNumber window_number) : Window(desc)
 	{

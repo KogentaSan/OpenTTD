@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file station_type.h Types related to stations. */
@@ -11,7 +11,6 @@
 #define STATION_TYPE_H
 
 #include "core/pool_type.hpp"
-#include "core/smallstack_type.hpp"
 #include "tilearea_type.h"
 
 using StationID = PoolID<uint16_t, struct StationIDTag, 64000, 0xFFFF>;
@@ -26,20 +25,18 @@ struct RoadStop;
 struct StationSpec;
 struct Waypoint;
 
-using StationIDStack = SmallStack<StationID, StationID::BaseType, StationID::Invalid().base(), 8, StationID::End().base()>;
-
 /** Station types */
 enum class StationType : uint8_t {
-	Rail,
-	Airport,
-	Truck,
-	Bus,
-	Oilrig,
-	Dock,
-	Buoy,
-	RailWaypoint,
-	RoadWaypoint,
-	End,
+	Rail, ///< Railways/train station.
+	Airport, ///< Airports and heliports, excluding the ones on oil rigs.
+	Truck, ///< Road stop for trucks.
+	Bus, ///< Road stop for busses.
+	Oilrig, ///< Heliport on an oil rig.
+	Dock, ///< Ship port.
+	Buoy, ///< Waypoint for ships.
+	RailWaypoint, ///< Waypoint for trains.
+	RoadWaypoint, ///< Waypoint for trucks and busses.
+	End, ///< End marker.
 };
 
 /** Types of RoadStops */
@@ -98,7 +95,7 @@ enum class StationAnimationTrigger : uint8_t {
 	AcceptanceTick, ///< Trigger station every 250 ticks.
 	TileLoop, ///< Trigger in the periodic tile loop.
 	PathReservation, ///< Trigger platform when train reserves path.
-	End
+	End, ///< End marker.
 };
 using StationAnimationTriggers = EnumBitSet<StationAnimationTrigger, uint16_t>;
 

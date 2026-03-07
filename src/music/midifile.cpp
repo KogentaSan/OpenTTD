@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/* @file midifile.cpp Parser for standard MIDI files */
+/** @file midifile.cpp Parser for standard MIDI files. */
 
 #include "../stdafx.h"
 
@@ -623,6 +623,9 @@ struct MpsMachine {
 
 	/**
 	 * Play one frame of data from one channel
+	 * @param[out] outblock The block to the music to.
+	 * @param channel The channel of the block to play.
+	 * @return The new delay for playing.
 	 */
 	uint16_t PlayChannelFrame(MidiFile::DataBlock &outblock, int channel)
 	{
@@ -748,6 +751,8 @@ struct MpsMachine {
 
 	/**
 	 * Play one frame of data into a block.
+	 * @param[out] block The block to write to.
+	 * @return \c true iff there is data to play.
 	 */
 	bool PlayFrame(MidiFile::DataBlock &block)
 	{
@@ -774,6 +779,7 @@ struct MpsMachine {
 
 	/**
 	 * Perform playback of whole song.
+	 * @return Always \c true.
 	 */
 	bool PlayInto()
 	{
@@ -1124,6 +1130,7 @@ MidiFile::MidiFile()
 	RegisterConsoleMidiCommands();
 }
 
+/** Remove ourselves from the _midifile_instance if needed. */
 MidiFile::~MidiFile()
 {
 	if (_midifile_instance == this) {

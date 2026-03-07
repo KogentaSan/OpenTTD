@@ -2,12 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file tcp.h Basic functions to receive and send TCP packets.
- */
+/** @file tcp.h Basic functions to receive and send TCP packets. */
 
 #ifndef NETWORK_CORE_TCP_H
 #define NETWORK_CORE_TCP_H
@@ -33,7 +31,6 @@ private:
 	std::deque<std::unique_ptr<Packet>> packet_queue{}; ///< Packets that are awaiting delivery. Cannot be std::queue as that does not have a clear() function.
 	std::unique_ptr<Packet> packet_recv = nullptr; ///< Partially received packet
 
-	void EmptyPacketQueue();
 public:
 	SOCKET sock = INVALID_SOCKET; ///< The socket currently connected to
 	bool writable = false; ///< Can we write to this socket?
@@ -65,7 +62,7 @@ public:
 	 * @param s The just opened TCP connection.
 	 */
 	NetworkTCPSocketHandler(SOCKET s = INVALID_SOCKET) : sock(s) {}
-	~NetworkTCPSocketHandler();
+	~NetworkTCPSocketHandler() override;
 };
 
 /**
@@ -152,6 +149,7 @@ public:
 	}
 };
 
+/** TCPConnecter that resolves the server invite code if needed before connecting. */
 class TCPServerConnecter : public TCPConnecter {
 private:
 	SOCKET socket = INVALID_SOCKET; ///< The socket when a connection is established.

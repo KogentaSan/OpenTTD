@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file ground_vehicle.hpp Base class and functions for all vehicles that move through ground. */
@@ -64,7 +64,7 @@ enum GroundVehicleFlags : uint8_t {
  * These functions are not defined as pure virtual functions at this class to improve performance.
  *
  * virtual uint16_t      GetPower() const = 0;
- * virtual uint16_t      GetPoweredPartPower(const T *head) const = 0;
+ * virtual uint16_t GetPoweredPartPower() const = 0;
  * virtual uint16_t      GetWeight() const = 0;
  * virtual uint8_t        GetTractiveEffort() const = 0;
  * virtual uint8_t        GetAirDrag() const = 0;
@@ -87,8 +87,9 @@ struct GroundVehicle : public SpecializedVehicle<T, Type> {
 
 	/**
 	 * The constructor at SpecializedVehicle must be called.
+	 * @param index The index into the vehicle pool.
 	 */
-	GroundVehicle() : SpecializedVehicle<T, Type>() {}
+	GroundVehicle(VehicleID index) : SpecializedVehicle<T, Type>(index) {}
 
 	void PowerChanged();
 	void CargoChanged();

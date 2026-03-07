@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file timetable.h Functions related to time tabling. */
@@ -17,10 +17,11 @@
 
 static const TimerGameEconomy::Year MAX_TIMETABLE_START_YEARS{15}; ///< The maximum start date offset, in economy years.
 
+/** Way the timetable is visualised. */
 enum class TimetableMode : uint8_t {
-	Days,
-	Seconds,
-	Ticks,
+	Days, ///< In in-game days.
+	Seconds, ///< In wall clock seconds.
+	Ticks, ///< In game ticks.
 };
 
 TimerGameTick::TickCounter GetStartTickFromDate(TimerGameEconomy::Date start_date);

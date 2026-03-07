@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file crashlog.cpp Implementation of generic function to be called to log a crash */
+/** @file crashlog.cpp Implementation of generic function to be called to log a crash. */
 
 #include "stdafx.h"
 #include "crashlog.h"
@@ -36,8 +36,8 @@
 constexpr uint8_t CRASHLOG_SURVEY_VERSION = 1;
 
 /**
- * Writes the gamelog data to the buffer.
- * @param output_iterator Iterator to write the output to.
+ * Writes the gamelog data to the given JSON object.
+ * @param json The object to write to.
  */
 static void SurveyGamelog(nlohmann::json &json)
 {
@@ -49,8 +49,8 @@ static void SurveyGamelog(nlohmann::json &json)
 }
 
 /**
- * Writes up to 32 recent news messages to the buffer, with the most recent first.
- * @param output_iterator Iterator to write the output to.
+ * Writes up to 32 recent news messages to the given JSON object, with the most recent first.
+ * @param json The object to write to.
  */
 static void SurveyRecentNews(nlohmann::json &json)
 {
@@ -260,7 +260,7 @@ bool CrashLog::WriteScreenshot()
 void CrashLog::SendSurvey() const
 {
 	if (_game_mode == GM_NORMAL) {
-		_survey.Transmit(NetworkSurveyHandler::Reason::CRASH, true);
+		_survey.Transmit(NetworkSurveyHandler::Reason::Crash, true);
 	}
 }
 

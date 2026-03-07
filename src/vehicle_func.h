@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file vehicle_func.h Functions related to vehicles. */
@@ -101,6 +101,9 @@ private:
 /**
  * Loop over vehicles on a tile, and check whether a predicate is true for any of them.
  * The predicate must have the signature: bool Predicate(const Vehicle *);
+ * @param tile The tile to search on.
+ * @param predicate The filter to apply to find vehicles.
+ * @return \c true iff a suitable vehicle has been found within the given distance.
  */
 template <class UnaryPred>
 bool HasVehicleOnTile(TileIndex tile, UnaryPred &&predicate)
@@ -170,6 +173,11 @@ private:
 /**
  * Loop over vehicles near a given world coordinate, and check whether a predicate is true for any of them.
  * The predicate must have the signature: bool Predicate(const Vehicle *);
+ * @param x The world X-coordinate.
+ * @param y The world Y-coordinate.
+ * @param max_dist The maximum distance to consider.
+ * @param predicate The filter to apply to find vehicles.
+ * @return \c true iff a suitable vehicle has been found within the given distance.
  * @warning This only works for vehicles with proper Vehicle::Tile, so only ground vehicles outside wormholes.
  */
 template <class UnaryPred>

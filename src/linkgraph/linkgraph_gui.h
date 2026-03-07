@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file linkgraph_gui.h Declaration of linkgraph overlay GUI. */
@@ -23,7 +23,10 @@
 struct LinkProperties {
 	LinkProperties() {}
 
-	/** Return the usage of the link to display. */
+	/**
+	 * Return the usage of the link to display.
+	 * @return The maximum of the actual and planned usage of the link.
+	 */
 	uint Usage() const { return std::max(this->usage, this->planned); }
 
 	CargoType cargo = INVALID_CARGO; ///< Cargo type of the link.
@@ -67,10 +70,16 @@ public:
 	/** Mark the linkgraph dirty to be rebuilt next time Draw() is called. */
 	void SetDirty() { this->dirty = true; }
 
-	/** Get a bitmask of the currently shown cargoes. */
+	/**
+	 * Get a bitmask of the currently shown cargoes.
+	 * @return The shown cargoes.
+	 */
 	CargoTypes GetCargoMask() { return this->cargo_mask; }
 
-	/** Get a bitmask of the currently shown companies. */
+	/**
+	 * Get a bitmask of the currently shown companies.
+	 * @return The shown companies.
+	 */
 	CompanyMask GetCompanyMask() { return this->company_mask; }
 
 protected:

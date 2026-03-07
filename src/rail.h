@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file rail.h Rail specific functions. */
@@ -13,8 +13,8 @@
 #include "rail_type.h"
 #include "track_type.h"
 #include "gfx_type.h"
-#include "core/bitmath_func.hpp"
 #include "core/enum_type.hpp"
+#include "core/flatset_type.hpp"
 #include "economy_func.h"
 #include "slope_type.h"
 #include "strings_type.h"
@@ -131,6 +131,7 @@ public:
 		SpriteID single_sloped;///< single piece of rail for slopes
 		SpriteID crossing;     ///< level crossing, rail in X direction
 		SpriteID tunnel;       ///< tunnel sprites base
+		SpriteID bridge_deck;  ///< bridge deck sprites base
 	} base_sprites;
 
 	/**
@@ -226,7 +227,7 @@ public:
 	/**
 	 * Rail type labels this type provides in addition to the main label.
 	 */
-	std::vector<RailTypeLabel> alternate_labels;
+	FlatSet<RailTypeLabel> alternate_labels;
 
 	/**
 	 * Colour on mini-map
@@ -281,11 +282,14 @@ public:
 	 *    is determined by normal rail. Check sprites 1005 and following for this order<p>
 	 * 2) The position where the railtype is loaded must always be the same, otherwise
 	 *    the offset will fail.
+	 * @return The offset.
 	 */
 	inline uint GetRailtypeSpriteOffset() const
 	{
 		return 82 * this->fallback_railtype;
 	}
+
+	RailType Index() const;
 };
 
 
@@ -299,19 +303,6 @@ inline const RailTypeInfo *GetRailTypeInfo(RailType railtype)
 	extern RailTypeInfo _railtypes[RAILTYPE_END];
 	assert(railtype < RAILTYPE_END);
 	return &_railtypes[railtype];
-}
-
-/**
- * Returns the railtype for a Railtype information.
- * @param rti Pointer to static RailTypeInfo
- * @return Railtype in static railtype definitions
- */
-inline RailType GetRailTypeInfoIndex(const RailTypeInfo *rti)
-{
-	extern RailTypeInfo _railtypes[RAILTYPE_END];
-	size_t index = rti - _railtypes;
-	assert(index < RAILTYPE_END && rti == _railtypes + index);
-	return static_cast<RailType>(index);
 }
 
 /**
@@ -438,7 +429,7 @@ inline bool Rail90DegTurnDisallowed(RailType rt1, RailType rt2, bool def = _sett
 inline Money RailBuildCost(RailType railtype)
 {
 	assert(railtype < RAILTYPE_END);
-	return (_price[PR_BUILD_RAIL] * GetRailTypeInfo(railtype)->cost_multiplier) >> 3;
+	return (_price[Price::BuildRail] * GetRailTypeInfo(railtype)->cost_multiplier) >> 3;
 }
 
 /**
@@ -454,7 +445,7 @@ inline Money RailClearCost(RailType railtype)
 	 * cost.
 	 */
 	assert(railtype < RAILTYPE_END);
-	return std::max(_price[PR_CLEAR_RAIL], -RailBuildCost(railtype) * 3 / 4);
+	return std::max(_price[Price::ClearRail], -RailBuildCost(railtype) * 3 / 4);
 }
 
 /**
@@ -493,7 +484,7 @@ inline Money RailConvertCost(RailType from, RailType to)
 inline Money RailMaintenanceCost(RailType railtype, uint32_t num, uint32_t total_num)
 {
 	assert(railtype < RAILTYPE_END);
-	return (_price[PR_INFRASTRUCTURE_RAIL] * GetRailTypeInfo(railtype)->maintenance_multiplier * num * (1 + IntSqrt(total_num))) >> 11; // 4 bits fraction for the multiplier and 7 bits scaling.
+	return (_price[Price::InfrastructureRail] * GetRailTypeInfo(railtype)->maintenance_multiplier * num * (1 + IntSqrt(total_num))) >> 11; // 4 bits fraction for the multiplier and 7 bits scaling.
 }
 
 /**
@@ -503,7 +494,7 @@ inline Money RailMaintenanceCost(RailType railtype, uint32_t num, uint32_t total
  */
 inline Money SignalMaintenanceCost(uint32_t num)
 {
-	return (_price[PR_INFRASTRUCTURE_RAIL] * 15 * num * (1 + IntSqrt(num))) >> 8; // 1 bit fraction for the multiplier and 7 bits scaling.
+	return (_price[Price::InfrastructureRail] * 15 * num * (1 + IntSqrt(num))) >> 8; // 1 bit fraction for the multiplier and 7 bits scaling.
 }
 
 void DrawTrainDepotSprite(int x, int y, int image, RailType railtype);

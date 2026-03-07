@@ -2,13 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file fios.cpp
- * This file contains functions for building file lists for the save/load dialogs.
- */
+/** @file fios.cpp This file contains functions for building file lists for the save/load dialogs. */
 
 #include "stdafx.h"
 #include "3rdparty/md5/md5.h"
@@ -28,7 +25,6 @@
 
 #include "safeguards.h"
 
-/* Variables to display file lists */
 static std::string *_fios_path = nullptr;
 SortingBits _savegame_sort_order = SORT_BY_DATE | SORT_DESCENDING;
 
@@ -128,6 +124,7 @@ const FiosItem *FileList::FindItem(std::string_view file)
 
 /**
  * Get the current path/working directory.
+ * @return The current path.
  */
 std::string FiosGetCurrentPath()
 {
@@ -230,16 +227,6 @@ std::string FiosMakeHeightmapName(std::string_view name)
 	return FiosMakeFilename(_fios_path, name, fmt::format(".{}", GetCurrentScreenshotExtension()));
 }
 
-/**
- * Delete a file.
- * @param name Filename to delete.
- * @return Whether the file deletion was successful.
- */
-bool FiosDelete(std::string_view name)
-{
-	return FioRemove(FiosMakeSavegameName(name));
-}
-
 typedef std::tuple<FiosType, std::string> FiosGetTypeAndNameProc(SaveLoadOperation fop, std::string_view filename, std::string_view ext);
 
 /**
@@ -260,7 +247,7 @@ public:
 			fop(fop), callback_proc(callback_proc), file_list(file_list)
 	{}
 
-	bool AddFile(const std::string &filename, size_t basepath_length, const std::string &tar_filename) override;
+	bool AddFile(const std::string &filename, size_t, const std::string &) override;
 };
 
 /**
@@ -517,7 +504,7 @@ std::tuple<FiosType, std::string> FiosGetHeightmapListCallback(SaveLoadOperation
 		for (Searchpath sp : _valid_searchpaths) {
 			std::string buf = FioGetDirectory(sp, HEIGHTMAP_DIR);
 
-			if (buf.compare(0, buf.size(), it->second.tar_filename, 0, buf.size()) == 0) {
+			if (it->second.tar_filename.starts_with(buf)) {
 				match = true;
 				break;
 			}
@@ -552,6 +539,7 @@ void FiosGetHeightmapList(SaveLoadOperation fop, bool show_dirs, FileList &file_
  * Callback for FiosGetTownDataList.
  * @param fop Purpose of collecting the list.
  * @param file Name of the file to check.
+ * @param ext The file extension of the file to check.
  * @return a FIOS_TYPE_JSON type of the found file, FIOS_TYPE_INVALID if not a valid JSON file, and the title of the file (if any).
  */
 static std::tuple<FiosType, std::string> FiosGetTownDataListCallback(SaveLoadOperation fop, std::string_view file, std::string_view ext)

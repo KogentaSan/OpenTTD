@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_act2.cpp NewGRF Action 0x02 handler. */
@@ -286,7 +286,7 @@ static const SpriteGroup *GetCallbackResultGroup(uint16_t value)
 
 	/* Result value is not present, so make it and add to cache. */
 	assert(CallbackResultSpriteGroup::CanAllocateItem());
-	const SpriteGroup *group = new CallbackResultSpriteGroup(value);
+	const SpriteGroup *group = CallbackResultSpriteGroup::Create(value);
 	it = _cached_callback_groups.emplace(it, value, group->index);
 	return group;
 }
@@ -330,7 +330,7 @@ static const SpriteGroup *CreateGroupFromGroupID(GrfSpecFeature feature, uint8_t
 	assert(spriteset_start + num_sprites <= _cur_gps.spriteid);
 
 	assert(ResultSpriteGroup::CanAllocateItem());
-	return new ResultSpriteGroup(spriteset_start, num_sprites);
+	return ResultSpriteGroup::Create(spriteset_start, num_sprites);
 }
 
 /* Action 0x02 */
@@ -374,7 +374,7 @@ static void NewSpriteGroup(ByteReader &buf)
 			uint8_t varsize;
 
 			assert(DeterministicSpriteGroup::CanAllocateItem());
-			DeterministicSpriteGroup *group = new DeterministicSpriteGroup();
+			DeterministicSpriteGroup *group = DeterministicSpriteGroup::Create();
 			group->nfo_line = _cur_gps.nfo_line;
 			act_group = group;
 			group->var_scope = HasBit(type, 1) ? VSG_SCOPE_PARENT : VSG_SCOPE_SELF;
@@ -494,7 +494,7 @@ static void NewSpriteGroup(ByteReader &buf)
 		case 0x84: // Relative scope
 		{
 			assert(RandomizedSpriteGroup::CanAllocateItem());
-			RandomizedSpriteGroup *group = new RandomizedSpriteGroup();
+			RandomizedSpriteGroup *group = RandomizedSpriteGroup::Create();
 			group->nfo_line = _cur_gps.nfo_line;
 			act_group = group;
 			group->var_scope = HasBit(type, 1) ? VSG_SCOPE_PARENT : VSG_SCOPE_SELF;
@@ -525,6 +525,11 @@ static void NewSpriteGroup(ByteReader &buf)
 		/* Neither a variable or randomized sprite group... must be a real group */
 		default:
 		{
+			if (type >= 0x80) {
+				GrfMsg(0, "NewSpriteGroup: Reserved group type 0x{:02X}, skipping", type);
+				return;
+			}
+
 			switch (feature) {
 				case GSF_TRAINS:
 				case GSF_ROADVEHICLES:
@@ -588,7 +593,7 @@ static void NewSpriteGroup(ByteReader &buf)
 					}
 
 					assert(RealSpriteGroup::CanAllocateItem());
-					RealSpriteGroup *group = new RealSpriteGroup();
+					RealSpriteGroup *group = RealSpriteGroup::Create();
 					group->nfo_line = _cur_gps.nfo_line;
 					act_group = group;
 
@@ -617,7 +622,7 @@ static void NewSpriteGroup(ByteReader &buf)
 					uint8_t num_building_sprites = std::max((uint8_t)1, type);
 
 					assert(TileLayoutSpriteGroup::CanAllocateItem());
-					TileLayoutSpriteGroup *group = new TileLayoutSpriteGroup();
+					TileLayoutSpriteGroup *group = TileLayoutSpriteGroup::Create();
 					group->nfo_line = _cur_gps.nfo_line;
 					act_group = group;
 
@@ -633,7 +638,7 @@ static void NewSpriteGroup(ByteReader &buf)
 					}
 
 					assert(IndustryProductionSpriteGroup::CanAllocateItem());
-					IndustryProductionSpriteGroup *group = new IndustryProductionSpriteGroup();
+					IndustryProductionSpriteGroup *group = IndustryProductionSpriteGroup::Create();
 					group->nfo_line = _cur_gps.nfo_line;
 					act_group = group;
 					group->version = type;
@@ -716,9 +721,15 @@ static void NewSpriteGroup(ByteReader &buf)
 	_cur_gps.spritegroups[setid] = act_group;
 }
 
+/** @copybrief GrfActionHandler::FileScan */
 template <> void GrfActionHandler<0x02>::FileScan(ByteReader &) { }
+/** @copybrief GrfActionHandler::SafetyScan */
 template <> void GrfActionHandler<0x02>::SafetyScan(ByteReader &) { }
+/** @copybrief GrfActionHandler::LabelScan */
 template <> void GrfActionHandler<0x02>::LabelScan(ByteReader &) { }
+/** @copybrief GrfActionHandler::Init */
 template <> void GrfActionHandler<0x02>::Init(ByteReader &) { }
+/** @copybrief GrfActionHandler::Reserve */
 template <> void GrfActionHandler<0x02>::Reserve(ByteReader &) { }
+/** @copydoc GrfActionHandler::Activation */
 template <> void GrfActionHandler<0x02>::Activation(ByteReader &buf) { NewSpriteGroup(buf); }

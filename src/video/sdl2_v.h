@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file sdl2_v.h Base of the SDL2 video driver. */
@@ -33,7 +33,7 @@ public:
 
 	bool AfterBlitterChange() override;
 
-	bool ClaimMousePointer() override;
+	void ClaimMousePointer() override;
 
 	void EditBoxGainedFocus() override;
 
@@ -42,6 +42,8 @@ public:
 	std::vector<int> GetListOfMonitorRefreshRates() override;
 
 	std::string_view GetInfoString() const override { return this->driver_info; }
+
+	void SetScreensaverInhibited(bool inhibited) override;
 
 protected:
 	struct SDL_Window *sdl_window = nullptr; ///< Main SDL window.
@@ -57,16 +59,33 @@ protected:
 	void CheckPaletteAnim() override;
 	bool PollEvent() override;
 
-	/** Indicate to the driver the client-side might have changed. */
 	void ClientSizeChanged(int w, int h, bool force);
 
-	/** (Re-)create the backing store. */
+	/**
+	 * (Re-)create the backing store.
+	 * @param w The width of the window.
+	 * @param h The height of the window.
+	 * @param force Whether to force full reallocation, instead of not reallocating when size did not change.
+	 * @return Whether the backing store was (re-)created.
+	 */
 	virtual bool AllocateBackingStore(int w, int h, bool force = false) = 0;
-	/** Get a pointer to the video buffer. */
+
+	/**
+	 * Get a pointer to the video buffer.
+	 * @return The pointer.
+	 */
 	virtual void *GetVideoPointer() = 0;
+
 	/** Hand video buffer back to the painting backend. */
 	virtual void ReleaseVideoPointer() = 0;
-	/** Create the main window. */
+
+	/**
+	 * Create the main window.
+	 * @param w The width of the window.
+	 * @param h The height of the window.
+	 * @param flags SDL specific flags for the window.
+	 * @return Whether the window was created or already existed.
+	 */
 	virtual bool CreateMainWindow(uint w, uint h, uint flags = 0);
 
 private:

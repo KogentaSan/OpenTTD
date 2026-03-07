@@ -2,12 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/**
- * @file base_media_func.h Generic function implementations for base data (graphics, sounds).
- */
+/** @file base_media_func.h Generic function implementations for base data (graphics, sounds). */
 
 #include "base_media_base.h"
 #include "debug.h"
@@ -38,6 +36,7 @@ void BaseSet<T>::LogError(std::string_view full_filename, std::string_view detai
  * @param full_filename the full filename of the loaded file (for error reporting purposes)
  * @param group ini group to read from
  * @param name the name of the item to fetch.
+ * @return The item or \c nullptr.
  */
 template <class T>
 const IniItem *BaseSet<T>::GetMandatoryItem(std::string_view full_filename, const IniGroup &group, std::string_view name) const
@@ -79,7 +78,7 @@ bool BaseSet<T>::FillSetDetails(const IniFile &ini, const std::string &path, con
 
 	/* Add the translations of the descriptions too. */
 	for (const IniItem &titem : metadata->items) {
-		if (titem.name.compare(0, 12, "description.") != 0) continue;
+		if (!titem.name.starts_with("description.")) continue;
 
 		this->description[titem.name.substr(12)] = titem.value.value_or("");
 	}
@@ -378,8 +377,9 @@ template <class Tbase_set>
 }
 
 /**
- * Get the name of the graphics set at the specified index
- * @return the name of the set
+ * Get the base set at a specified index. When the index is out of range, a #FatalError is triggered.
+ * @param index The index of the sets.
+ * @return The set.
  */
 template <class Tbase_set>
 /* static */ const Tbase_set *BaseMedia<Tbase_set>::GetSet(int index)

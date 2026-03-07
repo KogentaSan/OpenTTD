@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file opengl.h OpenGL video driver support. */
@@ -69,7 +69,7 @@ private:
 	std::vector<CursorSprite> cursor_sprites{}; ///< Sprites comprising cursor
 
 	OpenGLBackend();
-	~OpenGLBackend();
+	~OpenGLBackend() override;
 
 	std::optional<std::string_view> Init(const Dimension &screen_res);
 	bool InitShaders();
@@ -79,11 +79,15 @@ private:
 	void RenderOglSprite(const OpenGLSprite *gl_sprite, PaletteID pal, int x, int y, ZoomLevel zoom);
 
 public:
-	/** Get singleton instance of this class. */
+	/**
+	 * Get singleton instance of this class.
+	 * @return Our instance.
+	 */
 	static inline OpenGLBackend *Get()
 	{
 		return OpenGLBackend::instance;
 	}
+
 	static std::optional<std::string_view> Create(GetOGLProcAddressProc get_proc, const Dimension &screen_res);
 	static void Destroy();
 

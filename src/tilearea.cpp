@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file tilearea.cpp Handling of tile areas. */
@@ -230,6 +230,7 @@ bool DiagonalTileArea::Contains(TileIndex tile) const
 
 /**
  * Move ourselves to the next tile in the rectangle on the map.
+ * @return Reference to this iterator.
  */
 TileIterator &DiagonalTileIterator::operator++()
 {
@@ -296,9 +297,7 @@ TileIterator &DiagonalTileIterator::operator++()
 	return std::make_unique<OrthogonalTileIterator>(corner1, corner2);
 }
 
-/**
- * See SpiralTileSequence constructor for description.
- */
+/** Create the iterator. @copydoc SpiralTileSequence::SpiralTileSequence(TileIndex, uint) */
 SpiralTileIterator::SpiralTileIterator(TileIndex center, uint diameter) :
 	max_radius(diameter / 2),
 	cur_radius(0),
@@ -325,9 +324,7 @@ SpiralTileIterator::SpiralTileIterator(TileIndex center, uint diameter) :
 	this->SkipOutsideMap();
 }
 
-/**
- * See SpiralTileSequence constructor for description.
- */
+/** Create the iterator. @copydoc SpiralTileSequence::SpiralTileSequence(TileIndex, uint, uint, uint) */
 SpiralTileIterator::SpiralTileIterator(TileIndex start_north, uint radius, uint w, uint h) :
 	max_radius(radius),
 	extent{w, h, w, h},

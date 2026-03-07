@@ -2,10 +2,10 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file osk_gui.cpp The On Screen Keyboard GUI */
+/** @file osk_gui.cpp The On Screen Keyboard GUI. */
 
 #include "stdafx.h"
 #include "string_func.h"
@@ -209,11 +209,11 @@ struct OskWindow : public Window {
 	}
 };
 
-static const int HALF_KEY_WIDTH = 7;  // Width of 1/2 key in pixels.
-static const int INTER_KEY_SPACE = 2; // Number of pixels between two keys.
+static const int HALF_KEY_WIDTH = 7; ///< Width of 1/2 key in pixels.
+static const int INTER_KEY_SPACE = 2; ///< Number of pixels between two keys.
 
-static const int TOP_KEY_PADDING = 2; // Vertical padding for the top row of keys.
-static const int KEY_PADDING = 6;     // Vertical padding for remaining key rows.
+static const int TOP_KEY_PADDING = 2; ///< Vertical padding for the top row of keys.
+static const int KEY_PADDING = 6; ///< Vertical padding for remaining key rows.
 
 /**
  * Add a key widget to a row of the keyboard.
@@ -241,7 +241,7 @@ static void AddKey(std::unique_ptr<NWidgetHorizontal> &hor, int pad_y, int num_h
 	}
 }
 
-/** Construct the top row keys (cancel, ok, backspace). */
+/** Construct the top row keys (cancel, ok, backspace). @copydoc NWidgetFunctionType */
 static std::unique_ptr<NWidgetBase> MakeTopKeys()
 {
 	auto hor = std::make_unique<NWidgetHorizontal>();
@@ -253,7 +253,7 @@ static std::unique_ptr<NWidgetBase> MakeTopKeys()
 	return hor;
 }
 
-/** Construct the row containing the digit keys. */
+/** Construct the row containing the digit keys. @copydoc NWidgetFunctionType */
 static std::unique_ptr<NWidgetBase> MakeNumberKeys()
 {
 	std::unique_ptr<NWidgetHorizontal> hor = std::make_unique<NWidgetHorizontalLTR>();
@@ -265,7 +265,7 @@ static std::unique_ptr<NWidgetBase> MakeNumberKeys()
 	return hor;
 }
 
-/** Construct the qwerty row keys. */
+/** Construct the qwerty row keys. @copydoc NWidgetFunctionType */
 static std::unique_ptr<NWidgetBase> MakeQwertyKeys()
 {
 	std::unique_ptr<NWidgetHorizontal> hor = std::make_unique<NWidgetHorizontalLTR>();
@@ -279,7 +279,7 @@ static std::unique_ptr<NWidgetBase> MakeQwertyKeys()
 	return hor;
 }
 
-/** Construct the asdfg row keys. */
+/** Construct the asdfg row keys. @copydoc NWidgetFunctionType */
 static std::unique_ptr<NWidgetBase> MakeAsdfgKeys()
 {
 	std::unique_ptr<NWidgetHorizontal> hor = std::make_unique<NWidgetHorizontalLTR>();
@@ -292,7 +292,7 @@ static std::unique_ptr<NWidgetBase> MakeAsdfgKeys()
 	return hor;
 }
 
-/** Construct the zxcvb row keys. */
+/** Construct the zxcvb row keys. @copydoc NWidgetFunctionType */
 static std::unique_ptr<NWidgetBase> MakeZxcvbKeys()
 {
 	std::unique_ptr<NWidgetHorizontal> hor = std::make_unique<NWidgetHorizontalLTR>();
@@ -306,7 +306,7 @@ static std::unique_ptr<NWidgetBase> MakeZxcvbKeys()
 	return hor;
 }
 
-/** Construct the spacebar row keys. */
+/** Construct the spacebar row keys. @copydoc NWidgetFunctionType */
 static std::unique_ptr<NWidgetBase> MakeSpacebarKeys()
 {
 	auto hor = std::make_unique<NWidgetHorizontal>();
@@ -321,7 +321,7 @@ static std::unique_ptr<NWidgetBase> MakeSpacebarKeys()
 }
 
 
-static constexpr NWidgetPart _nested_osk_widgets[] = {
+static constexpr std::initializer_list<NWidgetPart> _nested_osk_widgets = {
 	NWidget(WWT_CAPTION, COLOUR_GREY, WID_OSK_CAPTION), SetTextStyle(TC_WHITE),
 	NWidget(WWT_PANEL, COLOUR_GREY),
 		NWidget(WWT_EDITBOX, COLOUR_GREY, WID_OSK_TEXT), SetMinimalSize(252, 0), SetPadding(2, 2, 2, 2),

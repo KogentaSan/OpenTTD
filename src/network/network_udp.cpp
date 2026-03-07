@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /**
@@ -52,19 +52,19 @@ static UDPSocket _udp_server("Server"); ///< udp server socket
 /** Helper class for handling all server side communication. */
 class ServerNetworkUDPSocketHandler : public NetworkUDPSocketHandler {
 protected:
-	void Receive_CLIENT_FIND_SERVER(Packet &p, NetworkAddress &client_addr) override;
+	void ReceiveClientFindServer(Packet &p, NetworkAddress &client_addr) override;
 public:
 	/**
 	 * Create the socket.
 	 * @param addresses The addresses to bind on.
 	 */
 	ServerNetworkUDPSocketHandler(NetworkAddressList *addresses) : NetworkUDPSocketHandler(addresses) {}
-	virtual ~ServerNetworkUDPSocketHandler() = default;
+	~ServerNetworkUDPSocketHandler() override = default;
 };
 
-void ServerNetworkUDPSocketHandler::Receive_CLIENT_FIND_SERVER(Packet &, NetworkAddress &client_addr)
+void ServerNetworkUDPSocketHandler::ReceiveClientFindServer(Packet &, NetworkAddress &client_addr)
 {
-	Packet packet(this, PACKET_UDP_SERVER_RESPONSE);
+	Packet packet(this, PacketUDPType::ServerResponse);
 	this->SendPacket(packet, client_addr);
 
 	Debug(net, 7, "Queried from {}", client_addr.GetHostname());
@@ -75,25 +75,28 @@ void ServerNetworkUDPSocketHandler::Receive_CLIENT_FIND_SERVER(Packet &, Network
 /** Helper class for handling all client side communication. */
 class ClientNetworkUDPSocketHandler : public NetworkUDPSocketHandler {
 protected:
-	void Receive_SERVER_RESPONSE(Packet &p, NetworkAddress &client_addr) override;
+	void ReceiveServerResponse(Packet &p, NetworkAddress &client_addr) override;
 public:
-	virtual ~ClientNetworkUDPSocketHandler() = default;
+	~ClientNetworkUDPSocketHandler() override = default;
 };
 
-void ClientNetworkUDPSocketHandler::Receive_SERVER_RESPONSE(Packet &, NetworkAddress &client_addr)
+void ClientNetworkUDPSocketHandler::ReceiveServerResponse(Packet &, NetworkAddress &client_addr)
 {
 	Debug(net, 3, "Server response from {}", client_addr.GetAddressAsString());
 
 	NetworkAddServer(client_addr.GetAddressAsString(false), false, true);
 }
 
-/** Broadcast to all ips */
+/**
+ * Broadcast to all IPs.
+ * @param socket The socket to broadcast on.
+ */
 static void NetworkUDPBroadCast(NetworkUDPSocketHandler &socket)
 {
 	for (NetworkAddress &addr : _broadcast_list) {
 		Debug(net, 5, "Broadcasting to {}", addr.GetHostname());
 
-		Packet p(&socket, PACKET_UDP_CLIENT_FIND_SERVER);
+		Packet p(&socket, PacketUDPType::ClientFindServer);
 		socket.SendPacket(p, addr, true, true);
 	}
 }

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file endian_buffer.hpp Endian-aware buffer. */
@@ -80,7 +80,10 @@ public:
 	}
 
 private:
-	/** Helper function to write a tuple to the buffer. */
+	/**
+	 * Helper function to write a tuple to the buffer.
+	 * @param values The values to write.
+	 */
 	template <class Ttuple, size_t... Tindices>
 	void WriteTuple(const Ttuple &values, std::index_sequence<Tindices...>)
 	{
@@ -102,7 +105,10 @@ private:
 		}
 	}
 
-	/** Write overload for string values. */
+	/**
+	 * Write overload for string values.
+	 * @param value The value to write.
+	 */
 	void Write(std::string_view value)
 	{
 		for (auto c : value) {
@@ -111,7 +117,10 @@ private:
 		this->buffer++ = '\0';
 	}
 
-	/** Fundamental write function. */
+	/**
+	 * Fundamental write function.
+	 * @param value The value to write.
+	 */
 	template <class T>
 	void Write(T value)
 	{
@@ -204,7 +213,10 @@ public:
 	}
 
 private:
-	/** Helper function to read a tuple from the buffer. */
+	/**
+	 * Helper function to read a tuple from the buffer.
+	 * @param values The value to read into.
+	 */
 	template <class Ttuple, size_t... Tindices>
 	void ReadTuple(Ttuple &values, std::index_sequence<Tindices...>)
 	{
@@ -226,7 +238,10 @@ private:
 		}
 	}
 
-	/** Read overload for string data. */
+	/**
+	 * Read overload for string data.
+	 * @return The read string.
+	 */
 	std::string ReadStr()
 	{
 		std::string str;
@@ -238,7 +253,10 @@ private:
 		return str;
 	}
 
-	/** Fundamental read function. */
+	/**
+	 * Fundamental read function.
+	 * @return The read integer.
+	 */
 	template <class T>
 	T Read()
 	{

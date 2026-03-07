@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file roadstop_base.h Base class for roadstops. */
@@ -12,7 +12,6 @@
 
 #include "station_type.h"
 #include "core/pool_type.hpp"
-#include "core/bitmath_func.hpp"
 #include "vehicle_type.h"
 
 using RoadStopPool = Pool<RoadStop, RoadStopID, 32>;
@@ -20,6 +19,7 @@ extern RoadStopPool _roadstop_pool;
 
 /** A Stop for a Road Vehicle */
 struct RoadStop : RoadStopPool::PoolItem<&_roadstop_pool> {
+	/** Flags describing the status of a single road stop. */
 	enum class RoadStopStatusFlag : uint8_t {
 		Bay0Free  = 0, ///< Non-zero when bay 0 is free
 		Bay1Free  = 1, ///< Non-zero when bay 1 is free
@@ -71,8 +71,12 @@ struct RoadStop : RoadStopPool::PoolItem<&_roadstop_pool> {
 	TileIndex xy = INVALID_TILE; ///< Position on the map
 	RoadStop *next = nullptr; ///< Next stop of the given type at this station
 
-	/** Initializes a RoadStop */
-	inline RoadStop(TileIndex tile = INVALID_TILE) : xy(tile) { }
+	/**
+	 * Initializes a RoadStop.
+	 * @param index The pool identifier of the road stop.
+	 * @param tile The tile the road stop is at.
+	 */
+	inline RoadStop(RoadStopID index, TileIndex tile = INVALID_TILE) : RoadStopPool::PoolItem<&_roadstop_pool>(index), xy(tile) { }
 
 	~RoadStop();
 

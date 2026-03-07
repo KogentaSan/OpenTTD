@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file debug.cpp Handling of printing debug messages. */
@@ -104,7 +104,8 @@ void DumpDebugFacilityNames(std::back_insert_iterator<std::string> &output_itera
 
 /**
  * Internal function for outputting the debug line.
- * @param level Debug category.
+ * @param category The category/classification of the debug message.
+ * @param level The severity of the debug level; lower is more likely to be shown.
  * @param message The message to output.
  */
 void DebugPrint(std::string_view category, int level, std::string &&message)
@@ -214,7 +215,8 @@ std::string GetDebugString()
  * If show_date_in_logs or \p force is enabled it returns
  * the date, otherwise it returns an empty string.
  *
- * @return the prefix for logs.
+ * @param force Whether to force the prefix on.
+ * @return The prefix for logs.
  */
 std::string GetLogPrefix(bool force)
 {

@@ -2,7 +2,7 @@
  * This file is part of OpenTTD.
  * OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
  * OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+ * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
 /** @file newgrf_engine.cpp NewGRF handling of engines. */
@@ -92,7 +92,7 @@ static int MapOldSubType(const Vehicle *v)
 }
 
 
-/* TTDP style aircraft movement states for GRF Action 2 Var 0xE2 */
+/** TTDP style aircraft movement states for GRF Action 2 Var 0xE2. */
 enum TTDPAircraftMovementStates : uint8_t {
 	AMS_TTDP_HANGAR,
 	AMS_TTDP_TO_HANGAR,
@@ -129,6 +129,8 @@ enum TTDPAircraftMovementStates : uint8_t {
 /**
  * Map OTTD aircraft movement states to TTDPatch style movement states
  * (VarAction 2 Variable 0xE2)
+ * @param v The aircraft to consider.
+ * @return The TTDP movement state.
  */
 static uint8_t MapAircraftMovementState(const Aircraft *v)
 {
@@ -228,7 +230,7 @@ static uint8_t MapAircraftMovementState(const Aircraft *v)
 }
 
 
-/* TTDP style aircraft movement action for GRF Action 2 Var 0xE6 */
+/** TTDP style aircraft movement action for GRF Action 2 Var 0xE6. */
 enum TTDPAircraftMovementActions : uint8_t {
 	AMA_TTDP_IN_HANGAR,
 	AMA_TTDP_ON_PAD1,
@@ -256,6 +258,8 @@ enum TTDPAircraftMovementActions : uint8_t {
  * Map OTTD aircraft movement states to TTDPatch style movement actions
  * (VarAction 2 Variable 0xE6)
  * This is not fully supported yet but it's enough for Planeset.
+ * @param v The aircraft to consider.
+ * @return The TTDP movement action.
  */
 static uint8_t MapAircraftMovementAction(const Aircraft *v)
 {
@@ -1020,7 +1024,7 @@ static uint32_t VehicleGetVariable(Vehicle *v, const VehicleScopeResolver *objec
 	}
 
 	const Order &order = v->First()->current_order;
-	bool not_loading = (order.GetUnloadType() & OUFB_NO_UNLOAD) && (order.GetLoadType() & OLFB_NO_LOAD);
+	bool not_loading = order.GetUnloadType() == OrderUnloadType::NoUnload && order.GetLoadType() == OrderLoadType::NoLoad;
 	bool in_motion = !order.IsType(OT_LOADING) || not_loading;
 
 	uint totalsets = static_cast<uint>(in_motion ? group.loaded.size() : group.loading.size());
@@ -1138,7 +1142,7 @@ static void GetRotorOverrideSprite(EngineID engine, const struct Aircraft *v, En
 
 	/* Only valid for helicopters */
 	assert(e->type == VEH_AIRCRAFT);
-	assert(!(e->u.air.subtype & AIR_CTOL));
+	assert(!(e->VehInfo<AircraftVehicleInfo>().subtype & AIR_CTOL));
 
 	/* We differ from TTDPatch by resolving the sprite using the primary vehicle 'v', and not using the rotor vehicle 'v->Next()->Next()'.
 	 * TTDPatch copies some variables between the vehicles each time, to somehow synchronize the rotor vehicle with the primary vehicle.
@@ -1248,9 +1252,9 @@ int GetEngineProperty(EngineID engine, PropertyID property, int orig_value, cons
  * @param type Build probability type to test for.
  * @returns True or false depending on the probability result, or std::nullopt if the callback failed.
  */
-std::optional<bool> TestVehicleBuildProbability(Vehicle *v, EngineID engine, BuildProbabilityType type)
+std::optional<bool> TestVehicleBuildProbability(Vehicle *v, BuildProbabilityType type)
 {
-	uint16_t p = GetVehicleCallback(CBID_VEHICLE_BUILD_PROBABILITY, to_underlying(type), 0, engine, v);
+	uint16_t p = GetVehicleCallback(CBID_VEHICLE_BUILD_PROBABILITY, to_underlying(type), 0, v->engine_type, v);
 	if (p == CALLBACK_FAILED) return std::nullopt;
 
 	const uint16_t PROBABILITY_RANGE = 100;
