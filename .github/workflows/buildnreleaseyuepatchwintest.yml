@@ -1,53 +1,42 @@
-name: Build & Release OpenTTD Windows Test
+name: Build & Release Yue Patch Windows Test
 
 on:
   push:
     branches:
-      - Yue-patch   # 你嘅測試分支
+      - main
+      - develop
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   build-windows:
     runs-on: windows-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - name: Checkout source
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSVC
-        uses: ilammy/msvc-dev-cmd@v1
-
-      - name: Configure
-        run: cmake -B build -A x64 -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build
-        run: cmake --build build --parallel
-
-      - name: Package zip
-        run: |
-          mkdir package
-          copy build\bin\Release\openttd.exe package\
-          powershell Compress-Archive -Path package\* -DestinationPath openttd-windows-test.zip
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          tag_name: yuepatch-v${{ github.run_number }}-${{ github.sha }}
-          name: "OpenTTD Windows Test Build v${{ github.run_number }}"
-          body: |
-            自動生成嘅 Windows 測試版 zip 包。
-            分支：Yue-patch
-            Build 編號：${{ github.run_number }}
-            Commit：${{ github.sha }}
-          draft: false
-          prerelease: true
-          files: openttd-windows-test.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '24'
 
-      - name: Cleanup old releases
-        uses: dev-drprasad/delete-older-releases@v0.3.3
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload build artifacts
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
-          keep_latest: 5
-          delete_tags: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: windows-build-output
+          path: dist/
