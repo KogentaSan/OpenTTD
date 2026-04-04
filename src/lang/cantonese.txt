@@ -26,25 +26,25 @@ STR_JUST_NOTHING                                                :無
 # Plural cargo name
 STR_CARGO_PLURAL_NOTHING                                        :
 STR_CARGO_PLURAL_PASSENGERS                                     :乘客
-STR_CARGO_PLURAL_COAL                                           :煤炭
-STR_CARGO_PLURAL_MAIL                                           :信件
+STR_CARGO_PLURAL_COAL                                           :煤
+STR_CARGO_PLURAL_MAIL                                           :信
 STR_CARGO_PLURAL_OIL                                            :石油
 STR_CARGO_PLURAL_LIVESTOCK                                      :牲口
-STR_CARGO_PLURAL_GOODS                                          :商品
+STR_CARGO_PLURAL_GOODS                                          :雜貨
 STR_CARGO_PLURAL_GRAIN                                          :穀物
 STR_CARGO_PLURAL_WOOD                                           :木材
-STR_CARGO_PLURAL_IRON_ORE                                       :鐵礦石
-STR_CARGO_PLURAL_STEEL                                          :鋼鐵
-STR_CARGO_PLURAL_VALUABLES                                      :貴價貨
-STR_CARGO_PLURAL_COPPER_ORE                                     :銅礦石
+STR_CARGO_PLURAL_IRON_ORE                                       :鐵礦
+STR_CARGO_PLURAL_STEEL                                          :鋼材
+STR_CARGO_PLURAL_VALUABLES                                      :貴重嘢
+STR_CARGO_PLURAL_COPPER_ORE                                     :銅礦
 STR_CARGO_PLURAL_MAIZE                                          :粟米
 STR_CARGO_PLURAL_FRUIT                                          :生果
 STR_CARGO_PLURAL_DIAMONDS                                       :鑽石
 STR_CARGO_PLURAL_FOOD                                           :食物
 STR_CARGO_PLURAL_PAPER                                          :紙張
-STR_CARGO_PLURAL_GOLD                                           :金塊
-STR_CARGO_PLURAL_WATER                                          :淡水
-STR_CARGO_PLURAL_WHEAT                                          :小麥
+STR_CARGO_PLURAL_GOLD                                           :黃金
+STR_CARGO_PLURAL_WATER                                          :水
+STR_CARGO_PLURAL_WHEAT                                          :麥
 STR_CARGO_PLURAL_RUBBER                                         :橡膠
 STR_CARGO_PLURAL_SUGAR                                          :砂糖
 STR_CARGO_PLURAL_TOYS                                           :玩具
@@ -53,32 +53,32 @@ STR_CARGO_PLURAL_COLA                                           :可樂
 STR_CARGO_PLURAL_CANDYFLOSS                                     :棉花糖
 STR_CARGO_PLURAL_BUBBLES                                        :氣泡
 STR_CARGO_PLURAL_TOFFEE                                         :拖肥糖
-STR_CARGO_PLURAL_BATTERIES                                      :電池
+STR_CARGO_PLURAL_BATTERIES                                      :電芯
 STR_CARGO_PLURAL_PLASTIC                                        :塑膠
 STR_CARGO_PLURAL_FIZZY_DRINKS                                   :汽水
 
 # Singular cargo name
 STR_CARGO_SINGULAR_NOTHING                                      :
 STR_CARGO_SINGULAR_PASSENGER                                    :乘客
-STR_CARGO_SINGULAR_COAL                                         :煤炭
-STR_CARGO_SINGULAR_MAIL                                         :信件
+STR_CARGO_SINGULAR_COAL                                         :煤
+STR_CARGO_SINGULAR_MAIL                                         :信
 STR_CARGO_SINGULAR_OIL                                          :石油
 STR_CARGO_SINGULAR_LIVESTOCK                                    :牲口
-STR_CARGO_SINGULAR_GOODS                                        :商品
+STR_CARGO_SINGULAR_GOODS                                        :雜貨
 STR_CARGO_SINGULAR_GRAIN                                        :穀物
 STR_CARGO_SINGULAR_WOOD                                         :木材
-STR_CARGO_SINGULAR_IRON_ORE                                     :鐵礦石
-STR_CARGO_SINGULAR_STEEL                                        :鋼鐵
-STR_CARGO_SINGULAR_VALUABLES                                    :貴價貨
-STR_CARGO_SINGULAR_COPPER_ORE                                   :銅礦石
+STR_CARGO_SINGULAR_IRON_ORE                                     :鐵礦
+STR_CARGO_SINGULAR_STEEL                                        :鋼材
+STR_CARGO_SINGULAR_VALUABLES                                    :貴重嘢
+STR_CARGO_SINGULAR_COPPER_ORE                                   :銅礦
 STR_CARGO_SINGULAR_MAIZE                                        :粟米
 STR_CARGO_SINGULAR_FRUIT                                        :生果
 STR_CARGO_SINGULAR_DIAMOND                                      :鑽石
 STR_CARGO_SINGULAR_FOOD                                         :食物
 STR_CARGO_SINGULAR_PAPER                                        :紙張
-STR_CARGO_SINGULAR_GOLD                                         :金塊
-STR_CARGO_SINGULAR_WATER                                        :淡水
-STR_CARGO_SINGULAR_WHEAT                                        :小麥
+STR_CARGO_SINGULAR_GOLD                                         :黃金
+STR_CARGO_SINGULAR_WATER                                        :水
+STR_CARGO_SINGULAR_WHEAT                                        :麥
 STR_CARGO_SINGULAR_RUBBER                                       :橡膠
 STR_CARGO_SINGULAR_SUGAR                                        :砂糖
 STR_CARGO_SINGULAR_TOY                                          :玩具
@@ -87,7 +87,7 @@ STR_CARGO_SINGULAR_COLA                                         :可樂
 STR_CARGO_SINGULAR_CANDYFLOSS                                   :棉花糖
 STR_CARGO_SINGULAR_BUBBLE                                       :氣泡
 STR_CARGO_SINGULAR_TOFFEE                                       :拖肥糖
-STR_CARGO_SINGULAR_BATTERY                                      :電池
+STR_CARGO_SINGULAR_BATTERY                                      :電芯
 STR_CARGO_SINGULAR_PLASTIC                                      :塑膠
 STR_CARGO_SINGULAR_FIZZY_DRINK                                  :汽水
 
@@ -95,15 +95,15 @@ STR_CARGO_SINGULAR_FIZZY_DRINK                                  :汽水
 STR_QUANTITY_NOTHING                                            :
 STR_QUANTITY_PASSENGERS                                         :{COMMA}{NBSP}個乘客
 STR_QUANTITY_COAL                                               :{WEIGHT_LONG} 煤碳
-STR_QUANTITY_MAIL                                               :{COMMA}{NBSP}封信件
+STR_QUANTITY_MAIL                                               :{COMMA}{NBSP}封信
 STR_QUANTITY_OIL                                                :{VOLUME_LONG} 石油
 STR_QUANTITY_LIVESTOCK                                          :{COMMA}{NBSP}隻牲口
-STR_QUANTITY_GOODS                                              :{COMMA}{NBSP}箱商品
+STR_QUANTITY_GOODS                                              :{COMMA}{NBSP}箱雜貨
 STR_QUANTITY_GRAIN                                              :{WEIGHT_LONG} 穀物
 STR_QUANTITY_WOOD                                               :{WEIGHT_LONG} 木材
 STR_QUANTITY_IRON_ORE                                           :{WEIGHT_LONG} 鐵礦
-STR_QUANTITY_STEEL                                              :{WEIGHT_LONG} 鋼鐵
-STR_QUANTITY_VALUABLES                                          :{COMMA}{NBSP}件貴價貨
+STR_QUANTITY_STEEL                                              :{WEIGHT_LONG} 鋼材
+STR_QUANTITY_VALUABLES                                          :{COMMA}{NBSP}件貴重嘢
 STR_QUANTITY_COPPER_ORE                                         :{WEIGHT_LONG} 銅礦
 STR_QUANTITY_MAIZE                                              :{WEIGHT_LONG} 粟米
 STR_QUANTITY_FRUIT                                              :{WEIGHT_LONG} 生果
@@ -111,8 +111,8 @@ STR_QUANTITY_DIAMONDS                                           :{COMMA}{NBSP}�
 STR_QUANTITY_FOOD                                               :{WEIGHT_LONG} 食物
 STR_QUANTITY_PAPER                                              :{WEIGHT_LONG} 紙張
 STR_QUANTITY_GOLD                                               :{COMMA}{NBSP}包黃金
-STR_QUANTITY_WATER                                              :{VOLUME_LONG} 淡水
-STR_QUANTITY_WHEAT                                              :{WEIGHT_LONG} 小麥
+STR_QUANTITY_WATER                                              :{VOLUME_LONG} 水
+STR_QUANTITY_WHEAT                                              :{WEIGHT_LONG} 麥
 STR_QUANTITY_RUBBER                                             :{VOLUME_LONG} 橡膠
 STR_QUANTITY_SUGAR                                              :{WEIGHT_LONG} 砂糖
 STR_QUANTITY_TOYS                                               :{COMMA}{NBSP}件玩具
@@ -121,7 +121,7 @@ STR_QUANTITY_COLA                                               :{VOLUME_LONG} �
 STR_QUANTITY_CANDYFLOSS                                         :{WEIGHT_LONG} 棉花糖
 STR_QUANTITY_BUBBLES                                            :{COMMA} 個泡泡
 STR_QUANTITY_TOFFEE                                             :{WEIGHT_LONG} 拖肥糖
-STR_QUANTITY_BATTERIES                                          :{COMMA} 粒電池
+STR_QUANTITY_BATTERIES                                          :{COMMA} 粒電芯
 STR_QUANTITY_PLASTIC                                            :{VOLUME_LONG} 塑膠
 STR_QUANTITY_FIZZY_DRINKS                                       :{COMMA} 杯汽水
 STR_QUANTITY_N_A                                                :N/A
@@ -130,7 +130,7 @@ STR_QUANTITY_N_A                                                :N/A
 STR_ABBREV_NOTHING                                              :
 STR_ABBREV_PASSENGERS                                           :客
 STR_ABBREV_COAL                                                 :煤
-STR_ABBREV_MAIL                                                 :郵
+STR_ABBREV_MAIL                                                 :信
 STR_ABBREV_OIL                                                  :油
 STR_ABBREV_LIVESTOCK                                            :畜
 STR_ABBREV_GOODS                                                :商
@@ -151,7 +151,7 @@ STR_ABBREV_WHEAT                                                :麥
 STR_ABBREV_RUBBER                                               :橡
 STR_ABBREV_SUGAR                                                :糖
 STR_ABBREV_TOYS                                                 :玩
-STR_ABBREV_SWEETS                                               :甜
+STR_ABBREV_SWEETS                                               :菓
 STR_ABBREV_COLA                                                 :可
 STR_ABBREV_CANDYFLOSS                                           :棉
 STR_ABBREV_BUBBLES                                              :泡
@@ -2112,7 +2112,7 @@ STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :設使有交通
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL                            :郵件分配方式：{STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :設使有交通路綫連接甲、乙兩站。「對稱」指甲站往乙站的郵件數量與乙站往甲站的郵件數量大致相同。「不對稱」指任何一站往另一站的郵件數量皆由系統隨意決定。「手動」指系統不會自動分配郵件的目的地
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :裝甲貨物分配方式：{STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :「裝甲貨物」包括溫帶場景的「貴重物品」、寒帶場景的「金塊」及亞熱帶場景的「鑽石」。使用 NewGRF 可能會改變以上設定。設使有交通路綫連接甲、乙兩站，則「對稱」指甲站往乙站的郵件數量與乙站往甲站的裝甲貨物數量大致相同；「不對稱」指任何一站往另一站的裝甲貨物數量皆由系統隨意決定；「手動」指系統不會自動分配裝甲貨物的目的地。建議在亞熱帶及寒帶場景中應使用「不對稱」或「手動」，因為銀行只會需求貨物。在溫帶場景中建議使用「對稱」，因為銀行之間會互相傳送貴重物品
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :「裝甲貨物」包括溫帶場景的「貴重物品」、寒帶場景的「黃金」及亞熱帶場景的「鑽石」。使用 NewGRF 可能會改變以上設定。設使有交通路綫連接甲、乙兩站，則「對稱」指甲站往乙站的郵件數量與乙站往甲站的裝甲貨物數量大致相同；「不對稱」指任何一站往另一站的裝甲貨物數量皆由系統隨意決定；「手動」指系統不會自動分配裝甲貨物的目的地。建議在亞熱帶及寒帶場景中應使用「不對稱」或「手動」，因為銀行只會需求貨物。在溫帶場景中建議使用「對稱」，因為銀行之間會互相傳送貴重物品
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :其他貨物分配方式：{STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :如設定此值為「不對稱」，則任何一站往另一站的貨物數量皆由系統隨意決定。如設定此值為「手動」，則系統不會自動分配貨物的目的地
 ###length 3
@@ -2346,7 +2346,7 @@ STR_LIVERY_PASSENGER_WAGON_MONORAIL                             :客運機車（
 STR_LIVERY_PASSENGER_WAGON_MAGLEV                               :客運機車（磁浮）
 STR_LIVERY_FREIGHT_WAGON                                        :載貨車廂
 STR_LIVERY_BUS                                                  :巴士
-STR_LIVERY_TRUCK                                                :載貨卡車
+STR_LIVERY_TRUCK                                                :載貨貨車
 STR_LIVERY_PASSENGER_SHIP                                       :載客渡輪
 STR_LIVERY_FREIGHT_SHIP                                         :貨船
 STR_LIVERY_HELICOPTER                                           :直升機
@@ -5596,8 +5596,8 @@ STR_INDUSTRY_NAME_FACTORY_2                                     :工廠
 STR_INDUSTRY_NAME_FARM_2                                        :農場
 STR_INDUSTRY_NAME_LUMBER_MILL                                   :伐木場
 STR_INDUSTRY_NAME_COTTON_CANDY_FOREST                           :棉花糖林
-STR_INDUSTRY_NAME_CANDY_FACTORY                                 :甜點工廠
-STR_INDUSTRY_NAME_BATTERY_FARM                                  :電池農場
+STR_INDUSTRY_NAME_CANDY_FACTORY                                 :糖果工廠
+STR_INDUSTRY_NAME_BATTERY_FARM                                  :電芯農場
 STR_INDUSTRY_NAME_COLA_WELLS                                    :可樂井
 STR_INDUSTRY_NAME_TOY_SHOP                                      :玩具店
 STR_INDUSTRY_NAME_TOY_FACTORY                                   :玩具工廠
@@ -5662,7 +5662,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut 柴�
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut 柴油
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (蒸汽)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_CHANEY_JUBILEE_STEAM         :Chaney 'Jubilee' (蒸汽)
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_GINZU_A4_STEAM               :Ginzu 'A4' (蒸汽)
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_GINZU_A4_STEAM               :銀頭 A4 (蒸汽)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_8P_STEAM                  :SH '8P' (蒸汽)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MANLEY_MOREL_DMU_DIESEL      :Manley-Morel 柴聯車組 (柴油)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_DASH_DIESEL                  :'Dash' (柴油)
@@ -5671,7 +5671,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_UU_37_DIESEL                 :UU '37' (柴油
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_FLOSS_47_DIESEL              :Floss '47' (柴油)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_CS_4000_DIESEL               :CS 4000 (柴油)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_CS_2400_DIESEL               :CS 2400 (柴油)
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_CENTENNIAL_DIESEL            :Centennial (柴油)
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_CENTENNIAL_DIESEL            :世紀號 (柴油)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KELLING_3100_DIESEL          :Kelling 3100 (柴油)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_TURNER_TURBO_DIESEL          :Turner Turbo (柴油)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_1000_DIESEL              :MJS 1000 (柴油)
@@ -5679,96 +5679,96 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_125_DIESEL                :SH '125' (柴�
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_30_ELECTRIC               :SH '30' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_40_ELECTRIC               :SH '40' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_T_I_M_ELECTRIC               :'T.I.M.' (電力)
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_ASIASTAR_ELECTRIC            :'AsiaStar' (電力)
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :客運車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :郵務車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COAL_CAR                      :煤炭車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :油罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :家畜車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GOODS_VAN                     :商品車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GRAIN_HOPPER                  :穀物斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WOOD_TRUCK                    :木材車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_IRON_ORE_HOPPER               :鐵礦斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_STEEL_TRUCK                   :運鋼車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_ARMORED_VAN                   :裝甲車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FOOD_VAN                      :食物車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PAPER_TRUCK                   :運紙車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COPPER_ORE_HOPPER             :銅礦斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WATER_TANKER                  :水罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FRUIT_TRUCK                   :蔬果車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_RUBBER_TRUCK                  :橡膠車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_SUGAR_TRUCK                   :砂糖車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COTTON_CANDY_HOPPER           :棉花糖斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOFFEE_HOPPER                 :拖肥糖斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BUBBLE_VAN                    :氣泡車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COLA_TANKER                   :可樂罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_CANDY_VAN                     :甜點車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOY_VAN                       :玩具車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BATTERY_TRUCK                 :電池車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FIZZY_DRINK_TRUCK             :汽水車
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PLASTIC_TRUCK                 :塑膠車
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_ASIASTAR_ELECTRIC            :亞洲之星 (電力)
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :載客車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :郵政車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COAL_CAR                      :煤車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :油罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :家畜車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GOODS_VAN                     :貨車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GRAIN_HOPPER                  :穀物斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WOOD_TRUCK                    :木材平板車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_IRON_ORE_HOPPER               :鐵礦斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_STEEL_TRUCK                   :鋼材平板車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_ARMORED_VAN                   :裝甲車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FOOD_VAN                      :食物車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PAPER_TRUCK                   :運紙車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COPPER_ORE_HOPPER             :銅礦斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WATER_TANKER                  :水罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FRUIT_TRUCK                   :蔬果車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_RUBBER_TRUCK                  :橡膠車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_SUGAR_TRUCK                   :砂糖車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COTTON_CANDY_HOPPER           :棉花糖斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOFFEE_HOPPER                 :拖肥糖斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BUBBLE_VAN                    :氣泡車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COLA_TANKER                   :可樂罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_CANDY_VAN                     :糖果車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOY_VAN                       :玩具車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BATTERY_TRUCK                 :電芯車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FIZZY_DRINK_TRUCK             :汽水車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PLASTIC_TRUCK                 :塑膠車卡
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_X2001_ELECTRIC           :'X2001' (電力)
-STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_MILLENNIUM_Z1_ELECTRIC   :'Millennium Z1' (電力)
+STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_MILLENNIUM_Z1_ELECTRIC   :千禧號 Z1 (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_WIZZOWOW_Z99             :Wizzowow Z99
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :客運車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :郵務車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :煤斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :油罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_LIVESTOCK_VAN             :家畜車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GOODS_VAN                 :商品車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GRAIN_HOPPER              :穀斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WOOD_TRUCK                :木材車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_IRON_ORE_HOPPER           :鐵礦斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_STEEL_TRUCK               :運鋼車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_ARMORED_VAN               :裝甲車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FOOD_VAN                  :食物車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PAPER_TRUCK               :運紙車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COPPER_ORE_HOPPER         :銅礦斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WATER_TANKER              :水罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FRUIT_TRUCK               :蔬果車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_RUBBER_TRUCK              :橡膠車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_SUGAR_TRUCK               :砂糖車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COTTON_CANDY_HOPPER       :棉花糖斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOFFEE_HOPPER             :拖肥糖斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BUBBLE_VAN                :氣泡車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COLA_TANKER               :可樂罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_CANDY_VAN                 :甜點車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOY_VAN                   :玩具車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BATTERY_TRUCK             :電池車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FIZZY_DRINK_TRUCK         :汽水車
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PLASTIC_TRUCK             :塑膠車
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :載客車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :郵政車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :煤斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :油罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_LIVESTOCK_VAN             :家畜車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GOODS_VAN                 :貨車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GRAIN_HOPPER              :穀斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WOOD_TRUCK                :木材平板車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_IRON_ORE_HOPPER           :鐵礦斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_STEEL_TRUCK               :鋼材平板車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_ARMORED_VAN               :裝甲車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FOOD_VAN                  :食物車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PAPER_TRUCK               :運紙車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COPPER_ORE_HOPPER         :銅礦斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WATER_TANKER              :水罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FRUIT_TRUCK               :蔬果車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_RUBBER_TRUCK              :橡膠車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_SUGAR_TRUCK               :砂糖車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COTTON_CANDY_HOPPER       :棉花糖斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOFFEE_HOPPER             :拖肥糖斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BUBBLE_VAN                :氣泡車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COLA_TANKER               :可樂罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_CANDY_VAN                 :糖果車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOY_VAN                   :玩具車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BATTERY_TRUCK             :電芯車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FIZZY_DRINK_TRUCK         :汽水車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PLASTIC_TRUCK             :塑膠車卡
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV1_LEVIATHAN_ELECTRIC    :Lev1 'Leviathan' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV2_CYCLOPS_ELECTRIC      :Lev2 'Cyclops' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV3_PEGASUS_ELECTRIC      :Lev3 'Pegasus' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV4_CHIMAERA_ELECTRIC     :Lev4 'Chimaera' (電力)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_WIZZOWOW_ROCKETEER         :Wizzowow Rocketeer
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :客運車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :郵務車廂
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COAL_CAR                    :煤斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :油罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_LIVESTOCK_VAN               :家畜車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GOODS_VAN                   :商品車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GRAIN_HOPPER                :穀斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WOOD_TRUCK                  :木材車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_IRON_ORE_HOPPER             :鐵礦斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_STEEL_TRUCK                 :運鋼車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_ARMORED_VAN                 :裝甲車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FOOD_VAN                    :食物車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PAPER_TRUCK                 :運紙車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COPPER_ORE_HOPPER           :銅礦斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WATER_TANKER                :水罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FRUIT_TRUCK                 :蔬果車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_RUBBER_TRUCK                :橡膠車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_SUGAR_TRUCK                 :砂糖車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COTTON_CANDY_HOPPER         :棉花糖斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOFFEE_HOPPER               :拖肥糖斗車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BUBBLE_VAN                  :氣泡車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COLA_TANKER                 :可樂罐車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_CANDY_VAN                   :甜點車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOY_VAN                     :玩具車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BATTERY_TRUCK               :電池車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FIZZY_DRINK_TRUCK           :汽水車
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PLASTIC_TRUCK               :塑膠車
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :載客車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :郵政車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COAL_CAR                    :煤斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :油罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_LIVESTOCK_VAN               :家畜車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GOODS_VAN                   :貨車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GRAIN_HOPPER                :穀斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WOOD_TRUCK                  :木材平板車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_IRON_ORE_HOPPER             :鐵礦斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_STEEL_TRUCK                 :鋼材平板車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_ARMORED_VAN                 :裝甲車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FOOD_VAN                    :食物車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PAPER_TRUCK                 :運紙車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COPPER_ORE_HOPPER           :銅礦斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WATER_TANKER                :水罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FRUIT_TRUCK                 :蔬果車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_RUBBER_TRUCK                :橡膠車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_SUGAR_TRUCK                 :砂糖車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COTTON_CANDY_HOPPER         :棉花糖斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOFFEE_HOPPER               :拖肥糖斗車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BUBBLE_VAN                  :氣泡車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COLA_TANKER                 :可樂罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_CANDY_VAN                   :糖果車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOY_VAN                     :玩具車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BATTERY_TRUCK               :電芯車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FIZZY_DRINK_TRUCK           :汽水車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PLASTIC_TRUCK               :塑膠車卡
 
 ###length 88
 STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_REGAL_BUS                     :MPS Regal 巴士
@@ -5778,87 +5778,87 @@ STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_MKII_SUPERBUS              :Foster MkII 超
 STR_VEHICLE_NAME_ROAD_VEHICLE_PLODDYPHUT_MKI_BUS                :Ploddyphut MkI 巴士
 STR_VEHICLE_NAME_ROAD_VEHICLE_PLODDYPHUT_MKII_BUS               :Ploddyphut MkII 巴士
 STR_VEHICLE_NAME_ROAD_VEHICLE_PLODDYPHUT_MKIII_BUS              :Ploddyphut MkIII 巴士
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_COAL_TRUCK                 :Bedford 煤卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_COAL_TRUCK                    :Uhl 煤卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_DW_COAL_TRUCK                     :DW 煤卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_MAIL_TRUCK                    :MPS 郵務車
-STR_VEHICLE_NAME_ROAD_VEHICLE_REYNARD_MAIL_TRUCK                :Reynard 郵務車
-STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_MAIL_TRUCK                  :Perry 郵務車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_MAIL_TRUCK            :MightyMover 郵務車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_MAIL_TRUCK            :Powernaught 郵務車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_MAIL_TRUCK               :Wizzowow 郵務車
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_COAL_TRUCK                 :Bedford 運煤泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_COAL_TRUCK                    :Uhl 運煤泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_DW_COAL_TRUCK                     :DW 運煤泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_MAIL_TRUCK                    :MPS 郵政車
+STR_VEHICLE_NAME_ROAD_VEHICLE_REYNARD_MAIL_TRUCK                :Reynard 郵政車
+STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_MAIL_TRUCK                  :Perry 郵政車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_MAIL_TRUCK            :MightyMover 郵政車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_MAIL_TRUCK            :Powernaught 郵政車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_MAIL_TRUCK               :Wizzowow 郵政車
 STR_VEHICLE_NAME_ROAD_VEHICLE_WITCOMBE_OIL_TANKER               :Witcombe 油罐車
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_OIL_TANKER                 :Foster 油罐車
 STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_OIL_TANKER                  :Perry 油罐車
-STR_VEHICLE_NAME_ROAD_VEHICLE_TALBOTT_LIVESTOCK_VAN             :Talbott 家畜廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_LIVESTOCK_VAN                 :Uhl 家畜廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_LIVESTOCK_VAN              :Foster 家畜廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_GOODS_TRUCK                :Balogh 商品卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_CRAIGHEAD_GOODS_TRUCK             :Craighead 商品卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_GOODS_TRUCK                  :Goss 商品卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_HEREFORD_GRAIN_TRUCK              :Hereford 穀物卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_THOMAS_GRAIN_TRUCK                :Thomas 穀物卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_GRAIN_TRUCK                  :Goss 穀物卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WITCOMBE_WOOD_TRUCK               :Witcombe 木材卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_WOOD_TRUCK                 :Foster 木材卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MORELAND_WOOD_TRUCK               :Moreland 木材卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_IRON_ORE_TRUCK                :MPS 鐵礦卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_IRON_ORE_TRUCK                :Uhl 鐵礦卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_CHIPPY_IRON_ORE_TRUCK             :Chippy 鐵礦卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_STEEL_TRUCK                :Balogh 運鋼卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_STEEL_TRUCK                   :Uhl 運鋼卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_KELLING_STEEL_TRUCK               :Kelling 運鋼卡車
+STR_VEHICLE_NAME_ROAD_VEHICLE_TALBOTT_LIVESTOCK_VAN             :Talbott 家畜輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_LIVESTOCK_VAN                 :Uhl 家畜輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_LIVESTOCK_VAN              :Foster 家畜輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_GOODS_TRUCK                :Balogh 貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_CRAIGHEAD_GOODS_TRUCK             :Craighead 貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_GOODS_TRUCK                  :Goss 貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_HEREFORD_GRAIN_TRUCK              :Hereford 穀物斗車
+STR_VEHICLE_NAME_ROAD_VEHICLE_THOMAS_GRAIN_TRUCK                :Thomas 穀物斗車
+STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_GRAIN_TRUCK                  :Goss 穀物斗車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WITCOMBE_WOOD_TRUCK               :Witcombe 木材平板貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_WOOD_TRUCK                 :Foster 木材平板貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MORELAND_WOOD_TRUCK               :Moreland 木材平板貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_IRON_ORE_TRUCK                :MPS 鐵礦泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_IRON_ORE_TRUCK                :Uhl 鐵礦泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_CHIPPY_IRON_ORE_TRUCK             :Chippy 鐵礦泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_STEEL_TRUCK                :Balogh 運鋼貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_STEEL_TRUCK                   :Uhl 運鋼貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_KELLING_STEEL_TRUCK               :Kelling 運鋼貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_ARMORED_TRUCK              :Balogh 運鈔車
 STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_ARMORED_TRUCK                 :Uhl 運鈔車
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_ARMORED_TRUCK              :Foster 運鈔車
-STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_FOOD_VAN                   :Foster 食物廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_FOOD_VAN                    :Perry 食物廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_CHIPPY_FOOD_VAN                   :Chippy 食物廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_PAPER_TRUCK                   :Uhl 運紙卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_PAPER_TRUCK                :Balogh 運紙卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_PAPER_TRUCK                   :MPS 運紙卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_COPPER_ORE_TRUCK              :MPS 銅礦卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_COPPER_ORE_TRUCK              :Uhl 銅礦卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_COPPER_ORE_TRUCK             :Goss 銅礦卡車
+STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_FOOD_VAN                   :Foster 食物輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_FOOD_VAN                    :Perry 食物輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_CHIPPY_FOOD_VAN                   :Chippy 食物輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_PAPER_TRUCK                   :Uhl 運紙車
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_PAPER_TRUCK                :Balogh 運紙車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_PAPER_TRUCK                   :MPS 運紙車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_COPPER_ORE_TRUCK              :MPS 銅礦泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_COPPER_ORE_TRUCK              :Uhl 銅礦泥頭車
+STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_COPPER_ORE_TRUCK             :Goss 銅礦泥頭車
 STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_WATER_TANKER                  :Uhl 水罐車
 STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_WATER_TANKER               :Balogh 水罐車
 STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_WATER_TANKER                  :MPS 水罐車
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_FRUIT_TRUCK                :Balogh 蔬果卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_FRUIT_TRUCK                   :Uhl 蔬果卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_KELLING_FRUIT_TRUCK               :Kelling 蔬果卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_RUBBER_TRUCK               :Balogh 橡膠卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_RUBBER_TRUCK                  :Uhl 橡膠卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_RMT_RUBBER_TRUCK                  :RMT 橡膠卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_SUGAR_TRUCK           :MightyMover 砂糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_SUGAR_TRUCK           :Powernaught 砂糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_SUGAR_TRUCK              :Wizzowow 砂糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_COLA_TRUCK            :MightyMover 可樂卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_COLA_TRUCK            :Powernaught 可樂卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_COLA_TRUCK               :Wizzowow 可樂卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_COTTON_CANDY          :MightyMover 棉花糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_COTTON_CANDY          :Powernaught 棉花糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_COTTON_CANDY_TRUCK       :Wizzowow 棉花糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_TOFFEE_TRUCK          :MightyMover 拖肥糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_TOFFEE_TRUCK          :Powernaught 拖肥糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_TOFFEE_TRUCK             :Wizzowow 拖肥糖卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_TOY_VAN               :MightyMover 玩具廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_TOY_VAN               :Powernaught 玩具廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_TOY_VAN                  :Wizzowow 玩具廂型車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_CANDY_TRUCK           :MightyMover 甜點卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_CANDY_TRUCK           :Powernaught 甜點卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_CANDY_TRUCK              :Wizzowow 甜點卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_BATTERY_TRUCK         :MightyMover 電池卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_BATTERY_TRUCK         :Powernaught 電池卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_BATTERY_TRUCK            :Wizzowow 電池卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_FIZZY_DRINK           :MightyMover 汽水卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_FIZZY_DRINK           :Powernaught 汽水卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_FIZZY_DRINK_TRUCK        :Wizzowow 汽水卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_PLASTIC_TRUCK         :MightyMover 塑膠卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_PLASTIC_TRUCK         :Powernaught 塑膠卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_PLASTIC_TRUCK            :Wizzowow 塑膠卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_BUBBLE_TRUCK          :MightyMover 氣泡卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_BUBBLE_TRUCK          :Powernaught 氣泡卡車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_BUBBLE_TRUCK             :Wizzowow 氣泡卡車
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_FRUIT_TRUCK                :Balogh 蔬果貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_FRUIT_TRUCK                   :Uhl 蔬果貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_KELLING_FRUIT_TRUCK               :Kelling 蔬果貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_RUBBER_TRUCK               :Balogh 橡膠貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_RUBBER_TRUCK                  :Uhl 橡膠貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_RMT_RUBBER_TRUCK                  :RMT 橡膠貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_SUGAR_TRUCK           :MightyMover 砂糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_SUGAR_TRUCK           :Powernaught 砂糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_SUGAR_TRUCK              :Wizzowow 砂糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_COLA_TRUCK            :MightyMover 可樂貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_COLA_TRUCK            :Powernaught 可樂貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_COLA_TRUCK               :Wizzowow 可樂貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_COTTON_CANDY          :MightyMover 棉花糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_COTTON_CANDY          :Powernaught 棉花糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_COTTON_CANDY_TRUCK       :Wizzowow 棉花糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_TOFFEE_TRUCK          :MightyMover 拖肥糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_TOFFEE_TRUCK          :Powernaught 拖肥糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_TOFFEE_TRUCK             :Wizzowow 拖肥糖貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_TOY_VAN               :MightyMover 玩具輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_TOY_VAN               :Powernaught 玩具輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_TOY_VAN                  :Wizzowow 玩具輕型貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_CANDY_TRUCK           :MightyMover 糖果貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_CANDY_TRUCK           :Powernaught 糖果貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_CANDY_TRUCK              :Wizzowow 糖果貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_BATTERY_TRUCK         :MightyMover 電芯貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_BATTERY_TRUCK         :Powernaught 電芯貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_BATTERY_TRUCK            :Wizzowow 電芯貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_FIZZY_DRINK           :MightyMover 汽水貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_FIZZY_DRINK           :Powernaught 汽水貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_FIZZY_DRINK_TRUCK        :Wizzowow 汽水貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_PLASTIC_TRUCK         :MightyMover 塑膠貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_PLASTIC_TRUCK         :Powernaught 塑膠貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_PLASTIC_TRUCK            :Wizzowow 塑膠貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_BUBBLE_TRUCK          :MightyMover 氣泡貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_BUBBLE_TRUCK          :Powernaught 氣泡貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_BUBBLE_TRUCK             :Wizzowow 氣泡貨車
 
 ###length 11
 STR_VEHICLE_NAME_SHIP_MPS_OIL_TANKER                            :MPS 油輪
@@ -5950,7 +5950,7 @@ STR_FORMAT_DEPOT_NAME_AIRCRAFT                                  :{STATION} 機�
 
 STR_UNKNOWN_STATION                                             :不明車站
 STR_DEFAULT_SIGN_NAME                                           :標誌
-STR_COMPANY_SOMEONE                                             :某人
+STR_COMPANY_SOMEONE                                             :乜水
 
 STR_SAVEGAME_DURATION_REALTIME                                  :{NUM} 個鐘頭零 {NUM} 分鐘
 STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STRING}
