@@ -25,23 +25,32 @@ jobs:
 
       - name: Fix file encoding and line endings
         run: |
-          # 確保所有 txt 都係 Unix 格式兼冇 BOM
-          dos2unix src/lang/*.txt
-          sed -i '1s/^\xef\xbb\xbf//' src/lang/*.txt
+          # 徹底清理所有語言檔，確保絕對純淨
+          find src/lang -name "*.txt" -exec dos2unix {} +
+          find src/lang -name "*.txt" -exec sed -i '1s/^\xef\xbb\xbf//' {} +
 
       - name: Generate .lng files
         run: |
-          # 1. 喺根目錄整好個絕對路徑嘅 output folder
-          mkdir -p $(pwd)/output
-          OUT_DIR=$(pwd)/output
-          STRGEN=$(pwd)/build/src/strgen/strgen
+          mkdir -p output
           
-          # 2. 呢步好重要：入去 src/lang 入面執行，等 strgen 覺得所有嘢都喺隔離
+          # 關鍵：strgen 通常嘅用法係 strgen -p [output_dir] [input_file]
+          # 或者直接喺 src/lang 目錄行 strgen，等佢自己搵 english.txt
+          
+          STRGEN=$(pwd)/build/src/strgen/strgen
+          OUT_DIR=$(pwd)/output
+          
           cd src/lang
           
-          $STRGEN english.txt $OUT_DIR/english.lng
-          $STRGEN cantonese.txt $OUT_DIR/cantonese.lng
-          $STRGEN traditional_chinese.txt $OUT_DIR/traditional_chinese.lng
+          # 嘗試方式 A: 明確指定輸出目錄 (-o)
+          # 注意：有啲版本嘅 strgen 需要 -o 嚟指定輸出地方
+          $STRGEN -o $OUT_DIR english.txt
+          $STRGEN -o $OUT_DIR cantonese.txt
+          $STRGEN -o $OUT_DIR traditional_chinese.txt
+          
+          # 如果上面報錯 "invalid option -o"，請將上面三行換成下面呢款：
+          # $STRGEN $OUT_DIR/english.lng english.txt
+          # $STRGEN $OUT_DIR/cantonese.lng cantonese.txt
+          # $STRGEN $OUT_DIR/traditional_chinese.lng traditional_chinese.txt
 
       - name: List generated files
         run: ls -l output/
