@@ -32,13 +32,16 @@ jobs:
           echo "=== traditional_chinese.txt head ==="
           head -n 3 src/lang/traditional_chinese.txt
 
-      - name: Generate .lng files
-        run: |
-          mkdir output
-          cd src/lang
-          ../../build/src/strgen/strgen english.txt ../output/english.lng
-          ../../build/src/strgen/strgen cantonese.txt ../output/cantonese.lng
-          ../../build/src/strgen/strgen traditional_chinese.txt ../output/traditional_chinese.lng
+-     - name: Generate .lng files
+          run: |
+          mkdir -p output
+          # 使用 sed 移除可能存在嘅 Windows BOM 同埋確保換行符正確
+          sed -i '1s/^\xef\xbb\xbf//' src/lang/*.txt
+          
+          # 執行 strgen
+          ./build/src/strgen/strgen src/lang/english.txt output/english.lng
+          ./build/src/strgen/strgen src/lang/cantonese.txt output/cantonese.lng
+          ./build/src/strgen/strgen src/lang/traditional_chinese.txt output/traditional_chinese.lng
 
       - name: List generated files
         run: ls -l output/
