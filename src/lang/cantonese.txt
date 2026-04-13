@@ -1,7 +1,7 @@
 ##name Cantonese
 ##ownname 粵語繁中
-##isocode yue
-##plural 1
+##isocode zh_CN
+##plural 0
 ##textdir ltr
 ##digitsep ,
 ##digitsepcur ,
