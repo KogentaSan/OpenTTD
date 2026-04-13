@@ -40,9 +40,9 @@ jobs:
           # 4. 使用 strgen 嘅「目錄輸出」模式
           # 語法：strgen -m [目的目錄] [來源檔案]
           # 如果唔得，就試 strgen -o [目的目錄] [來源檔案]
-          $STRGEN -m $OUT_DIR english.txt
-          $STRGEN -m $OUT_DIR cantonese.txt
-          $STRGEN -m $OUT_DIR traditional_chinese.txt
+          $STRGEN -o $OUT_DIR english.txt
+          $STRGEN -o $OUT_DIR cantonese.txt
+          $STRGEN -o $OUT_DIR traditional_chinese.txt
 
       - name: List generated files
         run: ls -l output/
