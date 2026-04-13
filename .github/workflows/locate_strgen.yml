@@ -1,0 +1,3 @@
+- name: Locate strgen
+  run: |
+    find build -type f -name strgen || true
