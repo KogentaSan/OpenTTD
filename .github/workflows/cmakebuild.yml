@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v4.1.7
         with:
           # 嘗試加返個 'v' 字，這是最常見的 Tag 格式
-          ref: 'v15.3'
+          ref: 'release/15'
           # 如果 v15.3 都唔得，請檢查你個 Repo 有冇呢個 Tag
           # 或者改用 'release/15'
 
