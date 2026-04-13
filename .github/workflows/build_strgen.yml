@@ -1,0 +1,8 @@
+- name: Build strgen
+  run: |
+    cmake -B build -S .
+    cmake --build build --target strgen
+
+- name: Generate Cantonese .lng
+  run: |
+    ./build/strgen src/lang/cantonese.txt -o output/cantonese.lng
