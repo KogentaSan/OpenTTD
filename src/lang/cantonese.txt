@@ -1249,7 +1249,7 @@ STR_CONFIG_SETTING_EXPAND_ALL                                   :展開所有選
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :折疊所有選項
 STR_CONFIG_SETTING_RESET_ALL                                    :重設所有數值
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(沒有適用的解釋)
-STR_CONFIG_SETTING_VALUE                                        :{PUSH_COLOUR}{ORANGE}{STRING}{POP_COLOUR}
+STR_CONFIG_SETTING_VALUE                                        :{ORANGE}{STRING}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}預設值：{ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}設定種類：{ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE_CLIENT                                  :用戶端設定 (存檔時不保存；影響所有遊戲)
@@ -2893,15 +2893,15 @@ STR_PICKER_HOUSE_TYPE_TOOLTIP                                   :選擇要整嘅
 STR_PICKER_HOUSE_COLLECTION_TOOLTIP                             :選擇要顯示的房屋收藏夾
 
 STR_HOUSE_PICKER_CAPTION                                        :房屋選擇
-STR_HOUSE_PICKER_NAME                                           :{BLACK}名稱：{ORANGE}{STRING}
-STR_HOUSE_PICKER_POPULATION                                     :{BLACK}人口：{ORANGE}{NUM}
-STR_HOUSE_PICKER_YEARS                                          :{BLACK}可用年份：{ORANGE}{NUM}-{NUM}
-STR_HOUSE_PICKER_YEARS_ANY                                      :{BLACK}可用年份：{ORANGE}不限
-STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}可用年份：{ORANGE}自 {NUM} 年起可用
-STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}可用年份：{ORANGE}至 {NUM} 年前可用
-STR_HOUSE_PICKER_SIZE                                           :{BLACK}大細：{ORANGE}{NUM}x{NUM} 格
-STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}需要貨物：{ORANGE}
-STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}出產貨物：{ORANGE}{CARGO_LIST}
+STR_HOUSE_PICKER_NAME                                           :{BLACK}名稱：{GOLD}{STRING}
+STR_HOUSE_PICKER_POPULATION                                     :{BLACK}人口：{GOLD}{NUM}
+STR_HOUSE_PICKER_YEARS                                          :{BLACK}可用年份：{GOLD}{NUM}-{NUM}
+STR_HOUSE_PICKER_YEARS_ANY                                      :{BLACK}可用年份：{GOLD}不限
+STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}可用年份：{GOLD}自 {NUM} 年起可用
+STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}可用年份：{GOLD}至 {NUM} 年前可用
+STR_HOUSE_PICKER_SIZE                                           :{BLACK}大細：{GOLD}{NUM}x{NUM} 格
+STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}需要貨物：{GOLD}{STRING}
+STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}出產貨物：{GOLD}{CARGO_LIST}
 
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :市鎮邊緣
 STR_HOUSE_PICKER_CLASS_ZONE2                                    :郊區邊緣
@@ -3188,7 +3188,7 @@ STR_LAND_AREA_INFORMATION_AIRPORT_CLASS                         :{BLACK}機場�
 STR_LAND_AREA_INFORMATION_AIRPORT_NAME                          :{BLACK}機場名稱：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_AIRPORTTILE_NAME                      :{BLACK}機場區塊名稱：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF：{LTBLUE}{STRING}
-STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}需要貨物：{LTBLUE}
+STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}需要貨物：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_TYPE                             :{BLACK}軌道類型：{LTBLUE}{STRING}
 STR_LANG_AREA_INFORMATION_ROAD_TYPE                             :{BLACK}馬路類型：{LTBLUE}{STRING}
@@ -3594,7 +3594,7 @@ STR_NEWGRF_PARAMETERS_CAPTION                                   :{WHITE}修改 N
 STR_NEWGRF_PARAMETERS_RESET                                     :{BLACK}重設
 STR_NEWGRF_PARAMETERS_RESET_TOOLTIP                             :{BLACK}將所有參數設為預設值
 STR_NEWGRF_PARAMETERS_DEFAULT_NAME                              :參數 {NUM}
-STR_NEWGRF_PARAMETERS_SETTING                                   :{STRING}: {ORANGE}{STRING}
+STR_NEWGRF_PARAMETERS_SETTING                                   :{STRING}：{ORANGE}{STRING}
 STR_NEWGRF_PARAMETERS_NUM_PARAM                                 :{LTBLUE}參數數量：{ORANGE}{NUM}
 
 # NewGRF inspect window
@@ -3733,7 +3733,7 @@ STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}輸入�
 STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}市鎮（{COMMA} 座，總共 {COMMA} 座）
 STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- 無 -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK} ({COMMA})
-STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{YELLOW} (城市){BLACK} ({COMMA})
+STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{BLACK}（{COMMA}）{YELLOW}{CITY_ICON}
 STR_TOWN_DIRECTORY_LIST_TOOLTIP                                 :{BLACK}市鎮名稱 - 點選名稱可將市鎮置於畫面正中央。按住 <Ctrl> 點選可於市鎮位置開啟新檢視視窗
 STR_TOWN_POPULATION                                             :{BLACK}世界人口：{COMMA}
 
@@ -4096,8 +4096,8 @@ STR_INDUSTRY_VIEW_CARGO_GRAPH_TOOLTIP                           :{BLACK}檢視�
 STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}生產等級：{YELLOW}{COMMA}%
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}該工業已宣佈關閉！
 
-STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}需要：{YELLOW}{STRING}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}出產：{YELLOW}{STRING}{STRING}
+STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}需要：{YELLOW}{STRING}
+STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}出產：{YELLOW}{STRING}
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :{STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}需要：
@@ -4486,7 +4486,7 @@ STR_REPLACE_TRAM_VEHICLES                                       :電車車輛
 
 STR_REPLACE_REMOVE_WAGON                                        :{BLACK}移除車廂 ({STRING})：{ORANGE}{STRING}
 STR_REPLACE_REMOVE_WAGON_TOOLTIP                                :{BLACK}如果更換後的車廂較長的話，讓自動更換功能移除多餘的車廂 (從頭開始) 以便維持列車長度
-STR_REPLACE_REMOVE_WAGON_GROUP_HELP                             :{STRING}. 按住Ctrl並點擊以套用到所有子群組
+STR_REPLACE_REMOVE_WAGON_GROUP_HELP                             :{STRING}。按住 <Ctrl> 並點擊以套用到所有子群組
 
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
@@ -4645,7 +4645,7 @@ STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}顯示�
 STR_VEHICLE_DETAIL_TAB_TOTAL_CARGO                              :{BLACK}總貨物量
 STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK}顯示列車的總容量，照貨物分類
 
-STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}容量：{LTBLUE}
+STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}容量：{LTBLUE}{STRING}
 
 # Vehicle refit
 STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE} (改裝)
