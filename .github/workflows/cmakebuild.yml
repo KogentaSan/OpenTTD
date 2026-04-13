@@ -43,14 +43,14 @@ jobs:
           
           # 嘗試方式 A: 明確指定輸出目錄 (-o)
           # 注意：有啲版本嘅 strgen 需要 -o 嚟指定輸出地方
-          $STRGEN -o $OUT_DIR english.txt
-          $STRGEN -o $OUT_DIR cantonese.txt
-          $STRGEN -o $OUT_DIR traditional_chinese.txt
+          # $STRGEN -o $OUT_DIR english.txt
+          # $STRGEN -o $OUT_DIR cantonese.txt
+          # $STRGEN -o $OUT_DIR traditional_chinese.txt
           
           # 如果上面報錯 "invalid option -o"，請將上面三行換成下面呢款：
-          # $STRGEN $OUT_DIR/english.lng english.txt
-          # $STRGEN $OUT_DIR/cantonese.lng cantonese.txt
-          # $STRGEN $OUT_DIR/traditional_chinese.lng traditional_chinese.txt
+           $STRGEN $OUT_DIR/english.lng english.txt
+           $STRGEN $OUT_DIR/cantonese.lng cantonese.txt
+           $STRGEN $OUT_DIR/traditional_chinese.lng traditional_chinese.txt
 
       - name: List generated files
         run: ls -l output/
