@@ -141,7 +141,7 @@ struct AIConfigWindow : public Window {
 				break;
 
 			case WID_AIC_LIST:
-				this->line_height = GetCharacterHeight(FS_NORMAL) + padding.height;
+				this->line_height = GetCharacterHeight(FontSize::Normal) + padding.height;
 				fill.height = resize.height = this->line_height;
 				size.height = 8 * this->line_height;
 				break;
@@ -295,7 +295,7 @@ struct AIConfigWindow : public Window {
 				if (!_network_available) {
 					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WL_ERROR);
 				} else {
-					ShowNetworkContentListWindow(nullptr, CONTENT_TYPE_AI);
+					ShowNetworkContentListWindow(nullptr, ContentType::Ai);
 				}
 				break;
 		}
