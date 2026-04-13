@@ -10,8 +10,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.1.7
         with:
-          # 關鍵：指定拎 15.3 嘅原始碼，確保 strgen 版本完全對應
-          ref: '15.3'
+          # 嘗試加返個 'v' 字，這是最常見的 Tag 格式
+          ref: 'v15.3'
+          # 如果 v15.3 都唔得，請檢查你個 Repo 有冇呢個 Tag
+          # 或者改用 'release/15'
 
       - name: Install minimal dependencies
         run: |
