@@ -1,13 +1,13 @@
 ##name Cantonese
 ##ownname 粵語繁中
 ##isocode zh_CN
-##plural 0
+##plural 1
 ##textdir ltr
 ##digitsep ,
 ##digitsepcur ,
 ##decimalsep .
-##winlangid 0x0c04
-##grflangid 0x3b
+##winlangid 0x0804
+##grflangid 0x56
 
 
 # This file is part of OpenTTD.
