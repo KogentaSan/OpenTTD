@@ -10,21 +10,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.1.7
 
-      - name: Install build dependencies
+      - name: Download strgen binary
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake build-essential libsdl2-dev
-
-      - name: Build strgen
-        run: |
-          cmake -B build -S .
-          cmake --build build --target strgen
+          curl -L https://proxy.openttd.org/strgen/latest/strgen-linux-x64 -o strgen
+          chmod +x strgen
 
       - name: Generate .lng files
         run: |
           mkdir output
-          ./build/strgen src/lang/cantonese.txt -o output/cantonese.lng
-          ./build/strgen src/lang/traditional_chinese.txt -o output/traditional_chinese.lng
+          ./strgen src/lang/cantonese.txt -o output/cantonese.lng
+          ./strgen src/lang/traditional_chinese.txt -o output/traditional_chinese.lng
 
       - name: Upload language artifacts
         uses: actions/upload-artifact@v4
