@@ -2802,7 +2802,7 @@ STR_JOIN_STATION_CAPTION                                        :{WHITE}合併�
 STR_JOIN_STATION_CREATE_SPLITTED_STATION                        :{YELLOW}建造獨立車站
 
 STR_JOIN_WAYPOINT_CAPTION                                       :{WHITE}合併分站
-STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}建立個別分站
+STR_JOIN_WAYPOINT_CREATE_SPLIT_WAYPOINT                         :{YELLOW}起獨立分站
 
 # Generic toolbar
 STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE                       :{BLACK}此設施已被禁用，因為沒有任何此設施可用的載具
@@ -2909,7 +2909,7 @@ STR_HOUSE_PICKER_CLASS_ZONE3                                    :遠郊
 STR_HOUSE_PICKER_CLASS_ZONE4                                    :近郊
 STR_HOUSE_PICKER_CLASS_ZONE5                                    :市鎮中心
 
-STR_HOUSE_PICKER_PROTECT_TITLE                                  :防止覆蓋建築物
+STR_HOUSE_PICKER_PROTECT                                        :防止覆蓋建築物
 STR_HOUSE_PICKER_PROTECT_TOOLTIP                                :選擇是否要保護房屋以免房屋隨著市鎮的發展而被更換
 
 STR_HOUSE_PICKER_REPLACE                                        :更換現有建築物
@@ -5195,6 +5195,7 @@ STR_ERROR_TOO_MANY_TRUCK_STOPS                                  :太多貨車場
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_DOCK                             :太接近另一個碼頭
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_AIRPORT                          :太接近另一個機場
 STR_ERROR_CAN_T_RENAME_STATION                                  :改唔到車站名……
+STR_ERROR_CAN_T_MOVE_STATION_NAME                               :搬唔到車站標誌……
 STR_ERROR_DRIVE_THROUGH_ON_TOWN_ROAD                            :市鎮擁有的路段
 STR_ERROR_DRIVE_THROUGH_DIRECTION                               :此馬路面向錯誤的方向
 STR_ERROR_DRIVE_THROUGH_CORNER                                  :路邊巴士站唔能夠整喺轉彎位
