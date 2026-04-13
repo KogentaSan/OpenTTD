@@ -13,7 +13,7 @@
 # This file is part of OpenTTD.
 # OpenTTD is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
 # OpenTTD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
+# See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
 
 
 ##id 0x0000
@@ -5141,7 +5141,6 @@ STR_ERROR_CAN_T_GENERATE_TOWN                                   :無法建立市
 STR_ERROR_CAN_T_RENAME_TOWN                                     :改唔到市鎮名……
 STR_ERROR_CAN_T_FOUND_TOWN_HERE                                 :不能在此建造市鎮……
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :無法擴展市鎮……
-STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :太接近地圖邊緣
 STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :太接近另一個市鎮
 STR_ERROR_TOO_MANY_TOWNS                                        :已有太多市鎮
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :地圖沒有足夠空間
