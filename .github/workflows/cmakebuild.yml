@@ -1,4 +1,4 @@
-name: Build Cantonese Language File
+name: Build Cantonese Language File 2
 
 on:
   workflow_dispatch:   # 手動觸發
