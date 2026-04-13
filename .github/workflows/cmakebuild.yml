@@ -26,19 +26,18 @@ jobs:
       - name: Check language file headers
         run: |
           echo "=== english.txt head ==="
-          head -n 3 src/lang/english.txt
+          head -n 3 ./src/lang/english.txt
           echo "=== cantonese.txt head ==="
-          head -n 3 src/lang/cantonese.txt
+          head -n 3 ./src/lang/cantonese.txt
           echo "=== traditional_chinese.txt head ==="
-          head -n 3 src/lang/traditional_chinese.txt
+          head -n 3 ./src/lang/traditional_chinese.txt
 
       - name: Generate .lng files
         run: |
           mkdir output
-          cd src/lang
-          ../../build/src/strgen/strgen english.txt ../../output/english.lng
-          ../../build/src/strgen/strgen cantonese.txt ../../output/cantonese.lng
-          ../../build/src/strgen/strgen traditional_chinese.txt ../../output/traditional_chinese.lng
+          build/src/strgen/strgen ./src/lang/english.txt ./output/english.lng
+          build/src/strgen/strgen ./src/lang/cantonese.txt ./output/cantonese.lng
+          build/src/strgen/strgen ./src/lang/traditional_chinese.txt ./output/traditional_chinese.lng
 
       - name: Upload language artifacts
         uses: actions/upload-artifact@v4
