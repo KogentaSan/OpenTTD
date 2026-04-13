@@ -23,9 +23,19 @@ jobs:
           cmake -B build -S .
           cmake --build build --target strgen
 
+      - name: Check language file headers
+        run: |
+          echo "=== english.txt head ==="
+          head -n 3 src/lang/english.txt
+          echo "=== cantonese.txt head ==="
+          head -n 3 src/lang/cantonese.txt
+          echo "=== traditional_chinese.txt head ==="
+          head -n 3 src/lang/traditional_chinese.txt
+
       - name: Generate .lng files
         run: |
           mkdir output
+          build/src/strgen/strgen src/lang/english.txt -o output/english.lng
           build/src/strgen/strgen src/lang/cantonese.txt -o output/cantonese.lng
           build/src/strgen/strgen src/lang/traditional_chinese.txt -o output/traditional_chinese.lng
 
