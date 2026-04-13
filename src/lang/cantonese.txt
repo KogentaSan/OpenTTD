@@ -6,8 +6,8 @@
 ##digitsep ,
 ##digitsepcur ,
 ##decimalsep .
-##winlangid 0x0804
-##grflangid 0x56
+##winlangid 0x0c04
+##grflangid 0x43
 
 
 # This file is part of OpenTTD.
