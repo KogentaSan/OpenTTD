@@ -23,34 +23,27 @@ jobs:
           cmake -B build -S .
           cmake --build build --target strgen
 
-      - name: Fix file encoding and line endings
+      - name: Fix file encoding
         run: |
-          # 徹底清理所有語言檔，確保絕對純淨
+          # 確保所有 txt 都係乾淨嘅 Unix 格式
           find src/lang -name "*.txt" -exec dos2unix {} +
           find src/lang -name "*.txt" -exec sed -i '1s/^\xef\xbb\xbf//' {} +
 
       - name: Generate .lng files
         run: |
-          mkdir -p output
-          
-          # 關鍵：strgen 通常嘅用法係 strgen -p [output_dir] [input_file]
-          # 或者直接喺 src/lang 目錄行 strgen，等佢自己搵 english.txt
-          
+          # 1. 準備工具路徑 (使用絕對路徑最穩陣)
           STRGEN=$(pwd)/build/src/strgen/strgen
+          
+          # 2. 建立輸出目錄
+          mkdir -p output
           OUT_DIR=$(pwd)/output
           
+          # 3. 進入語言檔目錄執行
+          # 注意順序：strgen <input_txt> <output_lng>
           cd src/lang
-          
-          # 嘗試方式 A: 明確指定輸出目錄 (-o)
-          # 注意：有啲版本嘅 strgen 需要 -o 嚟指定輸出地方
-          # $STRGEN -o $OUT_DIR english.txt
-          # $STRGEN -o $OUT_DIR cantonese.txt
-          # $STRGEN -o $OUT_DIR traditional_chinese.txt
-          
-          # 如果上面報錯 "invalid option -o"，請將上面三行換成下面呢款：
-           $STRGEN $OUT_DIR/english.lng english.txt
-           $STRGEN $OUT_DIR/cantonese.lng cantonese.txt
-           $STRGEN $OUT_DIR/traditional_chinese.lng traditional_chinese.txt
+          $STRGEN english.txt $OUT_DIR/english.lng
+          $STRGEN cantonese.txt $OUT_DIR/cantonese.lng
+          $STRGEN traditional_chinese.txt $OUT_DIR/traditional_chinese.lng
 
       - name: List generated files
         run: ls -l output/
