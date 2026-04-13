@@ -1,4 +1,4 @@
-name: Build Language Files 15.3
+name: Build Language Files 2
 
 on:
   workflow_dispatch:
@@ -9,11 +9,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.1.7
-        with:
-          # 嘗試加返個 'v' 字，這是最常見的 Tag 格式
-          ref: 'release/15'
-          # 如果 v15.3 都唔得，請檢查你個 Repo 有冇呢個 Tag
-          # 或者改用 'release/15'
 
       - name: Install minimal dependencies
         run: |
@@ -27,7 +22,6 @@ jobs:
 
       - name: Fix file encoding
         run: |
-          # 處理編碼與 BOM
           find src/lang -name "*.txt" -exec dos2unix {} +
           find src/lang -name "*.txt" -exec sed -i '1s/^\xef\xbb\xbf//' {} +
 
@@ -37,17 +31,21 @@ jobs:
           mkdir -p output
           OUT_DIR=$(pwd)/output
           
+          # 1. 進入目錄並清理所有可能干擾 strgen 嘅 .lng 檔
           cd src/lang
           rm -f *.lng
           
-          # 建議頭部加入 ID 防止衝突
-          # 執行編譯
+          # 2. 根據 help，使用 -d 指定輸出目錄
+          # 只需傳入一個參數：txt 檔案名
           $STRGEN -d $OUT_DIR english.txt
           $STRGEN -d $OUT_DIR cantonese.txt
           $STRGEN -d $OUT_DIR traditional_chinese.txt
 
+      - name: List generated files
+        run: ls -l output/
+
       - name: Upload language artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openttd-15.3-langs
+          name: yue-lang-files
           path: output/
