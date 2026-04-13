@@ -1,0 +1,50 @@
+name: Check Translation Keys
+
+on:
+  push:
+    paths:
+      - "src/lang/english.txt"
+      - "src/lang/cantonese.txt"
+  pull_request:
+    paths:
+      - "src/lang/english.txt"
+      - "src/lang/cantonese.txt"
+
+jobs:
+  check-keys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run key consistency check
+        run: |
+          eng_keys=set()
+          with open("src/lang/english.txt", encoding="utf-8") as f:
+              for line in f:
+                  if ":" in line:
+                      eng_keys.add(line.split(":")[0].strip())
+
+          yue_keys=set()
+          with open("src/lang/cantonese.txt", encoding="utf-8") as f:
+              for line in f:
+                  if ":" in line:
+                      yue_keys.add(line.split(":")[0].strip())
+
+          diff_yue = yue_keys - eng_keys
+          diff_eng = eng_keys - yue_keys
+
+          print("粵語檔有但英文檔冇:", diff_yue)
+          print("英文檔有但粵語檔冇:", diff_eng)
+
+          if diff_yue or diff_eng:
+              print("❌ Key 名唔一致，請修正！")
+              exit(1)
+          else:
+              print("✅ 所有 key 名一致。")
+
