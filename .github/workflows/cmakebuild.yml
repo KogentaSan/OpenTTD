@@ -1,4 +1,4 @@
-name: Build Cantonese Language File 2
+name: Build Language Files 2
 
 on:
   workflow_dispatch:
@@ -18,10 +18,10 @@ jobs:
             liblzma-dev liblzo2-dev libcurl4-openssl-dev libicu-dev \
             libfluidsynth-dev libharfbuzz-dev libopusfile-dev libogg-dev libopus-dev
 
-      - name: Build all targets
+      - name: Build strgen only
         run: |
           cmake -B build -S .
-          cmake --build build
+          cmake --build build --target strgen
 
       - name: Generate .lng files
         run: |
