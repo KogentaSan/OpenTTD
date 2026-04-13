@@ -17,8 +17,7 @@ jobs:
 
       - name: Build strgen only
         run: |
-          # 關鍵：加入 -DOPTIONAL_DEDICATED=ON 嚟跳過 SDL2 檢查
-          # 或者直接用 -DOPTION_DEDICATED=ON
+          # 使用 Dedicated 模式跳過 SDL2 檢查
           cmake -B build -S . -DOPTION_DEDICATED=ON
           cmake --build build --target strgen
 
@@ -33,14 +32,20 @@ jobs:
           mkdir -p output
           OUT_DIR=$(pwd)/output
           
+          # 睇睇個 help 確定用法 (Debug 用)
+          $STRGEN --help || true
+          
           cd src/lang
           
-          # 根據 OpenTTD 源碼，strgen 嘅標準用法係：
-          # strgen [選項] [輸出檔案] [輸入檔案]
-          # 如果之前順序報錯，我哋試返最原始嘅：
-          $STRGEN $OUT_DIR/english.lng english.txt
-          $STRGEN $OUT_DIR/cantonese.lng cantonese.txt
-          $STRGEN $OUT_DIR/traditional_chinese.lng traditional_chinese.txt
+          # 根據報錯邏輯，正確順序應該係：strgen [來源.txt] [目標.lng]
+          # 唔好寫 output/english.lng，直接試吓寫返入去當前目錄，再 move 走佢 (最穩陣)
+          
+          $STRGEN english.txt english.lng
+          $STRGEN cantonese.txt cantonese.lng
+          $STRGEN traditional_chinese.txt traditional_chinese.lng
+          
+          # 將產生的 .lng 搬去 output
+          mv *.lng $OUT_DIR/
 
       - name: List generated files
         run: ls -l output/
