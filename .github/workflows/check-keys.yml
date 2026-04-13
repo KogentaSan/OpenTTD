@@ -26,7 +26,7 @@ jobs:
       - name: Run key consistency check
         run: |
           python - <<'EOF'
-          eng_keys = set()
+          zht_keys = set()
           with open("src/lang/traditional_chinese.txt", encoding="utf-8") as f:
               for line in f:
                   if ":" in line:
