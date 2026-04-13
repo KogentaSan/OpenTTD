@@ -17,7 +17,6 @@ jobs:
 
       - name: Build strgen only
         run: |
-          # 使用 Dedicated 模式跳過 SDL2 檢查
           cmake -B build -S . -DOPTION_DEDICATED=ON
           cmake --build build --target strgen
 
@@ -32,20 +31,15 @@ jobs:
           mkdir -p output
           OUT_DIR=$(pwd)/output
           
-          # 睇睇個 help 確定用法 (Debug 用)
-          $STRGEN --help || true
-          
+          # 1. 進入目錄並清理所有可能干擾 strgen 嘅 .lng 檔
           cd src/lang
+          rm -f *.lng
           
-          # 根據報錯邏輯，正確順序應該係：strgen [來源.txt] [目標.lng]
-          # 唔好寫 output/english.lng，直接試吓寫返入去當前目錄，再 move 走佢 (最穩陣)
-          
-          $STRGEN english.txt english.lng
-          $STRGEN cantonese.txt cantonese.lng
-          $STRGEN traditional_chinese.txt traditional_chinese.lng
-          
-          # 將產生的 .lng 搬去 output
-          mv *.lng $OUT_DIR/
+          # 2. 根據 help，使用 -d 指定輸出目錄
+          # 只需傳入一個參數：txt 檔案名
+          $STRGEN -d $OUT_DIR english.txt
+          $STRGEN -d $OUT_DIR cantonese.txt
+          $STRGEN -d $OUT_DIR traditional_chinese.txt
 
       - name: List generated files
         run: ls -l output/
