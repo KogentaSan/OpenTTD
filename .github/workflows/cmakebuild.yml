@@ -13,7 +13,10 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential libsdl2-dev libpng-dev libfreetype6-dev liblzma-dev liblzo2-dev libcurl4-openssl-dev
+          sudo apt-get install -y cmake build-essential \
+            libsdl2-dev zlib1g-dev libpng-dev libfreetype6-dev \
+            liblzma-dev liblzo2-dev libcurl4-openssl-dev libicu-dev \
+            libfluidsynth-dev libharfbuzz-dev libopusfile-dev libogg-dev libopus-dev
 
       - name: Build strgen
         run: |
