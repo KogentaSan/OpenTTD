@@ -13,7 +13,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential \
+          sudo apt-get install -y cmake build-essential dos2unix \
             libsdl2-dev zlib1g-dev libpng-dev libfreetype6-dev \
             liblzma-dev liblzo2-dev libcurl4-openssl-dev libicu-dev \
             libfluidsynth-dev libharfbuzz-dev libopusfile-dev libogg-dev libopus-dev
@@ -23,22 +23,30 @@ jobs:
           cmake -B build -S .
           cmake --build build --target strgen
 
-      - name: Check language file headers
+      - name: Fix file encoding and line endings
         run: |
-          echo "=== english.txt head ==="
-          head -n 3 src/lang/english.txt
-          echo "=== cantonese.txt head ==="
-          head -n 3 src/lang/cantonese.txt
-          echo "=== traditional_chinese.txt head ==="
-          head -n 3 src/lang/traditional_chinese.txt
+          # 1. 強制轉換為 LF 換行符號
+          dos2unix src/lang/*.txt
+          # 2. 移除 UTF-8 BOM (如果存在)
+          sed -i '1s/^\xef\xbb\xbf//' src/lang/*.txt
+          # 3. 確保檔案最後有一行空行 (有助於某些 parser 讀取)
+          for f in src/lang/*.txt; do echo "" >> "$f"; done
+
+      - name: Check language file headers (Debug)
+        run: |
+          echo "=== Checking headers for potential hidden characters ==="
+          head -n 3 src/lang/english.txt | cat -A
+          head -n 3 src/lang/cantonese.txt | cat -A
 
       - name: Generate .lng files
         run: |
-          mkdir output
-          cd src/lang
-          ../../build/src/strgen/strgen english.txt ../output/english.lng
-          ../../build/src/strgen/strgen cantonese.txt ../output/cantonese.lng
-          ../../build/src/strgen/strgen traditional_chinese.txt ../output/traditional_chinese.lng
+          # 建立輸出目錄
+          mkdir -p output
+          
+          # 直接用絕對/相對路徑執行，避免 cd 造成路徑混亂
+          ./build/src/strgen/strgen src/lang/english.txt output/english.lng
+          ./build/src/strgen/strgen src/lang/cantonese.txt output/cantonese.lng
+          ./build/src/strgen/strgen src/lang/traditional_chinese.txt output/traditional_chinese.lng
 
       - name: List generated files
         run: ls -l output/
