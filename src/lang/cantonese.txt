@@ -7,7 +7,7 @@
 ##digitsepcur ,
 ##decimalsep .
 ##winlangid 0x0c04
-##grflangid 0x0c
+##grflangid 0x3b
 
 
 # This file is part of OpenTTD.
