@@ -23,23 +23,22 @@ jobs:
           cmake -B build -S .
           cmake --build build --target strgen
 
-      - name: Find all english.txt files
+      - name: Check language file headers
         run: |
-          echo "=== Searching for english.txt ==="
-          find . -name "english.txt" -print
-          echo "=== Preview each english.txt ==="
-          for f in $(find . -name "english.txt"); do
-            echo "--- $f ---"
-            head -n 3 $f
-          done
+          echo "=== english.txt head ==="
+          head -n 3 src/lang/english.txt
+          echo "=== cantonese.txt head ==="
+          head -n 3 src/lang/cantonese.txt
+          echo "=== traditional_chinese.txt head ==="
+          head -n 3 src/lang/traditional_chinese.txt
 
       - name: Generate .lng files
         run: |
           mkdir output
-          # 強制用 src/lang 下面嗰個 english.txt
-          build/src/strgen/strgen ./src/lang/english.txt ./output/english.lng
-          build/src/strgen/strgen ./src/lang/cantonese.txt ./output/cantonese.lng
-          build/src/strgen/strgen ./src/lang/traditional_chinese.txt ./output/traditional_chinese.lng
+          cd src/lang
+          ../../build/src/strgen/strgen english.txt ../output/english.lng
+          ../../build/src/strgen/strgen cantonese.txt ../output/cantonese.lng
+          ../../build/src/strgen/strgen traditional_chinese.txt ../output/traditional_chinese.lng
 
       - name: List generated files
         run: ls -l output/
