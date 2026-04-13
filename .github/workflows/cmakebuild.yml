@@ -13,37 +13,36 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential dos2unix \
-            libsdl2-dev zlib1g-dev libpng-dev libfreetype6-dev \
-            liblzma-dev liblzo2-dev libcurl4-openssl-dev libicu-dev \
-            libfluidsynth-dev libharfbuzz-dev libopusfile-dev libogg-dev libopus-dev
+          sudo apt-get install -y cmake build-essential dos2unix
 
-      - name: Build strgen only
+      - name: Build strgen
         run: |
           cmake -B build -S .
           cmake --build build --target strgen
 
       - name: Fix file encoding
         run: |
-          # 確保所有 txt 都係乾淨嘅 Unix 格式
           find src/lang -name "*.txt" -exec dos2unix {} +
           find src/lang -name "*.txt" -exec sed -i '1s/^\xef\xbb\xbf//' {} +
 
       - name: Generate .lng files
         run: |
-          # 1. 準備工具路徑 (使用絕對路徑最穩陣)
+          # 1. 取得 strgen 嘅絕對路徑
           STRGEN=$(pwd)/build/src/strgen/strgen
           
-          # 2. 建立輸出目錄
+          # 2. 建立一個乾淨嘅目錄嚟擺結果
           mkdir -p output
           OUT_DIR=$(pwd)/output
           
-          # 3. 進入語言檔目錄執行
-          # 注意順序：strgen <input_txt> <output_lng>
+          # 3. 進入語言檔目錄
           cd src/lang
-          $STRGEN english.txt $OUT_DIR/english.lng
-          $STRGEN cantonese.txt $OUT_DIR/cantonese.lng
-          $STRGEN traditional_chinese.txt $OUT_DIR/traditional_chinese.lng
+          
+          # 4. 使用 strgen 嘅「目錄輸出」模式
+          # 語法：strgen -m [目的目錄] [來源檔案]
+          # 如果唔得，就試 strgen -o [目的目錄] [來源檔案]
+          $STRGEN -m $OUT_DIR english.txt
+          $STRGEN -m $OUT_DIR cantonese.txt
+          $STRGEN -m $OUT_DIR traditional_chinese.txt
 
       - name: List generated files
         run: ls -l output/
