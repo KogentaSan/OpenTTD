@@ -23,18 +23,11 @@ jobs:
           cmake -B build -S .
           cmake --build build
 
-      - name: Locate strgen
-        id: locate
-        run: |
-          STRGEN_PATH=$(find build -type f -name strgen | head -n 1)
-          echo "Found strgen at: $STRGEN_PATH"
-          echo "STRGEN_PATH=$STRGEN_PATH" >> $GITHUB_ENV
-
       - name: Generate .lng files
         run: |
           mkdir output
-          $STRGEN_PATH src/lang/cantonese.txt -o output/cantonese.lng
-          $STRGEN_PATH src/lang/traditional_chinese.txt -o output/traditional_chinese.lng
+          build/src/strgen/strgen src/lang/cantonese.txt -o output/cantonese.lng
+          build/src/strgen/strgen src/lang/traditional_chinese.txt -o output/traditional_chinese.lng
 
       - name: Upload language artifacts
         uses: actions/upload-artifact@v4
