@@ -10,14 +10,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4.1.7
 
-      - name: Install build dependencies
+      - name: Install minimal dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake build-essential dos2unix
+          sudo apt-get install -y cmake build-essential dos2unix libicu-dev zlib1g-dev
 
-      - name: Build strgen
+      - name: Build strgen only
         run: |
-          cmake -B build -S .
+          # 關鍵：加入 -DOPTIONAL_DEDICATED=ON 嚟跳過 SDL2 檢查
+          # 或者直接用 -DOPTION_DEDICATED=ON
+          cmake -B build -S . -DOPTION_DEDICATED=ON
           cmake --build build --target strgen
 
       - name: Fix file encoding
@@ -27,23 +29,18 @@ jobs:
 
       - name: Generate .lng files
         run: |
-          # 1. 取得 strgen 嘅絕對路徑
-          $STRGEN --help
           STRGEN=$(pwd)/build/src/strgen/strgen
-          
-          # 2. 建立一個乾淨嘅目錄嚟擺結果
           mkdir -p output
           OUT_DIR=$(pwd)/output
           
-          # 3. 進入語言檔目錄
           cd src/lang
           
-          # 4. 使用 strgen 嘅「目錄輸出」模式
-          # 語法：strgen -m [目的目錄] [來源檔案]
-          # 如果唔得，就試 strgen -o [目的目錄] [來源檔案]
-          $STRGEN -m $OUT_DIR english.txt
-          $STRGEN -m $OUT_DIR cantonese.txt
-          $STRGEN -m $OUT_DIR traditional_chinese.txt
+          # 根據 OpenTTD 源碼，strgen 嘅標準用法係：
+          # strgen [選項] [輸出檔案] [輸入檔案]
+          # 如果之前順序報錯，我哋試返最原始嘅：
+          $STRGEN $OUT_DIR/english.lng english.txt
+          $STRGEN $OUT_DIR/cantonese.lng cantonese.txt
+          $STRGEN $OUT_DIR/traditional_chinese.lng traditional_chinese.txt
 
       - name: List generated files
         run: ls -l output/
