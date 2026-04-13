@@ -1,4 +1,4 @@
-name: Check Translation Keys
+name: Check English vs Cantonese Keys
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
     paths:
       - "src/lang/english.txt"
       - "src/lang/cantonese.txt"
+  workflow_dispatch:   # 手動觸發
 
 jobs:
   check-keys:
@@ -24,13 +25,14 @@ jobs:
 
       - name: Run key consistency check
         run: |
-          eng_keys=set()
+          python - <<'EOF'
+          eng_keys = set()
           with open("src/lang/english.txt", encoding="utf-8") as f:
               for line in f:
                   if ":" in line:
                       eng_keys.add(line.split(":")[0].strip())
 
-          yue_keys=set()
+          yue_keys = set()
           with open("src/lang/cantonese.txt", encoding="utf-8") as f:
               for line in f:
                   if ":" in line:
@@ -39,12 +41,12 @@ jobs:
           diff_yue = yue_keys - eng_keys
           diff_eng = eng_keys - yue_keys
 
-          print("粵語檔有但英文檔冇:", diff_yue)
-          print("英文檔有但粵語檔冇:", diff_eng)
+          print("=== 粵語檔有但英文檔冇 ===", diff_yue)
+          print("=== 英文檔有但粵語檔冇 ===", diff_eng)
 
           if diff_yue or diff_eng:
               print("❌ Key 名唔一致，請修正！")
               exit(1)
           else:
               print("✅ 所有 key 名一致。")
-
+          EOF
