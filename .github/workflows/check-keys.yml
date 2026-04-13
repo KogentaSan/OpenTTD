@@ -26,11 +26,11 @@ jobs:
       - name: Run key consistency check
         run: |
           python - <<'EOF'
-          zht_keys = set()
+          zh_keys = set()
           with open("src/lang/traditional_chinese.txt", encoding="utf-8") as f:
               for line in f:
                   if ":" in line:
-                      zht_keys.add(line.split(":")[0].strip())
+                      zh_keys.add(line.split(":")[0].strip())
 
           yue_keys = set()
           with open("src/lang/cantonese.txt", encoding="utf-8") as f:
@@ -38,13 +38,13 @@ jobs:
                   if ":" in line:
                       yue_keys.add(line.split(":")[0].strip())
 
-          diff_yue = yue_keys - zht_keys
-          diff_eng = zht_keys - yue_keys
+          diff_yue = yue_keys - zh_keys
+          diff_zh = zh_keys - yue_keys
 
-          print("=== 粵語檔有但英文檔冇 ===", diff_yue)
-          print("=== 繁中檔有但粵語檔冇 ===", diff_zht)
+          print("=== 粵語檔有但繁中檔冇 ===", diff_yue)
+          print("=== 繁中檔有但粵語檔冇 ===", diff_zh)
 
-          if diff_yue or diff_zht:
+          if diff_yue or diff_zh:
               print("❌ Key 名唔一致，請修正！")
               exit(1)
           else:
