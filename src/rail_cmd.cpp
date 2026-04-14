@@ -506,7 +506,7 @@ CommandCost CmdBuildSingleRail(DoCommandFlags flags, TileIndex tile, RailType ra
 			if (IsNormalRoad(tile)) {
 				if (HasRoadWorks(tile)) return CommandCost(STR_ERROR_ROAD_WORKS_IN_PROGRESS);
 
-				if (GetDisallowedRoadDirections(tile) != DRD_NONE) return CommandCost(STR_ERROR_CROSSING_ON_ONEWAY_ROAD);
+				if (GetDisallowedRoadDirections(tile).Any()) return CommandCost(STR_ERROR_CROSSING_ON_ONEWAY_ROAD);
 
 				if (RailNoLevelCrossings(railtype)) return CommandCost(STR_ERROR_CROSSING_DISALLOWED_RAIL);
 
@@ -516,25 +516,25 @@ CommandCost CmdBuildSingleRail(DoCommandFlags flags, TileIndex tile, RailType ra
 				if (roadtype_road != INVALID_ROADTYPE && RoadNoLevelCrossing(roadtype_road)) return CommandCost(STR_ERROR_CROSSING_DISALLOWED_ROAD);
 				if (roadtype_tram != INVALID_ROADTYPE && RoadNoLevelCrossing(roadtype_tram)) return CommandCost(STR_ERROR_CROSSING_DISALLOWED_ROAD);
 
-				RoadBits road = GetRoadBits(tile, RTT_ROAD);
-				RoadBits tram = GetRoadBits(tile, RTT_TRAM);
-				if ((track == TRACK_X && ((road | tram) & ROAD_X) == 0) ||
-						(track == TRACK_Y && ((road | tram) & ROAD_Y) == 0)) {
-					Owner road_owner = GetRoadOwner(tile, RTT_ROAD);
-					Owner tram_owner = GetRoadOwner(tile, RTT_TRAM);
+				RoadBits road = GetRoadBits(tile, RoadTramType::Road);
+				RoadBits tram = GetRoadBits(tile, RoadTramType::Tram);
+				if ((track == TRACK_X && !(road | tram).Any(ROAD_X)) ||
+						(track == TRACK_Y && !(road | tram).Any(ROAD_Y))) {
+					Owner road_owner = GetRoadOwner(tile, RoadTramType::Road);
+					Owner tram_owner = GetRoadOwner(tile, RoadTramType::Tram);
 					/* Disallow breaking end-of-line of someone else
 					 * so trams can still reverse on this tile. */
-					if (Company::IsValidID(tram_owner) && HasExactlyOneBit(tram)) {
+					if (Company::IsValidID(tram_owner) && tram.Count() == 1) {
 						ret = CheckOwnership(tram_owner);
 						if (ret.Failed()) return ret;
 					}
 
-					uint num_new_road_pieces = (road != ROAD_NONE) ? 2 - CountBits(road) : 0;
+					uint num_new_road_pieces = road.Any() ? 2 - road.Count() : 0;
 					if (num_new_road_pieces > 0) {
 						cost.AddCost(num_new_road_pieces * RoadBuildCost(roadtype_road));
 					}
 
-					uint num_new_tram_pieces = (tram != ROAD_NONE) ? 2 - CountBits(tram) : 0;
+					uint num_new_tram_pieces = tram.Any() ? 2 - tram.Count() : 0;
 					if (num_new_tram_pieces > 0) {
 						cost.AddCost(num_new_tram_pieces * RoadBuildCost(roadtype_tram));
 					}
@@ -654,7 +654,7 @@ CommandCost CmdRemoveSingleRail(DoCommandFlags flags, TileIndex tile, Track trac
 				owner = GetTileOwner(tile);
 				Company::Get(owner)->infrastructure.rail[GetRailType(tile)] -= LEVELCROSSING_TRACKBIT_FACTOR;
 				DirtyCompanyInfrastructureWindows(owner);
-				MakeRoadNormal(tile, GetCrossingRoadBits(tile), GetRoadTypeRoad(tile), GetRoadTypeTram(tile), GetTownIndex(tile), GetRoadOwner(tile, RTT_ROAD), GetRoadOwner(tile, RTT_TRAM));
+				MakeRoadNormal(tile, GetCrossingRoadBits(tile), GetRoadTypeRoad(tile), GetRoadTypeTram(tile), GetTownIndex(tile), GetRoadOwner(tile, RoadTramType::Road), GetRoadOwner(tile, RoadTramType::Tram));
 				DeleteNewGRFInspectWindow(GSF_RAILTYPES, tile.base());
 			}
 			break;
@@ -1199,7 +1199,7 @@ static bool AdvanceSignalAutoFill(TileIndex &tile, Trackdir &trackdir, bool remo
 	if (tile == INVALID_TILE) return false;
 
 	/* Check for track bits on the new tile */
-	TrackdirBits trackdirbits = TrackStatusToTrackdirBits(GetTileTrackStatus(tile, TRANSPORT_RAIL, 0));
+	TrackdirBits trackdirbits = TrackStatusToTrackdirBits(GetTileTrackStatus(tile, TRANSPORT_RAIL, RoadTramType::Invalid));
 
 	if (TracksOverlap(TrackdirBitsToTrackBits(trackdirbits))) return false;
 	trackdirbits &= TrackdirReachesTrackdirs(trackdir);
@@ -2740,7 +2740,7 @@ set_ground:
 
 
 /** @copydoc GetTileTrackStatusProc */
-static TrackStatus GetTileTrackStatus_Rail(TileIndex tile, TransportType mode, [[maybe_unused]] uint sub_mode, DiagDirection side)
+static TrackStatus GetTileTrackStatus_Rail(TileIndex tile, TransportType mode, [[maybe_unused]] RoadTramType sub_mode, DiagDirection side)
 {
 	/* Case of half tile slope with water. */
 	if (mode == TRANSPORT_WATER && IsPlainRail(tile) && GetRailGroundType(tile) == RailGroundType::HalfTileWater && IsSlopeWithOneCornerRaised(GetTileSlope(tile))) {

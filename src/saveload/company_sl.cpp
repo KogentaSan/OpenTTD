@@ -160,12 +160,12 @@ void AfterLoadCompanyStats()
 				}
 
 				/* Iterate all present road types as each can have a different owner. */
-				for (RoadTramType rtt : _roadtramtypes) {
+				for (RoadTramType rtt : ROADTRAMTYPES_ALL) {
 					RoadType rt = GetRoadType(tile, rtt);
 					if (rt == INVALID_ROADTYPE) continue;
 					c = Company::GetIfValid(IsRoadDepot(tile) ? GetTileOwner(tile) : GetRoadOwner(tile, rtt));
 					/* A level crossings and depots have two road bits. */
-					if (c != nullptr) c->infrastructure.road[rt] += IsNormalRoad(tile) ? CountBits(GetRoadBits(tile, rtt)) : 2;
+					if (c != nullptr) c->infrastructure.road[rt] += IsNormalRoad(tile) ? GetRoadBits(tile, rtt).Count() : 2;
 				}
 				break;
 			}
@@ -184,7 +184,7 @@ void AfterLoadCompanyStats()
 					case StationType::Truck:
 					case StationType::RoadWaypoint: {
 						/* Iterate all present road types as each can have a different owner. */
-						for (RoadTramType rtt : _roadtramtypes) {
+						for (RoadTramType rtt : ROADTRAMTYPES_ALL) {
 							RoadType rt = GetRoadType(tile, rtt);
 							if (rt == INVALID_ROADTYPE) continue;
 							c = Company::GetIfValid(GetRoadOwner(tile, rtt));
@@ -242,7 +242,7 @@ void AfterLoadCompanyStats()
 
 						case TRANSPORT_ROAD: {
 							/* Iterate all present road types as each can have a different owner. */
-							for (RoadTramType rtt : _roadtramtypes) {
+							for (RoadTramType rtt : ROADTRAMTYPES_ALL) {
 								RoadType rt = GetRoadType(tile, rtt);
 								if (rt == INVALID_ROADTYPE) continue;
 								c = Company::GetIfValid(GetRoadOwner(tile, rtt));
