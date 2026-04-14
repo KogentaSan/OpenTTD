@@ -1,4 +1,4 @@
-name: Build Full OpenTTD 16.0 Game Suite
+name: Build OpenTTD 16.0 Zip Package (Windows)
 
 on:
   workflow_dispatch:
@@ -10,51 +10,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Build Tools (Cross-Compiler)
+      - name: Install Build Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++-mingw-w64-x86-64 dos2unix
-
-      - name: Register Cantonese in CMakeLists.txt
-        run: |
-          # 確保 CMake 知道要處理粵語翻譯檔
-          sed -i '/traditional_chinese.txt/a \    cantonese.txt' src/lang/CMakeLists.txt
-
-      - name: Fix file encoding
-        run: |
-          find src/lang -name "*.txt" -exec dos2unix {} +
-          find src/lang -name "*.txt" -exec sed -i '1s/^\xef\xbb\xbf//' {} +
+          sudo apt-get install -y cmake g++-mingw-w64-x86-64 dos2unix ninja-build zip
 
       - name: Configure CMake for Windows
         run: |
-          # 配置交叉編譯，並指定安裝路徑為 ./install_dir
-          cmake -B build -S . \
-            -DCMAKE_TOOLCHAIN_FILE=find_package/toolchains/mingw_x86_64.cmake \
+          # 修正 Toolchain 路徑
+          cmake -G Ninja -B build -S . \
+            -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw_x86_64.cmake \
             -DOPTION_DEDICATED=OFF \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=$(pwd)/install_dir
+            -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build and Install
+      - name: Build OpenTTD
         run: |
-          # 編譯遊戲本體及所有組件
+          # 編譯遊戲本體。編譯完後，所有嘢會自動聚集喺 bin/ 目錄
           cmake --build build -j $(nproc)
-          # 執行 install 動作，這會自動建立 ai, baseset, lang 等資料夾並放入正確檔案
-          cmake --install build
 
-      - name: Finalizing Package
+      - name: Prepare Files for Zip
         run: |
-          # 進入安裝目錄
-          cd install_dir
-          # 確保所有基礎資源夾都齊全 (從 bin 複製漏掉的項目)
-          cp -r ../bin/ai . || true
-          cp -r ../bin/baseset . || true
-          cp -r ../bin/scripts . || true
-          cp -r ../bin/game . || true
-          # 整理目錄結構，確保 openttd.exe 同各資料夾喺埋一齊
-          ls -R
+          # 1. 建立一個乾淨嘅目錄嚟準備 Zip 內容
+          mkdir openttd_yue_package
+          
+          # 2. 將編譯好嘅執行檔同語言檔複製過嚟
+          # 喺編譯完後，成品通常喺 build/ 目錄入面嘅 bin 資料夾
+          cp -r build/bin/* openttd_yue_package/ || cp -r bin/* openttd_yue_package/ || true
+          
+          # 3. 確保剛剛編譯好嘅 .exe 喺入面 (MinGW 編譯路徑可能有所不同)
+          cp build/openttd.exe openttd_yue_package/ || true
+          
+          # 4. 確保語言檔已經喺入面
+          mkdir -p openttd_yue_package/lang
+          cp build/src/lang/*.lng openttd_yue_package/lang/ || true
 
-      - name: Upload Full Game Package
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: OpenTTD-16.0-Full-Win64-Yue
-          path: install_dir/
+          name: OpenTTD-16.0-Win64-Yue-Zip
+          # 呢度會直接將資料夾內容上傳，你下載嗰陣 GitHub 會自動幫你變做 Zip
+          path: openttd_yue_package/
