@@ -8,8 +8,6 @@ on:
       - "src/lang/traditional_chinese.txt"
       - "src/lang/cantonese.txt"
   pull_request:
-      branches:
-      - Yue-patch
     paths:
       - "src/lang/traditional_chinese.txt"
       - "src/lang/cantonese.txt"
