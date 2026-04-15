@@ -49,13 +49,13 @@ jobs:
           if diff_yue:
               print("\n".join(f"「{key}」" for key in sorted(diff_yue)))
           else:
-              print("set()")
+              print("（無唔同）")
               
           print("=== 繁中檔有但粵語檔冇 ===")
           if diff_zh:
               print("\n".join(f"「{key}」" for key in sorted(diff_zh)))
           else:
-              print("set()")
+              print("（無唔同）")
 
           if diff_yue or diff_zh:
               print("❌ Key 名唔一致，請修正！")
