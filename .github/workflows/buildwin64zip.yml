@@ -21,14 +21,20 @@ jobs:
       - name: Build project
         run: cmake --build build --config Release
 
-      - name: Package zip
+      - name: Install build
+        run: cmake --install build --config Release --prefix install
+
+      - name: Package zip with datetime + commit hash
+        shell: pwsh
         run: |
-          mkdir package
-          cp -r build/Release/* package/
-          powershell Compress-Archive -Path package/* -DestinationPath windows-x64-build.zip
+          $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+          $commit = "${{ github.sha }}".Substring(0,7)
+          $filename = "yueottd$timestamp-$commit.zip"
+          Compress-Archive -Path install/* -DestinationPath $filename
+          echo "ZIP_FILE=$filename" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-x64-build
-          path: windows-x64-build.zip
+          path: ${{ env.ZIP_FILE }}
