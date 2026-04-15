@@ -20,12 +20,13 @@ jobs:
           git clone https://github.com/microsoft/vcpkg.git
           .\vcpkg\bootstrap-vcpkg.bat
 
-      - name: Install dependencies via vcpkg
-        run: |
-          .\vcpkg\vcpkg.exe install sdl2:x64-windows liblzma:x64-windows libpng:x64-windows lzo:x64-windows zlib:x64-windows breakpad:x64-windows
+      - name: Install dependencies via vcpkg (manifest mode)
+        run: .\vcpkg\vcpkg.exe install --triplet=x64-windows-static
 
       - name: Configure build (CMake)
-        run: cmake -A x64 -DCMAKE_BUILD_TYPE=Release -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake
+        run: cmake -A x64 -DCMAKE_BUILD_TYPE=Release -B build `
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake `
+          -DVCPKG_TARGET_TRIPLET=x64-windows-static
 
       - name: Build project
         run: cmake --build build --config Release
@@ -33,7 +34,7 @@ jobs:
       - name: Install build
         run: cmake --install build --config Release --prefix install
 
-      - name: Copy required DLLs
+      - name: Copy required DLLs (if any dynamic deps remain)
         shell: pwsh
         run: |
           $deps = @(
@@ -45,11 +46,11 @@ jobs:
           )
 
           foreach ($dll in $deps) {
-            $path = "${{ github.workspace }}\vcpkg\installed\x64-windows\bin\$dll"
+            $path = "${{ github.workspace }}\vcpkg\installed\x64-windows-static\bin\$dll"
             if (Test-Path $path) {
               Copy-Item $path install/ -Force
             } else {
-              Write-Error "Missing dependency: $dll"
+              Write-Output "Dependency not found (likely static linked): $dll"
             }
           }
 
