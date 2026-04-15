@@ -2,8 +2,6 @@ name: Build Windows x64 Zip
 
 on:
   workflow_dispatch:   # 只手動觸發
-    branches:
-      - Yue-patch      # 只允許 Yue-patch 分支
 
 jobs:
   build-windows-x64:
