@@ -1,0 +1,36 @@
+name: Build Windows x64 Zip
+
+on:
+  workflow_dispatch:   # 只手動觸發
+    branches:
+      - Yue-patch      # 只允許 Yue-patch 分支
+
+jobs:
+  build-windows-x64:
+    runs-on: windows-latest
+    name: Windows x64 Build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v1.3
+
+      - name: Configure build (CMake)
+        run: cmake -A x64 -DCMAKE_BUILD_TYPE=Release -B build
+
+      - name: Build project
+        run: cmake --build build --config Release
+
+      - name: Package zip
+        run: |
+          mkdir package
+          cp -r build/Release/* package/
+          powershell Compress-Archive -Path package/* -DestinationPath windows-x64-build.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-build
+          path: windows-x64-build.zip
