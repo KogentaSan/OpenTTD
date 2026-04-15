@@ -1,0 +1,55 @@
+name: Check English vs Cantonese Keys
+
+on:
+  workflow_dispatch:   # 手動觸發
+
+jobs:
+  check-keys:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # 強制用 Node.js 24
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run key consistency check
+        run: |
+          python - <<'EOF'
+          en_keys = set()
+          with open("src/lang/english.txt", encoding="utf-8") as f:
+              for line in f:
+                  if ":" in line:
+                      en_keys.add(line.split(":")[0].strip())
+
+          yue_keys = set()
+          with open("src/lang/cantonese.txt", encoding="utf-8") as f:
+              for line in f:
+                  if ":" in line:
+                      yue_keys.add(line.split(":")[0].strip())
+
+          diff_yue = yue_keys - en_keys
+          diff_en = en_keys - yue_keys
+
+          print("=== 粵語檔有但繁中檔冇 ===")
+          if diff_yue:
+              print("\n".join(f"「{key}」" for key in sorted(diff_yue)))
+          else:
+              print("set()")
+              
+          print("=== 繁中檔有但粵語檔冇 ===")
+          if diff_en:
+              print("\n".join(f"「{key}」" for key in sorted(diff_en)))
+          else:
+              print("set()")
+
+          if diff_yue or diff_en:
+              print("❌ Key 名唔一致，請修正！")
+              exit(1)
+          else:
+              print("✅ 所有 key 名一致。")
+          EOF
