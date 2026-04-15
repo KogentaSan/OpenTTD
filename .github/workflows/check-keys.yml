@@ -2,6 +2,8 @@ name: Check Traditional Chinese vs Cantonese Keys
 
 on:
   push:
+    branches:
+      - Yue-patch
     paths:
       - "src/lang/traditional_chinese.txt"
       - "src/lang/cantonese.txt"
