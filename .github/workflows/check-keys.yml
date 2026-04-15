@@ -43,8 +43,17 @@ jobs:
           diff_yue = yue_keys - zh_keys
           diff_zh = zh_keys - yue_keys
 
-          print("=== 粵語檔有但繁中檔冇 ===", diff_yue)
-          print("=== 繁中檔有但粵語檔冇 ===", diff_zh)
+          print("=== 粵語檔有但繁中檔冇 ===")
+          if diff_yue:
+              print("\n".join(f"「{key}」" for key in sorted(diff_yue)))
+          else:
+              print("set()")
+              
+          print("=== 繁中檔有但粵語檔冇 ===")
+          if diff_zh:
+              print("\n".join(f"「{key}」" for key in sorted(diff_zh)))
+          else:
+              print("set()")
 
           if diff_yue or diff_zh:
               print("❌ Key 名唔一致，請修正！")
