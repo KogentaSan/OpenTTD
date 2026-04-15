@@ -35,13 +35,13 @@ jobs:
           diff_yue = yue_keys - en_keys
           diff_en = en_keys - yue_keys
 
-          print("=== 粵語檔有但繁中檔冇 ===")
+          print("=== 粵語檔有但英文檔冇 ===")
           if diff_yue:
               print("\n".join(f"「{key}」" for key in sorted(diff_yue)))
           else:
               print("set()")
               
-          print("=== 繁中檔有但粵語檔冇 ===")
+          print("=== 英文檔有但粵語檔冇 ===")
           if diff_en:
               print("\n".join(f"「{key}」" for key in sorted(diff_en)))
           else:
