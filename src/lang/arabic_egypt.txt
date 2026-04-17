@@ -1170,7 +1170,8 @@ STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :تحديد مس
 
 STR_CONFIG_SETTING_RECESSIONS                                   :حالات الركود: {STRING}
 
-STR_CONFIG_SETTING_TRAIN_REVERSING                              :عدم السماح بعودة القطار إلى الخلف في المحطات: {STRING}
+
+###length 3
 
 STR_CONFIG_SETTING_DISASTERS                                    :الكوارث: {STRING}
 
@@ -3794,7 +3795,7 @@ STR_ORDER_DROP_HALT_DEPOT                                       :توقف
 STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}بيانات العربة لتعريف التجاوز الى
 
 # Conditional order variables, must follow order of OrderConditionVariable enum
-###length 8
+###length 9
 STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE                           :نسبة التحميل
 STR_ORDER_CONDITIONAL_RELIABILITY                               :الصلاحية
 STR_ORDER_CONDITIONAL_MAX_SPEED                                 :السرعة القصوى
