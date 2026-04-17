@@ -2809,7 +2809,7 @@ static void ConDumpRoadTypes()
 		const RoadTypeInfo *rti = GetRoadTypeInfo(rt);
 		if (rti->label == 0) continue;
 		uint32_t grfid = 0;
-		const GRFFile *grf = rti->grffile[ROTSG_GROUND];
+		const GRFFile *grf = rti->grffile[RoadSpriteType::Ground];
 		if (grf != nullptr) {
 			grfid = grf->grfid;
 			grfs.emplace(grfid, grf);
@@ -2848,7 +2848,7 @@ static void ConDumpRailTypes()
 		const RailTypeInfo *rti = GetRailTypeInfo(rt);
 		if (rti->label == 0) continue;
 		uint32_t grfid = 0;
-		const GRFFile *grf = rti->grffile[RTSG_GROUND];
+		const GRFFile *grf = rti->grffile[RailSpriteType::Ground];
 		if (grf != nullptr) {
 			grfid = grf->grfid;
 			grfs.emplace(grfid, grf);

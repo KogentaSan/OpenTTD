@@ -1347,8 +1347,8 @@ STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HIGH                      :Altos
 STR_CONFIG_SETTING_RECESSIONS                                   :Recesiones: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Al activarse, habrá recesiones periódicamente en las que toda la producción decaerá considerablemente, restableciéndose al final de cada recesión
 
-STR_CONFIG_SETTING_TRAIN_REVERSING                              :Prohibir a los trenes que den reversa en estaciones: {STRING}
-STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :Al activarse, los trenes no podrán dar reversa en estaciones de paso, aun si detrás hay una ruta más corta a su próximo destino
+
+###length 3
 
 STR_CONFIG_SETTING_DISASTERS                                    :Desastres: {STRING}
 STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Desastres que ocasionalmente pueden bloquear o destruir vehículos o infraestructura
@@ -4672,7 +4672,7 @@ STR_ORDER_HANGAR_ACTION_TOOLTIP                                 :{BLACK}Elegir l
 STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}Datos del vehículo para órdenes condicionales
 
 # Conditional order variables, must follow order of OrderConditionVariable enum
-###length 8
+###length 9
 STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE                           :Porcentaje de carga
 STR_ORDER_CONDITIONAL_RELIABILITY                               :Fiabilidad
 STR_ORDER_CONDITIONAL_MAX_SPEED                                 :Velocidad máxima

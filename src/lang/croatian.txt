@@ -1247,8 +1247,8 @@ STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Postavi razinu 
 STR_CONFIG_SETTING_RECESSIONS                                   :Recesije: {STRING}
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Ukoliko je uključeno, recesija se može pojaviti svakih nekoliko godina. Tijekom recesije sva proizvodnja je značajno manja (vraća se na prethodnu razinu kada recesija završi)
 
-STR_CONFIG_SETTING_TRAIN_REVERSING                              :Zabrani okretanje vlakova na stanicama: {STRING}
-STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :Ukoliko je uključeno, vlakovi se neće okretati na stanicama koje nisu krajnje čak i ukoliko postoji kraći put do njihovog sljedećeg odredišta prilikom okretanja
+
+###length 3
 
 STR_CONFIG_SETTING_DISASTERS                                    :Nesreće: {STRING}
 STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Uključivanje nesreća koje mogu povremeno blokirati ili uništiti vozila ili infrastrukturu
@@ -4107,7 +4107,7 @@ STR_ORDER_DROP_HALT_DEPOT                                       :Stani
 STR_ORDER_CONDITIONAL_VARIABLE_TOOLTIP                          :{BLACK}Podaci vozila prema kojima se zasniva skok
 
 # Conditional order variables, must follow order of OrderConditionVariable enum
-###length 8
+###length 9
 STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE                           :Postotak ukrcaja
 STR_ORDER_CONDITIONAL_RELIABILITY                               :Pouzdanost
 STR_ORDER_CONDITIONAL_MAX_SPEED                                 :Najveća brzina
