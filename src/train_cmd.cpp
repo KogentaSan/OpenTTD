@@ -244,7 +244,7 @@ void Train::ConsistChanged(ConsistChangeFlags allowed_changes)
 		SetWindowDirty(WC_VEHICLE_DETAILS, this->index);
 		InvalidateWindowData(WC_VEHICLE_REFIT, this->index, VIWD_CONSIST_CHANGED);
 		InvalidateWindowData(WC_VEHICLE_ORDERS, this->index, VIWD_CONSIST_CHANGED);
-		InvalidateNewGRFInspectWindow(GSF_TRAINS, this->index);
+		InvalidateNewGRFInspectWindow(GrfSpecFeature::Trains, this->index);
 
 		/* If the consist is changed while in a depot, the vehicle view window must be invalidated to update the availability of refitting. */
 		InvalidateWindowData(WC_VEHICLE_VIEW, this->index, VIWD_CONSIST_CHANGED);
@@ -1380,7 +1380,7 @@ CommandCost CmdMoveRailVehicle(DoCommandFlags flags, VehicleID src_veh, VehicleI
 			CloseWindowById(WC_VEHICLE_REFIT, src->index);
 			CloseWindowById(WC_VEHICLE_DETAILS, src->index);
 			CloseWindowById(WC_VEHICLE_TIMETABLE, src->index);
-			DeleteNewGRFInspectWindow(GSF_TRAINS, src->index);
+			DeleteNewGRFInspectWindow(GrfSpecFeature::Trains, src->index);
 			SetWindowDirty(WC_COMPANY, _current_company);
 
 			if (src_head != nullptr && src_head->IsFrontEngine()) {
@@ -2201,9 +2201,10 @@ static TrainForceProceeding DetermineNextTrainForceProceeding(const Train *t)
 	if (t->vehstatus.Test(VehState::Crashed) || t->force_proceed == TFP_SIGNAL) return TFP_NONE;
 	if (!t->flags.Test(VehicleRailFlag::Stuck)) return t->IsChainInDepot() ? TFP_STUCK : TFP_SIGNAL;
 
-	TileIndex next_tile = TileAddByDiagDir(t->tile, TrackdirToExitdir(t->GetVehicleTrackdir()));
+	const Train *moving_front = t->GetMovingFront();
+	TileIndex next_tile = TileAddByDiagDir(moving_front->tile, TrackdirToExitdir(moving_front->GetVehicleTrackdir()));
 	if (next_tile == INVALID_TILE || !IsTileType(next_tile, TileType::Railway) || !HasSignals(next_tile)) return TFP_STUCK;
-	TrackBits new_tracks = DiagdirReachesTracks(TrackdirToExitdir(t->GetVehicleTrackdir())) & GetTrackBits(next_tile);
+	TrackBits new_tracks = DiagdirReachesTracks(TrackdirToExitdir(moving_front->GetVehicleTrackdir())) & GetTrackBits(next_tile);
 	return new_tracks != TRACK_BIT_NONE && HasSignalOnTrack(next_tile, FindFirstTrack(new_tracks)) ? TFP_SIGNAL : TFP_STUCK;
 }
 

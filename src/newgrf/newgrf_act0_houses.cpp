@@ -139,10 +139,10 @@ static ChangeInfoResult TownHouseChangeInfo(uint first, uint last, int prop, Byt
 					housespec->grf_prop.subst_id = subs_id;
 					housespec->grf_prop.SetGRFFile(_cur_gps.grffile);
 					/* Set default colours for randomization, used if not overridden. */
-					housespec->random_colour[0] = COLOUR_RED;
-					housespec->random_colour[1] = COLOUR_BLUE;
-					housespec->random_colour[2] = COLOUR_ORANGE;
-					housespec->random_colour[3] = COLOUR_GREEN;
+					housespec->random_colour[0] = Colours::Red;
+					housespec->random_colour[1] = Colours::Blue;
+					housespec->random_colour[2] = Colours::Orange;
+					housespec->random_colour[3] = Colours::Green;
 
 					/* House flags 40 and 80 are exceptions; these flags are never set automatically. */
 					housespec->building_flags.Reset({BuildingFlag::IsChurch, BuildingFlag::IsStadium});
@@ -343,7 +343,7 @@ static ChangeInfoResult TownHouseChangeInfo(uint first, uint last, int prop, Byt
 			}
 
 			case 0x24: // Badge list
-				housespec->badges = ReadBadgeList(buf, GSF_HOUSES);
+				housespec->badges = ReadBadgeList(buf, GrfSpecFeature::Houses);
 				break;
 
 			default:
@@ -356,6 +356,6 @@ static ChangeInfoResult TownHouseChangeInfo(uint first, uint last, int prop, Byt
 }
 
 /** @copybrief GrfChangeInfoHandler::Reserve @return Always ChangeInfoResult::Unhandled. */
-template <> ChangeInfoResult GrfChangeInfoHandler<GSF_HOUSES>::Reserve(uint, uint, int, ByteReader &) { return ChangeInfoResult::Unhandled; }
+template <> ChangeInfoResult GrfChangeInfoHandler<GrfSpecFeature::Houses>::Reserve(uint, uint, int, ByteReader &) { return ChangeInfoResult::Unhandled; }
 /** @copydoc GrfChangeInfoHandler::Activation */
-template <> ChangeInfoResult GrfChangeInfoHandler<GSF_HOUSES>::Activation(uint first, uint last, int prop, ByteReader &buf) { return TownHouseChangeInfo(first, last, prop, buf); }
+template <> ChangeInfoResult GrfChangeInfoHandler<GrfSpecFeature::Houses>::Activation(uint first, uint last, int prop, ByteReader &buf) { return TownHouseChangeInfo(first, last, prop, buf); }
