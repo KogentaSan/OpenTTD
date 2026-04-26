@@ -564,8 +564,9 @@ struct CompanyFinancesWindow : Window {
 /** First conservative estimate of the maximum amount of money */
 Money CompanyFinancesWindow::max_money = INT32_MAX;
 
+/** Window definition for the company finances window. */
 static WindowDesc _company_finances_desc(
-	WDP_AUTO, "company_finances", 0, 0,
+	WindowPosition::Automatic, "company_finances", 0, 0,
 	WC_FINANCES, WC_NONE,
 	{},
 	_nested_company_finances_widgets
@@ -742,10 +743,10 @@ public:
 		this->RaiseWidget(WID_SCL_CLASS_GENERAL + this->livery_class);
 		const Group *g = Group::Get(group);
 		switch (g->vehicle_type) {
-			case VEH_TRAIN: this->livery_class = LC_GROUP_RAIL; break;
-			case VEH_ROAD: this->livery_class = LC_GROUP_ROAD; break;
-			case VEH_SHIP: this->livery_class = LC_GROUP_SHIP; break;
-			case VEH_AIRCRAFT: this->livery_class = LC_GROUP_AIRCRAFT; break;
+			case VehicleType::Train: this->livery_class = LC_GROUP_RAIL; break;
+			case VehicleType::Road: this->livery_class = LC_GROUP_ROAD; break;
+			case VehicleType::Ship: this->livery_class = LC_GROUP_SHIP; break;
+			case VehicleType::Aircraft: this->livery_class = LC_GROUP_AIRCRAFT; break;
 			default: NOT_REACHED();
 		}
 		this->sel = group.base();
@@ -924,7 +925,7 @@ public:
 			}
 
 			if (this->vscroll->GetCount() == 0) {
-				const StringID empty_labels[] = { STR_LIVERY_TRAIN_GROUP_EMPTY, STR_LIVERY_ROAD_VEHICLE_GROUP_EMPTY, STR_LIVERY_SHIP_GROUP_EMPTY, STR_LIVERY_AIRCRAFT_GROUP_EMPTY };
+				constexpr VehicleTypeIndexArray<const StringID> empty_labels = { STR_LIVERY_TRAIN_GROUP_EMPTY, STR_LIVERY_ROAD_VEHICLE_GROUP_EMPTY, STR_LIVERY_SHIP_GROUP_EMPTY, STR_LIVERY_AIRCRAFT_GROUP_EMPTY };
 				VehicleType vtype = (VehicleType)(this->livery_class - LC_GROUP_RAIL);
 				DrawString(ir.left, ir.right, y + text_offs, empty_labels[vtype], TC_BLACK);
 			}
@@ -1116,8 +1117,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_select_company_liver
 	EndContainer(),
 };
 
+/** Window definition for the company livery configuration window. */
 static WindowDesc _select_company_livery_desc(
-	WDP_AUTO, "company_colour_scheme", 0, 0,
+	WindowPosition::Automatic, "company_colour_scheme", 0, 0,
 	WC_COMPANY_COLOUR, WC_NONE,
 	{},
 	_nested_select_company_livery_widgets
@@ -1539,7 +1541,7 @@ public:
 
 /** Company manager face selection window description */
 static WindowDesc _select_company_manager_face_desc(
-	WDP_AUTO, {}, 0, 0,
+	WindowPosition::Automatic, {}, 0, 0,
 	WC_COMPANY_MANAGER_FACE, WC_NONE,
 	WindowDefaultFlag::Construction,
 	_nested_select_company_manager_face_widgets
@@ -1845,8 +1847,9 @@ struct CompanyInfrastructureWindow : Window
 	}
 };
 
+/** Window definition for the company infrastructure statistics window. */
 static WindowDesc _company_infrastructure_desc(
-	WDP_AUTO, "company_infrastructure", 0, 0,
+	WindowPosition::Automatic, "company_infrastructure", 0, 0,
 	WC_COMPANY_INFRASTRUCTURE, WC_NONE,
 	{},
 	_nested_company_infrastructure_widgets
@@ -1939,7 +1942,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_company_widgets = {
 };
 
 /** Strings for the company vehicle counts */
-static const StringID _company_view_vehicle_count_strings[] = {
+static constexpr VehicleTypeIndexArray<const StringID> _company_view_vehicle_count_strings = {
 	STR_COMPANY_VIEW_TRAINS, STR_COMPANY_VIEW_ROAD_VEHICLES, STR_COMPANY_VIEW_SHIPS, STR_COMPANY_VIEW_AIRCRAFT
 };
 
@@ -2070,10 +2073,8 @@ struct CompanyWindow : Window
 
 	void DrawVehicleCountsWidget(const Rect &r, const Company *c) const
 	{
-		static_assert(VEH_COMPANY_END == lengthof(_company_view_vehicle_count_strings));
-
 		int y = r.top;
-		for (VehicleType type = VEH_BEGIN; type < VEH_COMPANY_END; type++) {
+		for (VehicleType type = VehicleType::Begin; type < VehicleType::CompanyEnd; type++) {
 			uint amount = c->group_all[type].num_vehicle;
 			if (amount != 0) {
 				DrawString(r.left, r.right, y, GetString(_company_view_vehicle_count_strings[type], amount));
@@ -2326,8 +2327,9 @@ struct CompanyWindow : Window
 	}
 };
 
+/** Window definition for the company window. */
 static WindowDesc _company_desc(
-	WDP_AUTO, "company", 0, 0,
+	WindowPosition::Automatic, "company", 0, 0,
 	WC_COMPANY, WC_NONE,
 	{},
 	_nested_company_widgets
@@ -2457,8 +2459,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_buy_company_widgets 
 	EndContainer(),
 };
 
+/** Window definition for the window to buy a company. */
 static WindowDesc _buy_company_desc(
-	WDP_AUTO, {}, 0, 0,
+	WindowPosition::Automatic, {}, 0, 0,
 	WC_BUY_COMPANY, WC_NONE,
 	WindowDefaultFlag::Construction,
 	_nested_buy_company_widgets

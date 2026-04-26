@@ -126,8 +126,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_normal_news_widgets 
 	EndContainer(),
 };
 
+/** Window definition for the normal news window. */
 static WindowDesc _normal_news_desc(
-	WDP_MANUAL, {}, 0, 0,
+	WindowPosition::Manual, {}, 0, 0,
 	WC_NEWS_WINDOW, WC_NONE,
 	{},
 	_nested_normal_news_widgets
@@ -174,8 +175,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_vehicle_news_widgets
 	EndContainer(),
 };
 
+/** Window definition for the vehicle news window. */
 static WindowDesc _vehicle_news_desc(
-	WDP_MANUAL, {}, 0, 0,
+	WindowPosition::Manual, {}, 0, 0,
 	WC_NEWS_WINDOW, WC_NONE,
 	{},
 	_nested_vehicle_news_widgets
@@ -219,8 +221,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_company_news_widgets
 	EndContainer(),
 };
 
+/** Window definition for the company news window. */
 static WindowDesc _company_news_desc(
-	WDP_MANUAL, {}, 0, 0,
+	WindowPosition::Manual, {}, 0, 0,
 	WC_NEWS_WINDOW, WC_NONE,
 	{},
 	_nested_company_news_widgets
@@ -253,8 +256,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_thin_news_widgets = 
 	EndContainer(),
 };
 
+/** Window definition for the thin news window. */
 static WindowDesc _thin_news_desc(
-	WDP_MANUAL, {}, 0, 0,
+	WindowPosition::Manual, {}, 0, 0,
 	WC_NEWS_WINDOW, WC_NONE,
 	{},
 	_nested_thin_news_widgets
@@ -291,8 +295,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_small_news_widgets =
 	EndContainer(),
 };
 
+/** Window definition for the small news window. */
 static WindowDesc _small_news_desc(
-	WDP_MANUAL, {}, 0, 0,
+	WindowPosition::Manual, {}, 0, 0,
 	WC_NEWS_WINDOW, WC_NONE,
 	{},
 	_nested_small_news_widgets
@@ -378,16 +383,16 @@ struct NewsWindow : Window {
 		if (has_vehicle_id && nwid != nullptr) {
 			const Vehicle *v = Vehicle::Get(std::get<VehicleID>(ni->ref1));
 			switch (v->type) {
-				case VEH_TRAIN:
+				case VehicleType::Train:
 					nwid->SetString(STR_TRAIN);
 					break;
-				case VEH_ROAD:
+				case VehicleType::Road:
 					nwid->SetString(RoadVehicle::From(v)->IsBus() ? STR_BUS : STR_LORRY);
 					break;
-				case VEH_SHIP:
+				case VehicleType::Ship:
 					nwid->SetString(STR_SHIP);
 					break;
-				case VEH_AIRCRAFT:
+				case VehicleType::Aircraft:
 					nwid->SetString(STR_PLANE);
 					break;
 				default:
@@ -1309,8 +1314,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_message_history = {
 	EndContainer(),
 };
 
+/** Window definition for the news message history window. */
 static WindowDesc _message_history_desc(
-	WDP_AUTO, "list_news", 400, 140,
+	WindowPosition::Automatic, "list_news", 400, 140,
 	WC_MESSAGE_HISTORY, WC_NONE,
 	{},
 	_nested_message_history

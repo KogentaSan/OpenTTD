@@ -609,7 +609,7 @@ uint32_t GetSmallMapOwnerPixels(TileIndex tile, TileType t, IncludeHeightmap inc
 }
 
 /** Vehicle colours in #SMT_VEHICLES mode. Indexed by #VehicleType. */
-static const PixelColour _vehicle_type_colours[6] = {
+static constexpr VehicleTypeIndexArray<PixelColour, VehicleType::End> _vehicle_type_colours = {
 	PC_RED, PC_YELLOW, PC_LIGHT_BLUE, PC_WHITE, PC_BLACK, PC_RED
 };
 
@@ -953,7 +953,7 @@ protected:
 	void DrawVehicles(const DrawPixelInfo *dpi, Blitter *blitter) const
 	{
 		for (const Vehicle *v : Vehicle::Iterate()) {
-			if (v->type == VEH_EFFECT) continue;
+			if (v->type == VehicleType::Effect) continue;
 			if (v->vehstatus.Any({VehState::Hidden, VehState::Unclickable})) continue;
 
 			/* Remap into flat coordinates. */
@@ -2058,8 +2058,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_smallmap_widgets = {
 	EndContainer(),
 };
 
+/** Window definition for the smallmap window. */
 static WindowDesc _smallmap_desc(
-	WDP_AUTO, "smallmap", 484, 314,
+	WindowPosition::Automatic, "smallmap", 484, 314,
 	WC_SMALLMAP, WC_NONE,
 	{},
 	_nested_smallmap_widgets
