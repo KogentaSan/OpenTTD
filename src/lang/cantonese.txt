@@ -53,7 +53,7 @@ STR_CARGO_PLURAL_COLA                                           :可樂
 STR_CARGO_PLURAL_CANDYFLOSS                                     :棉花糖
 STR_CARGO_PLURAL_BUBBLES                                        :氣泡
 STR_CARGO_PLURAL_TOFFEE                                         :拖肥糖
-STR_CARGO_PLURAL_BATTERIES                                      :電池
+STR_CARGO_PLURAL_BATTERIES                                      :電芯
 STR_CARGO_PLURAL_PLASTIC                                        :塑膠
 STR_CARGO_PLURAL_FIZZY_DRINKS                                   :汽水
 
@@ -87,7 +87,7 @@ STR_CARGO_SINGULAR_COLA                                         :可樂
 STR_CARGO_SINGULAR_CANDYFLOSS                                   :棉花糖
 STR_CARGO_SINGULAR_BUBBLE                                       :氣泡
 STR_CARGO_SINGULAR_TOFFEE                                       :拖肥糖
-STR_CARGO_SINGULAR_BATTERY                                      :電池
+STR_CARGO_SINGULAR_BATTERY                                      :電芯
 STR_CARGO_SINGULAR_PLASTIC                                      :塑膠
 STR_CARGO_SINGULAR_FIZZY_DRINK                                  :汽水
 
@@ -121,7 +121,7 @@ STR_QUANTITY_COLA                                               :{VOLUME_LONG} �
 STR_QUANTITY_CANDYFLOSS                                         :{WEIGHT_LONG} 棉花糖
 STR_QUANTITY_BUBBLES                                            :{COMMA} 個氣泡
 STR_QUANTITY_TOFFEE                                             :{WEIGHT_LONG} 拖肥糖
-STR_QUANTITY_BATTERIES                                          :{COMMA} 粒電池
+STR_QUANTITY_BATTERIES                                          :{COMMA} 粒電芯
 STR_QUANTITY_PLASTIC                                            :{VOLUME_LONG} 塑膠
 STR_QUANTITY_FIZZY_DRINKS                                       :{COMMA} 杯汽水
 STR_QUANTITY_N_A                                                :N/A
@@ -816,7 +816,7 @@ STR_SMALLMAP_LEGENDA_FIELDS                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_TREES                                      :{TINY_FONT}{BLACK}樹木
 STR_SMALLMAP_LEGENDA_ROCKS                                      :{TINY_FONT}{BLACK}岩石
 STR_SMALLMAP_LEGENDA_WATER                                      :{TINY_FONT}{BLACK}水
-STR_SMALLMAP_LEGENDA_NO_OWNER                                   :{TINY_FONT}{BLACK}沒有持有人
+STR_SMALLMAP_LEGENDA_NO_OWNER                                   :{TINY_FONT}{BLACK}無持有人
 STR_SMALLMAP_LEGENDA_TOWNS                                      :{TINY_FONT}{BLACK}市鎮
 STR_SMALLMAP_LEGENDA_INDUSTRIES                                 :{TINY_FONT}{BLACK}工業
 STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLACK}沙漠
@@ -1126,7 +1126,7 @@ STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :關於基礎音
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :取得內容
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :檢查及下載最新內容
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（沒有安裝社交平台擴充包）
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（無安裝社交平台擴充包）
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING}（{STRING}）
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :平台：
@@ -1248,7 +1248,7 @@ STR_CONFIG_SETTING_FILTER_TITLE                                 :篩選：
 STR_CONFIG_SETTING_EXPAND_ALL                                   :展開全部選項
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :折疊全部選項
 STR_CONFIG_SETTING_RESET_ALL                                    :重設全部數值
-STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(沒有適用嘅解釋)
+STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(無解釋)
 STR_CONFIG_SETTING_VALUE                                        :{ORANGE}{STRING}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}例牌值：{ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}設定種類：{ORANGE}{STRING}
@@ -5497,19 +5497,19 @@ STR_ERROR_TOO_FAR_FROM_PREVIOUS_DESTINATION                     :與上個目的
 STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :飛機嘅飛行距離不足
 
 # Extra messages which go on the third line of errors, explaining why orders failed
-STR_ERROR_NO_RAIL_STATION                                       :沒有鐵路站
-STR_ERROR_NO_BUS_STATION                                        :沒有巴士站
-STR_ERROR_NO_TRUCK_STATION                                      :沒有貨車場
-STR_ERROR_NO_DOCK                                               :這裡沒有碼頭
-STR_ERROR_NO_AIRPORT                                            :沒有機場或直升機場
-STR_ERROR_NO_STOP_COMPATIBLE_ROAD_TYPE                          :沒有相容此馬路類型嘅車站
-STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :沒有兼容此有軌電車馬路類型嘅車站
-STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :沒有適合掛接巴士嘅巴士站。{}掛接巴士需要路邊巴士站，而非港灣式巴士站
+STR_ERROR_NO_RAIL_STATION                                       :無鐵路站
+STR_ERROR_NO_BUS_STATION                                        :無巴士站
+STR_ERROR_NO_TRUCK_STATION                                      :無貨車場
+STR_ERROR_NO_DOCK                                               :這裡無碼頭
+STR_ERROR_NO_AIRPORT                                            :無機場或直升機場
+STR_ERROR_NO_STOP_COMPATIBLE_ROAD_TYPE                          :無相容此馬路類型嘅車站
+STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :無兼容此有軌電車馬路類型嘅車站
+STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :無適合掛接巴士嘅巴士站。{}掛接巴士需要路邊巴士站，而非港灣式巴士站
 STR_ERROR_AIRPORT_NO_PLANES                                     :這架飛機不能降落在這個直升機場
 STR_ERROR_AIRPORT_NO_HELICOPTERS                                :這架直升機不能降落在這個機場
-STR_ERROR_NO_RAIL_WAYPOINT                                      :沒有鐵路分站
-STR_ERROR_NO_ROAD_WAYPOINT                                      :沒有路面分站
-STR_ERROR_NO_BUOY                                               :沒有浮標
+STR_ERROR_NO_RAIL_WAYPOINT                                      :無鐵路分站
+STR_ERROR_NO_ROAD_WAYPOINT                                      :無路面分站
+STR_ERROR_NO_BUOY                                               :無浮標
 
 # Timetable related errors
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :同唔到架車編排時間表……
@@ -5607,7 +5607,7 @@ STR_INDUSTRY_NAME_FARM_2                                        :農場
 STR_INDUSTRY_NAME_LUMBER_MILL                                   :伐木場
 STR_INDUSTRY_NAME_COTTON_CANDY_FOREST                           :棉花糖林
 STR_INDUSTRY_NAME_CANDY_FACTORY                                 :糖果工廠
-STR_INDUSTRY_NAME_BATTERY_FARM                                  :電池農場
+STR_INDUSTRY_NAME_BATTERY_FARM                                  :電芯農場
 STR_INDUSTRY_NAME_COLA_WELLS                                    :可樂井
 STR_INDUSTRY_NAME_TOY_SHOP                                      :玩具店
 STR_INDUSTRY_NAME_TOY_FACTORY                                   :玩具工廠
@@ -5714,7 +5714,7 @@ STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BUBBLE_VAN                    :氣泡貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COLA_TANKER                   :可樂罐車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_CANDY_VAN                     :糖果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOY_VAN                       :玩具貨車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BATTERY_TRUCK                 :電池貨車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BATTERY_TRUCK                 :電芯貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FIZZY_DRINK_TRUCK             :汽水貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PLASTIC_TRUCK                 :塑膠貨車卡
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_X2001_ELECTRIC           :X2001（電力）
@@ -5744,7 +5744,7 @@ STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BUBBLE_VAN                :氣泡貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COLA_TANKER               :可樂罐車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_CANDY_VAN                 :糖果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOY_VAN                   :玩具貨車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BATTERY_TRUCK             :電池貨車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BATTERY_TRUCK             :電芯貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FIZZY_DRINK_TRUCK         :汽水貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PLASTIC_TRUCK             :塑膠貨車卡
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV1_LEVIATHAN_ELECTRIC    :Lev1 海怪（電力）
@@ -5776,7 +5776,7 @@ STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BUBBLE_VAN                  :氣泡貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COLA_TANKER                 :可樂罐車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_CANDY_VAN                   :糖果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOY_VAN                     :玩具貨車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BATTERY_TRUCK               :電池貨車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BATTERY_TRUCK               :電芯貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FIZZY_DRINK_TRUCK           :汽水貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PLASTIC_TRUCK               :塑膠貨車卡
 
@@ -5857,9 +5857,9 @@ STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_TOY_VAN                  :威而嘆玩具
 STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_CANDY_TRUCK           :勁力糖果貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_CANDY_TRUCK           :原力糖果貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_CANDY_TRUCK              :威而嘆糖果貨車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_BATTERY_TRUCK         :勁力電池貨車
-STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_BATTERY_TRUCK         :原力電池貨車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_BATTERY_TRUCK            :威而嘆電池貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_BATTERY_TRUCK         :勁力電芯貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_BATTERY_TRUCK         :原力電芯貨車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_BATTERY_TRUCK            :威而嘆電芯貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_FIZZY_DRINK           :勁力汽水貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_FIZZY_DRINK           :原力汽水貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_FIZZY_DRINK_TRUCK        :威而嘆汽水貨車
