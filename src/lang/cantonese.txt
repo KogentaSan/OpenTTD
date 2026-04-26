@@ -5885,7 +5885,7 @@ STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :航能者貨輪
 
 ###length 41
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :大力士 U52
-STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :維科爾曼伯爵
+STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :科爾曼伯爵
 STR_VEHICLE_NAME_AIRCRAFT_FFP_DART                              :FFP 飛鏢
 STR_VEHICLE_NAME_AIRCRAFT_YATE_HAUGAN                           :逸達丘陵
 STR_VEHICLE_NAME_AIRCRAFT_BAKEWELL_COTSWALD_LB_3                :貝克威爾科茲窩 LB-3
