@@ -54,8 +54,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_land_info_widgets = 
 	NWidget(WWT_PANEL, Colours::Grey, WID_LI_BACKGROUND), EndContainer(),
 };
 
+/** Window definition for the land information window. */
 static WindowDesc _land_info_desc(
-	WDP_AUTO, {}, 0, 0,
+	WindowPosition::Automatic, {}, 0, 0,
 	WC_LAND_INFO, WC_NONE,
 	{},
 	_nested_land_info_widgets
@@ -228,7 +229,7 @@ public:
 
 		/* Rail speed limit */
 		if (td.rail_speed != 0) {
-			this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT, PackVelocity(td.rail_speed, VEH_TRAIN)));
+			this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT, PackVelocity(td.rail_speed, VehicleType::Train)));
 		}
 
 		/* Road type name */
@@ -238,7 +239,7 @@ public:
 
 		/* Road speed limit */
 		if (td.road_speed != 0) {
-			this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT, PackVelocity(td.road_speed, VEH_ROAD)));
+			this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT, PackVelocity(td.road_speed, VehicleType::Road)));
 		}
 
 		/* Tram type name */
@@ -248,7 +249,7 @@ public:
 
 		/* Tram speed limit */
 		if (td.tram_speed != 0) {
-			this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT, PackVelocity(td.tram_speed, VEH_ROAD)));
+			this->landinfo_data.push_back(GetString(STR_LANG_AREA_INFORMATION_TRAM_SPEED_LIMIT, PackVelocity(td.tram_speed, VehicleType::Road)));
 		}
 
 		/* Tile protection status */
@@ -333,8 +334,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_about_widgets = {
 	EndContainer(),
 };
 
+/** Window definition for the about window. */
 static WindowDesc _about_desc(
-	WDP_CENTER, {}, 0, 0,
+	WindowPosition::Center, {}, 0, 0,
 	WC_GAME_OPTIONS, WC_NONE,
 	{},
 	_nested_about_widgets
@@ -589,8 +591,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_tooltips_widgets = {
 	NWidget(WWT_EMPTY, Colours::Invalid, WID_TT_BACKGROUND),
 };
 
+/** Window definition for the tool tip window. */
 static WindowDesc _tool_tips_desc(
-	WDP_MANUAL, {}, 0, 0, // Coordinates and sizes are not used,
+	WindowPosition::Manual, {}, 0, 0, // Coordinates and sizes are not used,
 	WC_TOOLTIPS, WC_NONE,
 	{WindowDefaultFlag::NoFocus, WindowDefaultFlag::NoClose},
 	_nested_tooltips_widgets
@@ -1039,8 +1042,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_query_string_widgets
 	EndContainer(),
 };
 
+/** Window definition for the string query window. */
 static WindowDesc _query_string_desc(
-	WDP_CENTER, {}, 0, 0,
+	WindowPosition::Center, {}, 0, 0,
 	WC_QUERY_STRING, WC_NONE,
 	{},
 	_nested_query_string_widgets
@@ -1188,8 +1192,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_query_widgets = {
 	EndContainer(),
 };
 
+/** Window definition for the query window. */
 static WindowDesc _query_desc(
-	WDP_CENTER, {}, 0, 0,
+	WindowPosition::Center, {}, 0, 0,
 	WC_CONFIRM_POPUP_QUERY, WC_NONE,
 	WindowDefaultFlag::Modal,
 	_nested_query_widgets

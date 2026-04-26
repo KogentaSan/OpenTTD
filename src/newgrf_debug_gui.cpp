@@ -308,10 +308,10 @@ struct NewGRFInspectWindow : Window {
 	VehicleType GetVehicleTypeForWindow() const
 	{
 		switch (GetFeatureNum(this->window_number)) {
-			case GrfSpecFeature::Trains: return VEH_TRAIN;
-			case GrfSpecFeature::RoadVehicles: return VEH_ROAD;
-			case GrfSpecFeature::Ships: return VEH_SHIP;
-			case GrfSpecFeature::Aircraft: return VEH_AIRCRAFT;
+			case GrfSpecFeature::Trains: return VehicleType::Train;
+			case GrfSpecFeature::RoadVehicles: return VehicleType::Road;
+			case GrfSpecFeature::Ships: return VehicleType::Ship;
+			case GrfSpecFeature::Aircraft: return VehicleType::Aircraft;
 			default: NOT_REACHED();
 		}
 	}
@@ -409,8 +409,8 @@ struct NewGRFInspectWindow : Window {
 		for (const Vehicle *u = v->First(); u != nullptr; u = u->Next()) {
 			if (u == v) sel_start = total_width;
 			switch (u->type) {
-				case VEH_TRAIN: total_width += Train::From(u)->GetDisplayImageWidth(); break;
-				case VEH_ROAD:  total_width += RoadVehicle::From(u)->GetDisplayImageWidth(); break;
+				case VehicleType::Train: total_width += Train::From(u)->GetDisplayImageWidth(); break;
+				case VehicleType::Road:  total_width += RoadVehicle::From(u)->GetDisplayImageWidth(); break;
 				default: NOT_REACHED();
 			}
 			if (u == v) sel_end = total_width;
@@ -678,15 +678,17 @@ static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_inspect_widge
 	EndContainer(),
 };
 
+/** Window definition for the NewGRF chain inspection window. */
 static WindowDesc _newgrf_inspect_chain_desc(
-	WDP_AUTO, "newgrf_inspect_chain", 400, 300,
+	WindowPosition::Automatic, "newgrf_inspect_chain", 400, 300,
 	WC_NEWGRF_INSPECT, WC_NONE,
 	{},
 	_nested_newgrf_inspect_chain_widgets
 );
 
+/** Window definition for the NewGRF inspection window. */
 static WindowDesc _newgrf_inspect_desc(
-	WDP_AUTO, "newgrf_inspect", 400, 300,
+	WindowPosition::Automatic, "newgrf_inspect", 400, 300,
 	WC_NEWGRF_INSPECT, WC_NONE,
 	{},
 	_nested_newgrf_inspect_widgets
@@ -1185,8 +1187,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_sprite_aligner_widge
 	EndContainer(),
 };
 
+/** Window definition for the sprite aligner window. */
 static WindowDesc _sprite_aligner_desc(
-	WDP_AUTO, "sprite_aligner", 400, 300,
+	WindowPosition::Automatic, "sprite_aligner", 400, 300,
 	WC_SPRITE_ALIGNER, WC_NONE,
 	{},
 	_nested_sprite_aligner_widgets
