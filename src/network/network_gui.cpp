@@ -1496,7 +1496,7 @@ protected:
 			DrawFrameRect(br, button->colour, {});
 			DrawSpriteIgnorePadding(button->sprite, PAL_NONE, br, SA_CENTER);
 			if (button->disabled) {
-				GfxFillRect(br.Shrink(WidgetDimensions::scaled.bevel), GetColourGradient(button->colour, SHADE_DARKER), FILLRECT_CHECKER);
+				GfxFillRect(br.Shrink(WidgetDimensions::scaled.bevel), GetColourGradient(button->colour, SHADE_DARKER), FillRectMode::Checker);
 			}
 			r = r.Indent(button->width + WidgetDimensions::scaled.hsep_normal, !rtl);
 		}
@@ -1715,7 +1715,7 @@ private:
 	 */
 	static void OnClickClientAuthorize(NetworkClientListWindow *, Point, ClientID client_id)
 	{
-		AutoRestoreBackup<CompanyID> cur_company(_current_company, NetworkClientInfo::GetByClientID(_network_own_client_id)->client_playas);
+		AutoRestoreBackup cur_company(_current_company, NetworkClientInfo::GetByClientID(_network_own_client_id)->client_playas);
 		Command<Commands::CompanyAllowListControl>::Post(CompanyAllowListCtrlAction::AddKey, NetworkClientInfo::GetByClientID(client_id)->public_key);
 	}
 

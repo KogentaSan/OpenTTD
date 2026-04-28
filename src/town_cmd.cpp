@@ -650,7 +650,7 @@ static void TileLoop_Town(TileIndex tile)
 		}
 	}
 
-	Backup<CompanyID> cur_company(_current_company, OWNER_TOWN);
+	AutoRestoreBackup cur_company(_current_company, OWNER_TOWN);
 
 	if (hs->building_flags.Any(BUILDING_HAS_1_TILE) &&
 			t->flags.Test(TownFlag::IsGrowing) &&
@@ -688,8 +688,6 @@ static void TileLoop_Town(TileIndex tile)
 			TryBuildTownHouse(t, tile, modes);
 		}
 	}
-
-	cur_company.Restore();
 }
 
 /** @copydoc ClearTileProc */
@@ -1133,13 +1131,13 @@ static RoadBits GetTownRoadGridElement(Town *t, TileIndex tile, DiagDirection di
 		default: NOT_REACHED();
 
 		case TL_2X2_GRID:
-			if ((grid_pos.x % 3) == 0) rcmd |= ROAD_Y;
-			if ((grid_pos.y % 3) == 0) rcmd |= ROAD_X;
+			if ((grid_pos.x % 3) == 0) rcmd.Set(ROAD_Y);
+			if ((grid_pos.y % 3) == 0) rcmd.Set(ROAD_X);
 			break;
 
 		case TL_3X3_GRID:
-			if ((grid_pos.x % 4) == 0) rcmd |= ROAD_Y;
-			if ((grid_pos.y % 4) == 0) rcmd |= ROAD_X;
+			if ((grid_pos.x % 4) == 0) rcmd.Set(ROAD_Y);
+			if ((grid_pos.y % 4) == 0) rcmd.Set(ROAD_X);
 			break;
 	}
 
@@ -1891,7 +1889,7 @@ static bool GrowTown(Town *t, TownExpandModes modes)
 	};
 
 	/* Current "company" is a town */
-	Backup<CompanyID> cur_company(_current_company, OWNER_TOWN);
+	AutoRestoreBackup cur_company(_current_company, OWNER_TOWN);
 
 	TileIndex tile = t->xy; // The tile we are working with ATM
 
@@ -1899,7 +1897,6 @@ static bool GrowTown(Town *t, TownExpandModes modes)
 	for (const auto &ptr : _town_coord_mod) {
 		if (GetTownRoadBits(tile).Any()) {
 			bool success = GrowTownAtRoad(t, tile, modes);
-			cur_company.Restore();
 			return success;
 		}
 		tile = TileAdd(tile, ToTileIndexDiff(ptr));
@@ -1915,7 +1912,6 @@ static bool GrowTown(Town *t, TownExpandModes modes)
 				if (Command<Commands::LandscapeClear>::Do({DoCommandFlag::Auto, DoCommandFlag::NoWater}, tile).Succeeded()) {
 					RoadType rt = GetTownRoadType();
 					Command<Commands::BuildRoad>::Do({DoCommandFlag::Execute, DoCommandFlag::Auto}, tile, GenRandomRoadBits(), rt, {}, t->index);
-					cur_company.Restore();
 					return true;
 				}
 			}
@@ -1923,7 +1919,6 @@ static bool GrowTown(Town *t, TownExpandModes modes)
 		}
 	}
 
-	cur_company.Restore();
 	return false;
 }
 
@@ -2387,9 +2382,8 @@ static Town *CreateRandomTown(uint attempts, uint32_t townnameparts, TownSize si
 		 * placement is so bad it couldn't grow at all */
 		if (t->cache.population > 0) return t;
 
-		Backup<CompanyID> cur_company(_current_company, OWNER_TOWN);
+		AutoRestoreBackup cur_company(_current_company, OWNER_TOWN);
 		[[maybe_unused]] CommandCost rc = Command<Commands::DeleteTown>::Do(DoCommandFlag::Execute, t->index);
-		cur_company.Restore();
 		assert(rc.Succeeded());
 
 		/* We already know that we can allocate a single town when
@@ -3516,10 +3510,8 @@ static CommandCost TownActionRoadRebuild(Town *t, DoCommandFlags flags)
  */
 static bool CheckClearTile(TileIndex tile)
 {
-	Backup<CompanyID> cur_company(_current_company, OWNER_NONE);
-	CommandCost r = Command<Commands::LandscapeClear>::Do({}, tile);
-	cur_company.Restore();
-	return r.Succeeded();
+	AutoRestoreBackup cur_company(_current_company, OWNER_NONE);
+	return Command<Commands::LandscapeClear>::Do({}, tile).Succeeded();
 }
 
 /**
@@ -3836,7 +3828,7 @@ static void UpdateTownRating(Town *t)
 
 /**
  * Updates town grow counter after growth rate change.
- * Preserves relative house builting progress whenever it can.
+ * Preserves relative house building progress whenever it can.
  * @param t The town to calculate grow counter for
  * @param prev_growth_rate Town growth rate before it changed (one that was used with grow counter to be updated)
  */
