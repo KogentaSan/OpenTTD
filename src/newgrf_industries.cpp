@@ -413,7 +413,7 @@ static uint32_t GetCountAndDistanceOfClosestInstance(const ResolverObject &objec
 		case 0xAC: return this->industry->was_cargo_delivered;
 
 		case 0xB0: return ClampTo<uint16_t>(this->industry->construction_date - CalendarTime::DAYS_TILL_ORIGINAL_BASE_YEAR); // Date when built since 1920 (in days)
-		case 0xB3: return this->industry->construction_type; // Construction type
+		case 0xB3: return to_underlying(this->industry->construction_type); // Construction type
 		case 0xB4: {
 			if (this->industry->accepted.empty()) return 0;
 			auto it = std::max_element(std::begin(this->industry->accepted), std::end(this->industry->accepted), [](const auto &a, const auto &b) { return a.last_accepted < b.last_accepted; });
@@ -556,7 +556,7 @@ CommandCost CheckIfCallBackAllowsCreation(TileIndex tile, IndustryType type, siz
 	ind.founder = founder;
 	ind.psa = nullptr;
 
-	IndustriesResolverObject object(tile, &ind, type, seed, CBID_INDUSTRY_LOCATION, 0, creation_type);
+	IndustriesResolverObject object(tile, &ind, type, seed, CBID_INDUSTRY_LOCATION, 0, to_underlying(creation_type));
 	std::array<int32_t, 16> regs100;
 	uint16_t result = object.ResolveCallback(regs100);
 
@@ -579,7 +579,7 @@ uint32_t GetIndustryProbabilityCallback(IndustryType type, IndustryAvailabilityC
 	const IndustrySpec *indspec = GetIndustrySpec(type);
 
 	if (indspec->callback_mask.Test(IndustryCallbackMask::Probability)) {
-		uint16_t res = GetIndustryCallback(CBID_INDUSTRY_PROBABILITY, 0, creation_type, nullptr, type, INVALID_TILE);
+		uint16_t res = GetIndustryCallback(CBID_INDUSTRY_PROBABILITY, 0, to_underlying(creation_type), nullptr, type, INVALID_TILE);
 		if (res != CALLBACK_FAILED) {
 			if (indspec->grf_prop.grffile->grf_version < 8) {
 				/* Disallow if result != 0 */
