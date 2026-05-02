@@ -1255,16 +1255,16 @@ void OnTick_Industry()
 }
 
 /**
- * Check the conditions of #CHECK_NOTHING (Always succeeds).
+ * Check the conditions of #IndustryCheck::None (Always succeeds).
  * @return Succeeded or failed command.
  */
-static CommandCost CheckNewIndustry_NULL(TileIndex)
+static CommandCost CheckNewIndustry_None(TileIndex)
 {
 	return CommandCost();
 }
 
 /**
- * Check the conditions of #CHECK_FOREST (Industry should be build above snow-line in arctic climate).
+ * Check the conditions of #IndustryCheck::Forest (Industry should be build above snow-line in arctic climate).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1302,7 +1302,7 @@ static bool CheckScaledDistanceFromEdge(TileIndex tile, uint maxdist)
 }
 
 /**
- * Check the conditions of #CHECK_REFINERY (Industry should be positioned near edge of the map).
+ * Check the conditions of #IndustryCheck::Refinery (Industry should be positioned near edge of the map).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1318,7 +1318,7 @@ static CommandCost CheckNewIndustry_OilRefinery(TileIndex tile)
 extern bool _ignore_industry_restrictions;
 
 /**
- * Check the conditions of #CHECK_OIL_RIG (Industries at sea should be positioned near edge of the map).
+ * Check the conditions of #IndustryCheck::OilRig (Industries at sea should be positioned near edge of the map).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1333,7 +1333,7 @@ static CommandCost CheckNewIndustry_OilRig(TileIndex tile)
 }
 
 /**
- * Check the conditions of #CHECK_FARM (Industry should be below snow-line in arctic).
+ * Check the conditions of #IndustryCheck::Farm (Industry should be below snow-line in arctic).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1348,7 +1348,7 @@ static CommandCost CheckNewIndustry_Farm(TileIndex tile)
 }
 
 /**
- * Check the conditions of #CHECK_PLANTATION (Industry should NOT be in the desert).
+ * Check the conditions of #IndustryCheck::Plantation (Industry should NOT be in the desert).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1361,7 +1361,7 @@ static CommandCost CheckNewIndustry_Plantation(TileIndex tile)
 }
 
 /**
- * Check the conditions of #CHECK_WATER (Industry should be in the desert).
+ * Check the conditions of #IndustryCheck::Water (Industry should be in the desert).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1374,7 +1374,7 @@ static CommandCost CheckNewIndustry_Water(TileIndex tile)
 }
 
 /**
- * Check the conditions of #CHECK_LUMBERMILL (Industry should be in the rainforest).
+ * Check the conditions of #IndustryCheck::Lumbermill (Industry should be in the rainforest).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1387,7 +1387,7 @@ static CommandCost CheckNewIndustry_Lumbermill(TileIndex tile)
 }
 
 /**
- * Check the conditions of #CHECK_BUBBLEGEN (Industry should be in low land).
+ * Check the conditions of #IndustryCheck::BubbleGen (Industry should be in low land).
  * @param tile %Tile to perform the checking.
  * @return Succeeded or failed command.
  */
@@ -1407,16 +1407,16 @@ static CommandCost CheckNewIndustry_BubbleGen(TileIndex tile)
 typedef CommandCost CheckNewIndustryProc(TileIndex tile);
 
 /** Check functions for different types of industry. */
-static CheckNewIndustryProc * const _check_new_industry_procs[CHECK_END] = {
-	CheckNewIndustry_NULL,        ///< CHECK_NOTHING
-	CheckNewIndustry_Forest,      ///< CHECK_FOREST
-	CheckNewIndustry_OilRefinery, ///< CHECK_REFINERY
-	CheckNewIndustry_Farm,        ///< CHECK_FARM
-	CheckNewIndustry_Plantation,  ///< CHECK_PLANTATION
-	CheckNewIndustry_Water,       ///< CHECK_WATER
-	CheckNewIndustry_Lumbermill,  ///< CHECK_LUMBERMILL
-	CheckNewIndustry_BubbleGen,   ///< CHECK_BUBBLEGEN
-	CheckNewIndustry_OilRig,      ///< CHECK_OIL_RIG
+static constexpr EnumIndexArray<CheckNewIndustryProc * const, IndustryCheck, IndustryCheck::End> _check_new_industry_procs = {
+	CheckNewIndustry_None, // IndustryCheck::None
+	CheckNewIndustry_Forest, // IndustryCheck::Forest
+	CheckNewIndustry_OilRefinery, // IndustryCheck::Refinery
+	CheckNewIndustry_Farm, // IndustryCheck::Farm
+	CheckNewIndustry_Plantation, // IndustryCheck::Plantation
+	CheckNewIndustry_Water, // IndustryCheck::Water
+	CheckNewIndustry_Lumbermill, // IndustryCheck::Lumbermill
+	CheckNewIndustry_BubbleGen, // IndustryCheck::BubbleGen
+	CheckNewIndustry_OilRig, // IndustryCheck::OilRig
 };
 
 /**
@@ -1812,8 +1812,8 @@ static void DoCreateNewIndustry(Industry *i, TileIndex tile, IndustryType type, 
 	i->ctlflags = {};
 
 	i->construction_date = TimerGameCalendar::date;
-	i->construction_type = (_game_mode == GM_EDITOR) ? ICT_SCENARIO_EDITOR :
-			(_generating_world ? ICT_MAP_GENERATION : ICT_NORMAL_GAMEPLAY);
+	i->construction_type = (_game_mode == GM_EDITOR) ? IndustryConstructionType::ScenarioEditor :
+			(_generating_world ? IndustryConstructionType::MapGeneration : IndustryConstructionType::Gameplay);
 
 	/* Adding 1 here makes it conform to specs of var44 of varaction2 for industries
 	 * 0 = created prior of newindustries
@@ -2076,7 +2076,7 @@ CommandCost CmdBuildIndustry(DoCommandFlags flags, TileIndex tile, IndustryType 
 		return CMD_ERROR;
 	}
 
-	if (_game_mode != GM_EDITOR && GetIndustryProbabilityCallback(it, _current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_USERCREATION, 1) == 0) {
+	if (_game_mode != GM_EDITOR && GetIndustryProbabilityCallback(it, _current_company == OWNER_DEITY ? IndustryAvailabilityCallType::RandomCreation : IndustryAvailabilityCallType::UserCreation, 1) == 0) {
 		return CMD_ERROR;
 	}
 
@@ -2097,7 +2097,7 @@ CommandCost CmdBuildIndustry(DoCommandFlags flags, TileIndex tile, IndustryType 
 			bool prospect_success = deity_prospect || Random() <= indspec->prospecting_chance;
 			if (prospect_success) {
 				/* Prospected industries are build as OWNER_TOWN to not e.g. be build on owned land of the founder */
-				IndustryAvailabilityCallType calltype = _current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_PROSPECTCREATION;
+				IndustryAvailabilityCallType calltype = _current_company == OWNER_DEITY ? IndustryAvailabilityCallType::RandomCreation : IndustryAvailabilityCallType::ProspectCreation;
 				AutoRestoreBackup cur_company(_current_company, OWNER_TOWN);
 				for (int i = 0; i < 5000; i++) {
 					/* We should not have more than one Random() in a function call
@@ -2130,7 +2130,7 @@ CommandCost CmdBuildIndustry(DoCommandFlags flags, TileIndex tile, IndustryType 
 		/* Check subsequently each layout, starting with the given layout in p1 */
 		for (size_t i = 0; i < num_layouts; i++) {
 			layout = (layout + 1) % num_layouts;
-			ret = CreateNewIndustryHelper(tile, it, flags, indspec, layout, random_var8f, random_initial_bits, _current_company, _current_company == OWNER_DEITY ? IACT_RANDOMCREATION : IACT_USERCREATION, &ind);
+			ret = CreateNewIndustryHelper(tile, it, flags, indspec, layout, random_var8f, random_initial_bits, _current_company, _current_company == OWNER_DEITY ? IndustryAvailabilityCallType::RandomCreation : IndustryAvailabilityCallType::UserCreation, &ind);
 			if (ret.Succeeded()) break;
 		}
 
@@ -2309,14 +2309,14 @@ static uint32_t GetScaledIndustryGenerationProbability(IndustryType it, std::opt
 	uint32_t chance = ind_spc->appear_creation[to_underlying(_settings_game.game_creation.landscape)];
 	if (!ind_spc->enabled || ind_spc->layouts.empty() ||
 			(_game_mode != GM_EDITOR && _settings_game.difficulty.industry_density == IndustryDensity::FundedOnly) ||
-			(chance = GetIndustryProbabilityCallback(it, IACT_MAPGENERATION, chance)) == 0) {
+			(chance = GetIndustryProbabilityCallback(it, IndustryAvailabilityCallType::MapGeneration, chance)) == 0) {
 		*force_at_least_one = false;
 		return 0;
 	} else {
 		chance *= 16; // to increase precision
 		/* We want industries appearing at coast to appear less often on bigger maps, as length of coast increases slower than map area.
 		 * For simplicity we scale in both cases, though scaling the probabilities of all industries has no effect. */
-		chance = (ind_spc->check_proc == CHECK_REFINERY || ind_spc->check_proc == CHECK_OIL_RIG) ? Map::ScaleBySize1D(chance) : Map::ScaleBySize(chance);
+		chance = (ind_spc->check_proc == IndustryCheck::Refinery || ind_spc->check_proc == IndustryCheck::OilRig) ? Map::ScaleBySize1D(chance) : Map::ScaleBySize(chance);
 
 		*force_at_least_one = (chance > 0) && !ind_spc->behaviour.Test(IndustryBehaviour::NoBuildMapCreation) && (_game_mode != GM_EDITOR);
 		return chance;
@@ -2341,7 +2341,7 @@ static uint16_t GetIndustryGamePlayProbability(IndustryType it, uint8_t *min_num
 	if (!ind_spc->enabled || ind_spc->layouts.empty() ||
 			(ind_spc->behaviour.Test(IndustryBehaviour::Before1950) && TimerGameCalendar::year > 1950) ||
 			(ind_spc->behaviour.Test(IndustryBehaviour::After1960) && TimerGameCalendar::year < 1960) ||
-			(chance = GetIndustryProbabilityCallback(it, IACT_RANDOMCREATION, chance)) == 0) {
+			(chance = GetIndustryProbabilityCallback(it, IndustryAvailabilityCallType::RandomCreation, chance)) == 0) {
 		*min_number = 0;
 		return 0;
 	}
@@ -2404,7 +2404,7 @@ static void PlaceInitialIndustry(IndustryType type, bool water, bool try_hard)
 	AutoRestoreBackup cur_company(_current_company, OWNER_NONE);
 
 	IncreaseGeneratingWorldProgress(water ? GWP_WATER_INDUSTRY : GWP_LAND_INDUSTRY);
-	PlaceIndustry(type, IACT_MAPGENERATION, try_hard);
+	PlaceIndustry(type, IndustryAvailabilityCallType::MapGeneration, try_hard);
 }
 
 /**
@@ -2722,7 +2722,7 @@ void IndustryBuildData::TryBuildNewIndustry()
 		}
 
 		/* Try to create the industry. */
-		const Industry *ind = PlaceIndustry(it, IACT_RANDOMCREATION, false);
+		const Industry *ind = PlaceIndustry(it, IndustryAvailabilityCallType::RandomCreation, false);
 		if (ind == nullptr) {
 			this->builddata[it].wait_count = this->builddata[it].max_wait + 1; // Compensate for decrementing below.
 			this->builddata[it].max_wait = std::min(1000, this->builddata[it].max_wait + 2);
