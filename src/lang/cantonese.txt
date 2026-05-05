@@ -2236,7 +2236,7 @@ STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :正在忽略基
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :正在忽略基礎音效集「{STRING}」：搵唔到檔案
 STR_CONFIG_ERROR_INVALID_BASE_MUSIC_NOT_FOUND                   :正在忽略基礎音樂集「{STRING}」：搵唔到檔案
 
-# Video initalization errors
+# Video initialization errors
 STR_VIDEO_DRIVER_ERROR                                          :圖像設定錯誤……
 STR_VIDEO_DRIVER_ERROR_NO_HARDWARE_ACCELERATION                 :搵唔到相容嘅顯示卡裝置。硬體加速已被停用
 STR_VIDEO_DRIVER_ERROR_HARDWARE_ACCELERATION_CRASH              :GPU 驅動程式導致遊戲崩潰。硬體加速已被停用
