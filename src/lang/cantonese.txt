@@ -1567,7 +1567,7 @@ STR_CONFIG_SETTING_CARGO_AGING_RATE                             :貨物過期貶
 STR_CONFIG_SETTING_CARGO_AGING_RATE_HELPTEXT                    :調整貨物裝車後隨時間貶值嘅快慢
 STR_CONFIG_SETTING_CARGO_AGING_RATE_VALUE                       :{NUM}%
 ###setting-zero-is-special
-STR_CONFIG_SETTING_CARGO_AGING_RATE_ZERO                        :無腐爛
+STR_CONFIG_SETTING_CARGO_AGING_RATE_ZERO                        :唔腐爛
 
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE                            :車輛達到使用年限時自動更新：{STRING}
 STR_CONFIG_SETTING_AUTORENEW_VEHICLE_HELPTEXT                   :如生效此選項，全部在符合更換條件時進入維修設施嘅車輛會被更換。
