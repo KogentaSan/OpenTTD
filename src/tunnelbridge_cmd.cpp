@@ -114,8 +114,8 @@ int CalcBridgeLenCostFactor(int length)
 Foundation GetBridgeFoundation(Slope tileh, Axis axis)
 {
 	if (tileh == SLOPE_FLAT ||
-			((tileh == SLOPE_NE || tileh == SLOPE_SW) && axis == AXIS_X) ||
-			((tileh == SLOPE_NW || tileh == SLOPE_SE) && axis == AXIS_Y)) return FOUNDATION_NONE;
+			((tileh == SLOPE_NE || tileh == SLOPE_SW) && axis == Axis::X) ||
+			((tileh == SLOPE_NW || tileh == SLOPE_SE) && axis == Axis::Y)) return FOUNDATION_NONE;
 
 	return (HasSlopeHighestCorner(tileh) ? InclinedFoundation(axis) : FlatteningFoundation(tileh));
 }
@@ -197,7 +197,7 @@ static uint8_t GetBridgeRampDirectionBaseOffset(DiagDirection diagdir)
  */
 static uint8_t GetBridgeMiddleAxisBaseOffset(Axis axis)
 {
-	return axis == AXIS_X ? 0 : 4;
+	return axis == Axis::X ? 0 : 4;
 }
 
 /**
@@ -218,9 +218,9 @@ static CommandCost CheckBridgeSlope(BridgePieces bridge_piece, Axis axis, Slope 
 
 	Slope valid_inclined;
 	if (bridge_piece == BRIDGE_PIECE_NORTH) {
-		valid_inclined = (axis == AXIS_X ? SLOPE_NE : SLOPE_NW);
+		valid_inclined = (axis == Axis::X ? SLOPE_NE : SLOPE_NW);
 	} else {
-		valid_inclined = (axis == AXIS_X ? SLOPE_SW : SLOPE_SE);
+		valid_inclined = (axis == Axis::X ? SLOPE_SW : SLOPE_SE);
 	}
 	if ((tileh != SLOPE_FLAT) && (tileh != valid_inclined)) return CMD_ERROR;
 
@@ -355,9 +355,9 @@ CommandCost CmdBuildBridge(DoCommandFlags flags, TileIndex tile_end, TileIndex t
 
 	Axis direction;
 	if (TileX(tile_start) == TileX(tile_end)) {
-		direction = AXIS_Y;
+		direction = Axis::Y;
 	} else if (TileY(tile_start) == TileY(tile_end)) {
-		direction = AXIS_X;
+		direction = Axis::X;
 	} else {
 		return CommandCost(STR_ERROR_START_AND_END_MUST_BE_IN);
 	}
@@ -456,7 +456,7 @@ CommandCost CmdBuildBridge(DoCommandFlags flags, TileIndex tile_end, TileIndex t
 		if (is_new_owner) owner = company;
 
 		/* Check if the new bridge is compatible with tiles underneath. */
-		TileIndexDiff delta = (direction == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
+		TileIndexDiff delta = (direction == Axis::X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
 		for (TileIndex tile = tile_start + delta; tile != tile_end; tile += delta) {
 			CommandCost ret = CheckBuildAbove(tile, flags, direction, z_start + 1);
 			if (ret.Failed()) return ret;
@@ -686,7 +686,7 @@ CommandCost CmdBuildTunnel(DoCommandFlags flags, TileIndex start_tile, Transport
 
 	TileIndexDiff delta = TileOffsByDiagDir(direction);
 	DiagDirection tunnel_in_way_dir;
-	if (DiagDirToAxis(direction) == AXIS_Y) {
+	if (DiagDirToAxis(direction) == Axis::Y) {
 		tunnel_in_way_dir = (TileX(start_tile) < (Map::MaxX() / 2)) ? DIAGDIR_SW : DIAGDIR_NE;
 	} else {
 		tunnel_in_way_dir = (TileY(start_tile) < (Map::MaxX() / 2)) ? DIAGDIR_SE : DIAGDIR_NW;
@@ -769,7 +769,7 @@ CommandCost CmdBuildTunnel(DoCommandFlags flags, TileIndex start_tile, Transport
 		assert(coa_index < UINT_MAX); // more than 2**32 cleared areas would be a bug in itself
 		coa = nullptr;
 
-		ret = std::get<0>(Command<Commands::TerraformLand>::Do(flags, end_tile, end_tileh & start_tileh, false));
+		ret = ExtractCommandCost(Command<Commands::TerraformLand>::Do(flags, end_tile, end_tileh & start_tileh, false));
 		_cleared_object_areas[(uint)coa_index].first_tile = old_first_tile;
 		if (ret.Failed()) return CommandCost(STR_ERROR_UNABLE_TO_EXCAVATE_LAND);
 		cost.AddCost(ret.GetCost());
@@ -1085,14 +1085,14 @@ static int DrawPillarColumn(int z_bottom, int z_top, const PalSpriteID &psid, in
  */
 static void DrawBridgePillars(const PalSpriteID &psid, const TileInfo *ti, Axis axis, bool drawfarpillar, int x, int y, int z_bridge)
 {
-	static const int bounding_box_size[2]  = {16, 2}; ///< bounding box size of pillars along bridge direction
-	static const int back_pillar_offset[2] = { 0, 9}; ///< sprite position offset of back facing pillar
+	static constexpr AxisIndexArray<int> bounding_box_size{16, 2}; ///< bounding box size of pillars along bridge direction
+	static constexpr AxisIndexArray<int> back_pillar_offset{0, 9}; ///< sprite position offset of back facing pillar
 
 	static const int INF = 1000; ///< big number compared to sprite size
-	static const SubSprite half_pillar_sub_sprite[2][2] = {
+	static constexpr AxisIndexArray<SubSprite[2]> half_pillar_sub_sprite{{{
 		{ {  -14, -INF, INF, INF }, { -INF, -INF, -15, INF } }, // X axis, north and south
 		{ { -INF, -INF,  15, INF }, {   16, -INF, INF, INF } }, // Y axis, north and south
-	};
+	}}};
 
 	if (psid.sprite == 0) return;
 
@@ -1349,7 +1349,7 @@ static void DrawTile_TunnelBridge(TileInfo *ti)
 			RoadType tram_rt = GetRoadTypeTram(ti->tile);
 			const RoadTypeInfo *road_rti = road_rt == INVALID_ROADTYPE ? nullptr : GetRoadTypeInfo(road_rt);
 			const RoadTypeInfo *tram_rti = tram_rt == INVALID_ROADTYPE ? nullptr : GetRoadTypeInfo(tram_rt);
-			uint sprite_offset = DiagDirToAxis(tunnelbridge_direction) == AXIS_X ? 1 : 0;
+			uint sprite_offset = DiagDirToAxis(tunnelbridge_direction) == Axis::X ? 1 : 0;
 			bool draw_underlay = true;
 
 			/* Road underlay takes precedence over tram */
@@ -1407,9 +1407,9 @@ static void DrawTile_TunnelBridge(TileInfo *ti)
 			if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation && HasTunnelBridgeReservation(ti->tile)) {
 				if (rti->UsesOverlay()) {
 					SpriteID overlay = GetCustomRailSprite(rti, ti->tile, RailSpriteType::Overlay);
-					DrawGroundSprite(overlay + RTO_X + DiagDirToAxis(tunnelbridge_direction), PALETTE_CRASH);
+					DrawGroundSprite(overlay + RTO_X + to_underlying(DiagDirToAxis(tunnelbridge_direction)), PALETTE_CRASH);
 				} else {
-					DrawGroundSprite(DiagDirToAxis(tunnelbridge_direction) == AXIS_X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH);
+					DrawGroundSprite(DiagDirToAxis(tunnelbridge_direction) == Axis::X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH);
 				}
 			}
 
@@ -1496,7 +1496,7 @@ static void DrawTile_TunnelBridge(TileInfo *ti)
 				SpriteID surface = rti->UsesOverlay() ? GetCustomRailSprite(rti, ti->tile, RailSpriteType::Bridge) : rti->base_sprites.bridge_deck;
 				if (surface != 0) {
 					if (HasBridgeFlatRamp(ti->tileh, DiagDirToAxis(tunnelbridge_direction))) {
-						AddSortableSpriteToDraw(surface + ((DiagDirToAxis(tunnelbridge_direction) == AXIS_X) ? RTBO_X : RTBO_Y), PAL_NONE, *ti, {{0, 0, TILE_HEIGHT}, {TILE_SIZE, TILE_SIZE, 0}, {}});
+						AddSortableSpriteToDraw(surface + ((DiagDirToAxis(tunnelbridge_direction) == Axis::X) ? RTBO_X : RTBO_Y), PAL_NONE, *ti, {{0, 0, TILE_HEIGHT}, {TILE_SIZE, TILE_SIZE, 0}, {}});
 					} else {
 						AddSortableSpriteToDraw(surface + RTBO_SLOPE + tunnelbridge_direction, PAL_NONE, *ti, {{}, {TILE_SIZE, TILE_SIZE, TILE_HEIGHT}, {}});
 					}
@@ -1508,13 +1508,13 @@ static void DrawTile_TunnelBridge(TileInfo *ti)
 				if (rti->UsesOverlay()) {
 					SpriteID overlay = GetCustomRailSprite(rti, ti->tile, RailSpriteType::Overlay);
 					if (HasBridgeFlatRamp(ti->tileh, DiagDirToAxis(tunnelbridge_direction))) {
-						AddSortableSpriteToDraw(overlay + RTO_X + DiagDirToAxis(tunnelbridge_direction), PALETTE_CRASH, *ti, {{0, 0, TILE_HEIGHT}, {TILE_SIZE, TILE_SIZE, 0}, {}});
+						AddSortableSpriteToDraw(overlay + RTO_X + to_underlying(DiagDirToAxis(tunnelbridge_direction)), PALETTE_CRASH, *ti, {{0, 0, TILE_HEIGHT}, {TILE_SIZE, TILE_SIZE, 0}, {}});
 					} else {
 						AddSortableSpriteToDraw(overlay + RTO_SLOPE_NE + tunnelbridge_direction, PALETTE_CRASH, *ti, {{}, {TILE_SIZE, TILE_SIZE, TILE_HEIGHT}, {}});
 					}
 				} else {
 					if (HasBridgeFlatRamp(ti->tileh, DiagDirToAxis(tunnelbridge_direction))) {
-						AddSortableSpriteToDraw(DiagDirToAxis(tunnelbridge_direction) == AXIS_X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH, *ti, {{0, 0, TILE_HEIGHT}, {TILE_SIZE, TILE_SIZE, 0}, {}});
+						AddSortableSpriteToDraw(DiagDirToAxis(tunnelbridge_direction) == Axis::X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH, *ti, {{0, 0, TILE_HEIGHT}, {TILE_SIZE, TILE_SIZE, 0}, {}});
 					} else {
 						AddSortableSpriteToDraw(rti->base_sprites.single_sloped + tunnelbridge_direction, PALETTE_CRASH, *ti, {{}, {TILE_SIZE, TILE_SIZE, TILE_HEIGHT}, {}});
 					}
@@ -1528,7 +1528,7 @@ static void DrawTile_TunnelBridge(TileInfo *ti)
 		}
 
 		BridgePillarFlags blocked_pillars;
-		if (DiagDirToAxis(tunnelbridge_direction) == AXIS_X) {
+		if (DiagDirToAxis(tunnelbridge_direction) == Axis::X) {
 			blocked_pillars = {BridgePillarFlag::EdgeSW, BridgePillarFlag::EdgeNE};
 		} else {
 			blocked_pillars = {BridgePillarFlag::EdgeNW, BridgePillarFlag::EdgeSE};
@@ -1587,9 +1587,9 @@ static BridgePillarFlags GetBridgeTilePillarFlags(TileIndex tile, TileIndex ramp
 	const BridgeSpec *spec = GetBridgeSpec(type);
 	if (!spec->ctrl_flags.Test(BridgeSpec::ControlFlag::InvalidPillarFlags)) {
 		BridgePieces piece = CalcBridgePiece(GetTunnelBridgeLength(tile, rampnorth) + 1, GetTunnelBridgeLength(tile, rampsouth) + 1);
-		Axis axis = TileX(rampnorth) == TileX(rampsouth) ? AXIS_Y : AXIS_X;
+		Axis axis = TileX(rampnorth) == TileX(rampsouth) ? Axis::Y : Axis::X;
 
-		return spec->pillar_flags[piece][axis == AXIS_Y ? 1 : 0];
+		return spec->pillar_flags[piece][axis];
 	}
 
 	return BRIDGEPILLARFLAGS_ALL_CORNERS;
@@ -1658,7 +1658,7 @@ void DrawBridgeMiddle(const TileInfo *ti, BridgePillarFlags blocked_pillars)
 
 	/* Draw floor and far part of bridge*/
 	if (!IsInvisibilitySet(TO_BRIDGES)) {
-		if (axis == AXIS_X) {
+		if (axis == Axis::X) {
 			AddSortableSpriteToDraw(psid[0].sprite, psid[0].pal, x, y, z, {{0, 0, BRIDGE_Z_START}, {TILE_SIZE, 1, 40}, {0, 0, -BRIDGE_Z_START}}, IsTransparencySet(TO_BRIDGES));
 		} else {
 			AddSortableSpriteToDraw(psid[0].sprite, psid[0].pal, x, y, z, {{0, 0, BRIDGE_Z_START}, {1, TILE_SIZE, 40}, {0, 0, -BRIDGE_Z_START}}, IsTransparencySet(TO_BRIDGES));
@@ -1667,22 +1667,22 @@ void DrawBridgeMiddle(const TileInfo *ti, BridgePillarFlags blocked_pillars)
 
 	if (transport_type == TRANSPORT_ROAD) {
 		/* DrawBridgeRoadBits() calls EndSpriteCombine() and StartSpriteCombine() */
-		DrawBridgeRoadBits(rampsouth, x, y, bridge_z, axis ^ 1, false, is_custom_layout);
+		DrawBridgeRoadBits(rampsouth, x, y, bridge_z, to_underlying(OtherAxis(axis)), false, is_custom_layout);
 	} else if (transport_type == TRANSPORT_RAIL) {
 		const RailTypeInfo *rti = GetRailTypeInfo(GetRailType(rampsouth));
 		if ((is_custom_layout || rti->UsesOverlay()) && !IsInvisibilitySet(TO_BRIDGES)) {
 			SpriteID surface = rti->UsesOverlay() ? GetCustomRailSprite(rti, rampsouth, RailSpriteType::Bridge, TCX_ON_BRIDGE) : rti->base_sprites.bridge_deck;
 			if (surface != 0) {
-				AddSortableSpriteToDraw(surface + axis, PAL_NONE, x, y, bridge_z, {{}, {TILE_SIZE, TILE_SIZE, 0}, {}}, IsTransparencySet(TO_BRIDGES));
+				AddSortableSpriteToDraw(surface + to_underlying(axis), PAL_NONE, x, y, bridge_z, {{}, {TILE_SIZE, TILE_SIZE, 0}, {}}, IsTransparencySet(TO_BRIDGES));
 			}
 		}
 
 		if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation && !IsInvisibilitySet(TO_BRIDGES) && HasTunnelBridgeReservation(rampnorth)) {
 			if (rti->UsesOverlay()) {
 				SpriteID overlay = GetCustomRailSprite(rti, rampnorth, RailSpriteType::Overlay, TCX_ON_BRIDGE);
-				AddSortableSpriteToDraw(overlay + RTO_X + axis, PALETTE_CRASH, ti->x, ti->y, bridge_z, {{}, {TILE_SIZE, TILE_SIZE, 0}, {}}, IsTransparencySet(TO_BRIDGES));
+				AddSortableSpriteToDraw(overlay + RTO_X + to_underlying(axis), PALETTE_CRASH, ti->x, ti->y, bridge_z, {{}, {TILE_SIZE, TILE_SIZE, 0}, {}}, IsTransparencySet(TO_BRIDGES));
 			} else {
-				AddSortableSpriteToDraw(axis == AXIS_X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH, ti->x, ti->y, bridge_z, {{}, {TILE_SIZE, TILE_SIZE, 0}, {}}, IsTransparencySet(TO_BRIDGES));
+				AddSortableSpriteToDraw(axis == Axis::X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH, ti->x, ti->y, bridge_z, {{}, {TILE_SIZE, TILE_SIZE, 0}, {}}, IsTransparencySet(TO_BRIDGES));
 			}
 		}
 
@@ -1695,7 +1695,7 @@ void DrawBridgeMiddle(const TileInfo *ti, BridgePillarFlags blocked_pillars)
 
 	/* draw roof, the component of the bridge which is logically between the vehicle and the camera */
 	if (!IsInvisibilitySet(TO_BRIDGES)) {
-		if (axis == AXIS_X) {
+		if (axis == Axis::X) {
 			y += 12;
 			if (psid[1].sprite & SPRITE_MASK) AddSortableSpriteToDraw(psid[1].sprite, psid[1].pal, x, y, z, {{0, 3, BRIDGE_Z_START}, {TILE_SIZE, 1, 40}, {0, -3, -BRIDGE_Z_START}}, IsTransparencySet(TO_BRIDGES));
 		} else {
@@ -1966,7 +1966,7 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 	/* Direction of the vehicle */
 	const DiagDirection vdir = DirToDiagDir(v->GetMovingDirection());
 	/* New position of the vehicle on the tile */
-	uint8_t pos = (DiagDirToAxis(vdir) == AXIS_X ? x : y) & TILE_UNIT_MASK;
+	uint8_t pos = (DiagDirToAxis(vdir) == Axis::X ? x : y) & TILE_UNIT_MASK;
 	/* Number of units moved by the vehicle since entering the tile */
 	uint8_t frame = (vdir == DIAGDIR_NE || vdir == DIAGDIR_NW) ? TILE_SIZE - 1 - pos : pos;
 

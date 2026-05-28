@@ -414,8 +414,8 @@ TileIndex GetNearbyTile(uint8_t parameter, TileIndex tile, bool signed_offsets, 
 	if (signed_offsets && y >= 8) y -= 16;
 
 	/* Swap width and height depending on axis for railway stations */
-	if (axis == INVALID_AXIS && HasStationTileRail(tile)) axis = GetRailStationAxis(tile);
-	if (axis == AXIS_Y) std::swap(x, y);
+	if (axis == Axis::Invalid && HasStationTileRail(tile)) axis = GetRailStationAxis(tile);
+	if (axis == Axis::Y) std::swap(x, y);
 
 	/* Make sure we never roam outside of the map, better wrap in that case */
 	return Map::WrapToMap(tile + TileDiffXY(x, y));
@@ -453,7 +453,7 @@ uint32_t GetNearbyTileInformation(TileIndex tile, bool grf_version8)
  */
 uint32_t GetCompanyInfo(CompanyID owner, const Livery *l)
 {
-	if (l == nullptr && Company::IsValidID(owner)) l = &Company::Get(owner)->livery[LS_DEFAULT];
+	if (l == nullptr && Company::IsValidID(owner)) l = &Company::Get(owner)->livery[LiveryScheme::Default];
 	return owner.base() | (Company::IsValidAiID(owner) ? 0x10000 : 0) | (l != nullptr ? (to_underlying(l->colour1) << 24) | (to_underlying(l->colour2) << 28) : 0);
 }
 
@@ -519,7 +519,7 @@ void ErrorUnknownCallbackResult(uint32_t grfid, uint16_t cbid, uint16_t cb_res)
 		grfconfig->grf_bugs.Set(GRFBug::UnknownCbResult);
 		ShowErrorMessage(GetEncodedString(STR_NEWGRF_BUGGY, grfconfig->GetName()),
 			GetEncodedString(STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT, std::monostate{}, cbid, cb_res),
-			WL_CRITICAL);
+			WarningLevel::Critical);
 	}
 
 	/* debug output */

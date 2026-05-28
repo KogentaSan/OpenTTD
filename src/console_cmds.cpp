@@ -148,13 +148,13 @@ static inline bool NetworkAvailable(bool echo)
  */
 static ConsoleHookResult ConHookServerOnly(bool echo)
 {
-	if (!NetworkAvailable(echo)) return CHR_DISALLOW;
+	if (!NetworkAvailable(echo)) return ConsoleHookResult::Disallow;
 
 	if (!_network_server) {
 		if (echo) IConsolePrint(CC_ERROR, "This command is only available to a network server.");
-		return CHR_DISALLOW;
+		return ConsoleHookResult::Disallow;
 	}
-	return CHR_ALLOW;
+	return ConsoleHookResult::Allow;
 }
 
 /**
@@ -163,13 +163,13 @@ static ConsoleHookResult ConHookServerOnly(bool echo)
  */
 static ConsoleHookResult ConHookClientOnly(bool echo)
 {
-	if (!NetworkAvailable(echo)) return CHR_DISALLOW;
+	if (!NetworkAvailable(echo)) return ConsoleHookResult::Disallow;
 
 	if (_network_server) {
 		if (echo) IConsolePrint(CC_ERROR, "This command is not available to a network server.");
-		return CHR_DISALLOW;
+		return ConsoleHookResult::Disallow;
 	}
-	return CHR_ALLOW;
+	return ConsoleHookResult::Allow;
 }
 
 /**
@@ -178,13 +178,13 @@ static ConsoleHookResult ConHookClientOnly(bool echo)
  */
 static ConsoleHookResult ConHookNeedNetwork(bool echo)
 {
-	if (!NetworkAvailable(echo)) return CHR_DISALLOW;
+	if (!NetworkAvailable(echo)) return ConsoleHookResult::Disallow;
 
 	if (!_networking || (!_network_server && !MyClient::IsConnected())) {
 		if (echo) IConsolePrint(CC_ERROR, "Not connected. This command is only available in multiplayer.");
-		return CHR_DISALLOW;
+		return ConsoleHookResult::Disallow;
 	}
-	return CHR_ALLOW;
+	return ConsoleHookResult::Allow;
 }
 
 /**
@@ -193,13 +193,13 @@ static ConsoleHookResult ConHookNeedNetwork(bool echo)
  */
 static ConsoleHookResult ConHookNeedNonDedicatedNetwork(bool echo)
 {
-	if (!NetworkAvailable(echo)) return CHR_DISALLOW;
+	if (!NetworkAvailable(echo)) return ConsoleHookResult::Disallow;
 
 	if (_network_dedicated) {
 		if (echo) IConsolePrint(CC_ERROR, "This command is not available to a dedicated network server.");
-		return CHR_DISALLOW;
+		return ConsoleHookResult::Disallow;
 	}
-	return CHR_ALLOW;
+	return ConsoleHookResult::Allow;
 }
 
 /**
@@ -210,9 +210,9 @@ static ConsoleHookResult ConHookNoNetwork(bool echo)
 {
 	if (_networking) {
 		if (echo) IConsolePrint(CC_ERROR, "This command is forbidden in multiplayer.");
-		return CHR_DISALLOW;
+		return ConsoleHookResult::Disallow;
 	}
-	return CHR_ALLOW;
+	return ConsoleHookResult::Allow;
 }
 
 /**
@@ -223,9 +223,9 @@ static ConsoleHookResult ConHookServerOrNoNetwork(bool echo)
 {
 	if (_networking && !_network_server) {
 		if (echo) IConsolePrint(CC_ERROR, "This command is only available to a network server.");
-		return CHR_DISALLOW;
+		return ConsoleHookResult::Disallow;
 	}
-	return CHR_ALLOW;
+	return ConsoleHookResult::Allow;
 }
 
 /**
@@ -237,11 +237,11 @@ static ConsoleHookResult ConHookNewGRFDeveloperTool(bool echo)
 	if (_settings_client.gui.newgrf_developer_tools) {
 		if (_game_mode == GM_MENU) {
 			if (echo) IConsolePrint(CC_ERROR, "This command is only available in-game and in the editor.");
-			return CHR_DISALLOW;
+			return ConsoleHookResult::Disallow;
 		}
 		return ConHookNoNetwork(echo);
 	}
-	return CHR_HIDE;
+	return ConsoleHookResult::Hide;
 }
 
 /**
@@ -667,7 +667,7 @@ static bool ConClearBuffer(std::span<std::string_view> argv)
 	}
 
 	IConsoleClearBuffer();
-	SetWindowDirty(WC_CONSOLE, 0);
+	SetWindowDirty(WindowClass::Console, 0);
 	return true;
 }
 
@@ -1344,8 +1344,8 @@ static bool ConEchoC(std::span<std::string_view> argv)
 	if (argv.size() < 3) return false;
 
 	auto colour = ParseInteger(argv[1]);
-	if (!colour.has_value() || !IsInsideMM(*colour, TC_BEGIN, TC_END)) {
-		IConsolePrint(CC_ERROR, "The colour must be a number between {} and {}.", TC_BEGIN, TC_END - 1);
+	if (!colour.has_value() || !IsInsideMM(*colour, to_underlying(TextColour::Begin), to_underlying(TextColour::End))) {
+		IConsolePrint(CC_ERROR, "The colour must be a number between {} and {}.", TextColour::Begin, to_underlying(TextColour::End) - 1);
 		return true;
 	}
 
@@ -1962,7 +1962,7 @@ static bool ConHelp(std::span<std::string_view> argv)
 		return true;
 	}
 
-	IConsolePrint(TC_LIGHT_BLUE, " ---- OpenTTD Console Help ---- ");
+	IConsolePrint(TextColour::LightBlue, " ---- OpenTTD Console Help ---- ");
 	IConsolePrint(CC_DEFAULT, " - commands: the command to list all commands is 'list_cmds'.");
 	IConsolePrint(CC_DEFAULT, " call commands with '<command> <arg2> <arg3>...'");
 	IConsolePrint(CC_DEFAULT, " - to assign strings, or use them as arguments, enclose it within quotes.");
@@ -1985,7 +1985,7 @@ static bool ConListCommands(std::span<std::string_view> argv)
 	for (auto &it : IConsole::Commands()) {
 		const IConsoleCmd *cmd = &it.second;
 		if (argv.size() <= 1|| cmd->name.find(argv[1]) != std::string::npos) {
-			if (cmd->hook == nullptr || cmd->hook(false) != CHR_HIDE) IConsolePrint(CC_DEFAULT, cmd->name);
+			if (cmd->hook == nullptr || cmd->hook(false) != ConsoleHookResult::Hide) IConsolePrint(CC_DEFAULT, cmd->name);
 		}
 	}
 
@@ -2300,12 +2300,17 @@ struct ConsoleContentCallback : public ContentCallback {
  */
 static void OutputContentState(const ContentInfo &ci)
 {
-	static const std::string_view types[] = { "", "Base graphics", "NewGRF", "AI", "AI library", "Scenario", "Heightmap", "Base sound", "Base music", "Game script", "GS library" };
-	static_assert(std::size(types) == to_underlying(ContentType::End));
-	static const std::string_view states[] = { "Not selected", "Selected", "Dep Selected", "Installed", "Unknown" };
-	static const TextColour state_to_colour[] = { CC_COMMAND, CC_INFO, CC_INFO, CC_WHITE, CC_ERROR };
+	static constexpr EnumIndexArray<std::string_view, ContentType, ContentType::End> types{
+		"", "Base graphics", "NewGRF", "AI", "AI library", "Scenario", "Heightmap", "Base sound", "Base music", "Game script", "GS library"
+	};
+	static constexpr EnumIndexArray<std::string_view, ContentInfo::State, ContentInfo::State::End> states{
+		"Not selected", "Selected", "Dep Selected", "Installed", "Unknown"
+	};
+	static constexpr EnumIndexArray<TextColour, ContentInfo::State, ContentInfo::State::End> state_to_colour{
+		CC_COMMAND, CC_INFO, CC_INFO, CC_WHITE, CC_ERROR
+	};
 
-	IConsolePrint(state_to_colour[to_underlying(ci.state)], "{}, {}, {}, {}, {:08X}, {}", ci.id, types[to_underlying(ci.type)], states[to_underlying(ci.state)], ci.name, ci.unique_id, FormatArrayAsHex(ci.md5sum));
+	IConsolePrint(state_to_colour[ci.state], "{}, {}, {}, {}, {:08X}, {}", ci.id, types[ci.type], states[ci.state], ci.name, ci.unique_id, FormatArrayAsHex(ci.md5sum));
 }
 
 /** Downloading of content from the server. @copydoc IConsoleCmdProc */
@@ -2641,7 +2646,7 @@ static bool ConNewGRFProfile(std::span<std::string_view> argv)
 			auto profiler = std::ranges::find(_newgrf_profilers, &grf, &NewGRFProfiler::grffile);
 			bool selected = profiler != _newgrf_profilers.end();
 			bool active = selected && profiler->active;
-			TextColour tc = active ? TC_LIGHT_BLUE : selected ? TC_GREEN : CC_INFO;
+			TextColour tc = active ? TextColour::LightBlue : selected ? TextColour::Green : CC_INFO;
 			std::string_view statustext = active ? " (active)" : selected ? " (selected)" : "";
 			IConsolePrint(tc, "{}: [{:08X}] {}{}", i, std::byteswap(grf.grfid), grf.filename, statustext);
 			i++;

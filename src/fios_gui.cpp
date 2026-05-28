@@ -303,16 +303,16 @@ static constexpr std::initializer_list<NWidgetPart> _nested_save_dialog_widgets 
 };
 
 /** Text colours of #DetailedFileType fios entries in the window. */
-static const EnumIndexArray<TextColour, DetailedFileType, DetailedFileType::End> _fios_colours = {
-	TC_LIGHT_BROWN, // DetailedFileType::OldGameFile
-	TC_ORANGE, // DetailedFileType::GameFile
-	TC_YELLOW, // DetailedFileType::HeightmapBmp
-	TC_ORANGE, // DetailedFileType::HeightmapPng
-	TC_LIGHT_BROWN, // DetailedFileType::TownDataJson
-	TC_LIGHT_BLUE, // DetailedFileType::FiosDrive
-	TC_DARK_GREEN, // DetailedFileType::FiosParent
-	TC_DARK_GREEN, // DetailedFileType::FiosDirectory
-	TC_ORANGE, // DetailedFileType::FiosDirect
+static const EnumIndexArray<ExtendedTextColour, DetailedFileType, DetailedFileType::End> _fios_colours = {
+	TextColour::LightBrown, // DetailedFileType::OldGameFile
+	TextColour::Orange, // DetailedFileType::GameFile
+	TextColour::Yellow, // DetailedFileType::HeightmapBmp
+	TextColour::Orange, // DetailedFileType::HeightmapPng
+	TextColour::LightBrown, // DetailedFileType::TownDataJson
+	TextColour::LightBlue, // DetailedFileType::FiosDrive
+	TextColour::DarkGreen, // DetailedFileType::FiosParent
+	TextColour::DarkGreen, // DetailedFileType::FiosDirectory
+	TextColour::Orange, // DetailedFileType::FiosDirect
 };
 
 /**
@@ -377,7 +377,7 @@ private:
 
 		if (confirmed) {
 			if (!FioRemove(save_load_window->selected->name)) {
-				ShowErrorMessage(GetEncodedString(STR_ERROR_UNABLE_TO_DELETE_FILE), {}, WL_ERROR);
+				ShowErrorMessage(GetEncodedString(STR_ERROR_UNABLE_TO_DELETE_FILE), {}, WarningLevel::Error);
 			} else {
 				save_load_window->InvalidateData(SLIWD_RESCAN_FILES);
 				/* Reset file name to current date on successful delete */
@@ -460,7 +460,7 @@ public:
 		if (_game_mode != GM_MENU && !_networking && _game_mode != GM_EDITOR) {
 			Command<Commands::Pause>::Post(PauseMode::SaveLoad, true);
 		}
-		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WindowClass::MainWindow, 0);
 
 		this->OnInvalidateData(SLIWD_RESCAN_FILES);
 
@@ -533,7 +533,7 @@ public:
 				} else {
 					DrawString(ir.left, ir.right, ir.top + GetCharacterHeight(FontSize::Normal), STR_ERROR_UNABLE_TO_READ_DRIVE);
 				}
-				DrawString(ir.left, ir.right, ir.top, path, TC_BLACK);
+				DrawString(ir.left, ir.right, ir.top, path, TextColour::Black);
 				break;
 			}
 
@@ -574,7 +574,7 @@ public:
 
 		/* Create the nice lighter rectangle at the details top */
 		GfxFillRect(r.WithHeight(HEADER_HEIGHT).Shrink(WidgetDimensions::scaled.bevel.left, WidgetDimensions::scaled.bevel.top, WidgetDimensions::scaled.bevel.right, 0), GetColourGradient(Colours::Grey, Shade::Lightest));
-		DrawString(hr.left, hr.right, hr.top, STR_SAVELOAD_DETAIL_CAPTION, TC_FROMSTRING, SA_HOR_CENTER);
+		DrawString(hr.left, hr.right, hr.top, STR_SAVELOAD_DETAIL_CAPTION, TextColour::FromString, SA_HOR_CENTER);
 
 		if (this->selected == nullptr) return;
 
@@ -588,7 +588,7 @@ public:
 			tr.top += GetCharacterHeight(FontSize::Normal);
 		} else if (_load_check_data.error != INVALID_STRING_ID) {
 			/* Incompatible / broken savegame */
-			tr.top = DrawStringMultiLine(tr, GetString(_load_check_data.error, _load_check_data.error_msg), TC_RED);
+			tr.top = DrawStringMultiLine(tr, GetString(_load_check_data.error, _load_check_data.error_msg), TextColour::Red);
 		} else {
 			/* Mapsize */
 			DrawString(tr, GetString(STR_NETWORK_SERVER_LIST_MAP_SIZE, _load_check_data.map_size_x, _load_check_data.map_size_y));
@@ -733,7 +733,7 @@ public:
 
 			case WID_SL_MISSING_NEWGRFS:
 				if (!_network_available) {
-					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WL_ERROR);
+					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WarningLevel::Error);
 				} else if (_load_check_data.HasNewGrfs()) {
 					ShowMissingContentWindow(_load_check_data.grfconfig);
 				}
@@ -788,7 +788,7 @@ public:
 
 			case WID_SL_CONTENT_DOWNLOAD:
 				if (!_network_available) {
-					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WL_ERROR);
+					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WarningLevel::Error);
 				} else {
 					assert(this->fop == SaveLoadOperation::Load);
 					switch (this->abstract_filetype) {
@@ -983,7 +983,7 @@ public:
 /** Load game/scenario */
 static WindowDesc _load_dialog_desc(
 	WindowPosition::Center, "load_game", 500, 294,
-	WC_SAVELOAD, WC_NONE,
+	WindowClass::SaveLoad, WindowClass::None,
 	{},
 	_nested_load_dialog_widgets
 );
@@ -991,7 +991,7 @@ static WindowDesc _load_dialog_desc(
 /** Load heightmap */
 static WindowDesc _load_heightmap_dialog_desc(
 	WindowPosition::Center, "load_heightmap", 257, 320,
-	WC_SAVELOAD, WC_NONE,
+	WindowClass::SaveLoad, WindowClass::None,
 	{},
 	_nested_load_heightmap_dialog_widgets
 );
@@ -999,7 +999,7 @@ static WindowDesc _load_heightmap_dialog_desc(
 /** Load town data */
 static WindowDesc _load_town_data_dialog_desc(
 	WindowPosition::Center, "load_town_data", 257, 320,
-	WC_SAVELOAD, WC_NONE,
+	WindowClass::SaveLoad, WindowClass::None,
 	{},
 	_nested_load_town_data_dialog_widgets
 );
@@ -1007,7 +1007,7 @@ static WindowDesc _load_town_data_dialog_desc(
 /** Save game/scenario */
 static WindowDesc _save_dialog_desc(
 	WindowPosition::Center, "save_game", 500, 294,
-	WC_SAVELOAD, WC_NONE,
+	WindowClass::SaveLoad, WindowClass::None,
 	{},
 	_nested_save_dialog_widgets
 );
@@ -1019,7 +1019,7 @@ static WindowDesc _save_dialog_desc(
  */
 void ShowSaveLoadDialog(AbstractFileType abstract_filetype, SaveLoadOperation fop)
 {
-	CloseWindowById(WC_SAVELOAD, 0);
+	CloseWindowById(WindowClass::SaveLoad, 0);
 
 	if (fop == SaveLoadOperation::Save) {
 		new SaveLoadWindow(_save_dialog_desc, abstract_filetype, fop);

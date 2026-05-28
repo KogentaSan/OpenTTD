@@ -267,11 +267,11 @@ struct SelectGameWindow : public Window {
 	{
 		switch (widget) {
 			case WID_SGI_BASESET:
-				DrawStringMultiLine(r, GetString(STR_INTRO_BASESET, _missing_extra_graphics), TC_FROMSTRING, SA_CENTER);
+				DrawStringMultiLine(r, GetString(STR_INTRO_BASESET, _missing_extra_graphics), TextColour::FromString, SA_CENTER);
 				break;
 
 			case WID_SGI_TRANSLATION:
-				DrawStringMultiLine(r, GetString(STR_INTRO_TRANSLATION, _current_language->missing), TC_FROMSTRING, SA_CENTER);
+				DrawStringMultiLine(r, GetString(STR_INTRO_TRANSLATION, _current_language->missing), TextColour::FromString, SA_CENTER);
 				break;
 		}
 	}
@@ -321,7 +321,7 @@ struct SelectGameWindow : public Window {
 
 			case WID_SGI_PLAY_NETWORK:
 				if (!_network_available) {
-					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WL_ERROR);
+					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WarningLevel::Error);
 				} else {
 					ShowNetworkGameWindow();
 				}
@@ -332,7 +332,7 @@ struct SelectGameWindow : public Window {
 			case WID_SGI_HELP:            ShowHelpWindow(); break;
 			case WID_SGI_CONTENT_DOWNLOAD:
 				if (!_network_available) {
-					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WL_ERROR);
+					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WarningLevel::Error);
 				} else {
 					ShowNetworkContentListWindow();
 				}
@@ -391,7 +391,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_select_game_widgets 
 /** Window definition for the select game window. */
 static WindowDesc _select_game_desc(
 	WindowPosition::Center, {}, 0, 0,
-	WC_SELECT_GAME, WC_NONE,
+	WindowClass::SelectGame, WindowClass::None,
 	WindowDefaultFlag::NoClose,
 	_nested_select_game_widgets
 );

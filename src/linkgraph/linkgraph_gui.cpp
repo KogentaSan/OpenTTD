@@ -535,7 +535,7 @@ static_assert(WID_LGL_SATURATION_LAST - WID_LGL_SATURATION_FIRST ==
 /** Window definition for the linkgraph toolbar. */
 static WindowDesc _linkgraph_legend_desc(
 	WindowPosition::Automatic, "toolbar_linkgraph", 0, 0,
-	WC_LINKGRAPH_LEGEND, WC_NONE,
+	WindowClass::LinkGraphLegend, WindowClass::None,
 	{},
 	_nested_linkgraph_legend_widgets
 );
@@ -622,7 +622,7 @@ void LinkGraphLegendWindow::DrawWidget(const Rect &r, WidgetID widget) const
 			str = STR_LINKGRAPH_LEGEND_SATURATED;
 		}
 		if (str != STR_NULL) {
-			DrawString(br.left, br.right, CentreBounds(br.top, br.bottom, GetCharacterHeight(FontSize::Small)), str, GetContrastColour(colour) | TC_FORCED, SA_HOR_CENTER, false, FontSize::Small);
+			DrawString(br.left, br.right, CentreBounds(br.top, br.bottom, GetCharacterHeight(FontSize::Small)), str, ExtendedTextColour{GetContrastColour(colour), ExtendedTextColourFlag::Forced}, SA_HOR_CENTER, false, FontSize::Small);
 		}
 	}
 	if (IsInsideMM(widget, WID_LGL_CARGO_FIRST, WID_LGL_CARGO_LAST + 1)) {

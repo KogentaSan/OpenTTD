@@ -202,9 +202,9 @@ std::tuple<CommandCost, VehicleID, uint, uint16_t, CargoArray> CmdBuildVehicle(D
 				NormalizeTrainVehInDepot(Train::From(v));
 			}
 
-			InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
+			InvalidateWindowData(WindowClass::VehicleDepot, v->tile);
 			InvalidateWindowClassesData(GetWindowClassForVehicleType(type), 0);
-			SetWindowDirty(WC_COMPANY, _current_company);
+			SetWindowDirty(WindowClass::Company, _current_company);
 			if (IsLocalCompany()) {
 				InvalidateAutoreplaceWindow(v->engine_type, v->group_id); // updates the auto replace window (must be called before incrementing num_engines)
 			}
@@ -560,10 +560,10 @@ std::tuple<CommandCost, uint, uint16_t, CargoArray> CmdRefitVehicle(DoCommandFla
 		front->MarkDirty();
 
 		if (!free_wagon) {
-			InvalidateWindowData(WC_VEHICLE_DETAILS, front->index);
+			InvalidateWindowData(WindowClass::VehicleDetails, front->index);
 			InvalidateWindowClassesData(GetWindowClassForVehicleType(v->type), 0);
 		}
-		SetWindowDirty(WC_VEHICLE_DEPOT, front->tile);
+		SetWindowDirty(WindowClass::VehicleDepot, front->tile);
 	} else {
 		/* Always invalidate the cache; querycost might have filled it. */
 		v->InvalidateNewGRFCacheOfChain();
@@ -653,10 +653,10 @@ CommandCost CmdStartStopVehicle(DoCommandFlags flags, VehicleID veh_id, bool eva
 		v->ResetDepotUnbunching();
 
 		v->MarkDirty();
-		SetWindowWidgetDirty(WC_VEHICLE_VIEW, v->index, WID_VV_START_STOP);
-		SetWindowDirty(WC_VEHICLE_DEPOT, v->GetMovingFront()->tile);
+		SetWindowWidgetDirty(WindowClass::VehicleView, v->index, WID_VV_START_STOP);
+		SetWindowDirty(WindowClass::VehicleDepot, v->GetMovingFront()->tile);
 		SetWindowClassesDirty(GetWindowClassForVehicleType(v->type));
-		InvalidateWindowData(WC_VEHICLE_VIEW, v->index);
+		InvalidateWindowData(WindowClass::VehicleView, v->index);
 	}
 	return CommandCost();
 }
@@ -962,7 +962,7 @@ std::tuple<CommandCost, VehicleID> CmdCloneVehicle(DoCommandFlags flags, TileInd
 				/* Find out what's the best sub type */
 				uint8_t subtype = GetBestFittingSubType(v, w, v->cargo_type);
 				if (w->cargo_type != v->cargo_type || w->cargo_subtype != subtype) {
-					CommandCost cost = std::get<0>(Command<Commands::RefitVehicle>::Do(flags, w->index, v->cargo_type, subtype, false, true, 0));
+					CommandCost cost = ExtractCommandCost(Command<Commands::RefitVehicle>::Do(flags, w->index, v->cargo_type, subtype, false, true, 0));
 					if (cost.Succeeded()) total_cost.AddCost(cost.GetCost());
 				}
 
@@ -1141,7 +1141,7 @@ CommandCost CmdChangeServiceInt(DoCommandFlags flags, VehicleID veh_id, uint16_t
 		v->SetServiceInterval(serv_int);
 		v->SetServiceIntervalIsCustom(is_custom);
 		v->SetServiceIntervalIsPercent(is_percent);
-		SetWindowDirty(WC_VEHICLE_DETAILS, v->index);
+		SetWindowDirty(WindowClass::VehicleDetails, v->index);
 	}
 
 	return CommandCost();

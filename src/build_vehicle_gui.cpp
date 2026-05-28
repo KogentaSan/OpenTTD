@@ -61,7 +61,7 @@ uint GetEngineListHeight(VehicleType type)
 static constexpr std::initializer_list<NWidgetPart> _nested_build_vehicle_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, Colours::Grey),
-		NWidget(WWT_CAPTION, Colours::Grey, WID_BV_CAPTION), SetTextStyle(TC_WHITE),
+		NWidget(WWT_CAPTION, Colours::Grey, WID_BV_CAPTION), SetTextStyle(TextColour::White),
 		NWidget(WWT_SHADEBOX, Colours::Grey),
 		NWidget(WWT_DEFSIZEBOX, Colours::Grey),
 		NWidget(WWT_STICKYBOX, Colours::Grey),
@@ -803,7 +803,7 @@ static uint ShowAdditionalText(int left, int right, int y, EngineID engine)
 {
 	auto text = GetNewGRFAdditionalText(engine);
 	if (!text) return y;
-	return DrawStringMultiLine(left, right, y, INT32_MAX, *text, TC_BLACK);
+	return DrawStringMultiLine(left, right, y, INT32_MAX, *text, TextColour::Black);
 }
 
 void TestedEngineDetails::FillDefaultCapacities(const Engine *e)
@@ -898,7 +898,7 @@ int DrawVehiclePurchaseInfo(int left, int right, int y, EngineID engine_number, 
 	const GRFConfig *config = GetGRFConfig(e->GetGRFID());
 	if (_settings_client.gui.show_newgrf_name && config != nullptr)
 	{
-		DrawString(left, right, y, config->GetName(), TC_BLACK);
+		DrawString(left, right, y, config->GetName(), TextColour::Black);
 		y += GetCharacterHeight(FontSize::Normal);
 	}
 
@@ -1023,7 +1023,7 @@ void DrawEngineList(VehicleType type, const Rect &r, const GUIEngineList &eng_li
 			Rect cr = tr.WithWidth(count_width, !rtl);
 			tr = tr.Indent(count_width + WidgetDimensions::scaled.hsep_normal, !rtl);
 
-			DrawString(cr.left, cr.right, textr.top + small_text_y_offset, GetString(STR_JUST_COMMA, num_engines), TC_BLACK, SA_RIGHT | SA_FORCE, false, FontSize::Small);
+			DrawString(cr.left, cr.right, textr.top + small_text_y_offset, GetString(STR_JUST_COMMA, num_engines), TextColour::Black, SA_RIGHT | SA_FORCE, false, FontSize::Small);
 
 			if (EngineHasReplacementForCompany(Company::Get(_local_company), item.engine_id, selected_group)) {
 				DrawSpriteIgnorePadding(SPR_GROUP_REPLACE_ACTIVE, num_engines == 0 ? PALETTE_CRASH : PAL_NONE, rr, SA_CENTER);
@@ -1038,7 +1038,7 @@ void DrawEngineList(VehicleType type, const Rect &r, const GUIEngineList &eng_li
 
 		bool hidden = e->company_hidden.Test(_local_company);
 		StringID str = hidden ? STR_HIDDEN_ENGINE_NAME : STR_ENGINE_NAME;
-		TextColour tc = (item.engine_id == selected_id) ? TC_WHITE : ((hidden | shaded) ? (TC_GREY | TC_FORCED | TC_NO_SHADE) : TC_BLACK);
+		ExtendedTextColour tc = (item.engine_id == selected_id) ? TextColour::White : ((hidden | shaded) ? ExtendedTextColour{TextColour::Grey, {ExtendedTextColourFlag::Forced, ExtendedTextColourFlag::NoShade}} : TextColour::Black);
 
 		/* Draw the value of the currently selected sort property to the right (or left in RTL), if applicable */
 		std::string sort_prop_detail;
@@ -1713,8 +1713,8 @@ struct BuildVehicleWindow : Window {
 		}
 
 		if (refresh) {
-			InvalidateWindowData(WC_REPLACE_VEHICLE, this->vehicle_type, 0); // Update the autoreplace window
-			InvalidateWindowClassesData(WC_BUILD_VEHICLE); // The build windows needs updating as well
+			InvalidateWindowData(WindowClass::ReplaceVehicle, this->vehicle_type, 0); // Update the autoreplace window
+			InvalidateWindowClassesData(WindowClass::BuildVehicle); // The build windows needs updating as well
 		}
 	}
 
@@ -1748,8 +1748,8 @@ struct BuildVehicleWindow : Window {
 						Engine *engine = Engine::Get(item.variant_id);
 						engine->display_flags.Flip(EngineDisplayFlag::IsFolded);
 
-						InvalidateWindowData(WC_REPLACE_VEHICLE, this->vehicle_type, 0); // Update the autoreplace window
-						InvalidateWindowClassesData(WC_BUILD_VEHICLE); // The build windows needs updating as well
+						InvalidateWindowData(WindowClass::ReplaceVehicle, this->vehicle_type, 0); // Update the autoreplace window
+						InvalidateWindowClassesData(WindowClass::BuildVehicle); // The build windows needs updating as well
 						return;
 					}
 					if (!item.flags.Test(EngineDisplayFlag::Shaded)) e = item.engine_id;
@@ -1802,7 +1802,7 @@ struct BuildVehicleWindow : Window {
 
 			default:
 				if (IsInsideMM(widget, this->badge_filters.first, this->badge_filters.second)) {
-					PaletteID palette = SPR_2CCMAP_BASE + Company::Get(_local_company)->GetCompanyRecolourOffset(LS_DEFAULT);
+					PaletteID palette = SPR_2CCMAP_BASE + Company::Get(_local_company)->GetCompanyRecolourOffset(LiveryScheme::Default);
 					ShowDropDownList(this, this->GetWidget<NWidgetBadgeFilter>(widget)->GetDropDownList(palette), -1, widget, 0, DropDownOption::Filterable);
 				}
 				break;
@@ -1999,7 +1999,7 @@ struct BuildVehicleWindow : Window {
 				if (reopen) {
 					ReplaceDropDownList(this, this->BuildBadgeConfigurationList(), -1);
 				} else {
-					this->CloseChildWindows(WC_DROPDOWN_MENU);
+					this->CloseChildWindows(WindowClass::DropdownMenu);
 				}
 
 				/* We need to refresh if a filter is removed. */
@@ -2042,7 +2042,7 @@ struct BuildVehicleWindow : Window {
 /** Window definition for the build vehicle window. */
 static WindowDesc _build_vehicle_desc(
 	WindowPosition::Automatic, "build_vehicle", 240, 268,
-	WC_BUILD_VEHICLE, WC_NONE,
+	WindowClass::BuildVehicle, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_build_vehicle_widgets,
 	&BuildVehicleWindow::hotkeys
@@ -2058,7 +2058,7 @@ void ShowBuildVehicleWindow(TileIndex tile, VehicleType type)
 
 	assert(IsCompanyBuildableVehicleType(type));
 
-	CloseWindowById(WC_BUILD_VEHICLE, num);
+	CloseWindowById(WindowClass::BuildVehicle, num);
 
 	new BuildVehicleWindow(_build_vehicle_desc, tile, type);
 }

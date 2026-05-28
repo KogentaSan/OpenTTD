@@ -136,7 +136,7 @@ bool ClientNetworkCoordinatorSocketHandler::ReceiveGameCoordinatorError(Packet &
 			return false;
 
 		case NETWORK_COORDINATOR_ERROR_REGISTRATION_FAILED:
-			ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_COORDINATOR_REGISTRATION_FAILED), {}, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_COORDINATOR_REGISTRATION_FAILED), {}, WarningLevel::Error);
 
 			/* To prevent that we constantly try to reconnect, switch to local game. */
 			_settings_client.network.server_game_type = ServerGameType::Local;
@@ -160,7 +160,7 @@ bool ClientNetworkCoordinatorSocketHandler::ReceiveGameCoordinatorError(Packet &
 		}
 
 		case NETWORK_COORDINATOR_ERROR_REUSE_OF_INVITE_CODE:
-			ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE), {}, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE), {}, WarningLevel::Error);
 
 			/* To prevent that we constantly battle for the same invite-code, switch to local game. */
 			_settings_client.network.server_game_type = ServerGameType::Local;
@@ -189,7 +189,7 @@ bool ClientNetworkCoordinatorSocketHandler::ReceiveGameCoordinatorRegisterAck(Pa
 		ShowErrorMessage(
 			GetEncodedString(STR_NETWORK_ERROR_COORDINATOR_ISOLATED),
 			GetEncodedString(STR_NETWORK_ERROR_COORDINATOR_ISOLATED_DETAIL),
-			WL_ERROR);
+			WarningLevel::Error);
 	}
 
 	/* Users can change the invite code in the settings, but this has no effect
@@ -199,7 +199,7 @@ bool ClientNetworkCoordinatorSocketHandler::ReceiveGameCoordinatorRegisterAck(Pa
 	 * attempt to re-use when registering again. */
 	_network_server_invite_code = _settings_client.network.server_invite_code;
 
-	SetWindowDirty(WC_CLIENT_LIST, 0);
+	SetWindowDirty(WindowClass::NetworkClientList, 0);
 
 	if (_network_dedicated) {
 		std::string connection_type;
@@ -454,7 +454,7 @@ NetworkRecvStatus ClientNetworkCoordinatorSocketHandler::CloseConnection(bool er
 
 	this->CloseAllConnections();
 
-	SetWindowDirty(WC_CLIENT_LIST, 0);
+	SetWindowDirty(WindowClass::NetworkClientList, 0);
 
 	return NETWORK_RECV_STATUS_OKAY;
 }
@@ -467,7 +467,7 @@ void ClientNetworkCoordinatorSocketHandler::Register()
 	_network_server_connection_type = CONNECTION_TYPE_UNKNOWN;
 	this->next_update = {};
 
-	SetWindowDirty(WC_CLIENT_LIST, 0);
+	SetWindowDirty(WindowClass::NetworkClientList, 0);
 
 	this->Connect();
 
@@ -672,7 +672,7 @@ void ClientNetworkCoordinatorSocketHandler::CloseStunHandler(std::string_view to
  */
 void ClientNetworkCoordinatorSocketHandler::CloseTurnHandler(std::string_view token)
 {
-	CloseWindowByClass(WC_NETWORK_ASK_RELAY, NRWCD_HANDLED);
+	CloseWindowByClass(WindowClass::NetworkAskRelay, NRWCD_HANDLED);
 
 	auto turn_it = this->turn_handlers.find(token);
 	if (turn_it == this->turn_handlers.end()) return;

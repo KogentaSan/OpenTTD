@@ -213,7 +213,7 @@ struct GroundVehicle : public SpecializedVehicle<T, Type> {
 			int8_t x_pos = this->x_pos;
 			int8_t y_pos = this->y_pos;
 			/* DiagDirToAxis() is a simple mask */
-			int8_t d = DiagDirToAxis(dir) == AXIS_X ? x_pos : y_pos;
+			int8_t d = DiagDirToAxis(dir) == Axis::X ? x_pos : y_pos;
 			/* We need only the least significant bit */
 			d &= 1;
 			d ^= (int8_t)(dir == DIAGDIR_NW || dir == DIAGDIR_NE);
@@ -361,7 +361,7 @@ struct GroundVehicle : public SpecializedVehicle<T, Type> {
 	inline void SetLastSpeed()
 	{
 		if (this->cur_speed != this->gcache.last_speed) {
-			SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
+			SetWindowWidgetDirty(WindowClass::VehicleView, this->index, WID_VV_START_STOP);
 			this->gcache.last_speed = this->cur_speed;
 		}
 	}

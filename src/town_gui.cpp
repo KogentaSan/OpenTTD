@@ -214,9 +214,9 @@ public:
 			if (!this->enabled_actions.Test(i)) continue;
 
 			/* Set colour of action based on ability to execute and if selected. */
-			TextColour action_colour = TC_GREY | TC_NO_SHADE;
-			if (this->available_actions.Test(i)) action_colour = TC_ORANGE;
-			if (this->sel_action == i) action_colour = TC_WHITE;
+			ExtendedTextColour action_colour{TextColour::Grey, ExtendedTextColourFlag::NoShade};
+			if (this->available_actions.Test(i)) action_colour = TextColour::Orange;
+			if (this->sel_action == i) action_colour = TextColour::White;
 
 			DrawString(r, STR_LOCAL_AUTHORITY_ACTION_SMALL_ADVERTISING_CAMPAIGN + to_underlying(i), action_colour);
 			r.top += GetCharacterHeight(FontSize::Normal);
@@ -240,7 +240,7 @@ public:
 
 					DrawStringMultiLine(r.Shrink(WidgetDimensions::scaled.framerect),
 						GetString(this->action_tooltips[to_underlying(this->sel_action)], action_cost),
-						affordable ? TC_YELLOW : TC_RED);
+						affordable ? TextColour::Yellow : TextColour::Red);
 				}
 				break;
 		}
@@ -333,7 +333,7 @@ public:
 /** Window definition for the town authority window. */
 static WindowDesc _town_authority_desc(
 	WindowPosition::Automatic, "view_town_authority", 317, 222,
-	WC_TOWN_AUTHORITY, WC_NONE,
+	WindowClass::TownAuthority, WindowClass::None,
 	{},
 	_nested_town_authority_widgets
 );
@@ -469,7 +469,7 @@ public:
 		}
 
 		if (!this->town->text.empty()) {
-			tr.top = DrawStringMultiLine(tr, this->town->text.GetDecodedString(), TC_BLACK);
+			tr.top = DrawStringMultiLine(tr, this->town->text.GetDecodedString(), TextColour::Black);
 		}
 	}
 
@@ -640,7 +640,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_town_game_view_widge
 /** Window definition for the town view window. */
 static WindowDesc _town_game_view_desc(
 	WindowPosition::Automatic, "view_town", 260, TownViewWindow::WID_TV_HEIGHT_NORMAL,
-	WC_TOWN_VIEW, WC_NONE,
+	WindowClass::TownView, WindowClass::None,
 	{},
 	_nested_town_game_view_widgets
 );
@@ -676,7 +676,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_town_editor_view_wid
 /** Window definition for the town view window of the scenario edtior. */
 static WindowDesc _town_editor_view_desc(
 	WindowPosition::Automatic, "view_town_scen", 260, TownViewWindow::WID_TV_HEIGHT_NORMAL,
-	WC_TOWN_VIEW, WC_NONE,
+	WindowClass::TownView, WindowClass::None,
 	{},
 	_nested_town_editor_view_widgets
 );
@@ -1049,7 +1049,7 @@ const std::initializer_list<GUITownList::SortFunction * const> TownDirectoryWind
 /** Window definition for the town directory window. */
 static WindowDesc _town_directory_desc(
 	WindowPosition::Automatic, "list_towns", 208, 202,
-	WC_TOWN_DIRECTORY, WC_NONE,
+	WindowClass::TownDirectory, WindowClass::None,
 	{},
 	_nested_town_directory_widgets,
 	&TownDirectoryWindow::hotkeys
@@ -1057,7 +1057,7 @@ static WindowDesc _town_directory_desc(
 
 void ShowTownDirectory()
 {
-	if (BringWindowToFrontById(WC_TOWN_DIRECTORY, 0)) return;
+	if (BringWindowToFrontById(WindowClass::TownDirectory, 0)) return;
 	new TownDirectoryWindow(_town_directory_desc);
 }
 
@@ -1319,7 +1319,7 @@ public:
 		AutoRestoreBackup old_generating_world(_generating_world, true);
 		UpdateNearestTownForRoadTiles(true);
 		if (!GenerateTowns(this->town_layout, value)) {
-			ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_GENERATE_TOWN), GetEncodedString(STR_ERROR_NO_SPACE_FOR_TOWN), WL_INFO);
+			ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_GENERATE_TOWN), GetEncodedString(STR_ERROR_NO_SPACE_FOR_TOWN), WarningLevel::Info);
 		}
 		UpdateNearestTownForRoadTiles(false);
 	}
@@ -1350,7 +1350,7 @@ public:
 /** Window definition for the town funding window. */
 static WindowDesc _found_town_desc(
 	WindowPosition::Automatic, "build_town", 160, 162,
-	WC_FOUND_TOWN, WC_NONE,
+	WindowClass::FoundTown, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_found_town_widgets
 );
@@ -1874,7 +1874,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_build_house_widgets 
 /** Window definition for the house building window. */
 static WindowDesc _build_house_desc(
 	WindowPosition::Automatic, "build_house", 0, 0,
-	WC_BUILD_HOUSE, WC_BUILD_TOOLBAR,
+	WindowClass::BuildHouse, WindowClass::BuildToolbar,
 	WindowDefaultFlag::Construction,
 	_nested_build_house_widgets,
 	&BuildHouseWindow::hotkeys
@@ -1882,6 +1882,6 @@ static WindowDesc _build_house_desc(
 
 void ShowBuildHousePicker(Window *parent)
 {
-	if (BringWindowToFrontById(WC_BUILD_HOUSE, 0)) return;
+	if (BringWindowToFrontById(WindowClass::BuildHouse, 0)) return;
 	new BuildHouseWindow(_build_house_desc, parent);
 }

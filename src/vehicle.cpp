@@ -187,7 +187,7 @@ bool Vehicle::NeedsAutorenewing(const Company *c, bool use_renew_setting) const
 void VehicleServiceInDepot(Vehicle *v)
 {
 	assert(v != nullptr);
-	SetWindowDirty(WC_VEHICLE_DETAILS, v->index); // ensure that last service date and reliability are updated
+	SetWindowDirty(WindowClass::VehicleDetails, v->index); // ensure that last service date and reliability are updated
 
 	do {
 		v->date_of_last_service = TimerGameEconomy::date;
@@ -315,9 +315,9 @@ uint Vehicle::Crash(bool)
 
 	/* Dirty some windows */
 	InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type), 0);
-	SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
-	SetWindowDirty(WC_VEHICLE_DETAILS, this->index);
-	SetWindowDirty(WC_VEHICLE_DEPOT, this->GetMovingFront()->tile);
+	SetWindowWidgetDirty(WindowClass::VehicleView, this->index, WID_VV_START_STOP);
+	SetWindowDirty(WindowClass::VehicleDetails, this->index);
+	SetWindowDirty(WindowClass::VehicleDepot, this->GetMovingFront()->tile);
 
 	delete this->cargo_payment;
 	assert(this->cargo_payment == nullptr); // cleared by ~CargoPayment
@@ -345,7 +345,7 @@ void ShowNewGrfVehicleError(EngineID engine, StringID part1, StringID part2, GRF
 	if (!grfconfig->grf_bugs.Test(bug_type)) {
 		grfconfig->grf_bugs.Set(bug_type);
 		ShowErrorMessage(GetEncodedString(part1, grfconfig->GetName()),
-			GetEncodedString(part2, std::monostate{}, engine), WL_CRITICAL);
+			GetEncodedString(part2, std::monostate{}, engine), WarningLevel::Critical);
 		if (!_networking) Command<Commands::Pause>::Do(DoCommandFlag::Execute, critical ? PauseMode::Error : PauseMode::Normal, true);
 	}
 
@@ -797,7 +797,7 @@ void Vehicle::HandlePathfindingResult(bool path_found)
 
 		/* Clear the flag as the PF's problem was solved. */
 		this->vehicle_flags.Reset(VehicleFlag::PathfinderLost);
-		SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
+		SetWindowWidgetDirty(WindowClass::VehicleView, this->index, WID_VV_START_STOP);
 		InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type));
 		/* Delete the news item. */
 		DeleteVehicleNews(this->index, AdviceType::VehicleLost);
@@ -809,7 +809,7 @@ void Vehicle::HandlePathfindingResult(bool path_found)
 
 	/* It is first time the problem occurred, set the "lost" flag. */
 	this->vehicle_flags.Set(VehicleFlag::PathfinderLost);
-	SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
+	SetWindowWidgetDirty(WindowClass::VehicleView, this->index, WID_VV_START_STOP);
 	InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type));
 
 	/* Unbunching data is no longer valid. */
@@ -869,16 +869,16 @@ void Vehicle::PreDestructor()
 	}
 
 	if (this->Previous() == nullptr) {
-		InvalidateWindowData(WC_VEHICLE_DEPOT, this->tile);
+		InvalidateWindowData(WindowClass::VehicleDepot, this->tile);
 	}
 
 	if (this->IsPrimaryVehicle()) {
-		CloseWindowById(WC_VEHICLE_VIEW, this->index);
-		CloseWindowById(WC_VEHICLE_ORDERS, this->index);
-		CloseWindowById(WC_VEHICLE_REFIT, this->index);
-		CloseWindowById(WC_VEHICLE_DETAILS, this->index);
-		CloseWindowById(WC_VEHICLE_TIMETABLE, this->index);
-		SetWindowDirty(WC_COMPANY, this->owner);
+		CloseWindowById(WindowClass::VehicleView, this->index);
+		CloseWindowById(WindowClass::VehicleOrders, this->index);
+		CloseWindowById(WindowClass::VehicleRefit, this->index);
+		CloseWindowById(WindowClass::VehicleDetails, this->index);
+		CloseWindowById(WindowClass::VehicleTimetable, this->index);
+		SetWindowDirty(WindowClass::Company, this->owner);
 		OrderBackup::ClearVehicle(this);
 	}
 	InvalidateWindowClassesData(GetWindowClassForVehicleType(this->type), 0);
@@ -1297,7 +1297,7 @@ Vehicle *CheckClickOnVehicle(const Viewport &vp, int x, int y)
 void DecreaseVehicleValue(Vehicle *v)
 {
 	v->value -= v->value >> 8;
-	SetWindowDirty(WC_VEHICLE_DETAILS, v->index);
+	SetWindowDirty(WindowClass::VehicleDetails, v->index);
 }
 
 static const uint8_t _breakdown_chance[64] = {
@@ -1329,7 +1329,7 @@ void CheckVehicleBreakdown(Vehicle *v)
 	/* Decrease reliability. */
 	int rel, rel_old;
 	v->reliability = rel = std::max((rel_old = v->reliability) - v->reliability_spd_dec, 0);
-	if ((rel_old >> 8) != (rel >> 8)) SetWindowDirty(WC_VEHICLE_DETAILS, v->index);
+	if ((rel_old >> 8) != (rel >> 8)) SetWindowDirty(WindowClass::VehicleDetails, v->index);
 
 	/* Some vehicles lose reliability but won't break down. */
 	/* Breakdowns are disabled. */
@@ -1409,8 +1409,8 @@ bool Vehicle::HandleBreakdown()
 			}
 
 			this->MarkDirty(); // Update graphics after speed is zeroed
-			SetWindowDirty(WC_VEHICLE_VIEW, this->index);
-			SetWindowDirty(WC_VEHICLE_DETAILS, this->index);
+			SetWindowDirty(WindowClass::VehicleView, this->index);
+			SetWindowDirty(WindowClass::VehicleDetails, this->index);
 
 			[[fallthrough]];
 		case 1:
@@ -1422,7 +1422,7 @@ bool Vehicle::HandleBreakdown()
 				if (--this->breakdown_delay == 0) {
 					this->breakdown_ctr = 0;
 					this->MarkDirty();
-					SetWindowDirty(WC_VEHICLE_VIEW, this->index);
+					SetWindowDirty(WindowClass::VehicleView, this->index);
 				}
 			}
 			return true;
@@ -1463,7 +1463,7 @@ void AgeVehicle(Vehicle *v)
 		}
 	}
 
-	SetWindowDirty(WC_VEHICLE_DETAILS, v->index);
+	SetWindowDirty(WindowClass::VehicleDetails, v->index);
 
 	/* Don't warn if warnings are disabled */
 	if (!_settings_client.gui.old_vehicle_warn) return;
@@ -1567,7 +1567,7 @@ void VehicleEnterDepot(Vehicle *v)
 	switch (v->type) {
 		case VehicleType::Train: {
 			Train *t = Train::From(v);
-			SetWindowClassesDirty(WC_TRAINS_LIST);
+			SetWindowClassesDirty(WindowClass::TrainList);
 			/* Clear path reservation */
 			SetDepotReservation(t->tile, false);
 			if (_settings_client.gui.show_track_reservation) MarkTileDirtyByTile(t->tile);
@@ -1581,21 +1581,21 @@ void VehicleEnterDepot(Vehicle *v)
 		}
 
 		case VehicleType::Road:
-			SetWindowClassesDirty(WC_ROADVEH_LIST);
+			SetWindowClassesDirty(WindowClass::RoadVehicleList);
 			break;
 
 		case VehicleType::Ship: {
-			SetWindowClassesDirty(WC_SHIPS_LIST);
+			SetWindowClassesDirty(WindowClass::ShipList);
 			Ship *ship = Ship::From(v);
 			ship->state = TRACK_BIT_DEPOT;
 			ship->UpdateCache();
 			ship->UpdateViewport(true, true);
-			SetWindowDirty(WC_VEHICLE_DEPOT, v->tile);
+			SetWindowDirty(WindowClass::VehicleDepot, v->tile);
 			break;
 		}
 
 		case VehicleType::Aircraft:
-			SetWindowClassesDirty(WC_AIRCRAFT_LIST);
+			SetWindowClassesDirty(WindowClass::AircraftList);
 			HandleAircraftEnterHangar(Aircraft::From(v));
 			break;
 		default: NOT_REACHED();
@@ -1603,9 +1603,9 @@ void VehicleEnterDepot(Vehicle *v)
 	if (v->type != VehicleType::Train) {
 		/* Trains update the vehicle list when the first unit enters the depot and calls VehicleEnterDepot() when the last unit enters.
 		 * We only increase the number of vehicles when the first one enters, so we will not need to search for more vehicles in the depot */
-		InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
+		InvalidateWindowData(WindowClass::VehicleDepot, v->tile);
 	}
-	SetWindowDirty(WC_VEHICLE_DEPOT, v->tile);
+	SetWindowDirty(WindowClass::VehicleDepot, v->tile);
 
 	v->vehstatus.Set(VehState::Hidden);
 	v->cur_speed = 0;
@@ -1619,7 +1619,7 @@ void VehicleEnterDepot(Vehicle *v)
 	TriggerVehicleRandomisation(v, VehicleRandomTrigger::Depot);
 	v->MarkDirty();
 
-	InvalidateWindowData(WC_VEHICLE_VIEW, v->index);
+	InvalidateWindowData(WindowClass::VehicleView, v->index);
 
 	if (v->current_order.IsType(OT_GOTO_DEPOT)) {
 		const Order *real_order = v->GetOrder(v->cur_real_order_index);
@@ -1635,7 +1635,7 @@ void VehicleEnterDepot(Vehicle *v)
 
 		if (v->current_order.IsRefit()) {
 			AutoRestoreBackup cur_company(_current_company, v->owner);
-			CommandCost cost = std::get<0>(Command<Commands::RefitVehicle>::Do(DoCommandFlag::Execute, v->index, v->current_order.GetRefitCargo(), 0xFF, false, false, 0));
+			CommandCost cost = ExtractCommandCost(Command<Commands::RefitVehicle>::Do(DoCommandFlag::Execute, v->index, v->current_order.GetRefitCargo(), 0xFF, false, false, 0));
 
 			if (cost.Failed()) {
 				_vehicles_to_autoreplace[v->index] = false;
@@ -2007,31 +2007,31 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
 			if (e->VehInfo<RailVehicleInfo>().railveh_type == RailVehicleType::Wagon) {
 				if (!CargoSpec::Get(cargo_type)->is_freight) {
 					if (parent_engine_type == EngineID::Invalid()) {
-						return LS_PASSENGER_WAGON_STEAM;
+						return LiveryScheme::PassengerWagonSteam;
 					} else {
 						bool is_mu = EngInfo(parent_engine_type)->misc_flags.Test(EngineMiscFlag::RailIsMU);
 						switch (RailVehInfo(parent_engine_type)->engclass) {
 							default: NOT_REACHED();
-							case EngineClass::Steam: return LS_PASSENGER_WAGON_STEAM;
-							case EngineClass::Diesel: return is_mu ? LS_DMU : LS_PASSENGER_WAGON_DIESEL;
-							case EngineClass::Electric: return is_mu ? LS_EMU : LS_PASSENGER_WAGON_ELECTRIC;
-							case EngineClass::Monorail: return LS_PASSENGER_WAGON_MONORAIL;
-							case EngineClass::Maglev: return LS_PASSENGER_WAGON_MAGLEV;
+							case EngineClass::Steam: return LiveryScheme::PassengerWagonSteam;
+							case EngineClass::Diesel: return is_mu ? LiveryScheme::DMU : LiveryScheme::PassengerWagonDiesel;
+							case EngineClass::Electric: return is_mu ? LiveryScheme::EMU : LiveryScheme::PassengerWagonElectric;
+							case EngineClass::Monorail: return LiveryScheme::PassengerWagonMonorail;
+							case EngineClass::Maglev: return LiveryScheme::PassengerWagonMaglev;
 						}
 					}
 				} else {
-					return LS_FREIGHT_WAGON;
+					return LiveryScheme::FreightWagon;
 				}
 			} else {
 				bool is_mu = e->info.misc_flags.Test(EngineMiscFlag::RailIsMU);
 
 				switch (e->VehInfo<RailVehicleInfo>().engclass) {
 					default: NOT_REACHED();
-					case EngineClass::Steam: return LS_STEAM;
-					case EngineClass::Diesel: return is_mu ? LS_DMU : LS_DIESEL;
-					case EngineClass::Electric: return is_mu ? LS_EMU : LS_ELECTRIC;
-					case EngineClass::Monorail: return LS_MONORAIL;
-					case EngineClass::Maglev: return LS_MAGLEV;
+					case EngineClass::Steam: return LiveryScheme::Steam;
+					case EngineClass::Diesel: return is_mu ? LiveryScheme::DMU : LiveryScheme::Diesel;
+					case EngineClass::Electric: return is_mu ? LiveryScheme::EMU : LiveryScheme::Electric;
+					case EngineClass::Monorail: return LiveryScheme::Monorail;
+					case EngineClass::Maglev: return LiveryScheme::Maglev;
 				}
 			}
 
@@ -2049,23 +2049,23 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
 			/* Important: Use Tram Flag of front part. Luckily engine_type refers to the front part here. */
 			if (e->info.misc_flags.Test(EngineMiscFlag::RoadIsTram)) {
 				/* Tram */
-				return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LS_PASSENGER_TRAM : LS_FREIGHT_TRAM;
+				return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LiveryScheme::PassengerTram : LiveryScheme::FreightTram;
 			} else {
 				/* Bus or truck */
-				return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LS_BUS : LS_TRUCK;
+				return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LiveryScheme::Bus : LiveryScheme::Truck;
 			}
 
 		case VehicleType::Ship:
 			if (!IsValidCargoType(cargo_type)) cargo_type = e->GetDefaultCargoType();
 			if (!IsValidCargoType(cargo_type)) cargo_type = GetCargoTypeByLabel(CT_GOODS); // The vehicle does not carry anything, let's pick some freight cargo
 			assert(IsValidCargoType(cargo_type));
-			return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LS_PASSENGER_SHIP : LS_FREIGHT_SHIP;
+			return IsCargoInClass(cargo_type, CargoClass::Passengers) ? LiveryScheme::PassengerShip : LiveryScheme::FreightShip;
 
 		case VehicleType::Aircraft:
 			switch (e->VehInfo<AircraftVehicleInfo>().subtype) {
-				case AIR_HELI: return LS_HELICOPTER;
-				case AIR_CTOL: return LS_SMALL_PLANE;
-				case AIR_CTOL | AIR_FAST: return LS_LARGE_PLANE;
+				case AIR_HELI: return LiveryScheme::Helicopter;
+				case AIR_CTOL: return LiveryScheme::SmallPlane;
+				case AIR_CTOL | AIR_FAST: return LiveryScheme::LargePlane;
 				default: NOT_REACHED();
 			}
 	}
@@ -2083,7 +2083,7 @@ LiveryScheme GetEngineLiveryScheme(EngineID engine_type, EngineID parent_engine_
 const Livery *GetEngineLivery(EngineID engine_type, CompanyID company, EngineID parent_engine_type, const Vehicle *v, uint8_t livery_setting)
 {
 	const Company *c = Company::Get(company);
-	LiveryScheme scheme = LS_DEFAULT;
+	LiveryScheme scheme = LiveryScheme::Default;
 
 	if (livery_setting == LIT_ALL || (livery_setting == LIT_COMPANY && company == _local_company)) {
 		if (v != nullptr) {
@@ -2099,7 +2099,7 @@ const Livery *GetEngineLivery(EngineID engine_type, CompanyID company, EngineID 
 
 		/* The default livery is always available for use, but its in_use flag determines
 		 * whether any _other_ liveries are in use. */
-		if (c->livery[LS_DEFAULT].in_use.Any({Livery::Flag::Primary, Livery::Flag::Secondary})) {
+		if (c->livery[LiveryScheme::Default].in_use.Any({Livery::Flag::Primary, Livery::Flag::Secondary})) {
 			/* Determine the livery scheme to use */
 			scheme = GetEngineLiveryScheme(engine_type, parent_engine_type, v);
 		}
@@ -2331,9 +2331,9 @@ void Vehicle::BeginLoading()
 	PrepareUnload(this);
 
 	SetWindowDirty(GetWindowClassForVehicleType(this->type), this->owner);
-	SetWindowWidgetDirty(WC_VEHICLE_VIEW, this->index, WID_VV_START_STOP);
-	SetWindowDirty(WC_VEHICLE_DETAILS, this->index);
-	SetWindowDirty(WC_STATION_VIEW, this->last_station_visited);
+	SetWindowWidgetDirty(WindowClass::VehicleView, this->index, WID_VV_START_STOP);
+	SetWindowDirty(WindowClass::VehicleDetails, this->index);
+	SetWindowDirty(WindowClass::StationView, this->last_station_visited);
 
 	Station::Get(this->last_station_visited)->MarkTilesDirty(true);
 	this->cur_speed = 0;
@@ -2533,7 +2533,7 @@ void Vehicle::LeaveUnbunchingDepot()
 
 	/* Tell the timetable we are now "on time." */
 	this->lateness_counter = 0;
-	SetWindowDirty(WC_VEHICLE_TIMETABLE, this->index);
+	SetWindowDirty(WindowClass::VehicleTimetable, this->index);
 
 	/* Find the average travel time of vehicles that we share orders with. */
 	int num_vehicles = 0;
@@ -2562,7 +2562,7 @@ void Vehicle::LeaveUnbunchingDepot()
 		if (u->vehstatus.Any({VehState::Stopped, VehState::Crashed})) continue;
 
 		u->depot_unbunching_next_departure = next_departure;
-		InvalidateWindowData(WC_VEHICLE_VIEW, u->index);
+		InvalidateWindowData(WindowClass::VehicleView, u->index);
 	}
 }
 
@@ -2612,7 +2612,7 @@ CommandCost Vehicle::SendToDepot(DoCommandFlags flags, DepotCommandFlags command
 			if (flags.Test(DoCommandFlag::Execute)) {
 				this->current_order.SetDepotOrderType({});
 				this->current_order.SetDepotActionType(halt_in_depot ? OrderDepotActionFlags{} : OrderDepotActionFlag::Halt);
-				InvalidateWindowData(WC_VEHICLE_VIEW, this->index);
+				InvalidateWindowData(WindowClass::VehicleView, this->index);
 			}
 			return CommandCost();
 		}
@@ -2629,7 +2629,7 @@ CommandCost Vehicle::SendToDepot(DoCommandFlags flags, DepotCommandFlags command
 			}
 
 			this->current_order.MakeDummy();
-			InvalidateWindowData(WC_VEHICLE_VIEW, this->index);
+			InvalidateWindowData(WindowClass::VehicleView, this->index);
 		}
 		return CommandCost();
 	}
@@ -2649,7 +2649,7 @@ CommandCost Vehicle::SendToDepot(DoCommandFlags flags, DepotCommandFlags command
 		this->SetDestTile(closest_depot.location);
 		this->current_order.MakeGoToDepot(closest_depot.destination.ToDepotID(), {});
 		if (!command.Test(DepotCommandFlag::Service)) this->current_order.SetDepotActionType(OrderDepotActionFlag::Halt);
-		InvalidateWindowData(WC_VEHICLE_VIEW, this->index);
+		InvalidateWindowData(WindowClass::VehicleView, this->index);
 
 		/* If there is no depot in front and the train is not already reversing, reverse automatically (trains only) */
 		if (this->type == VehicleType::Train && (closest_depot.reverse ^ Train::From(this)->flags.Test(VehicleRailFlag::Reversing))) {
@@ -2947,7 +2947,7 @@ void Vehicle::ShowVisualEffect() const
 			if (v->type == VehicleType::Train) effect_offset += (VEHICLE_LENGTH - Train::From(v)->gcache.cached_veh_length) / 2;
 
 			int x = _vehicle_smoke_pos[v->direction] * effect_offset;
-			int y = _vehicle_smoke_pos[(v->direction + 2) % 8] * effect_offset;
+			int y = _vehicle_smoke_pos[ChangeDir(v->direction, DIRDIFF_90RIGHT)] * effect_offset;
 
 			if (v->type == VehicleType::Train && Train::From(v)->flags.Test(VehicleRailFlag::Flipped)) {
 				x = -x;
@@ -3055,6 +3055,7 @@ void Vehicle::RemoveFromShared()
 	this->previous_shared = nullptr;
 }
 
+/** Yearly callback for vehicles. Updates statistics and shows advices about unprofitable vehicles. */
 static const IntervalTimer<TimerGameEconomy> _economy_vehicles_yearly({TimerGameEconomy::Trigger::Year, TimerGameEconomy::Priority::Vehicle}, [](auto)
 {
 	for (Vehicle *v : Vehicle::Iterate()) {
@@ -3072,14 +3073,14 @@ static const IntervalTimer<TimerGameEconomy> _economy_vehicles_yearly({TimerGame
 
 			v->profit_last_year = v->profit_this_year;
 			v->profit_this_year = 0;
-			SetWindowDirty(WC_VEHICLE_DETAILS, v->index);
+			SetWindowDirty(WindowClass::VehicleDetails, v->index);
 		}
 	}
 	GroupStatistics::UpdateProfits();
-	SetWindowClassesDirty(WC_TRAINS_LIST);
-	SetWindowClassesDirty(WC_SHIPS_LIST);
-	SetWindowClassesDirty(WC_ROADVEH_LIST);
-	SetWindowClassesDirty(WC_AIRCRAFT_LIST);
+	SetWindowClassesDirty(WindowClass::TrainList);
+	SetWindowClassesDirty(WindowClass::ShipList);
+	SetWindowClassesDirty(WindowClass::RoadVehicleList);
+	SetWindowClassesDirty(WindowClass::AircraftList);
 });
 
 /**

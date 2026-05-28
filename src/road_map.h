@@ -335,7 +335,7 @@ inline void SetDisallowedRoadDirections(Tile t, DisallowedRoadDirections drd)
 inline Axis GetCrossingRoadAxis(Tile t)
 {
 	assert(IsLevelCrossing(t));
-	return (Axis)GB(t.m5(), 0, 1);
+	return static_cast<Axis>(GB(t.m5(), 0, 1));
 }
 
 /**
@@ -347,7 +347,7 @@ inline Axis GetCrossingRoadAxis(Tile t)
 inline Axis GetCrossingRailAxis(Tile t)
 {
 	assert(IsLevelCrossing(t));
-	return OtherAxis((Axis)GetCrossingRoadAxis(t));
+	return OtherAxis(GetCrossingRoadAxis(t));
 }
 
 /**
@@ -357,7 +357,7 @@ inline Axis GetCrossingRailAxis(Tile t)
  */
 inline RoadBits GetCrossingRoadBits(Tile tile)
 {
-	return GetCrossingRoadAxis(tile) == AXIS_X ? ROAD_X : ROAD_Y;
+	return AxisToRoadBits(GetCrossingRoadAxis(tile));
 }
 
 /**
@@ -676,7 +676,7 @@ inline void MakeRoadCrossing(Tile t, Owner road, Owner tram, Owner rail, Axis ro
 	t.m2() = town.base();
 	t.m3() = 0;
 	t.m4() = INVALID_ROADTYPE;
-	t.m5() = to_underlying(RoadTileType::Crossing) << 6 | roaddir;
+	t.m5() = to_underlying(RoadTileType::Crossing) << 6 | to_underlying(roaddir);
 	SB(t.m6(), 2, 6, 0);
 	t.m7() = road.base();
 	t.m8() = INVALID_ROADTYPE << 6 | rat;

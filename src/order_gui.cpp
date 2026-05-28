@@ -236,11 +236,11 @@ void DrawOrderString(const Vehicle *v, const Order *order, VehicleOrderID order_
 		DrawSprite(sprite, PAL_NONE, rtl ? right -     sprite_size.width : left,                     y + ((int)GetCharacterHeight(FontSize::Normal) - (int)sprite_size.height) / 2);
 	}
 
-	TextColour colour = TC_BLACK;
+	ExtendedTextColour colour{TextColour::Black};
 	if (order->IsType(OT_IMPLICIT)) {
-		colour = (selected ? TC_SILVER : TC_GREY) | TC_NO_SHADE;
+		colour = ExtendedTextColour{selected ? TextColour::Silver : TextColour::Grey, ExtendedTextColourFlag::NoShade};
 	} else if (selected) {
-		colour = TC_WHITE;
+		colour = TextColour::White;
 	}
 
 	DrawString(left, rtl ? right - 2 * sprite_size.width - 3 : middle, y, GetString(STR_ORDER_INDEX, order_index + 1), colour, SA_RIGHT | SA_FORCE);
@@ -1130,7 +1130,7 @@ public:
 
 		if (this->vscroll->IsVisible(i)) {
 			StringID str = this->vehicle->IsOrderListShared() ? STR_ORDERS_END_OF_SHARED_ORDERS : STR_ORDERS_END_OF_ORDERS;
-			DrawString(rtl ? ir.left : middle, rtl ? middle : ir.right, y, str, (i == this->selected_order) ? TC_WHITE : TC_BLACK);
+			DrawString(rtl ? ir.left : middle, rtl ? middle : ir.right, y, str, (i == this->selected_order) ? TextColour::White : TextColour::Black);
 		}
 	}
 
@@ -1504,7 +1504,7 @@ public:
 			})) {
 				OnVehicleSelect(*begin);
 			} else {
-				ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_COPY_ORDER_LIST), GetEncodedString(STR_ERROR_CAN_T_COPY_ORDER_VEHICLE_LIST), WL_INFO);
+				ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_COPY_ORDER_LIST), GetEncodedString(STR_ERROR_CAN_T_COPY_ORDER_VEHICLE_LIST), WarningLevel::Info);
 			}
 		} else {
 			/* If CTRL is pressed: If all the vehicles in this list share orders, then copy orders */
@@ -1513,7 +1513,7 @@ public:
 			})) {
 				OnVehicleSelect(*begin);
 			} else {
-				ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_SHARE_ORDER_LIST), GetEncodedString(STR_ERROR_CAN_T_SHARE_ORDER_VEHICLE_LIST), WL_INFO);
+				ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_SHARE_ORDER_LIST), GetEncodedString(STR_ERROR_CAN_T_SHARE_ORDER_VEHICLE_LIST), WarningLevel::Info);
 			}
 		}
 
@@ -1645,7 +1645,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_orders_train_widgets
 /** Window definition for the train orders window. */
 static WindowDesc _orders_train_desc(
 	WindowPosition::Automatic, "view_vehicle_orders_train", 384, 100,
-	WC_VEHICLE_ORDERS, WC_VEHICLE_VIEW,
+	WindowClass::VehicleOrders, WindowClass::VehicleView,
 	WindowDefaultFlag::Construction,
 	_nested_orders_train_widgets,
 	&OrdersWindow::hotkeys
@@ -1719,7 +1719,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_orders_widgets = {
 /** Window definition for the orders window for road vehicles, ships and aircraft. */
 static WindowDesc _orders_desc(
 	WindowPosition::Automatic, "view_vehicle_orders", 384, 100,
-	WC_VEHICLE_ORDERS, WC_VEHICLE_VIEW,
+	WindowClass::VehicleOrders, WindowClass::VehicleView,
 	WindowDefaultFlag::Construction,
 	_nested_orders_widgets,
 	&OrdersWindow::hotkeys
@@ -1747,7 +1747,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_other_orders_widgets
 /** Window definition for the orders window for other companies. */
 static WindowDesc _other_orders_desc(
 	WindowPosition::Automatic, "view_vehicle_orders_competitor", 384, 86,
-	WC_VEHICLE_ORDERS, WC_VEHICLE_VIEW,
+	WindowClass::VehicleOrders, WindowClass::VehicleView,
 	WindowDefaultFlag::Construction,
 	_nested_other_orders_widgets,
 	&OrdersWindow::hotkeys
@@ -1755,9 +1755,9 @@ static WindowDesc _other_orders_desc(
 
 void ShowOrdersWindow(const Vehicle *v)
 {
-	CloseWindowById(WC_VEHICLE_DETAILS, v->index, false);
-	CloseWindowById(WC_VEHICLE_TIMETABLE, v->index, false);
-	if (BringWindowToFrontById(WC_VEHICLE_ORDERS, v->index) != nullptr) return;
+	CloseWindowById(WindowClass::VehicleDetails, v->index, false);
+	CloseWindowById(WindowClass::VehicleTimetable, v->index, false);
+	if (BringWindowToFrontById(WindowClass::VehicleOrders, v->index) != nullptr) return;
 
 	/* Using a different WindowDescs for _local_company causes problems.
 	 * Due to this we have to close order windows in ChangeWindowOwner/CloseCompanyWindows,

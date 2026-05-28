@@ -721,8 +721,8 @@ bool AfterLoadGame()
 	}
 
 	switch (gcf_res) {
-		case GRFListCompatibility::Compatible: ShowErrorMessage(GetEncodedString(STR_NEWGRF_COMPATIBLE_LOAD_WARNING), {}, WL_CRITICAL); break;
-		case GRFListCompatibility::NotFound:  ShowErrorMessage(GetEncodedString(STR_NEWGRF_DISABLED_WARNING), {}, WL_CRITICAL); _pause_mode = PauseMode::Error; break;
+		case GRFListCompatibility::Compatible: ShowErrorMessage(GetEncodedString(STR_NEWGRF_COMPATIBLE_LOAD_WARNING), {}, WarningLevel::Critical); break;
+		case GRFListCompatibility::NotFound:  ShowErrorMessage(GetEncodedString(STR_NEWGRF_DISABLED_WARNING), {}, WarningLevel::Critical); _pause_mode = PauseMode::Error; break;
 		default: break;
 	}
 
@@ -1228,14 +1228,14 @@ bool AfterLoadGame()
 			if (MayHaveBridgeAbove(t)) ClearBridgeMiddle(t);
 			if (IsBridgeTile(t)) {
 				if (HasBit(t.m5(), 6)) { // middle part
-					Axis axis = (Axis)GB(t.m5(), 0, 1);
+					Axis axis = static_cast<Axis>(GB(t.m5(), 0, 1));
 
 					if (HasBit(t.m5(), 5)) { // transport route under bridge?
 						if (GB(t.m5(), 3, 2) == TRANSPORT_RAIL) {
 							MakeRailNormal(
 								t,
 								GetTileOwner(t),
-								axis == AXIS_X ? TRACK_BIT_Y : TRACK_BIT_X,
+								AxisToTrackBits(OtherAxis(axis)),
 								GetRailType(t)
 							);
 						} else {
@@ -1245,7 +1245,7 @@ bool AfterLoadGame()
 							SetTileType(t, TileType::Road);
 							t.m2() = town.base();
 							t.m3() = 0;
-							t.m5() = (axis == AXIS_X ? ROAD_Y : ROAD_X).base() | to_underlying(RoadTileType::Normal) << 6;
+							t.m5() = AxisToRoadBits(OtherAxis(axis)).base() | to_underlying(RoadTileType::Normal) << 6;
 							SB(t.m6(), 2, 4, 0);
 							t.m7() = 1 << 6;
 							SetRoadOwner(t, RoadTramType::Tram, OWNER_NONE);
@@ -1267,7 +1267,7 @@ bool AfterLoadGame()
 					}
 					SetBridgeMiddle(t, axis);
 				} else { // ramp
-					Axis axis = (Axis)GB(t.m5(), 0, 1);
+					Axis axis = static_cast<Axis>(GB(t.m5(), 0, 1));
 					uint north_south = GB(t.m5(), 5, 1);
 					DiagDirection dir = ReverseDiagDir(XYNSToDiagDir(axis, north_south));
 					TransportType type = (TransportType)GB(t.m5(), 1, 2);
@@ -1990,7 +1990,7 @@ bool AfterLoadGame()
 		 * There would be trams without tram track under causing crashes sooner or later. */
 		for (RoadVehicle *v : RoadVehicle::Iterate()) {
 			if (v->First() == v && EngInfo(v->engine_type)->misc_flags.Test(EngineMiscFlag::RoadIsTram)) {
-				ShowErrorMessage(GetEncodedString(STR_WARNING_LOADGAME_REMOVED_TRAMS), {}, WL_CRITICAL);
+				ShowErrorMessage(GetEncodedString(STR_WARNING_LOADGAME_REMOVED_TRAMS), {}, WarningLevel::Critical);
 				delete v;
 			}
 		}
@@ -2595,7 +2595,7 @@ bool AfterLoadGame()
 	if (IsSavegameVersionBefore(SLV_148)) {
 		for (Object *o : Object::Iterate()) {
 			Owner owner = GetTileOwner(o->location.tile);
-			o->recolour_offset = (owner == OWNER_NONE) ? GB(Random(), 0, 4) : to_underlying(Company::Get(owner)->livery[0].colour1);
+			o->recolour_offset = (owner == OWNER_NONE) ? GB(Random(), 0, 4) : to_underlying(Company::Get(owner)->livery[LiveryScheme::Default].colour1);
 		}
 	}
 
@@ -2646,7 +2646,7 @@ bool AfterLoadGame()
 			const DiagDirection vdir = DirToDiagDir(v->direction);
 
 			/* Have we passed the visibility "switch" state already? */
-			uint8_t pos = (DiagDirToAxis(vdir) == AXIS_X ? v->x_pos : v->y_pos) & TILE_UNIT_MASK;
+			uint8_t pos = (DiagDirToAxis(vdir) == Axis::X ? v->x_pos : v->y_pos) & TILE_UNIT_MASK;
 			uint8_t frame = (vdir == DIAGDIR_NE || vdir == DIAGDIR_NW) ? TILE_SIZE - 1 - pos : pos;
 			extern const uint8_t _tunnel_visibility_frame[DIAGDIR_END];
 
@@ -2781,7 +2781,7 @@ bool AfterLoadGame()
 					Direction dir = rv->direction;
 
 					/* Test if we are reversing. */
-					Axis a = trackbits == TRACK_BIT_X ? AXIS_X : AXIS_Y;
+					Axis a = trackbits == TRACK_BIT_X ? Axis::X : Axis::Y;
 					if (AxisToDirection(a) != dir &&
 							AxisToDirection(a) != ReverseDir(dir)) {
 						/* When reversing, the road vehicle is on the edge of the tile,
@@ -3499,10 +3499,10 @@ void ReloadNewGRFData()
 	/* Delete news referring to no longer existing entities */
 	DeleteInvalidEngineNews();
 	/* Update livery selection windows */
-	for (CompanyID i = CompanyID::Begin(); i < MAX_COMPANIES; ++i) InvalidateWindowData(WC_COMPANY_COLOUR, i);
+	for (CompanyID i = CompanyID::Begin(); i < MAX_COMPANIES; ++i) InvalidateWindowData(WindowClass::CompanyLivery, i);
 	/* Update company infrastructure counts. */
-	InvalidateWindowClassesData(WC_COMPANY_INFRASTRUCTURE);
-	InvalidateWindowClassesData(WC_BUILD_TOOLBAR);
+	InvalidateWindowClassesData(WindowClass::CompanyInfrastructure);
+	InvalidateWindowClassesData(WindowClass::BuildToolbar);
 	InvalidateAllPickerWindows();
 	/* redraw the whole screen */
 	MarkWholeScreenDirty();

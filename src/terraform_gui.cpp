@@ -73,7 +73,7 @@ static void GenerateDesertArea(TileIndex end, TileIndex start)
 		MarkTileDirtyByTile(tile);
 	}
 	old_generating_world.Restore();
-	InvalidateWindowClassesData(WC_TOWN_VIEW, 0);
+	InvalidateWindowClassesData(WindowClass::TownView, 0);
 }
 
 /**
@@ -265,7 +265,7 @@ struct TerraformToolbarWindow : Window {
 	Point OnInitialPosition([[maybe_unused]] int16_t sm_width, [[maybe_unused]] int16_t sm_height, [[maybe_unused]] int window_number) override
 	{
 		Point pt = GetToolbarAlignedWindowPosition(sm_width);
-		if (FindWindowByClass(WC_BUILD_TOOLBAR) != nullptr && !_settings_client.gui.link_terraform_toolbar) pt.y += sm_height;
+		if (FindWindowByClass(WindowClass::BuildToolbar) != nullptr && !_settings_client.gui.link_terraform_toolbar) pt.y += sm_height;
 
 		return pt;
 	}
@@ -359,7 +359,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_terraform_widgets = 
 /** Window definition for the landscaping toolbar. */
 static WindowDesc _terraform_desc(
 	WindowPosition::Manual, "toolbar_landscape", 0, 0,
-	WC_SCEN_LAND_GEN, WC_NONE,
+	WindowClass::ScenarioGenerateLandscape, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_terraform_widgets,
 	&TerraformToolbarWindow::hotkeys
@@ -375,7 +375,7 @@ Window *ShowTerraformToolbar(Window *link)
 	if (!Company::IsValidID(_local_company)) return nullptr;
 
 	/* Delete the terraform toolbar to place it again. */
-	CloseWindowById(WC_SCEN_LAND_GEN, 0, true);
+	CloseWindowById(WindowClass::ScenarioGenerateLandscape, 0, true);
 
 	if (link == nullptr) return AllocateWindowDescFront<TerraformToolbarWindow>(_terraform_desc, 0);
 
@@ -462,9 +462,9 @@ static constexpr std::initializer_list<NWidgetPart> _nested_scen_edit_land_gen_w
 			NWidget(WWT_IMGBTN, Colours::Grey, WID_ETT_DEMOLISH), SetToolbarMinimalSize(1),
 										SetFill(0, 1), SetSpriteTip(SPR_IMG_DYNAMITE, STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC),
 			NWidget(WWT_IMGBTN, Colours::Grey, WID_ETT_LOWER_LAND), SetToolbarMinimalSize(1),
-										SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_DOWN, STR_LANDSCAPING_TOOLTIP_LOWER_A_CORNER_OF_LAND),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_DOWN, STR_TERRAFORM_TOOLTIP_LOWER_A_CORNER_OF_LAND),
 			NWidget(WWT_IMGBTN, Colours::Grey, WID_ETT_RAISE_LAND), SetToolbarMinimalSize(1),
-										SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_UP, STR_LANDSCAPING_TOOLTIP_RAISE_A_CORNER_OF_LAND),
+										SetFill(0, 1), SetSpriteTip(SPR_IMG_TERRAFORM_UP, STR_TERRAFORM_TOOLTIP_RAISE_A_CORNER_OF_LAND),
 			NWidget(WWT_IMGBTN, Colours::Grey, WID_ETT_LEVEL_LAND), SetToolbarMinimalSize(1),
 										SetFill(0, 1), SetSpriteTip(SPR_IMG_LEVEL_LAND, STR_LANDSCAPING_LEVEL_LAND_TOOLTIP),
 			NWidget(WWT_IMGBTN, Colours::Grey, WID_ETT_PLACE_ROCKS), SetToolbarMinimalSize(1),
@@ -588,12 +588,12 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 				break;
 
 			case WID_ETT_LOWER_LAND: // Lower land button
-				HandlePlacePushButton(this, WID_ETT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT);
+				HandlePlacePushButton(this, WID_ETT_LOWER_LAND, ANIMCURSOR_LOWERLAND, HT_POINT | HT_DIAGONAL);
 				this->last_user_action = widget;
 				break;
 
 			case WID_ETT_RAISE_LAND: // Raise land button
-				HandlePlacePushButton(this, WID_ETT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT);
+				HandlePlacePushButton(this, WID_ETT_RAISE_LAND, ANIMCURSOR_RAISELAND, HT_POINT | HT_DIAGONAL);
 				this->last_user_action = widget;
 				break;
 
@@ -661,11 +661,19 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 				break;
 
 			case WID_ETT_LOWER_LAND: // Lower land button
-				CommonRaiseLowerBigLand(tile, false);
+				if (_terraform_size == 1) {
+					VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_LOWER_AND_LEVEL_AREA);
+				} else {
+					CommonRaiseLowerBigLand(tile, false);
+				}
 				break;
 
 			case WID_ETT_RAISE_LAND: // Raise land button
-				CommonRaiseLowerBigLand(tile, true);
+				if (_terraform_size == 1) {
+					VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_RAISE_AND_LEVEL_AREA);
+				} else {
+					CommonRaiseLowerBigLand(tile, true);
+				}
 				break;
 
 			case WID_ETT_LEVEL_LAND: // Level land button
@@ -739,7 +747,7 @@ struct ScenarioEditorLandscapeGenerationWindow : Window {
 /** Window definition for the landscaping toolbar for he scenario editor. */
 static WindowDesc _scen_edit_land_gen_desc(
 	WindowPosition::Automatic, "toolbar_landscape_scen", 0, 0,
-	WC_SCEN_LAND_GEN, WC_NONE,
+	WindowClass::ScenarioGenerateLandscape, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_scen_edit_land_gen_widgets,
 	&ScenarioEditorLandscapeGenerationWindow::hotkeys

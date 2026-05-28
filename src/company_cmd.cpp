@@ -76,7 +76,7 @@ Company::Company(CompanyID index, StringID name_1, bool is_ai) : CompanyPool::Po
 	this->tree_limit         = (uint32_t)_settings_game.construction.tree_frame_burst << 16;
 	this->build_object_limit = (uint32_t)_settings_game.construction.build_object_frame_burst << 16;
 
-	InvalidateWindowData(WC_PERFORMANCE_DETAIL, 0, CompanyID::Invalid());
+	InvalidateWindowData(WindowClass::PerformanceDetail, 0, CompanyID::Invalid());
 }
 
 /** Close the associated company windows. */
@@ -93,12 +93,12 @@ Company::~Company()
  */
 void Company::PostDestructor(size_t index)
 {
-	InvalidateWindowData(WC_GRAPH_LEGEND, 0, (int)index);
-	InvalidateWindowData(WC_PERFORMANCE_DETAIL, 0, (int)index);
-	InvalidateWindowData(WC_COMPANY_LEAGUE, 0, 0);
-	InvalidateWindowData(WC_LINKGRAPH_LEGEND, 0);
+	InvalidateWindowData(WindowClass::GraphLegend, 0, static_cast<int>(index));
+	InvalidateWindowData(WindowClass::PerformanceDetail, 0, static_cast<int>(index));
+	InvalidateWindowData(WindowClass::CompanyLeague, 0, 0);
+	InvalidateWindowData(WindowClass::LinkGraphLegend, 0);
 	/* If the currently shown error message has this company in it, then close it. */
-	InvalidateWindowData(WC_ERRMSG, 0);
+	InvalidateWindowData(WindowClass::ErrorMessage, 0);
 }
 
 /**
@@ -126,15 +126,15 @@ void SetLocalCompany(CompanyID new_company)
 	bool switching_company = _local_company != new_company;
 
 	/* Delete the chat window, if you were team chatting. */
-	if (switching_company) InvalidateWindowData(WC_SEND_NETWORK_MSG, NetworkChatDestinationType::Team, _local_company);
+	if (switching_company) InvalidateWindowData(WindowClass::NetworkChat, NetworkChatDestinationType::Team, _local_company);
 
 	assert(IsLocalCompany());
 
 	_current_company = _local_company = new_company;
 
 	if (switching_company) {
-		InvalidateWindowClassesData(WC_COMPANY);
-		InvalidateWindowClassesData(WC_VEHICLE_VIEW);
+		InvalidateWindowClassesData(WindowClass::Company);
+		InvalidateWindowClassesData(WindowClass::VehicleView);
 		/* Delete any construction windows... */
 		CloseConstructionWindows();
 		/* Update the default rail based on most used */
@@ -143,9 +143,9 @@ void SetLocalCompany(CompanyID new_company)
 
 	/* ... and redraw the whole screen. */
 	MarkWholeScreenDirty();
-	InvalidateWindowClassesData(WC_SIGN_LIST, -1);
-	InvalidateWindowClassesData(WC_GOALS_LIST);
-	InvalidateWindowClassesData(WC_COMPANY_COLOUR, -1);
+	InvalidateWindowClassesData(WindowClass::SignList, -1);
+	InvalidateWindowClassesData(WindowClass::GoalList);
+	InvalidateWindowClassesData(WindowClass::CompanyLivery, -1);
 	ResetVehicleColourMap();
 }
 
@@ -154,10 +154,10 @@ void SetLocalCompany(CompanyID new_company)
  * @param company Company to get the colour of.
  * @return Colour of \a company.
  */
-TextColour GetDrawStringCompanyColour(CompanyID company)
+ExtendedTextColour GetDrawStringCompanyColour(CompanyID company)
 {
-	if (!Company::IsValidID(company)) return GetColourGradient(Colours::White, Shade::Normal).ToTextColour();
-	return GetColourGradient(_company_colours[company], Shade::Normal).ToTextColour();
+	if (!Company::IsValidID(company)) return ExtendedTextColour{GetColourGradient(Colours::White, Shade::Normal)};
+	return ExtendedTextColour{GetColourGradient(_company_colours[company], Shade::Normal)};
 }
 
 /**
@@ -218,8 +218,8 @@ void InvalidateCompanyWindows(const Company *company)
  */
 static const IntervalTimer<TimerWindow> invalidate_company_windows_interval(std::chrono::milliseconds(1), [](auto) {
 	for (CompanyID cid : _dirty_company_finances) {
-		if (cid == _local_company) SetWindowWidgetDirty(WC_STATUS_BAR, 0, WID_S_RIGHT);
-		Window *w = FindWindowById(WC_FINANCES, cid);
+		if (cid == _local_company) SetWindowWidgetDirty(WindowClass::Statusbar, 0, WID_S_RIGHT);
+		Window *w = FindWindowById(WindowClass::Finances, cid);
 		if (w != nullptr) {
 			w->SetWidgetDirty(WID_CF_EXPS_PRICE3);
 			w->SetWidgetDirty(WID_CF_OWN_VALUE);
@@ -227,7 +227,7 @@ static const IntervalTimer<TimerWindow> invalidate_company_windows_interval(std:
 			w->SetWidgetDirty(WID_CF_BALANCE_VALUE);
 			w->SetWidgetDirty(WID_CF_MAXLOAN_VALUE);
 		}
-		SetWindowWidgetDirty(WC_COMPANY, cid, WID_C_DESC_COMPANY_VALUE);
+		SetWindowWidgetDirty(WindowClass::Company, cid, WID_C_DESC_COMPANY_VALUE);
 	}
 	_dirty_company_finances.Reset();
 });
@@ -566,7 +566,7 @@ restart:;
  */
 void ResetCompanyLivery(Company *c)
 {
-	for (LiveryScheme scheme = LS_BEGIN; scheme < LS_END; scheme++) {
+	for (LiveryScheme scheme = LiveryScheme::Begin; scheme < LiveryScheme::End; scheme++) {
 		c->livery[scheme].in_use.Reset();
 		c->livery[scheme].colour1 = c->colour;
 		c->livery[scheme].colour2 = c->colour;
@@ -633,11 +633,11 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = CompanyID::Invalid(
 
 	GeneratePresidentName(c);
 
-	SetWindowDirty(WC_GRAPH_LEGEND, 0);
-	InvalidateWindowData(WC_CLIENT_LIST, 0);
-	InvalidateWindowData(WC_LINKGRAPH_LEGEND, 0);
+	SetWindowDirty(WindowClass::GraphLegend, 0);
+	InvalidateWindowData(WindowClass::NetworkClientList, 0);
+	InvalidateWindowData(WindowClass::LinkGraphLegend, 0);
 	BuildOwnerLegend();
-	InvalidateWindowData(WC_SMALLMAP, 0, 1);
+	InvalidateWindowData(WindowClass::SmallMap, 0, 1);
 
 	if (is_ai && (!_networking || _network_server)) AI::StartNew(c->index);
 
@@ -808,7 +808,7 @@ static const IntervalTimer<TimerGameEconomy> _economy_companies_yearly({TimerGam
 		/* Move expenses to previous years. */
 		std::rotate(std::rbegin(c->yearly_expenses), std::rbegin(c->yearly_expenses) + 1, std::rend(c->yearly_expenses));
 		c->yearly_expenses[0].fill(0);
-		InvalidateWindowData(WC_FINANCES, c->index);
+		InvalidateWindowData(WindowClass::Finances, c->index);
 	}
 
 	if (_settings_client.gui.show_finances && _local_company != COMPANY_SPECTATOR) {
@@ -875,7 +875,7 @@ void CompanyAdminRemove(CompanyID company_id, CompanyRemoveReason reason)
  */
 CommandCost CmdCompanyCtrl(DoCommandFlags flags, CompanyCtrlAction cca, CompanyID company_id, CompanyRemoveReason reason, ClientID client_id)
 {
-	InvalidateWindowData(WC_COMPANY_LEAGUE, 0, 0);
+	InvalidateWindowData(WindowClass::CompanyLeague, 0, 0);
 
 	switch (cca) {
 		case CompanyCtrlAction::New: { // Create a new company
@@ -888,7 +888,7 @@ CommandCost CmdCompanyCtrl(DoCommandFlags flags, CompanyCtrlAction cca, CompanyI
 			NetworkClientInfo *ci = NetworkClientInfo::GetByClientID(client_id);
 
 			/* Delete multiplayer progress bar */
-			CloseWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_JOIN);
+			CloseWindowById(WindowClass::NetworkStatus, NetworkStatusWindowNumber::Join);
 
 			Company *c = DoStartupNewCompany(false);
 
@@ -978,8 +978,8 @@ CommandCost CmdCompanyCtrl(DoCommandFlags flags, CompanyCtrlAction cca, CompanyI
 			Game::NewEvent(new ScriptEventCompanyBankrupt(c_index));
 			CompanyAdminRemove(c_index, (CompanyRemoveReason)reason);
 
-			if (StoryPage::GetNumItems() == 0 || Goal::GetNumItems() == 0) InvalidateWindowData(WC_MAIN_TOOLBAR, 0);
-			InvalidateWindowData(WC_CLIENT_LIST, 0);
+			if (StoryPage::GetNumItems() == 0 || Goal::GetNumItems() == 0) InvalidateWindowData(WindowClass::MainToolbar, 0);
+			InvalidateWindowData(WindowClass::NetworkClientList, 0);
 
 			break;
 		}
@@ -987,9 +987,9 @@ CommandCost CmdCompanyCtrl(DoCommandFlags flags, CompanyCtrlAction cca, CompanyI
 		default: return CMD_ERROR;
 	}
 
-	InvalidateWindowClassesData(WC_GAME_OPTIONS);
-	InvalidateWindowClassesData(WC_SCRIPT_SETTINGS);
-	InvalidateWindowClassesData(WC_SCRIPT_LIST);
+	InvalidateWindowClassesData(WindowClass::GameOptions);
+	InvalidateWindowClassesData(WindowClass::ScriptSettings);
+	InvalidateWindowClassesData(WindowClass::ScriptList);
 
 	return CommandCost();
 }
@@ -1048,8 +1048,8 @@ CommandCost CmdCompanyAllowListCtrl(DoCommandFlags flags, CompanyAllowListCtrlAc
 
 	if (flags.Test(DoCommandFlag::Execute)) {
 		if (ExecuteAllowListCtrlAction(action, c, public_key)) {
-			InvalidateWindowData(WC_CLIENT_LIST, 0);
-			SetWindowDirty(WC_COMPANY, _current_company);
+			InvalidateWindowData(WindowClass::NetworkClientList, 0);
+			SetWindowDirty(WindowClass::Company, _current_company);
 		}
 	}
 
@@ -1079,15 +1079,15 @@ CommandCost CmdSetCompanyManagerFace(DoCommandFlags flags, uint style, uint32_t 
 }
 
 /**
- * Update liveries for a company. This is called when the LS_DEFAULT scheme is changed, to update schemes with colours
+ * Update liveries for a company. This is called when the LiveryScheme::Default scheme is changed, to update schemes with colours
  * set to default.
  * @param c Company to update.
  */
 void UpdateCompanyLiveries(Company *c)
 {
-	for (int i = 1; i < LS_END; i++) {
-		if (!c->livery[i].in_use.Test(Livery::Flag::Primary)) c->livery[i].colour1 = c->livery[LS_DEFAULT].colour1;
-		if (!c->livery[i].in_use.Test(Livery::Flag::Secondary)) c->livery[i].colour2 = c->livery[LS_DEFAULT].colour2;
+	for (LiveryScheme i = LiveryScheme::Steam; i < LiveryScheme::End; i++) {
+		if (!c->livery[i].in_use.Test(Livery::Flag::Primary)) c->livery[i].colour1 = c->livery[LiveryScheme::Default].colour1;
+		if (!c->livery[i].in_use.Test(Livery::Flag::Secondary)) c->livery[i].colour2 = c->livery[LiveryScheme::Default].colour2;
 	}
 	UpdateCompanyGroupLiveries(c);
 }
@@ -1102,15 +1102,15 @@ void UpdateCompanyLiveries(Company *c)
  */
 CommandCost CmdSetCompanyColour(DoCommandFlags flags, LiveryScheme scheme, bool primary, Colours colour)
 {
-	if (scheme >= LS_END || (colour >= Colours::End && colour != Colours::Invalid)) return CMD_ERROR;
+	if (scheme >= LiveryScheme::End || (colour >= Colours::End && colour != Colours::Invalid)) return CMD_ERROR;
 
 	/* Default scheme can't be reset to invalid. */
-	if (scheme == LS_DEFAULT && colour == Colours::Invalid) return CMD_ERROR;
+	if (scheme == LiveryScheme::Default && colour == Colours::Invalid) return CMD_ERROR;
 
 	Company *c = Company::Get(_current_company);
 
 	/* Ensure no two companies have the same primary colour */
-	if (scheme == LS_DEFAULT && primary) {
+	if (scheme == LiveryScheme::Default && primary) {
 		for (const Company *cc : Company::Iterate()) {
 			if (cc != c && cc->colour == colour) return CMD_ERROR;
 		}
@@ -1118,38 +1118,38 @@ CommandCost CmdSetCompanyColour(DoCommandFlags flags, LiveryScheme scheme, bool 
 
 	if (flags.Test(DoCommandFlag::Execute)) {
 		if (primary) {
-			if (scheme != LS_DEFAULT) c->livery[scheme].in_use.Set(Livery::Flag::Primary, colour != Colours::Invalid);
-			if (colour == Colours::Invalid) colour = c->livery[LS_DEFAULT].colour1;
+			if (scheme != LiveryScheme::Default) c->livery[scheme].in_use.Set(Livery::Flag::Primary, colour != Colours::Invalid);
+			if (colour == Colours::Invalid) colour = c->livery[LiveryScheme::Default].colour1;
 			c->livery[scheme].colour1 = colour;
 
 			/* If setting the first colour of the default scheme, adjust the
 			 * original and cached company colours too. */
-			if (scheme == LS_DEFAULT) {
+			if (scheme == LiveryScheme::Default) {
 				UpdateCompanyLiveries(c);
 				_company_colours[_current_company] = colour;
 				c->colour = colour;
 				CompanyAdminUpdate(c);
 			}
 		} else {
-			if (scheme != LS_DEFAULT) c->livery[scheme].in_use.Set(Livery::Flag::Secondary, colour != Colours::Invalid);
-			if (colour == Colours::Invalid) colour = c->livery[LS_DEFAULT].colour2;
+			if (scheme != LiveryScheme::Default) c->livery[scheme].in_use.Set(Livery::Flag::Secondary, colour != Colours::Invalid);
+			if (colour == Colours::Invalid) colour = c->livery[LiveryScheme::Default].colour2;
 			c->livery[scheme].colour2 = colour;
 
-			if (scheme == LS_DEFAULT) {
+			if (scheme == LiveryScheme::Default) {
 				UpdateCompanyLiveries(c);
 			}
 		}
 
 		if (c->livery[scheme].in_use.Any({Livery::Flag::Primary, Livery::Flag::Secondary})) {
 			/* If enabling a scheme, set the default scheme to be in use too */
-			c->livery[LS_DEFAULT].in_use.Set(Livery::Flag::Primary);
+			c->livery[LiveryScheme::Default].in_use.Set(Livery::Flag::Primary);
 		} else {
 			/* Else loop through all schemes to see if any are left enabled.
 			 * If not, disable the default scheme too. */
-			c->livery[LS_DEFAULT].in_use.Reset({Livery::Flag::Primary, Livery::Flag::Secondary});
-			for (scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
+			c->livery[LiveryScheme::Default].in_use.Reset({Livery::Flag::Primary, Livery::Flag::Secondary});
+			for (scheme = LiveryScheme::Default; scheme < LiveryScheme::End; scheme++) {
 				if (c->livery[scheme].in_use.Any({Livery::Flag::Primary, Livery::Flag::Secondary})) {
-					c->livery[LS_DEFAULT].in_use.Set(Livery::Flag::Primary);
+					c->livery[LiveryScheme::Default].in_use.Set(Livery::Flag::Primary);
 					break;
 				}
 			}
@@ -1159,15 +1159,15 @@ CommandCost CmdSetCompanyColour(DoCommandFlags flags, LiveryScheme scheme, bool 
 		MarkWholeScreenDirty();
 
 		/* All graph related to companies use the company colour. */
-		InvalidateWindowData(WC_INCOME_GRAPH, 0);
-		InvalidateWindowData(WC_OPERATING_PROFIT, 0);
-		InvalidateWindowData(WC_DELIVERED_CARGO, 0);
-		InvalidateWindowData(WC_PERFORMANCE_HISTORY, 0);
-		InvalidateWindowData(WC_COMPANY_VALUE, 0);
-		InvalidateWindowData(WC_LINKGRAPH_LEGEND, 0);
+		InvalidateWindowData(WindowClass::IncomeGraph, 0);
+		InvalidateWindowData(WindowClass::OperatingProfitGraph, 0);
+		InvalidateWindowData(WindowClass::DeliveredCargoGraph, 0);
+		InvalidateWindowData(WindowClass::PerformanceGraph, 0);
+		InvalidateWindowData(WindowClass::CompanyValueGraph, 0);
+		InvalidateWindowData(WindowClass::LinkGraphLegend, 0);
 		/* The smallmap owner view also stores the company colours. */
 		BuildOwnerLegend();
-		InvalidateWindowData(WC_SMALLMAP, 0, 1);
+		InvalidateWindowData(WindowClass::SmallMap, 0, 1);
 
 		/* Company colour data is indirectly cached. */
 		for (Vehicle *v : Vehicle::Iterate()) {
@@ -1216,7 +1216,7 @@ CommandCost CmdRenameCompany(DoCommandFlags flags, const std::string &text)
 			c->name = text;
 		}
 
-		InvalidateWindowClassesData(WC_COMPANY, WID_C_COMPANY_NAME);
+		InvalidateWindowClassesData(WindowClass::Company, WID_C_COMPANY_NAME);
 		MarkWholeScreenDirty();
 		CompanyAdminUpdate(c);
 
@@ -1270,7 +1270,7 @@ CommandCost CmdRenamePresident(DoCommandFlags flags, const std::string &text)
 			}
 		}
 
-		InvalidateWindowClassesData(WC_COMPANY, WID_C_PRESIDENT_NAME);
+		InvalidateWindowClassesData(WindowClass::Company, WID_C_PRESIDENT_NAME);
 		MarkWholeScreenDirty();
 		CompanyAdminUpdate(c);
 

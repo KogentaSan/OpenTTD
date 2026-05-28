@@ -92,7 +92,7 @@ static int32_t ClickChangeCompanyCheat(int32_t new_value, int32_t change_directi
 static int32_t ClickSetProdCheat(int32_t new_value, int32_t)
 {
 	_cheats.setup_prod.value = (new_value != 0);
-	InvalidateWindowClassesData(WC_INDUSTRY_VIEW);
+	InvalidateWindowClassesData(WindowClass::IndustryView);
 	return _cheats.setup_prod.value;
 }
 
@@ -128,12 +128,12 @@ static int32_t ClickChangeDateCheat(int32_t new_value, int32_t)
 	}
 
 	CalendarEnginesMonthlyLoop();
-	SetWindowDirty(WC_STATUS_BAR, 0);
-	InvalidateWindowClassesData(WC_BUILD_STATION, 0);
-	InvalidateWindowClassesData(WC_BUS_STATION, 0);
-	InvalidateWindowClassesData(WC_TRUCK_STATION, 0);
-	InvalidateWindowClassesData(WC_BUILD_OBJECT, 0);
-	InvalidateWindowClassesData(WC_FINANCES, 0);
+	SetWindowDirty(WindowClass::Statusbar, 0);
+	InvalidateWindowClassesData(WindowClass::BuildStation, 0);
+	InvalidateWindowClassesData(WindowClass::BuildBusStation, 0);
+	InvalidateWindowClassesData(WindowClass::BuildTruckStation, 0);
+	InvalidateWindowClassesData(WindowClass::BuildObject, 0);
+	InvalidateWindowClassesData(WindowClass::Finances, 0);
 	ResetSignalVariant();
 	return TimerGameCalendar::year.base();
 }
@@ -152,7 +152,7 @@ static int32_t ClickChangeMaxHlCheat(int32_t new_value, int32_t)
 	 * If yes, disallow the change. */
 	for (const auto t : Map::Iterate()) {
 		if ((int32_t)TileHeight(t) > new_value) {
-			ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN), {}, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_CONFIG_SETTING_TOO_HIGH_MOUNTAIN), {}, WarningLevel::Error);
 			/* Return old, unchanged value */
 			return _settings_game.construction.map_height_limit;
 		}
@@ -163,7 +163,7 @@ static int32_t ClickChangeMaxHlCheat(int32_t new_value, int32_t)
 	ReloadNewGRFData();
 
 	/* The smallmap uses an index from heightlevels to colours. Trigger rebuilding it. */
-	InvalidateWindowClassesData(WC_SMALLMAP, 2);
+	InvalidateWindowClassesData(WindowClass::SmallMap, 2);
 
 	return _settings_game.construction.map_height_limit;
 }
@@ -364,7 +364,7 @@ struct CheatWindow : Window {
 					editable && value != (sd->flags.Test(SettingFlag::GuiZeroIsSpecial) ? 0 : min_val), editable && static_cast<uint32_t>(value) != max_val);
 		}
 		auto [param1, param2] = sd->GetValueParams(value);
-		DrawString(text.left, text.right, text.top, GetString(sd->GetTitle(), STR_CONFIG_SETTING_VALUE, param1, param2), TC_LIGHT_BLUE);
+		DrawString(text.left, text.right, text.top, GetString(sd->GetTitle(), STR_CONFIG_SETTING_VALUE, param1, param2), TextColour::LightBlue);
 	}
 
 	void UpdateWidgetSize(WidgetID widget, Dimension &size, [[maybe_unused]] const Dimension &padding, [[maybe_unused]] Dimension &fill, [[maybe_unused]] Dimension &resize) override
@@ -642,7 +642,7 @@ struct CheatWindow : Window {
 /** Window description of the cheats GUI. */
 static WindowDesc _cheats_desc(
 	WindowPosition::Automatic, "cheats", 0, 0,
-	WC_CHEATS, WC_NONE,
+	WindowClass::Cheat, WindowClass::None,
 	{},
 	_nested_cheat_widgets
 );
@@ -650,6 +650,6 @@ static WindowDesc _cheats_desc(
 /** Open cheat window. */
 void ShowCheatWindow()
 {
-	CloseWindowById(WC_CHEATS, 0);
+	CloseWindowById(WindowClass::Cheat, 0);
 	new CheatWindow(_cheats_desc);
 }

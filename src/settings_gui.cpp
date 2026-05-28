@@ -127,7 +127,7 @@ struct BaseSetTextfileWindow : public TextfileWindow {
 template <class TBaseSet>
 void ShowBaseSetTextfileWindow(Window *parent, TextfileType file_type, const TBaseSet *baseset, StringID content_type)
 {
-	parent->CloseChildWindowById(WC_TEXTFILE, file_type);
+	parent->CloseChildWindowById(WindowClass::Textfile, file_type);
 	new BaseSetTextfileWindow(parent, file_type, baseset->name, *baseset->GetTextfile(file_type), content_type);
 }
 
@@ -198,11 +198,11 @@ static constexpr Colours GAME_OPTIONS_BACKGROUND = Colours::Mauve;
 /** Colour for buttons of game options. */
 static constexpr Colours GAME_OPTIONS_BUTTON = Colours::Yellow;
 /** Colour for frame text of game options. */
-static constexpr TextColour GAME_OPTIONS_FRAME = TC_ORANGE;
+static constexpr TextColour GAME_OPTIONS_FRAME = TextColour::Orange;
 /** Colour for label text of game options. */
-static constexpr TextColour GAME_OPTIONS_LABEL = TC_LIGHT_BLUE;
+static constexpr TextColour GAME_OPTIONS_LABEL = TextColour::LightBlue;
 /** Colour for selected text of game options. */
-static constexpr TextColour GAME_OPTIONS_SELECTED = TC_WHITE;
+static constexpr TextColour GAME_OPTIONS_SELECTED = TextColour::White;
 
 static constexpr std::initializer_list<NWidgetPart> _nested_social_plugins_widgets = {
 	NWidget(NWID_HORIZONTAL),
@@ -438,7 +438,7 @@ struct GameOptionsWindow : Window {
 		this->vscroll = this->GetScrollbar(WID_GO_SCROLLBAR);
 		this->vscroll_description = this->GetScrollbar(WID_GO_HELP_TEXT_SCROLL);
 		this->vscroll_description->SetCapacity(NUM_DESCRIPTION_LINES);
-		this->FinishInitNested(WN_GAME_OPTIONS_GAME_OPTIONS);
+		this->FinishInitNested(GameOptionsWindowNumber::GameOptions);
 
 		this->querystrings[WID_GO_FILTER] = &this->filter_editbox;
 		this->filter_editbox.cancel_button = QueryString::ACTION_CLEAR;
@@ -460,7 +460,7 @@ struct GameOptionsWindow : Window {
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		CloseWindowById(WC_CUSTOM_CURRENCY, 0);
+		CloseWindowById(WindowClass::CustomCurrenty, 0);
 		if (this->reload) _switch_mode = SM_MENU;
 		this->Window::Close();
 	}
@@ -693,7 +693,7 @@ struct GameOptionsWindow : Window {
 				break;
 
 			case WID_GO_GUI_SCALE:
-				DrawSliderWidget(r, GAME_OPTIONS_BACKGROUND, GAME_OPTIONS_BUTTON, TC_BLACK, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE, SCALE_NMARKS, this->gui_scale, ScaleMarkFunc);
+				DrawSliderWidget(r, GAME_OPTIONS_BACKGROUND, GAME_OPTIONS_BUTTON, TextColour::Black, MIN_INTERFACE_SCALE, MAX_INTERFACE_SCALE, SCALE_NMARKS, this->gui_scale, ScaleMarkFunc);
 				break;
 
 			case WID_GO_VIDEO_DRIVER_INFO:
@@ -701,11 +701,11 @@ struct GameOptionsWindow : Window {
 				break;
 
 			case WID_GO_BASE_SFX_VOLUME:
-				DrawSliderWidget(r, GAME_OPTIONS_BACKGROUND, GAME_OPTIONS_BUTTON, TC_BLACK, 0, INT8_MAX, VOLUME_NMARKS, _settings_client.music.effect_vol, VolumeMarkFunc);
+				DrawSliderWidget(r, GAME_OPTIONS_BACKGROUND, GAME_OPTIONS_BUTTON, TextColour::Black, 0, INT8_MAX, VOLUME_NMARKS, _settings_client.music.effect_vol, VolumeMarkFunc);
 				break;
 
 			case WID_GO_BASE_MUSIC_VOLUME:
-				DrawSliderWidget(r, GAME_OPTIONS_BACKGROUND, GAME_OPTIONS_BUTTON, TC_BLACK, 0, INT8_MAX, VOLUME_NMARKS, _settings_client.music.music_vol, VolumeMarkFunc);
+				DrawSliderWidget(r, GAME_OPTIONS_BACKGROUND, GAME_OPTIONS_BUTTON, TextColour::Black, 0, INT8_MAX, VOLUME_NMARKS, _settings_client.music.music_vol, VolumeMarkFunc);
 				break;
 
 			case WID_GO_OPTIONSPANEL: {
@@ -746,7 +746,7 @@ struct GameOptionsWindow : Window {
 					if (FillDrawPixelInfo(&tmp_dpi, r)) {
 						AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
 						int scrolls_pos = this->vscroll_description->GetPosition() * GetCharacterHeight(FontSize::Normal);
-						DrawStringMultiLine(0, r.Width() - 1, -scrolls_pos, r.Height() - 1, sd->GetHelp(), TC_WHITE);
+						DrawStringMultiLine(0, r.Width() - 1, -scrolls_pos, r.Height() - 1, sd->GetHelp(), TextColour::White);
 					}
 				}
 				break;
@@ -926,7 +926,7 @@ struct GameOptionsWindow : Window {
 		if (this->warn_missing != WHR_NONE) {
 			DrawStringMultiLineWithClipping(panel.WithHeight(this->warn_lines * GetCharacterHeight(FontSize::Normal)),
 				GetString(warn_str, _game_settings_restrict_dropdown[this->filter.min_cat]),
-				TC_BLACK, SA_CENTER);
+				TextColour::Black, SA_CENTER);
 		}
 	}
 
@@ -988,7 +988,7 @@ struct GameOptionsWindow : Window {
 			case WID_GO_FULLSCREEN_BUTTON: // Click fullscreen on/off
 				/* try to toggle full-screen on/off */
 				if (!ToggleFullScreen(!_fullscreen)) {
-					ShowErrorMessage(GetEncodedString(STR_ERROR_FULLSCREEN_FAILED), {}, WL_ERROR);
+					ShowErrorMessage(GetEncodedString(STR_ERROR_FULLSCREEN_FAILED), {}, WarningLevel::Error);
 				}
 				this->SetWidgetLoweredState(WID_GO_FULLSCREEN_BUTTON, _fullscreen);
 				this->SetWidgetDirty(WID_GO_FULLSCREEN_BUTTON);
@@ -997,7 +997,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_VIDEO_ACCEL_BUTTON:
 				_video_hw_accel = !_video_hw_accel;
-				ShowErrorMessage(GetEncodedString(STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART), {}, WL_INFO);
+				ShowErrorMessage(GetEncodedString(STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART), {}, WarningLevel::Info);
 				this->SetWidgetLoweredState(WID_GO_VIDEO_ACCEL_BUTTON, _video_hw_accel);
 				this->SetWidgetDirty(WID_GO_VIDEO_ACCEL_BUTTON);
 				this->SetWidgetDirty(WID_GO_VIDEO_ACCEL_TEXT);
@@ -1115,7 +1115,7 @@ struct GameOptionsWindow : Window {
 						SetEffectVolume(vol);
 					}
 					this->SetWidgetDirty(widget);
-					SetWindowClassesDirty(WC_MUSIC_WINDOW);
+					SetWindowClassesDirty(WindowClass::Music);
 				}
 
 				if (click_count > 0) this->mouse_capture_widget = widget;
@@ -1162,7 +1162,7 @@ struct GameOptionsWindow : Window {
 				if (!list.empty()) {
 					ShowDropDownList(this, std::move(list), selected, widget);
 				} else {
-					if (widget == WID_GO_RESOLUTION_DROPDOWN) ShowErrorMessage(GetEncodedString(STR_ERROR_RESOLUTION_LIST_FAILED), {}, WL_ERROR);
+					if (widget == WID_GO_RESOLUTION_DROPDOWN) ShowErrorMessage(GetEncodedString(STR_ERROR_RESOLUTION_LIST_FAILED), {}, WarningLevel::Error);
 				}
 				break;
 			}
@@ -1177,7 +1177,7 @@ struct GameOptionsWindow : Window {
 				if (!list.empty()) {
 					ShowDropDownList(this, std::move(list), selected, widget, 0, DropDownOption::Filterable);
 				} else {
-					if (widget == WID_GO_RESOLUTION_DROPDOWN) ShowErrorMessage(GetEncodedString(STR_ERROR_RESOLUTION_LIST_FAILED), {}, WL_ERROR);
+					if (widget == WID_GO_RESOLUTION_DROPDOWN) ShowErrorMessage(GetEncodedString(STR_ERROR_RESOLUTION_LIST_FAILED), {}, WarningLevel::Error);
 				}
 				break;
 			}
@@ -1272,7 +1272,7 @@ struct GameOptionsWindow : Window {
 
 			if (this->valuedropdown_entry == pe) {
 				/* unclick the dropdown */
-				this->CloseChildWindows(WC_DROPDOWN_MENU);
+				this->CloseChildWindows(WindowClass::DropdownMenu);
 				this->closing_dropdown = false;
 				this->valuedropdown_entry->SetButtons({});
 				this->valuedropdown_entry = nullptr;
@@ -1437,7 +1437,7 @@ struct GameOptionsWindow : Window {
 
 			case WID_GO_LANG_DROPDOWN: // Change interface language
 				ReadLanguagePack(&_languages[index]);
-				CloseWindowByClass(WC_QUERY_STRING);
+				CloseWindowByClass(WindowClass::QueryString);
 				CheckForMissingGlyphs();
 				ClearAllCachedNames();
 				UpdateAllVirtCoords();
@@ -1456,14 +1456,14 @@ struct GameOptionsWindow : Window {
 				if (_settings_client.gui.refresh_rate > 60) {
 					/* Show warning to the user that this refresh rate might not be suitable on
 					 * larger maps with many NewGRFs and vehicles. */
-					ShowErrorMessage(GetEncodedString(STR_GAME_OPTIONS_REFRESH_RATE_WARNING), {}, WL_INFO);
+					ShowErrorMessage(GetEncodedString(STR_GAME_OPTIONS_REFRESH_RATE_WARNING), {}, WarningLevel::Info);
 				}
 				break;
 			}
 
 			case WID_GO_BASE_GRF_DROPDOWN:
 				if (_game_mode == GM_MENU) {
-					CloseWindowByClass(WC_GRF_PARAMETERS);
+					CloseWindowByClass(WindowClass::NewGRFParameters);
 					auto set = BaseGraphics::GetSet(index);
 					BaseGraphics::SetSet(set);
 					this->reload = true;
@@ -1855,7 +1855,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_game_options_widgets
 /** Window definition for the game options window. */
 static WindowDesc _game_options_desc(
 	WindowPosition::Center, "game_options", 0, 0,
-	WC_GAME_OPTIONS, WC_NONE,
+	WindowClass::GameOptions, WindowClass::None,
 	{},
 	_nested_game_options_widgets
 );
@@ -1863,7 +1863,7 @@ static WindowDesc _game_options_desc(
 /** Open the game options window. */
 void ShowGameOptions()
 {
-	CloseWindowByClass(WC_GAME_OPTIONS);
+	CloseWindowByClass(WindowClass::GameOptions);
 	new GameOptionsWindow(_game_options_desc);
 }
 
@@ -2199,7 +2199,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_cust_currency_widget
 /** Window definition for the custom currency window. */
 static WindowDesc _cust_currency_desc(
 	WindowPosition::Center, {}, 0, 0,
-	WC_CUSTOM_CURRENCY, WC_NONE,
+	WindowClass::CustomCurrenty, WindowClass::None,
 	{},
 	_nested_cust_currency_widgets
 );
@@ -2207,6 +2207,6 @@ static WindowDesc _cust_currency_desc(
 /** Open custom currency window. */
 static void ShowCustCurrency()
 {
-	CloseWindowById(WC_CUSTOM_CURRENCY, 0);
+	CloseWindowById(WindowClass::CustomCurrenty, 0);
 	new CustomCurrencyWindow(_cust_currency_desc);
 }

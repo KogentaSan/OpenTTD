@@ -197,8 +197,8 @@ Industry::~Industry()
 	industries.erase(this->index);
 
 	DeleteIndustryNews(this->index);
-	CloseWindowById(WC_INDUSTRY_VIEW, this->index);
-	CloseWindowById(WC_INDUSTRY_PRODUCTION, this->index);
+	CloseWindowById(WindowClass::IndustryView, this->index);
+	CloseWindowById(WindowClass::IndustryProductionGraph, this->index);
 	DeleteNewGRFInspectWindow(GrfSpecFeature::Industries, this->index);
 
 	Source src{this->index, SourceType::Industry};
@@ -216,8 +216,8 @@ Industry::~Industry()
  */
 void Industry::PostDestructor(size_t)
 {
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_FORCE_REBUILD);
-	SetWindowDirty(WC_BUILD_INDUSTRY, 0);
+	InvalidateWindowData(WindowClass::IndustryDirectory, 0, IDIWD_FORCE_REBUILD);
+	SetWindowDirty(WindowClass::BuildIndustry, 0);
 }
 
 
@@ -1660,7 +1660,7 @@ static bool CheckIfCanLevelIndustryPlatform(TileIndex tile, DoCommandFlags flags
 			}
 			/* This is not 100% correct check, but the best we can do without modifying the map.
 			 *  What is missing, is if the difference in height is more than 1.. */
-			if (std::get<0>(Command<Commands::TerraformLand>::Do(DoCommandFlags{flags}.Reset(DoCommandFlag::Execute), tile_walk, SLOPE_N, curh <= h)).Failed()) {
+			if (ExtractCommandCost(Command<Commands::TerraformLand>::Do(DoCommandFlags{flags}.Reset(DoCommandFlag::Execute), tile_walk, SLOPE_N, curh <= h)).Failed()) {
 				return false;
 			}
 		}
@@ -1975,8 +1975,8 @@ static void DoCreateNewIndustry(Industry *i, TileIndex tile, IndustryType type, 
 	if (GetIndustrySpec(i->type)->behaviour.Test(IndustryBehaviour::PlantOnBuild)) {
 		for (uint j = 0; j != 50; j++) PlantRandomFarmField(i);
 	}
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_FORCE_REBUILD);
-	SetWindowDirty(WC_BUILD_INDUSTRY, 0);
+	InvalidateWindowData(WindowClass::IndustryDirectory, 0, IDIWD_FORCE_REBUILD);
+	SetWindowDirty(WindowClass::BuildIndustry, 0);
 
 	if (!_generating_world) PopulateStationsNearby(i);
 }
@@ -2117,9 +2117,9 @@ CommandCost CmdBuildIndustry(DoCommandFlags flags, TileIndex tile, IndustryType 
 			}
 			if (ret.Failed() && IsLocalCompany()) {
 				if (prospect_success) {
-					ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_PROSPECT_INDUSTRY), GetEncodedString(STR_ERROR_NO_SUITABLE_PLACES_FOR_PROSPECTING), WL_INFO);
+					ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_PROSPECT_INDUSTRY), GetEncodedString(STR_ERROR_NO_SUITABLE_PLACES_FOR_PROSPECTING), WarningLevel::Info);
 				} else {
-					ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_PROSPECT_INDUSTRY), GetEncodedString(STR_ERROR_PROSPECTING_WAS_UNLUCKY), WL_INFO);
+					ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_PROSPECT_INDUSTRY), GetEncodedString(STR_ERROR_PROSPECTING_WAS_UNLUCKY), WarningLevel::Info);
 				}
 			}
 		}
@@ -2268,7 +2268,7 @@ CommandCost CmdIndustrySetText(DoCommandFlags flags, IndustryID ind_id, const En
 	if (flags.Test(DoCommandFlag::Execute)) {
 		ind->text.clear();
 		if (!text.empty()) ind->text = text;
-		InvalidateWindowData(WC_INDUSTRY_VIEW, ind->index);
+		InvalidateWindowData(WindowClass::IndustryView, ind->index);
 	}
 
 	return CommandCost();
@@ -2403,7 +2403,7 @@ static void PlaceInitialIndustry(IndustryType type, bool water, bool try_hard)
 {
 	AutoRestoreBackup cur_company(_current_company, OWNER_NONE);
 
-	IncreaseGeneratingWorldProgress(water ? GWP_WATER_INDUSTRY : GWP_LAND_INDUSTRY);
+	IncreaseGeneratingWorldProgress(water ? GenWorldProgress::WaterIndustries : GenWorldProgress::LandIndustries);
 	PlaceIndustry(type, IndustryAvailabilityCallType::MapGeneration, try_hard);
 }
 
@@ -2510,7 +2510,7 @@ void GenerateIndustries()
 			total_amount = p.num_forced;
 		}
 
-		SetGeneratingWorldProgress(water ? GWP_WATER_INDUSTRY : GWP_LAND_INDUSTRY, total_amount);
+		SetGeneratingWorldProgress(water ? GenWorldProgress::WaterIndustries : GenWorldProgress::LandIndustries, total_amount);
 
 		/* Try to build one industry per type independent of any probabilities */
 		for (IndustryType it = 0; it < NUM_INDUSTRYTYPES; it++) {
@@ -3034,7 +3034,7 @@ static void ChangeIndustryProduction(Industry *i, bool monthly)
 	/* Close if needed and allowed */
 	if (closeit && !CheckIndustryCloseDownProtection(i->type) && !i->ctlflags.Test(IndustryControlFlag::NoClosure)) {
 		i->prod_level = PRODLEVEL_CLOSURE;
-		SetWindowDirty(WC_INDUSTRY_VIEW, i->index);
+		SetWindowDirty(WindowClass::IndustryView, i->index);
 		str = indspec->closure_text;
 	}
 
@@ -3109,13 +3109,13 @@ static const IntervalTimer<TimerGameEconomy> _economy_industries_daily({TimerGam
 			Industry *i = Industry::GetRandom();
 			if (i != nullptr) {
 				ChangeIndustryProduction(i, false);
-				SetWindowDirty(WC_INDUSTRY_VIEW, i->index);
+				SetWindowDirty(WindowClass::IndustryView, i->index);
 			}
 		}
 	}
 
 	/* production-change */
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_PRODUCTION_CHANGE);
+	InvalidateWindowData(WindowClass::IndustryDirectory, 0, IDIWD_PRODUCTION_CHANGE);
 });
 
 /** Economy monthly loop for industries. */
@@ -3131,12 +3131,12 @@ static const IntervalTimer<TimerGameEconomy> _economy_industries_monthly({TimerG
 			delete i;
 		} else {
 			ChangeIndustryProduction(i, true);
-			SetWindowDirty(WC_INDUSTRY_VIEW, i->index);
+			SetWindowDirty(WindowClass::IndustryView, i->index);
 		}
 	}
 
 	/* production-change */
-	InvalidateWindowData(WC_INDUSTRY_DIRECTORY, 0, IDIWD_PRODUCTION_CHANGE);
+	InvalidateWindowData(WindowClass::IndustryDirectory, 0, IDIWD_PRODUCTION_CHANGE);
 });
 
 
@@ -3161,7 +3161,7 @@ void CheckIndustries()
 
 		const IndustrySpec *is = GetIndustrySpec(it);
 		ShowErrorMessage(GetEncodedString(STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES, is->name),
-			GetEncodedString(STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION), WL_WARNING);
+			GetEncodedString(STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION), WarningLevel::Warning);
 
 		count++;
 		if (count >= 3) break; // Don't swamp the user with errors.

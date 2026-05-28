@@ -540,7 +540,7 @@ CommandCost CmdBuildSingleRail(DoCommandFlags flags, TileIndex tile, RailType ra
 					}
 
 					if (flags.Test(DoCommandFlag::Execute)) {
-						MakeRoadCrossing(tile, road_owner, tram_owner, _current_company, (track == TRACK_X ? AXIS_Y : AXIS_X), railtype, roadtype_road, roadtype_tram, GetTownIndex(tile));
+						MakeRoadCrossing(tile, road_owner, tram_owner, _current_company, (track == TRACK_X ? Axis::Y : Axis::X), railtype, roadtype_road, roadtype_tram, GetTownIndex(tile));
 						UpdateLevelCrossing(tile, false);
 						MarkDirtyAdjacentLevelCrossingTiles(tile, GetCrossingRoadAxis(tile));
 						Company::Get(_current_company)->infrastructure.rail[railtype] += LEVELCROSSING_TRACKBIT_FACTOR;
@@ -1641,8 +1641,8 @@ CommandCost CmdConvertRail(DoCommandFlags flags, TileIndex tile, TileIndex area_
 							YapfNotifyTrackLayoutChange(tile, GetRailDepotTrack(tile));
 
 							/* Update build vehicle window related to this depot */
-							InvalidateWindowData(WC_VEHICLE_DEPOT, tile);
-							InvalidateWindowData(WC_BUILD_VEHICLE, tile);
+							InvalidateWindowData(WindowClass::VehicleDepot, tile);
+							InvalidateWindowData(WindowClass::BuildVehicle, tile);
 						}
 						found_convertible_track = true;
 						cost.AddCost(RailConvertCost(type, totype));
@@ -2449,7 +2449,7 @@ static void DrawTile_Rail(TileInfo *ti)
 
 		DrawTrackBits(ti, rails);
 
-		if (HasBit(_display_opt, DO_FULL_DETAIL)) DrawTrackDetails(ti, rti, pal);
+		if (_display_opt.Test(DisplayOption::FullDetail)) DrawTrackDetails(ti, rti, pal);
 
 		if (HasRailCatenaryDrawn(GetRailType(ti->tile))) DrawRailCatenary(ti);
 
@@ -2992,7 +2992,7 @@ static VehicleEnterTileStates VehicleEnterTile_Rail(Vehicle *v, TileIndex tile, 
 			/* Leave the depot. */
 			if ((v = v->GetMovingNext()) != nullptr) {
 				v->vehstatus.Reset(VehState::Hidden);
-				Train::From(v)->track = (DiagDirToAxis(dir) == AXIS_X ? TRACK_BIT_X : TRACK_BIT_Y);
+				Train::From(v)->track = AxisToTrackBits(DiagDirToAxis(dir));
 			}
 		}
 	} else if (_fractcoords_enter[dir] == fract_coord) {
@@ -3016,7 +3016,7 @@ static VehicleEnterTileStates VehicleEnterTile_Rail(Vehicle *v, TileIndex tile, 
 		}
 		v->tile = tile;
 
-		InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
+		InvalidateWindowData(WindowClass::VehicleDepot, v->tile);
 		return VehicleEnterTileState::EnteredWormhole;
 	}
 
