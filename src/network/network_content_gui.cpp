@@ -95,7 +95,7 @@ struct ContentTextfileWindow : public TextfileWindow {
  */
 static void ShowContentTextfileWindow(Window *parent, TextfileType file_type, const ContentInfo *ci)
 {
-	parent->CloseChildWindowById(WC_TEXTFILE, file_type);
+	parent->CloseChildWindowById(WindowClass::Textfile, file_type);
 	new ContentTextfileWindow(parent, file_type, ci);
 }
 
@@ -114,7 +114,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_network_content_down
 /** Window description for the download window */
 static WindowDesc _network_content_download_status_window_desc(
 	WindowPosition::Center, {}, 0, 0,
-	WC_NETWORK_STATUS_WINDOW, WC_NONE,
+	WindowClass::NetworkStatus, WindowClass::None,
 	WindowDefaultFlag::Modal,
 	_nested_network_content_download_status_window_widgets
 );
@@ -124,7 +124,7 @@ BaseNetworkContentDownloadStatusWindow::BaseNetworkContentDownloadStatusWindow(W
 	_network_content_client.AddCallback(this);
 	_network_content_client.DownloadSelectedContent(this->total_files, this->total_bytes);
 
-	this->InitNested(WN_NETWORK_STATUS_WINDOW_CONTENT_DOWNLOAD);
+	this->InitNested(NetworkStatusWindowNumber::ContentDownload);
 }
 
 void BaseNetworkContentDownloadStatusWindow::Close([[maybe_unused]] int data)
@@ -161,19 +161,19 @@ void BaseNetworkContentDownloadStatusWindow::DrawWidget(const Rect &r, WidgetID 
 			DrawFrameRect(ir.WithWidth((uint64_t)ir.Width() * this->downloaded_bytes / this->total_bytes, _current_text_dir == TD_RTL), Colours::Mauve, {});
 			DrawString(ir.left, ir.right, CentreBounds(ir.top, ir.bottom, GetCharacterHeight(FontSize::Normal)),
 				GetString(STR_CONTENT_DOWNLOAD_PROGRESS_SIZE, this->downloaded_bytes, this->total_bytes, this->downloaded_bytes * 100LL / this->total_bytes),
-				TC_FROMSTRING, SA_HOR_CENTER);
+				TextColour::FromString, SA_HOR_CENTER);
 			break;
 		}
 
 		case WID_NCDS_PROGRESS_TEXT:
 			if (this->downloaded_bytes == this->total_bytes) {
-				DrawStringMultiLine(r, STR_CONTENT_DOWNLOAD_COMPLETE, TC_FROMSTRING, SA_CENTER);
+				DrawStringMultiLine(r, STR_CONTENT_DOWNLOAD_COMPLETE, TextColour::FromString, SA_CENTER);
 			} else if (!this->name.empty()) {
 				DrawStringMultiLine(r,
 					GetString(STR_CONTENT_DOWNLOAD_FILE, this->name, this->downloaded_files, this->total_files),
-					TC_FROMSTRING, SA_CENTER);
+					TextColour::FromString, SA_CENTER);
 			} else {
-				DrawStringMultiLine(r, STR_CONTENT_DOWNLOAD_INITIALISE, TC_FROMSTRING, SA_CENTER);
+				DrawStringMultiLine(r, STR_CONTENT_DOWNLOAD_INITIALISE, TextColour::FromString, SA_CENTER);
 			}
 			break;
 	}
@@ -210,7 +210,7 @@ public:
 	 */
 	NetworkContentDownloadStatusWindow() : BaseNetworkContentDownloadStatusWindow(_network_content_download_status_window_desc)
 	{
-		this->parent = FindWindowById(WC_NETWORK_WINDOW, WN_NETWORK_WINDOW_CONTENT_LIST);
+		this->parent = FindWindowById(WindowClass::Network, NetworkWindowNumber::ContentList);
 	}
 
 	void Close([[maybe_unused]] int data = 0) override
@@ -264,17 +264,17 @@ public:
 
 				case ContentType::BaseGraphics:
 					BaseGraphics::FindSets();
-					SetWindowDirty(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_OPTIONS);
+					SetWindowDirty(WindowClass::GameOptions, GameOptionsWindowNumber::GameOptions);
 					break;
 
 				case ContentType::BaseSounds:
 					BaseSounds::FindSets();
-					SetWindowDirty(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_OPTIONS);
+					SetWindowDirty(WindowClass::GameOptions, GameOptionsWindowNumber::GameOptions);
 					break;
 
 				case ContentType::BaseMusic:
 					BaseMusic::FindSets();
-					SetWindowDirty(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_OPTIONS);
+					SetWindowDirty(WindowClass::GameOptions, GameOptionsWindowNumber::GameOptions);
 					break;
 
 				case ContentType::NewGRF:
@@ -284,7 +284,7 @@ public:
 				case ContentType::Scenario:
 				case ContentType::Heightmap:
 					ScanScenarios();
-					InvalidateWindowData(WC_SAVELOAD, 0, 0);
+					InvalidateWindowData(WindowClass::SaveLoad, 0, 0);
 					break;
 
 				default:
@@ -293,7 +293,7 @@ public:
 		}
 
 		/* Always invalidate the download window; tell it we are going to be gone */
-		InvalidateWindowData(WC_NETWORK_WINDOW, WN_NETWORK_WINDOW_CONTENT_LIST, 2);
+		InvalidateWindowData(WindowClass::Network, NetworkWindowNumber::ContentList, 2);
 
 		this->BaseNetworkContentDownloadStatusWindow::Close();
 	}
@@ -307,7 +307,7 @@ public:
 			} else {
 				/* If downloading succeeded, close the online content window. This will close
 				 * the current window as well. */
-				CloseWindowById(WC_NETWORK_WINDOW, WN_NETWORK_WINDOW_CONTENT_LIST);
+				CloseWindowById(WindowClass::Network, NetworkWindowNumber::ContentList);
 			}
 		}
 	}
@@ -358,7 +358,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	uint filesize_sum = 0; ///< The sum of all selected file sizes
 	Scrollbar *vscroll = nullptr; ///< Cache of the vertical scrollbar
 
-	static std::array<std::string, to_underlying(ContentType::End)> content_type_strs; ///< Cached strings for all content types.
+	static EnumIndexArray<std::string, ContentType, ContentType::End> content_type_strs; ///< Cached strings for all content types.
 
 	/** Search external websites for content */
 	void OpenExternalSearch()
@@ -454,7 +454,7 @@ class NetworkContentListWindow : public Window, ContentCallback {
 	{
 		int r = 0;
 		if (a->type != b->type) {
-			r = StrNaturalCompare(content_type_strs[to_underlying(a->type)], content_type_strs[to_underlying(b->type)]);
+			r = StrNaturalCompare(content_type_strs[a->type], content_type_strs[b->type]);
 		}
 		if (r == 0) return NameSorter(a, b);
 		return r < 0;
@@ -564,7 +564,7 @@ public:
 	{
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_NCL_SCROLLBAR);
-		this->FinishInitNested(WN_NETWORK_WINDOW_CONTENT_LIST);
+		this->FinishInitNested(NetworkWindowNumber::ContentList);
 
 		this->GetWidget<NWidgetStacked>(WID_NCL_SEL_ALL_UPDATE)->SetDisplayedPlane(select_all);
 
@@ -694,12 +694,12 @@ public:
 			DrawSpriteIgnorePadding(sprite, pal, checkbox.WithY(mr), SA_CENTER);
 
 			StringID str = GetContentTypeString(ci->type);
-			DrawString(type.left, type.right, mr.top + text_y_offset, str, TC_BLACK, SA_HOR_CENTER);
+			DrawString(type.left, type.right, mr.top + text_y_offset, str, TextColour::Black, SA_HOR_CENTER);
 
-			int x = DrawString(name.left, name.right, mr.top + version_y_offset, ci->version, TC_BLACK, SA_RIGHT, false, FontSize::Small);
+			int x = DrawString(name.left, name.right, mr.top + version_y_offset, ci->version, TextColour::Black, SA_RIGHT, false, FontSize::Small);
 			x += rtl ? WidgetDimensions::scaled.hsep_wide : -WidgetDimensions::scaled.hsep_wide;
 
-			DrawString(rtl ? x : name.left, rtl ? name.right : x, mr.top + text_y_offset, ci->name, TC_BLACK);
+			DrawString(rtl ? x : name.left, rtl ? name.right : x, mr.top + text_y_offset, ci->name, TextColour::Black);
 			mr = mr.Translate(0, step_height);
 		}
 	}
@@ -719,7 +719,7 @@ public:
 
 		/* Create the nice darker rectangle at the details top */
 		GfxFillRect(r.WithHeight(HEADER_HEIGHT).Shrink(WidgetDimensions::scaled.bevel.left, WidgetDimensions::scaled.bevel.top, WidgetDimensions::scaled.bevel.right, 0), GetColourGradient(Colours::LightBlue, Shade::Normal));
-		DrawString(hr.left, hr.right, hr.top, STR_CONTENT_DETAIL_TITLE, TC_FROMSTRING, SA_HOR_CENTER);
+		DrawString(hr.left, hr.right, hr.top, STR_CONTENT_DETAIL_TITLE, TextColour::FromString, SA_HOR_CENTER);
 
 		/* Draw the total download size */
 		DrawString(tr.left, tr.right, tr.bottom - GetCharacterHeight(FontSize::Normal) + 1, GetString(STR_CONTENT_TOTAL_DOWNLOAD_SIZE, this->filesize_sum));
@@ -727,7 +727,7 @@ public:
 		if (this->selected == nullptr) return;
 
 		/* And fill the rest of the details when there's information to place there */
-		DrawStringMultiLine(hr.left, hr.right, hr.top + GetCharacterHeight(FontSize::Normal), hr.bottom, STR_CONTENT_DETAIL_SUBTITLE_UNSELECTED + to_underlying(this->selected->state), TC_FROMSTRING, SA_CENTER);
+		DrawStringMultiLine(hr.left, hr.right, hr.top + GetCharacterHeight(FontSize::Normal), hr.bottom, STR_CONTENT_DETAIL_SUBTITLE_UNSELECTED + to_underlying(this->selected->state), TextColour::FromString, SA_CENTER);
 
 		/* Also show the total download size, so keep some space from the bottom */
 		tr.bottom -= GetCharacterHeight(FontSize::Normal) + WidgetDimensions::scaled.vsep_wide;
@@ -870,7 +870,7 @@ public:
 				break;
 
 			case WID_NCL_DOWNLOAD:
-				if (BringWindowToFrontById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_CONTENT_DOWNLOAD) == nullptr) new NetworkContentDownloadStatusWindow();
+				if (BringWindowToFrontById(WindowClass::NetworkStatus, NetworkStatusWindowNumber::ContentDownload) == nullptr) new NetworkContentDownloadStatusWindow();
 				break;
 
 			case WID_NCL_SEARCH_EXTERNAL:
@@ -965,7 +965,7 @@ public:
 	void OnConnect(bool success) override
 	{
 		if (!success) {
-			ShowErrorMessage(GetEncodedString(STR_CONTENT_ERROR_COULD_NOT_CONNECT), {}, WL_ERROR);
+			ShowErrorMessage(GetEncodedString(STR_CONTENT_ERROR_COULD_NOT_CONNECT), {}, WarningLevel::Error);
 			this->Close();
 			return;
 		}
@@ -1005,7 +1005,7 @@ public:
 		}
 
 		/* If data == 2 then the status window caused this OnInvalidate */
-		this->SetWidgetDisabledState(WID_NCL_DOWNLOAD, this->filesize_sum == 0 || (FindWindowById(WC_NETWORK_STATUS_WINDOW, WN_NETWORK_STATUS_WINDOW_CONTENT_DOWNLOAD) != nullptr && data != 2));
+		this->SetWidgetDisabledState(WID_NCL_DOWNLOAD, this->filesize_sum == 0 || (FindWindowById(WindowClass::NetworkStatus, NetworkStatusWindowNumber::ContentDownload) != nullptr && data != 2));
 		this->SetWidgetDisabledState(WID_NCL_UNSELECT, this->filesize_sum == 0);
 		this->SetWidgetDisabledState(WID_NCL_SELECT_ALL, !show_select_all);
 		this->SetWidgetDisabledState(WID_NCL_SELECT_UPDATE, !show_select_upgrade || !this->filter_data.string_filter.IsEmpty());
@@ -1030,7 +1030,7 @@ const std::initializer_list<NetworkContentListWindow::GUIContentList::FilterFunc
 	&TypeOrSelectedFilter,
 };
 
-std::array<std::string, to_underlying(ContentType::End)> NetworkContentListWindow::content_type_strs;
+EnumIndexArray<std::string, ContentType, ContentType::End> NetworkContentListWindow::content_type_strs;
 
 /**
  * Build array of all strings corresponding to the content types.
@@ -1038,7 +1038,7 @@ std::array<std::string, to_underlying(ContentType::End)> NetworkContentListWindo
 void BuildContentTypeStringList()
 {
 	for (ContentType ct = ContentType::Begin; ct != ContentType::End; ++ct) {
-		NetworkContentListWindow::content_type_strs[to_underlying(ct)] = GetString(GetContentTypeString(ct));
+		NetworkContentListWindow::content_type_strs[ct] = GetString(GetContentTypeString(ct));
 	}
 }
 
@@ -1120,7 +1120,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_network_content_list
 /** Window description of the content list */
 static WindowDesc _network_content_list_desc(
 	WindowPosition::Center, "list_content", 630, 460,
-	WC_NETWORK_WINDOW, WC_NONE,
+	WindowClass::Network, WindowClass::None,
 	{},
 	_nested_network_content_list_widgets
 );
@@ -1149,12 +1149,12 @@ void ShowNetworkContentListWindow(ContentVector *cv, ContentType type1, ContentT
 		_network_content_client.RequestContentList(cv, true);
 	}
 
-	CloseWindowById(WC_NETWORK_WINDOW, WN_NETWORK_WINDOW_CONTENT_LIST);
+	CloseWindowById(WindowClass::Network, NetworkWindowNumber::ContentList);
 	new NetworkContentListWindow(_network_content_list_desc, cv != nullptr, types);
 #else
 	ShowErrorMessage(
 		GetEncodedString(STR_CONTENT_NO_ZLIB),
 		GetEncodedString(STR_CONTENT_NO_ZLIB_SUB),
-		WL_ERROR);
+		WarningLevel::Error);
 #endif /* WITH_ZLIB */
 }

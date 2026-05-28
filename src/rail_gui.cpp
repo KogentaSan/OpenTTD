@@ -177,12 +177,12 @@ static void PlaceRail_Waypoint(TileIndex tile)
 	Axis axis = GetAxisForNewRailWaypoint(tile);
 	if (IsValidAxis(axis)) {
 		/* Valid tile for waypoints */
-		VpStartPlaceSizing(tile, axis == AXIS_X ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_STATION);
+		VpStartPlaceSizing(tile, axis == Axis::X ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_STATION);
 		VpSetPlaceSizingLimit(_settings_game.station.station_spread);
 	} else {
 		/* Tile where we can't build rail waypoints. This is always going to fail,
 		 * but provides the user with a proper error message. */
-		Command<Commands::BuildRailWaypoint>::Post(STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT , tile, AXIS_X, 1, 1, STAT_CLASS_WAYP, 0, StationID::Invalid(), false);
+		Command<Commands::BuildRailWaypoint>::Post(STR_ERROR_CAN_T_BUILD_RAIL_WAYPOINT , tile, Axis::X, 1, 1, STAT_CLASS_WAYP, 0, StationID::Invalid(), false);
 	}
 }
 
@@ -210,7 +210,7 @@ static void PlaceRail_Station(TileIndex tile)
 	} else {
 		int w = _settings_client.gui.station_numtracks;
 		int h = _settings_client.gui.station_platlength;
-		if (!_station_gui.axis) std::swap(w, h);
+		if (_station_gui.axis == Axis::X) std::swap(w, h);
 
 		StationPickerSelection params = _station_gui;
 		RailType rt = _cur_railtype;
@@ -275,7 +275,7 @@ static void GenericPlaceSignals(TileIndex tile)
 			}
 		}
 
-		if (FindWindowById(WC_BUILD_SIGNAL, 0) != nullptr) {
+		if (FindWindowById(WindowClass::BuildSignal, 0) != nullptr) {
 			/* signal GUI is used */
 			Command<Commands::BuildSignal>::Post(_convert_signal_button ? STR_ERROR_SIGNAL_CAN_T_CONVERT_SIGNALS_HERE : STR_ERROR_CAN_T_BUILD_SIGNALS_HERE, CcPlaySound_CONSTRUCTION_RAIL,
 				tile, track, _cur_signal_type, _cur_signal_variant, _convert_signal_button, false, _ctrl_pressed, cycle_start, cycle_end, 0, 0);
@@ -325,7 +325,7 @@ void CcBuildRailTunnel(Commands, const CommandCost &result, TileIndex tile)
  */
 static void ToggleRailButton_Remove(Window *w)
 {
-	CloseWindowById(WC_SELECT_STATION, 0);
+	CloseWindowById(WindowClass::JoinStation, 0);
 	w->ToggleWidgetLoweredState(WID_RAT_REMOVE);
 	w->SetWidgetDirty(WID_RAT_REMOVE);
 	_remove_button_clicked = w->IsWidgetLowered(WID_RAT_REMOVE);
@@ -378,7 +378,7 @@ static void BuildRailClick_Remove(Window *w)
 			if (!_settings_client.gui.station_dragdrop) {
 				int x = _settings_client.gui.station_numtracks;
 				int y = _settings_client.gui.station_platlength;
-				if (_station_gui.axis == 0) std::swap(x, y);
+				if (_station_gui.axis == Axis::X) std::swap(x, y);
 				SetTileSelectSize(x, y);
 			} else {
 				VpSetPlaceSizingLimit(_settings_game.station.station_spread);
@@ -431,7 +431,7 @@ static void HandleAutoSignalPlacement()
 		Command<Commands::RemoveSignalLong>::Post(STR_ERROR_CAN_T_REMOVE_SIGNALS_FROM, CcPlaySound_CONSTRUCTION_RAIL,
 				TileVirtXY(_thd.selstart.x, _thd.selstart.y), TileVirtXY(_thd.selend.x, _thd.selend.y), track, _ctrl_pressed);
 	} else {
-		bool sig_gui = FindWindowById(WC_BUILD_SIGNAL, 0) != nullptr;
+		bool sig_gui = FindWindowById(WindowClass::BuildSignal, 0) != nullptr;
 		SignalType sigtype = sig_gui ? _cur_signal_type : _settings_client.gui.default_signal_type;
 		SignalVariant sigvar = sig_gui ? _cur_signal_variant : (TimerGameCalendar::year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC);
 		Command<Commands::BuildSignalLong>::Post(STR_ERROR_CAN_T_BUILD_SIGNALS_HERE, CcPlaySound_CONSTRUCTION_RAIL,
@@ -459,8 +459,8 @@ struct BuildRailToolbarWindow : Window {
 	{
 		if (this->IsWidgetLowered(WID_RAT_BUILD_STATION)) SetViewportCatchmentStation(nullptr, true);
 		if (this->IsWidgetLowered(WID_RAT_BUILD_WAYPOINT)) SetViewportCatchmentWaypoint(nullptr, true);
-		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WC_SCEN_LAND_GEN, 0, false);
-		CloseWindowById(WC_SELECT_STATION, 0);
+		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WindowClass::ScenarioGenerateLandscape, 0, false);
+		CloseWindowById(WindowClass::JoinStation, 0);
 		this->Window::Close();
 	}
 
@@ -484,11 +484,11 @@ struct BuildRailToolbarWindow : Window {
 		bool can_build = CanBuildVehicleInfrastructure(VehicleType::Train);
 		for (const WidgetID widget : can_build_widgets) this->SetWidgetDisabledState(widget, !can_build);
 		if (!can_build) {
-			CloseWindowById(WC_BUILD_SIGNAL, TRANSPORT_RAIL);
-			CloseWindowById(WC_BUILD_STATION, TRANSPORT_RAIL);
-			CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_RAIL);
-			CloseWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
-			CloseWindowById(WC_SELECT_STATION, 0);
+			CloseWindowById(WindowClass::BuildSignal, TRANSPORT_RAIL);
+			CloseWindowById(WindowClass::BuildStation, TRANSPORT_RAIL);
+			CloseWindowById(WindowClass::BuildDepot, TRANSPORT_RAIL);
+			CloseWindowById(WindowClass::BuildWaypoint, TRANSPORT_RAIL);
+			CloseWindowById(WindowClass::JoinStation, 0);
 		}
 	}
 
@@ -736,7 +736,7 @@ struct BuildRailToolbarWindow : Window {
 	void OnPlaceDrag(ViewportPlaceMethod select_method, [[maybe_unused]] ViewportDragDropSelectionProcess select_proc, [[maybe_unused]] Point pt) override
 	{
 		/* no dragging if you have pressed the convert button */
-		if (FindWindowById(WC_BUILD_SIGNAL, 0) != nullptr && _convert_signal_button && this->IsWidgetLowered(WID_RAT_BUILD_SIGNALS)) return;
+		if (FindWindowById(WindowClass::BuildSignal, 0) != nullptr && _convert_signal_button && this->IsWidgetLowered(WID_RAT_BUILD_SIGNALS)) return;
 
 		VpSelectTilesWithMethod(pt.x, pt.y, select_method);
 	}
@@ -789,7 +789,7 @@ struct BuildRailToolbarWindow : Window {
 							Command<Commands::RemoveFromRailWaypoint>::Post(STR_ERROR_CAN_T_REMOVE_RAIL_WAYPOINT , CcPlaySound_CONSTRUCTION_RAIL, end_tile, start_tile, keep_rail);
 						} else {
 							TileArea ta(start_tile, end_tile);
-							Axis axis = select_method == VPM_X_LIMITED ? AXIS_X : AXIS_Y;
+							Axis axis = select_method == VPM_X_LIMITED ? Axis::X : Axis::Y;
 							bool adjacent = _ctrl_pressed;
 
 							auto proc = [=](bool test, StationID to_join) -> bool {
@@ -817,12 +817,12 @@ struct BuildRailToolbarWindow : Window {
 		this->DisableWidget(WID_RAT_REMOVE);
 		this->SetWidgetDirty(WID_RAT_REMOVE);
 
-		CloseWindowById(WC_BUILD_SIGNAL, TRANSPORT_RAIL);
-		CloseWindowById(WC_BUILD_STATION, TRANSPORT_RAIL);
-		CloseWindowById(WC_BUILD_DEPOT, TRANSPORT_RAIL);
-		CloseWindowById(WC_BUILD_WAYPOINT, TRANSPORT_RAIL);
-		CloseWindowById(WC_SELECT_STATION, 0);
-		CloseWindowByClass(WC_BUILD_BRIDGE);
+		CloseWindowById(WindowClass::BuildSignal, TRANSPORT_RAIL);
+		CloseWindowById(WindowClass::BuildStation, TRANSPORT_RAIL);
+		CloseWindowById(WindowClass::BuildDepot, TRANSPORT_RAIL);
+		CloseWindowById(WindowClass::BuildWaypoint, TRANSPORT_RAIL);
+		CloseWindowById(WindowClass::JoinStation, 0);
+		CloseWindowByClass(WindowClass::BuildBridge);
 	}
 
 	void OnPlacePresize([[maybe_unused]] Point pt, TileIndex tile) override
@@ -861,7 +861,7 @@ struct BuildRailToolbarWindow : Window {
 
 		/* Update cursor and all sub windows. */
 		if (_thd.GetCallbackWnd() == this) SetCursor(this->GetCursorForWidget(this->last_user_action), PAL_NONE);
-		for (WindowClass cls : {WC_BUILD_STATION, WC_BUILD_SIGNAL, WC_BUILD_WAYPOINT, WC_BUILD_DEPOT}) SetWindowDirty(cls, TRANSPORT_RAIL);
+		for (WindowClass cls : {WindowClass::BuildStation, WindowClass::BuildSignal, WindowClass::BuildWaypoint, WindowClass::BuildDepot}) SetWindowDirty(cls, TRANSPORT_RAIL);
 
 		return ES_HANDLED;
 	}
@@ -904,7 +904,7 @@ struct BuildRailToolbarWindow : Window {
 static constexpr std::initializer_list<NWidgetPart> _nested_build_rail_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, Colours::DarkGreen),
-		NWidget(WWT_CAPTION, Colours::DarkGreen, WID_RAT_CAPTION), SetTextStyle(TC_WHITE),
+		NWidget(WWT_CAPTION, Colours::DarkGreen, WID_RAT_CAPTION), SetTextStyle(TextColour::White),
 		NWidget(WWT_STICKYBOX, Colours::DarkGreen),
 	EndContainer(),
 	NWidget(NWID_HORIZONTAL),
@@ -945,7 +945,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_build_rail_widgets =
 /** Window definition for the rail toolbar. */
 static WindowDesc _build_rail_desc(
 	WindowPosition::Manual, "toolbar_rail", 0, 0,
-	WC_BUILD_TOOLBAR, WC_NONE,
+	WindowClass::BuildToolbar, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_build_rail_widgets,
 	&BuildRailToolbarWindow::hotkeys
@@ -965,7 +965,7 @@ Window *ShowBuildRailToolbar(RailType railtype)
 	if (!Company::IsValidID(_local_company)) return nullptr;
 	if (!ValParamRailType(railtype)) return nullptr;
 
-	CloseWindowByClass(WC_BUILD_TOOLBAR);
+	CloseWindowByClass(WindowClass::BuildToolbar);
 	_cur_railtype = railtype;
 	_remove_button_clicked = false;
 	return new BuildRailToolbarWindow(_build_rail_desc, railtype);
@@ -980,7 +980,7 @@ static void HandleStationPlacement(TileIndex start, TileIndex end)
 	uint numtracks = ta.w;
 	uint platlength = ta.h;
 
-	if (_station_gui.axis == AXIS_X) std::swap(numtracks, platlength);
+	if (_station_gui.axis == Axis::X) std::swap(numtracks, platlength);
 
 	StationPickerSelection params = _station_gui;
 	RailType rt = _cur_railtype;
@@ -1070,7 +1070,7 @@ public:
 	void DrawType(int x, int y, int cls_id, int id) const override
 	{
 		if (!DrawStationTile(x, y, _cur_railtype, _station_gui.axis, this->GetClassIndex(cls_id), id)) {
-			StationPickerDrawSprite(x, y, StationType::Rail, _cur_railtype, INVALID_ROADTYPE, 2 + _station_gui.axis);
+			StationPickerDrawSprite(x, y, StationType::Rail, _cur_railtype, INVALID_ROADTYPE, 2 + to_underlying(_station_gui.axis));
 		}
 	}
 
@@ -1140,7 +1140,7 @@ public:
 
 	void OnInit() override
 	{
-		this->LowerWidget(WID_BRAS_PLATFORM_DIR_X + _station_gui.axis);
+		this->LowerWidget(WID_BRAS_PLATFORM_DIR_X + to_underlying(_station_gui.axis));
 		if (_settings_client.gui.station_dragdrop) {
 			this->LowerWidget(WID_BRAS_PLATFORM_DRAG_N_DROP);
 		} else {
@@ -1155,7 +1155,7 @@ public:
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		CloseWindowById(WC_SELECT_STATION, 0);
+		CloseWindowById(WindowClass::JoinStation, 0);
 		this->PickerWindow::Close();
 	}
 
@@ -1178,7 +1178,7 @@ public:
 		} else {
 			int x = _settings_client.gui.station_numtracks;
 			int y = _settings_client.gui.station_platlength;
-			if (_station_gui.axis == AXIS_X) std::swap(x, y);
+			if (_station_gui.axis == Axis::X) std::swap(x, y);
 			if (!_remove_button_clicked) {
 				SetTileSelectSize(x, y);
 			}
@@ -1249,7 +1249,7 @@ public:
 					AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
 					int x = (ir.Width()  - ScaleSpriteTrad(PREVIEW_WIDTH)) / 2 + ScaleSpriteTrad(PREVIEW_LEFT);
 					int y = (ir.Height() + ScaleSpriteTrad(PREVIEW_HEIGHT)) / 2 - ScaleSpriteTrad(PREVIEW_BOTTOM);
-					if (!DrawStationTile(x, y, _cur_railtype, AXIS_X, _station_gui.sel_class, _station_gui.sel_type)) {
+					if (!DrawStationTile(x, y, _cur_railtype, Axis::X, _station_gui.sel_class, _station_gui.sel_type)) {
 						StationPickerDrawSprite(x, y, StationType::Rail, _cur_railtype, INVALID_ROADTYPE, 2);
 					}
 				}
@@ -1263,7 +1263,7 @@ public:
 					AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
 					int x = (ir.Width()  - ScaleSpriteTrad(PREVIEW_WIDTH)) / 2 + ScaleSpriteTrad(PREVIEW_LEFT);
 					int y = (ir.Height() + ScaleSpriteTrad(PREVIEW_HEIGHT)) / 2 - ScaleSpriteTrad(PREVIEW_BOTTOM);
-					if (!DrawStationTile(x, y, _cur_railtype, AXIS_Y, _station_gui.sel_class, _station_gui.sel_type)) {
+					if (!DrawStationTile(x, y, _cur_railtype, Axis::Y, _station_gui.sel_class, _station_gui.sel_type)) {
 						StationPickerDrawSprite(x, y, StationType::Rail, _cur_railtype, INVALID_ROADTYPE, 3);
 					}
 				}
@@ -1281,12 +1281,12 @@ public:
 		switch (widget) {
 			case WID_BRAS_PLATFORM_DIR_X:
 			case WID_BRAS_PLATFORM_DIR_Y:
-				this->RaiseWidget(WID_BRAS_PLATFORM_DIR_X + _station_gui.axis);
-				_station_gui.axis = (Axis)(widget - WID_BRAS_PLATFORM_DIR_X);
-				this->LowerWidget(WID_BRAS_PLATFORM_DIR_X + _station_gui.axis);
+				this->RaiseWidget(WID_BRAS_PLATFORM_DIR_X + to_underlying(_station_gui.axis));
+				_station_gui.axis = static_cast<Axis>(widget - WID_BRAS_PLATFORM_DIR_X);
+				this->LowerWidget(WID_BRAS_PLATFORM_DIR_X + to_underlying(_station_gui.axis));
 				SndClickBeep();
 				this->SetDirty();
-				CloseWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WindowClass::JoinStation, 0);
 				break;
 
 			case WID_BRAS_PLATFORM_NUM_1:
@@ -1318,7 +1318,7 @@ public:
 				this->LowerWidget(_settings_client.gui.station_platlength + WID_BRAS_PLATFORM_LEN_BEGIN);
 				SndClickBeep();
 				this->SetDirty();
-				CloseWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WindowClass::JoinStation, 0);
 				break;
 			}
 
@@ -1351,7 +1351,7 @@ public:
 				this->LowerWidget(_settings_client.gui.station_platlength + WID_BRAS_PLATFORM_LEN_BEGIN);
 				SndClickBeep();
 				this->SetDirty();
-				CloseWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WindowClass::JoinStation, 0);
 				break;
 			}
 
@@ -1385,7 +1385,7 @@ public:
 				this->SetWidgetLoweredState(_settings_client.gui.station_platlength + WID_BRAS_PLATFORM_LEN_BEGIN, !_settings_client.gui.station_dragdrop);
 				SndClickBeep();
 				this->SetDirty();
-				CloseWindowById(WC_SELECT_STATION, 0);
+				CloseWindowById(WindowClass::JoinStation, 0);
 				break;
 			}
 
@@ -1419,7 +1419,7 @@ public:
 	static EventState BuildRailStationGlobalHotkeys(int hotkey)
 	{
 		if (_game_mode == GM_MENU) return ES_NOT_HANDLED;
-		Window *w = ShowStationBuilder(FindWindowById(WC_BUILD_TOOLBAR, TRANSPORT_RAIL));
+		Window *w = ShowStationBuilder(FindWindowById(WindowClass::BuildToolbar, TRANSPORT_RAIL));
 		if (w == nullptr) return ES_NOT_HANDLED;
 		return w->OnHotkey(hotkey);
 	}
@@ -1485,7 +1485,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_station_builder_widg
 /** High level window description of the station-build window (default & newGRF) */
 static WindowDesc _station_builder_desc(
 	WindowPosition::Automatic, "build_station_rail", 0, 0,
-	WC_BUILD_STATION, WC_BUILD_TOOLBAR,
+	WindowClass::BuildStation, WindowClass::BuildToolbar,
 	WindowDefaultFlag::Construction,
 	_nested_station_builder_widgets,
 	&BuildRailStationWindow::hotkeys
@@ -1626,7 +1626,7 @@ public:
 
 				/* If 'remove' button of rail build toolbar is active, disable it. */
 				if (_remove_button_clicked) {
-					Window *w = FindWindowById(WC_BUILD_TOOLBAR, TRANSPORT_RAIL);
+					Window *w = FindWindowById(WindowClass::BuildToolbar, TRANSPORT_RAIL);
 					if (w != nullptr) ToggleRailButton_Remove(w);
 				}
 
@@ -1641,14 +1641,12 @@ public:
 			case WID_BS_DRAG_SIGNALS_DENSITY_DECREASE:
 				if (_settings_client.gui.drag_signals_density > 1) {
 					_settings_client.gui.drag_signals_density--;
-					SetWindowDirty(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_SETTINGS);
 				}
 				break;
 
 			case WID_BS_DRAG_SIGNALS_DENSITY_INCREASE:
 				if (_settings_client.gui.drag_signals_density < 20) {
 					_settings_client.gui.drag_signals_density++;
-					SetWindowDirty(WC_GAME_OPTIONS, WN_GAME_OPTIONS_GAME_SETTINGS);
 				}
 				break;
 
@@ -1729,7 +1727,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_signal_builder_widge
 			NWidget(WWT_IMGBTN, Colours::DarkGreen, WID_BS_CONVERT), SetSpriteTip(SPR_IMG_SIGNAL_CONVERT, STR_BUILD_SIGNAL_CONVERT_TOOLTIP), SetFill(0, 1),
 			NWidget(WWT_PANEL, Colours::DarkGreen), SetToolTip(STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP), SetFill(0, 1),
 				NWidget(NWID_VERTICAL), SetPadding(2), SetPIPRatio(1, 0, 1),
-					NWidget(WWT_LABEL, Colours::Invalid, WID_BS_DRAG_SIGNALS_DENSITY_LABEL), SetToolTip(STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP), SetTextStyle(TC_ORANGE), SetFill(1, 1),
+					NWidget(WWT_LABEL, Colours::Invalid, WID_BS_DRAG_SIGNALS_DENSITY_LABEL), SetToolTip(STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP), SetTextStyle(TextColour::Orange), SetFill(1, 1),
 					NWidget(NWID_HORIZONTAL), SetPIPRatio(1, 0, 1),
 						NWidget(WWT_PUSHARROWBTN, Colours::Grey, WID_BS_DRAG_SIGNALS_DENSITY_DECREASE), SetMinimalSize(9, 12), SetArrowWidgetTypeTip(ArrowWidgetType::Decrease, STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP),
 						NWidget(WWT_PUSHARROWBTN, Colours::Grey, WID_BS_DRAG_SIGNALS_DENSITY_INCREASE), SetMinimalSize(9, 12), SetArrowWidgetTypeTip(ArrowWidgetType::Increase, STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP),
@@ -1743,7 +1741,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_signal_builder_widge
 /** Signal selection window description */
 static WindowDesc _signal_builder_desc(
 	WindowPosition::Automatic, {}, 0, 0,
-	WC_BUILD_SIGNAL, WC_BUILD_TOOLBAR,
+	WindowClass::BuildSignal, WindowClass::BuildToolbar,
 	WindowDefaultFlag::Construction,
 	_nested_signal_builder_widgets
 );
@@ -1826,7 +1824,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_build_depot_widgets 
 /** Window definition for the build rail depot window. */
 static WindowDesc _build_depot_desc(
 	WindowPosition::Automatic, {}, 0, 0,
-	WC_BUILD_DEPOT, WC_BUILD_TOOLBAR,
+	WindowClass::BuildDepot, WindowClass::BuildToolbar,
 	WindowDefaultFlag::Construction,
 	_nested_build_depot_widgets
 );
@@ -1947,7 +1945,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_build_waypoint_widge
 /** Window definition for the build rail waypoint window. */
 static WindowDesc _build_waypoint_desc(
 	WindowPosition::Automatic, "build_waypoint", 0, 0,
-	WC_BUILD_WAYPOINT, WC_BUILD_TOOLBAR,
+	WindowClass::BuildWaypoint, WindowClass::BuildToolbar,
 	WindowDefaultFlag::Construction,
 	_nested_build_waypoint_widgets,
 	&BuildRailWaypointWindow::hotkeys
@@ -1979,7 +1977,7 @@ void ReinitGuiAfterToggleElrail(bool disable)
 {
 	if (disable && _last_built_railtype == RAILTYPE_ELECTRIC) {
 		_last_built_railtype = _cur_railtype = RAILTYPE_RAIL;
-		BuildRailToolbarWindow *w = dynamic_cast<BuildRailToolbarWindow *>(FindWindowById(WC_BUILD_TOOLBAR, TRANSPORT_RAIL));
+		BuildRailToolbarWindow *w = dynamic_cast<BuildRailToolbarWindow *>(FindWindowById(WindowClass::BuildToolbar, TRANSPORT_RAIL));
 		if (w != nullptr) w->ModifyRailType(_cur_railtype);
 	}
 	MarkWholeScreenDirty();
@@ -2027,7 +2025,7 @@ void SetDefaultRailGui()
 	}
 
 	_last_built_railtype = _cur_railtype = rt;
-	BuildRailToolbarWindow *w = dynamic_cast<BuildRailToolbarWindow *>(FindWindowById(WC_BUILD_TOOLBAR, TRANSPORT_RAIL));
+	BuildRailToolbarWindow *w = dynamic_cast<BuildRailToolbarWindow *>(FindWindowById(WindowClass::BuildToolbar, TRANSPORT_RAIL));
 	if (w != nullptr) w->ModifyRailType(_cur_railtype);
 }
 
@@ -2040,7 +2038,7 @@ void ResetSignalVariant(int32_t)
 	SignalVariant new_variant = (TimerGameCalendar::year < _settings_client.gui.semaphore_build_before ? SIG_SEMAPHORE : SIG_ELECTRIC);
 
 	if (new_variant != _cur_signal_variant) {
-		Window *w = FindWindowById(WC_BUILD_SIGNAL, 0);
+		Window *w = FindWindowById(WindowClass::BuildSignal, 0);
 		if (w != nullptr) {
 			w->SetDirty();
 			w->RaiseWidget((_cur_signal_variant == SIG_ELECTRIC ? WID_BS_ELECTRIC_NORM : WID_BS_SEMAPHORE_NORM) + _cur_signal_type);

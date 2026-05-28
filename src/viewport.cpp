@@ -1447,11 +1447,11 @@ static void ViewportAddKdtreeSigns(DrawPixelInfo *dpi)
 	Rect search_rect{ dpi->left, dpi->top, dpi->left + dpi->width, dpi->top + dpi->height };
 	search_rect = ExpandRectWithViewportSignMargins(search_rect, dpi->zoom);
 
-	bool show_stations = HasBit(_display_opt, DO_SHOW_STATION_NAMES) && _game_mode != GM_MENU;
-	bool show_waypoints = HasBit(_display_opt, DO_SHOW_WAYPOINT_NAMES) && _game_mode != GM_MENU;
-	bool show_towns = HasBit(_display_opt, DO_SHOW_TOWN_NAMES) && _game_mode != GM_MENU;
-	bool show_signs = HasBit(_display_opt, DO_SHOW_SIGNS) && !IsInvisibilitySet(TO_SIGNS);
-	bool show_competitors = HasBit(_display_opt, DO_SHOW_COMPETITOR_SIGNS);
+	bool show_stations = _display_opt.Test(DisplayOption::ShowStationNames) && _game_mode != GM_MENU;
+	bool show_waypoints = _display_opt.Test(DisplayOption::ShowWaypointNames) && _game_mode != GM_MENU;
+	bool show_towns = _display_opt.Test(DisplayOption::ShowTownNames) && _game_mode != GM_MENU;
+	bool show_signs = _display_opt.Test(DisplayOption::ShowSigns) && !IsInvisibilitySet(TO_SIGNS);
+	bool show_competitors = _display_opt.Test(DisplayOption::ShowCompetitorSigns);
 
 	/* Collect all the items first and draw afterwards, to ensure layering */
 	std::vector<const BaseStation *> stations;
@@ -1556,17 +1556,17 @@ void ViewportSign::UpdatePosition(int center, int top, std::string_view str, std
  */
 void ViewportSign::MarkDirty(ZoomLevel maxzoom) const
 {
-	Rect zoomlevels[to_underlying(ZoomLevel::End)];
+	EnumIndexArray<Rect, ZoomLevel, ZoomLevel::End> zoomlevels;
 
 	/* We don't know which size will be drawn, so mark the largest area dirty. */
 	const uint half_width = std::max(this->width_normal, this->width_small) / 2 + 1;
 	const uint height = WidgetDimensions::scaled.fullbevel.top + std::max(GetCharacterHeight(FontSize::Normal), GetCharacterHeight(FontSize::Small)) + WidgetDimensions::scaled.fullbevel.bottom + 1;
 
 	for (ZoomLevel zoom = ZoomLevel::Begin; zoom != ZoomLevel::End; zoom++) {
-		zoomlevels[to_underlying(zoom)].left = this->center - ScaleByZoom(half_width, zoom);
-		zoomlevels[to_underlying(zoom)].top = this->top - ScaleByZoom(1, zoom);
-		zoomlevels[to_underlying(zoom)].right = this->center + ScaleByZoom(half_width, zoom);
-		zoomlevels[to_underlying(zoom)].bottom = this->top + ScaleByZoom(height, zoom);
+		zoomlevels[zoom].left = this->center - ScaleByZoom(half_width, zoom);
+		zoomlevels[zoom].top = this->top - ScaleByZoom(1, zoom);
+		zoomlevels[zoom].right = this->center + ScaleByZoom(half_width, zoom);
+		zoomlevels[zoom].bottom = this->top + ScaleByZoom(height, zoom);
 	}
 
 	for (const Window *w : Window::Iterate()) {
@@ -1575,7 +1575,7 @@ void ViewportSign::MarkDirty(ZoomLevel maxzoom) const
 		Viewport &vp = *w->viewport;
 		if (vp.zoom <= maxzoom) {
 			assert(vp.width != 0);
-			Rect &zl = zoomlevels[to_underlying(vp.zoom)];
+			Rect &zl = zoomlevels[vp.zoom];
 			MarkViewportDirty(vp, zl.left, zl.top, zl.right, zl.bottom);
 		}
 	}
@@ -1780,16 +1780,16 @@ static void ViewportDrawStrings(ZoomLevel zoom, const StringSpriteToDrawVector *
 		int y = UnScaleByZoom(ss.y, zoom);
 		int h = WidgetDimensions::scaled.fullbevel.top + GetCharacterHeight(small ? FontSize::Small : FontSize::Normal) + WidgetDimensions::scaled.fullbevel.bottom;
 
-		TextColour colour = TC_WHITE;
+		ExtendedTextColour colour{TextColour::White};
 		if (ss.flags.Test(ViewportStringFlag::ColourRect)) {
 			if (ss.colour != Colours::Invalid) DrawFrameRect(x, y, x + w - 1, y + h - 1, ss.colour, {});
-			colour = TC_BLACK;
+			colour = TextColour::Black;
 		} else if (ss.flags.Test(ViewportStringFlag::TransparentRect)) {
 			DrawFrameRect(x, y, x + w - 1, y + h - 1, ss.colour, FrameFlag::Transparent);
 		}
 
 		if (ss.flags.Test(ViewportStringFlag::TextColour)) {
-			if (ss.colour != Colours::Invalid) colour = GetColourGradient(ss.colour, Shade::Lighter).ToTextColour();
+			if (ss.colour != Colours::Invalid) colour = ExtendedTextColour{GetColourGradient(ss.colour, Shade::Lighter)};
 		}
 
 		int left = x + WidgetDimensions::scaled.fullbevel.left;
@@ -1800,7 +1800,7 @@ static void ViewportDrawStrings(ZoomLevel zoom, const StringSpriteToDrawVector *
 		if (small && ss.flags.Test(ViewportStringFlag::Shadow)) {
 			/* Shadow needs to be shifted 1 pixel. */
 			shadow_offset = WidgetDimensions::scaled.fullbevel.top;
-			DrawString(left + shadow_offset, right + shadow_offset, top, ss.string, TC_BLACK, SA_HOR_CENTER, false, FontSize::Small);
+			DrawString(left + shadow_offset, right + shadow_offset, top, ss.string, TextColour::Black, SA_HOR_CENTER, false, FontSize::Small);
 		}
 
 		DrawString(left, right, top - shadow_offset, ss.string, colour, SA_HOR_CENTER, false, small ? FontSize::Small : FontSize::Normal);
@@ -2294,11 +2294,11 @@ static bool CheckClickOnViewportSign(const Viewport &vp, int x, int y)
 	Rect search_rect{ x - 1, y - 1, x + 1, y + 1 };
 	search_rect = ExpandRectWithViewportSignMargins(search_rect, vp.zoom);
 
-	bool show_stations = HasBit(_display_opt, DO_SHOW_STATION_NAMES) && !IsInvisibilitySet(TO_SIGNS);
-	bool show_waypoints = HasBit(_display_opt, DO_SHOW_WAYPOINT_NAMES) && !IsInvisibilitySet(TO_SIGNS);
-	bool show_towns = HasBit(_display_opt, DO_SHOW_TOWN_NAMES);
-	bool show_signs = HasBit(_display_opt, DO_SHOW_SIGNS) && !IsInvisibilitySet(TO_SIGNS);
-	bool show_competitors = HasBit(_display_opt, DO_SHOW_COMPETITOR_SIGNS);
+	bool show_stations = _display_opt.Test(DisplayOption::ShowStationNames) && !IsInvisibilitySet(TO_SIGNS);
+	bool show_waypoints = _display_opt.Test(DisplayOption::ShowWaypointNames) && !IsInvisibilitySet(TO_SIGNS);
+	bool show_towns = _display_opt.Test(DisplayOption::ShowTownNames);
+	bool show_signs = _display_opt.Test(DisplayOption::ShowSigns) && !IsInvisibilitySet(TO_SIGNS);
+	bool show_competitors = _display_opt.Test(DisplayOption::ShowCompetitorSigns);
 
 	/* Topmost of each type that was hit */
 	BaseStation *st = nullptr, *last_st = nullptr;
@@ -2795,7 +2795,7 @@ static inline void ShowMeasurementTooltips(EncodedString &&text)
 
 static void HideMeasurementTooltips()
 {
-	CloseWindowById(WC_TOOLTIPS, 0);
+	CloseWindowById(WindowClass::ToolTips, 0);
 }
 
 /**
@@ -3544,7 +3544,7 @@ void SetObjectToPlaceWnd(CursorID icon, PaletteID pal, HighLightStyle mode, Wind
  */
 void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowClass window_class, WindowNumber window_num)
 {
-	if (_thd.window_class != WC_INVALID) {
+	if (_thd.window_class != WindowClass::Invalid) {
 		/* Undo clicking on button and drag & drop */
 		Window *w = _thd.GetCallbackWnd();
 		/* Call the abort function, but set the window class to something
@@ -3552,7 +3552,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 		 * the 'next' window class must not be done because recursion into
 		 * this function might in some cases reset the newly set object to
 		 * place or not properly reset the original selection. */
-		_thd.window_class = WC_INVALID;
+		_thd.window_class = WindowClass::Invalid;
 		if (w != nullptr) {
 			w->OnPlaceObjectAbort();
 			HideMeasurementTooltips();
@@ -3587,7 +3587,7 @@ void SetObjectToPlace(CursorID icon, PaletteID pal, HighLightStyle mode, WindowC
 /** Reset the cursor and mouse mode handling back to default (normal cursor, only clicking in windows). */
 void ResetObjectToPlace()
 {
-	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WC_MAIN_WINDOW, 0);
+	SetObjectToPlace(SPR_CURSOR_MOUSE, PAL_NONE, HT_NONE, WindowClass::MainWindow, 0);
 }
 
 Point GetViewportStationMiddle(const Viewport &vp, const Station *st)
@@ -3702,11 +3702,11 @@ void MarkCatchmentTilesDirty()
 
 static void SetWindowDirtyForViewportCatchment()
 {
-	if (_viewport_highlight_station != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station->index);
-	if (_viewport_highlight_station_rect != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station_rect->index);
-	if (_viewport_highlight_waypoint != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint->index);
-	if (_viewport_highlight_waypoint_rect != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint_rect->index);
-	if (_viewport_highlight_town != nullptr) SetWindowDirty(WC_TOWN_VIEW, _viewport_highlight_town->index);
+	if (_viewport_highlight_station != nullptr) SetWindowDirty(WindowClass::StationView, _viewport_highlight_station->index);
+	if (_viewport_highlight_station_rect != nullptr) SetWindowDirty(WindowClass::StationView, _viewport_highlight_station_rect->index);
+	if (_viewport_highlight_waypoint != nullptr) SetWindowDirty(WindowClass::WaypointView, _viewport_highlight_waypoint->index);
+	if (_viewport_highlight_waypoint_rect != nullptr) SetWindowDirty(WindowClass::WaypointView, _viewport_highlight_waypoint_rect->index);
+	if (_viewport_highlight_town != nullptr) SetWindowDirty(WindowClass::TownView, _viewport_highlight_town->index);
 }
 
 static void ClearViewportCatchment()
@@ -3739,7 +3739,7 @@ void SetViewportCatchmentStation(const Station *st, bool sel)
 		_viewport_highlight_station = nullptr;
 	}
 	/* Redraw the currently selected station window */
-	if (_viewport_highlight_station != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station->index);
+	if (_viewport_highlight_station != nullptr) SetWindowDirty(WindowClass::StationView, _viewport_highlight_station->index);
 }
 
 /**
@@ -3762,7 +3762,7 @@ void SetViewportStationRect(const Station *st, bool sel)
 		_viewport_highlight_station_rect = nullptr;
 	}
 	/* Redraw the currently selected station window */
-	if (_viewport_highlight_station_rect != nullptr) SetWindowDirty(WC_STATION_VIEW, _viewport_highlight_station_rect->index);
+	if (_viewport_highlight_station_rect != nullptr) SetWindowDirty(WindowClass::StationView, _viewport_highlight_station_rect->index);
 }
 
 /**
@@ -3785,7 +3785,7 @@ void SetViewportCatchmentWaypoint(const Waypoint *wp, bool sel)
 		_viewport_highlight_waypoint = nullptr;
 	}
 	/* Redraw the currently selected waypoint window */
-	if (_viewport_highlight_waypoint != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint->index);
+	if (_viewport_highlight_waypoint != nullptr) SetWindowDirty(WindowClass::WaypointView, _viewport_highlight_waypoint->index);
 }
 
 /**
@@ -3808,7 +3808,7 @@ void SetViewportWaypointRect(const Waypoint *wp, bool sel)
 		_viewport_highlight_waypoint_rect = nullptr;
 	}
 	/* Redraw the currently selected waypoint window */
-	if (_viewport_highlight_waypoint_rect != nullptr) SetWindowDirty(WC_WAYPOINT_VIEW, _viewport_highlight_waypoint_rect->index);
+	if (_viewport_highlight_waypoint_rect != nullptr) SetWindowDirty(WindowClass::WaypointView, _viewport_highlight_waypoint_rect->index);
 }
 
 /**
@@ -3831,7 +3831,7 @@ void SetViewportCatchmentTown(const Town *t, bool sel)
 		MarkWholeScreenDirty();
 	}
 	/* Redraw the currently selected town window */
-	if (_viewport_highlight_town != nullptr) SetWindowDirty(WC_TOWN_VIEW, _viewport_highlight_town->index);
+	if (_viewport_highlight_town != nullptr) SetWindowDirty(WindowClass::TownView, _viewport_highlight_town->index);
 }
 
 /**
@@ -3842,10 +3842,10 @@ void ViewportData::CancelFollow(const Window &viewport_window)
 {
 	if (this->follow_vehicle == VehicleID::Invalid()) return;
 
-	if (viewport_window.window_class == WC_MAIN_WINDOW) {
+	if (viewport_window.window_class == WindowClass::MainWindow) {
 		/* We're cancelling follow in the main viewport, so we need to check for a vehicle view window
 		 * to raise the location follow widget. */
-		Window *vehicle_window = FindWindowById(WC_VEHICLE_VIEW, this->follow_vehicle);
+		Window *vehicle_window = FindWindowById(WindowClass::VehicleView, this->follow_vehicle);
 		if (vehicle_window != nullptr) vehicle_window->RaiseWidgetWhenLowered(WID_VV_LOCATION);
 	}
 

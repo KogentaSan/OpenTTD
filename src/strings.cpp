@@ -2139,13 +2139,13 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 	SortIndustryTypes();
 	BuildIndustriesLegend();
 	BuildContentTypeStringList();
-	InvalidateWindowClassesData(WC_BUILD_VEHICLE);      // Build vehicle window.
-	InvalidateWindowClassesData(WC_TRAINS_LIST);        // Train group window.
-	InvalidateWindowClassesData(WC_ROADVEH_LIST);       // Road vehicle group window.
-	InvalidateWindowClassesData(WC_SHIPS_LIST);         // Ship group window.
-	InvalidateWindowClassesData(WC_AIRCRAFT_LIST);      // Aircraft group window.
-	InvalidateWindowClassesData(WC_INDUSTRY_DIRECTORY); // Industry directory window.
-	InvalidateWindowClassesData(WC_STATION_LIST);       // Station list window.
+	InvalidateWindowClassesData(WindowClass::BuildVehicle); // Build vehicle window.
+	InvalidateWindowClassesData(WindowClass::TrainList); // Train group window.
+	InvalidateWindowClassesData(WindowClass::RoadVehicleList); // Road vehicle group window.
+	InvalidateWindowClassesData(WindowClass::ShipList); // Ship group window.
+	InvalidateWindowClassesData(WindowClass::AircraftList); // Aircraft group window.
+	InvalidateWindowClassesData(WindowClass::IndustryDirectory); // Industry directory window.
+	InvalidateWindowClassesData(WindowClass::StationList); // Station list window.
 
 	return true;
 }
@@ -2416,7 +2416,7 @@ void CheckForMissingGlyphs(MissingGlyphSearcher *searcher)
 			StringBuilder builder(err_str);
 			builder.PutUtf8(SCC_YELLOW);
 			builder.Put("The current font is missing some of the characters used in the texts for this language. Using system fallback font instead.");
-			ShowErrorMessage(GetEncodedString(STR_JUST_RAW_STRING, std::move(err_str)), {}, WL_WARNING);
+			ShowErrorMessage(GetEncodedString(STR_JUST_RAW_STRING, std::move(err_str)), {}, WarningLevel::Warning);
 		}
 	}
 #endif
@@ -2433,7 +2433,7 @@ void CheckForMissingGlyphs(MissingGlyphSearcher *searcher)
 		StringBuilder builder(err_str);
 		builder.PutUtf8(SCC_YELLOW);
 		builder.Put("The current font is missing some of the characters used in the texts for this language. Go to Help & Manuals > Fonts, or read the file docs/fonts.md in your OpenTTD directory, to see how to solve this.");
-		ShowErrorMessage(GetEncodedString(STR_JUST_RAW_STRING, std::move(err_str)), {}, WL_WARNING);
+		ShowErrorMessage(GetEncodedString(STR_JUST_RAW_STRING, std::move(err_str)), {}, WarningLevel::Warning);
 		return;
 	}
 
@@ -2452,7 +2452,7 @@ void CheckForMissingGlyphs(MissingGlyphSearcher *searcher)
 		StringBuilder builder(err_str);
 		builder.PutUtf8(SCC_YELLOW);
 		builder.Put("This version of OpenTTD does not support right-to-left languages. Recompile with ICU + Harfbuzz enabled.");
-		ShowErrorMessage(GetEncodedString(STR_JUST_RAW_STRING, std::move(err_str)), {}, WL_ERROR);
+		ShowErrorMessage(GetEncodedString(STR_JUST_RAW_STRING, std::move(err_str)), {}, WarningLevel::Error);
 	}
 #endif /* !(WITH_ICU_I18N && WITH_HARFBUZZ) && !WITH_UNISCRIBE && !WITH_COCOA */
 }

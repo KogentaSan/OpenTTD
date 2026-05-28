@@ -188,12 +188,12 @@ static void DrawCategories(const Rect &r)
 {
 	int y = r.top;
 	/* Draw description of 12-minute economic period. */
-	DrawString(r.left, r.right, y, (TimerGameEconomy::UsingWallclockUnits() ? STR_FINANCES_PERIOD_CAPTION : STR_FINANCES_YEAR_CAPTION), TC_FROMSTRING, SA_LEFT, true);
+	DrawString(r.left, r.right, y, (TimerGameEconomy::UsingWallclockUnits() ? STR_FINANCES_PERIOD_CAPTION : STR_FINANCES_YEAR_CAPTION), TextColour::FromString, SA_LEFT, true);
 	y += GetCharacterHeight(FontSize::Normal) + WidgetDimensions::scaled.vsep_wide;
 
 	for (const ExpensesList &list : _expenses_list_types) {
 		/* Draw category title and advance y */
-		DrawString(r.left, r.right, y, list.title, TC_FROMSTRING, SA_LEFT);
+		DrawString(r.left, r.right, y, list.title, TextColour::FromString, SA_LEFT);
 		y += GetCharacterHeight(FontSize::Normal);
 
 		/* Draw category items and advance y */
@@ -204,7 +204,7 @@ static void DrawCategories(const Rect &r)
 		y += WidgetDimensions::scaled.vsep_normal;
 
 		/* Draw category total and advance y */
-		DrawString(r.left, r.right, y, STR_FINANCES_TOTAL_CAPTION, TC_FROMSTRING, SA_RIGHT);
+		DrawString(r.left, r.right, y, STR_FINANCES_TOTAL_CAPTION, TextColour::FromString, SA_RIGHT);
 		y += GetCharacterHeight(FontSize::Normal);
 
 		/* Advance y by a blockspace after this category block */
@@ -213,7 +213,7 @@ static void DrawCategories(const Rect &r)
 
 	/* Draw total profit/loss */
 	y += WidgetDimensions::scaled.vsep_normal;
-	DrawString(r.left, r.right, y, STR_FINANCES_PROFIT, TC_FROMSTRING, SA_LEFT);
+	DrawString(r.left, r.right, y, STR_FINANCES_PROFIT, TextColour::FromString, SA_LEFT);
 }
 
 /**
@@ -252,14 +252,14 @@ static Money DrawYearCategory(const Rect &r, int start_y, const ExpensesList &li
 	for (const ExpensesType &et : list.items) {
 		Money cost = tbl[et];
 		sum += cost;
-		if (cost != 0) DrawPrice(cost, r.left, r.right, y, TC_BLACK);
+		if (cost != 0) DrawPrice(cost, r.left, r.right, y, TextColour::Black);
 		y += GetCharacterHeight(FontSize::Normal);
 	}
 
 	/* Draw the total at the bottom of the category. */
 	GfxFillRect(r.left, y, r.right, y + WidgetDimensions::scaled.bevel.top - 1, PC_BLACK);
 	y += WidgetDimensions::scaled.vsep_normal;
-	if (sum != 0) DrawPrice(sum, r.left, r.right, y, TC_WHITE);
+	if (sum != 0) DrawPrice(sum, r.left, r.right, y, TextColour::White);
 
 	/* Return the sum for the yearly total. */
 	return sum;
@@ -279,7 +279,7 @@ static void DrawYearColumn(const Rect &r, TimerGameEconomy::Year year, const Exp
 	Money sum;
 
 	/* Year header */
-	DrawString(r.left, r.right, y, GetString(STR_FINANCES_YEAR, year), TC_FROMSTRING, SA_RIGHT | SA_FORCE, true);
+	DrawString(r.left, r.right, y, GetString(STR_FINANCES_YEAR, year), TextColour::FromString, SA_RIGHT | SA_FORCE, true);
 	y += GetCharacterHeight(FontSize::Normal) + WidgetDimensions::scaled.vsep_wide;
 
 	/* Categories */
@@ -293,7 +293,7 @@ static void DrawYearColumn(const Rect &r, TimerGameEconomy::Year year, const Exp
 	/* Total income. */
 	GfxFillRect(r.left, y, r.right, y + WidgetDimensions::scaled.bevel.top - 1, PC_BLACK);
 	y += WidgetDimensions::scaled.vsep_normal;
-	DrawPrice(sum, r.left, r.right, y, TC_WHITE);
+	DrawPrice(sum, r.left, r.right, y, TextColour::White);
 }
 
 static constexpr std::initializer_list<NWidgetPart> _nested_company_finances_widgets = {
@@ -567,7 +567,7 @@ Money CompanyFinancesWindow::max_money = INT32_MAX;
 /** Window definition for the company finances window. */
 static WindowDesc _company_finances_desc(
 	WindowPosition::Automatic, "company_finances", 0, 0,
-	WC_FINANCES, WC_NONE,
+	WindowClass::Finances, WindowClass::None,
 	{},
 	_nested_company_finances_widgets
 );
@@ -580,19 +580,19 @@ static WindowDesc _company_finances_desc(
 void ShowCompanyFinances(CompanyID company)
 {
 	if (!Company::IsValidID(company)) return;
-	if (BringWindowToFrontById(WC_FINANCES, company)) return;
+	if (BringWindowToFrontById(WindowClass::Finances, company)) return;
 
 	new CompanyFinancesWindow(_company_finances_desc, company);
 }
 
 /** Association of liveries to livery classes. */
-static const LiveryClass _livery_class[LS_END] = {
-	LC_OTHER,
-	LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL, LC_RAIL,
-	LC_ROAD, LC_ROAD,
-	LC_SHIP, LC_SHIP,
-	LC_AIRCRAFT, LC_AIRCRAFT, LC_AIRCRAFT,
-	LC_ROAD, LC_ROAD,
+static const EnumIndexArray<LiveryClass, LiveryScheme, LiveryScheme::End> _livery_class = {
+	LiveryClass::Other,
+	LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail, LiveryClass::Rail,
+	LiveryClass::Road, LiveryClass::Road,
+	LiveryClass::Ship, LiveryClass::Ship,
+	LiveryClass::Aircraft, LiveryClass::Aircraft, LiveryClass::Aircraft,
+	LiveryClass::Road, LiveryClass::Road,
 };
 
 /**
@@ -623,13 +623,17 @@ constexpr uint8_t GetColourOffset(const Livery &l, bool primary)
 /** Company livery colour scheme window. */
 struct SelectCompanyLiveryWindow : public Window {
 private:
-	uint32_t sel = 0;
+	struct {
+		LiverySchemes schemes{}; ///< Selected schemes.
+		GroupID group = GroupID::Invalid(); ///< Selected group.
+	} sel{}; ///< Current selection.
 	LiveryClass livery_class{};
 	Dimension square{};
 	uint rows = 0;
 	uint line_height = 0;
 	GUIGroupList groups{};
 	Scrollbar *vscroll = nullptr;
+	LiverySchemes visible_schemes{}; ///< Currently visible livery schemes.
 
 	void ShowColourDropDownMenu(uint32_t widget)
 	{
@@ -639,7 +643,7 @@ private:
 		uint8_t default_col{};
 
 		/* Disallow other company colours for the primary colour */
-		if (this->livery_class < LC_GROUP_RAIL && HasBit(this->sel, LS_DEFAULT) && primary) {
+		if (this->livery_class < LiveryClass::GroupRail && this->sel.schemes.Test(LiveryScheme::Default) && primary) {
 			for (const Company *c : Company::Iterate()) {
 				if (c->index != _local_company) used_colours.Set(c->colour);
 			}
@@ -647,20 +651,16 @@ private:
 
 		const Company *c = Company::Get(this->window_number);
 
-		if (this->livery_class < LC_GROUP_RAIL) {
+		if (this->livery_class < LiveryClass::GroupRail) {
 			/* Get the first selected livery to use as the default dropdown item */
-			LiveryScheme scheme;
-			for (scheme = LS_BEGIN; scheme < LS_END; scheme++) {
-				if (HasBit(this->sel, scheme)) break;
-			}
-			if (scheme == LS_END) scheme = LS_DEFAULT;
+			LiveryScheme scheme = this->sel.schemes.GetNthSetBit(0).value_or(LiveryScheme::Default);
 			livery = &c->livery[scheme];
-			if (scheme != LS_DEFAULT) default_livery = &c->livery[LS_DEFAULT];
+			if (scheme != LiveryScheme::Default) default_livery = &c->livery[LiveryScheme::Default];
 		} else {
-			const Group *g = Group::Get(this->sel);
+			const Group *g = Group::Get(this->sel.group);
 			livery = &g->livery;
 			if (g->parent == GroupID::Invalid()) {
-				default_livery = &c->livery[LS_DEFAULT];
+				default_livery = &c->livery[LiveryScheme::Default];
 			} else {
 				const Group *pg = Group::Get(g->parent);
 				default_livery = &pg->livery;
@@ -686,14 +686,24 @@ private:
 		ShowDropDownList(this, std::move(list), sel, widget);
 	}
 
+	/** Build 'list' of visible livery schemes. */
+	void BuildLiveryList()
+	{
+		visible_schemes.Reset();
+		for (LiveryScheme scheme : _loaded_newgrf_features.used_liveries) {
+			if (_livery_class[scheme] != this->livery_class) continue;
+			visible_schemes.Set(scheme);
+		}
+	}
+
 	void BuildGroupList(CompanyID owner)
 	{
 		if (!this->groups.NeedRebuild()) return;
 
 		this->groups.clear();
 
-		if (this->livery_class >= LC_GROUP_RAIL) {
-			VehicleType vtype = (VehicleType)(this->livery_class - LC_GROUP_RAIL);
+		if (this->livery_class >= LiveryClass::GroupRail) {
+			VehicleType vtype = static_cast<VehicleType>(this->livery_class - LiveryClass::GroupRail);
 			BuildGuiGroupList(this->groups, false, owner, vtype);
 		}
 
@@ -702,13 +712,8 @@ private:
 
 	void SetRows()
 	{
-		if (this->livery_class < LC_GROUP_RAIL) {
-			this->rows = 0;
-			for (LiveryScheme scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
-				if (_livery_class[scheme] == this->livery_class && HasBit(_loaded_newgrf_features.used_liveries, scheme)) {
-					this->rows++;
-				}
-			}
+		if (this->livery_class < LiveryClass::GroupRail) {
+			this->rows = this->visible_schemes.Count();
 		} else {
 			this->rows = (uint)this->groups.size();
 		}
@@ -724,9 +729,10 @@ public:
 		this->vscroll = this->GetScrollbar(WID_SCL_MATRIX_SCROLLBAR);
 
 		if (group == GroupID::Invalid()) {
-			this->livery_class = LC_OTHER;
-			this->sel = 1;
+			this->livery_class = LiveryClass::Other;
+			this->sel.schemes = LiveryScheme::Default;
 			this->LowerWidget(WID_SCL_CLASS_GENERAL);
+			this->BuildLiveryList();
 			this->BuildGroupList(company);
 			this->SetRows();
 		} else {
@@ -743,13 +749,13 @@ public:
 		this->RaiseWidget(WID_SCL_CLASS_GENERAL + this->livery_class);
 		const Group *g = Group::Get(group);
 		switch (g->vehicle_type) {
-			case VehicleType::Train: this->livery_class = LC_GROUP_RAIL; break;
-			case VehicleType::Road: this->livery_class = LC_GROUP_ROAD; break;
-			case VehicleType::Ship: this->livery_class = LC_GROUP_SHIP; break;
-			case VehicleType::Aircraft: this->livery_class = LC_GROUP_AIRCRAFT; break;
+			case VehicleType::Train: this->livery_class = LiveryClass::GroupRail; break;
+			case VehicleType::Road: this->livery_class = LiveryClass::GroupRoad; break;
+			case VehicleType::Ship: this->livery_class = LiveryClass::GroupShip; break;
+			case VehicleType::Aircraft: this->livery_class = LiveryClass::GroupAircraft; break;
 			default: NOT_REACHED();
 		}
-		this->sel = group.base();
+		this->sel.group = group;
 		this->LowerWidget(WID_SCL_CLASS_GENERAL + this->livery_class);
 
 		this->groups.ForceRebuild();
@@ -758,7 +764,7 @@ public:
 
 		/* Position scrollbar to selected group */
 		for (uint i = 0; i < this->rows; i++) {
-			if (this->groups[i].group->index == sel) {
+			if (this->groups[i].group->index == this->sel.group) {
 				this->vscroll->SetPosition(i - this->vscroll->GetCapacity() / 2);
 				break;
 			}
@@ -771,8 +777,8 @@ public:
 			case WID_SCL_SPACER_DROPDOWN: {
 				/* The matrix widget below needs enough room to print all the schemes. */
 				Dimension d = {0, 0};
-				for (LiveryScheme scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
-					d = maxdim(d, GetStringBoundingBox(STR_LIVERY_DEFAULT + scheme));
+				for (LiveryScheme scheme : _loaded_newgrf_features.used_liveries) {
+					d = maxdim(d, GetStringBoundingBox(STR_LIVERY_DEFAULT + to_underlying(scheme)));
 				}
 
 				size.width = std::max(size.width, 5 + d.width + padding.width);
@@ -811,7 +817,7 @@ public:
 		bool local = this->window_number == _local_company;
 
 		/* Disable dropdown controls if no scheme is selected */
-		bool disabled = this->livery_class < LC_GROUP_RAIL ? (this->sel == 0) : (this->sel == GroupID::Invalid());
+		bool disabled = this->livery_class < LiveryClass::GroupRail ? this->sel.schemes.None() : (this->sel.group == GroupID::Invalid());
 		this->SetWidgetDisabledState(WID_SCL_PRI_COL_DROPDOWN, !local || disabled);
 		this->SetWidgetDisabledState(WID_SCL_SEC_COL_DROPDOWN, !local || disabled);
 
@@ -832,21 +838,17 @@ public:
 				bool primary = widget == WID_SCL_PRI_COL_DROPDOWN;
 				StringID colour = STR_COLOUR_DEFAULT;
 
-				if (this->livery_class < LC_GROUP_RAIL) {
-					if (this->sel != 0) {
-						LiveryScheme scheme = LS_DEFAULT;
-						for (scheme = LS_BEGIN; scheme < LS_END; scheme++) {
-							if (HasBit(this->sel, scheme)) break;
-						}
-						if (scheme == LS_END) scheme = LS_DEFAULT;
+				if (this->livery_class < LiveryClass::GroupRail) {
+					LiveryScheme scheme = this->sel.schemes.GetNthSetBit(0).value_or(LiveryScheme::End);
+					if (scheme != LiveryScheme::End) {
 						const Livery &livery = c->livery[scheme];
-						if (scheme == LS_DEFAULT || livery.in_use.Test(primary ? Livery::Flag::Primary : Livery::Flag::Secondary)) {
+						if (scheme == LiveryScheme::Default || livery.in_use.Test(primary ? Livery::Flag::Primary : Livery::Flag::Secondary)) {
 							colour = STR_COLOUR_DARK_BLUE + GetColourOffset(livery, primary);
 						}
 					}
 				} else {
-					if (this->sel != GroupID::Invalid()) {
-						const Group *g = Group::Get(this->sel);
+					if (this->sel.group != GroupID::Invalid()) {
+						const Group *g = Group::Get(this->sel.group);
 						const Livery &livery = g->livery;
 						if (livery.in_use.Test(primary ? Livery::Flag::Primary : Livery::Flag::Secondary)) {
 							colour = STR_COLOUR_DARK_BLUE + GetColourOffset(livery, primary);
@@ -892,16 +894,16 @@ public:
 		/* Helper function to draw livery info. */
 		auto draw_livery = [&](std::string_view str, const Livery &livery, bool is_selected, bool is_default_scheme, int indent) {
 			/* Livery Label. */
-			DrawString(sch.left + (rtl ? 0 : indent), sch.right - (rtl ? indent : 0), y + text_offs, str, is_selected ? TC_WHITE : TC_BLACK);
+			DrawString(sch.left + (rtl ? 0 : indent), sch.right - (rtl ? indent : 0), y + text_offs, str, is_selected ? TextColour::White : TextColour::Black);
 
 			/* Text below the first dropdown. */
 			DrawSprite(SPR_SQUARE, GetColourPalette(livery.colour1), pri_squ.left, y + square_offs);
-			DrawString(pri.left, pri.right, y + text_offs, (is_default_scheme || livery.in_use.Test(Livery::Flag::Primary)) ? STR_COLOUR_DARK_BLUE + to_underlying(livery.colour1) : STR_COLOUR_DEFAULT, is_selected ? TC_WHITE : TC_GOLD);
+			DrawString(pri.left, pri.right, y + text_offs, (is_default_scheme || livery.in_use.Test(Livery::Flag::Primary)) ? STR_COLOUR_DARK_BLUE + to_underlying(livery.colour1) : STR_COLOUR_DEFAULT, is_selected ? TextColour::White : TextColour::Gold);
 
 			/* Text below the second dropdown. */
 			if (sec.right > sec.left) { // Second dropdown has non-zero size.
 				DrawSprite(SPR_SQUARE, GetColourPalette(livery.colour2), sec_squ.left, y + square_offs);
-				DrawString(sec.left, sec.right, y + text_offs, (is_default_scheme || livery.in_use.Test(Livery::Flag::Secondary)) ? STR_COLOUR_DARK_BLUE + to_underlying(livery.colour2) : STR_COLOUR_DEFAULT, is_selected ? TC_WHITE : TC_GOLD);
+				DrawString(sec.left, sec.right, y + text_offs, (is_default_scheme || livery.in_use.Test(Livery::Flag::Secondary)) ? STR_COLOUR_DARK_BLUE + to_underlying(livery.colour2) : STR_COLOUR_DEFAULT, is_selected ? TextColour::White : TextColour::Gold);
 			}
 
 			y += this->line_height;
@@ -909,25 +911,23 @@ public:
 
 		const Company *c = Company::Get(this->window_number);
 
-		if (livery_class < LC_GROUP_RAIL) {
+		if (livery_class < LiveryClass::GroupRail) {
 			int pos = this->vscroll->GetPosition();
-			for (LiveryScheme scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
-				if (_livery_class[scheme] == this->livery_class && HasBit(_loaded_newgrf_features.used_liveries, scheme)) {
-					if (pos-- > 0) continue;
-					draw_livery(GetString(STR_LIVERY_DEFAULT + scheme), c->livery[scheme], HasBit(this->sel, scheme), scheme == LS_DEFAULT, 0);
-				}
+			for (LiveryScheme scheme : this->visible_schemes) {
+				if (pos-- > 0) continue;
+				draw_livery(GetString(STR_LIVERY_DEFAULT + to_underlying(scheme)), c->livery[scheme], this->sel.schemes.Test(scheme), scheme == LiveryScheme::Default, 0);
 			}
 		} else {
 			auto [first, last] = this->vscroll->GetVisibleRangeIterators(this->groups);
 			for (auto it = first; it != last; ++it) {
 				const Group *g = it->group;
-				draw_livery(GetString(STR_GROUP_NAME, g->index), g->livery, this->sel == g->index, false, it->indent * WidgetDimensions::scaled.hsep_indent);
+				draw_livery(GetString(STR_GROUP_NAME, g->index), g->livery, this->sel.group == g->index, false, it->indent * WidgetDimensions::scaled.hsep_indent);
 			}
 
 			if (this->vscroll->GetCount() == 0) {
 				constexpr VehicleTypeIndexArray<const StringID> empty_labels = { STR_LIVERY_TRAIN_GROUP_EMPTY, STR_LIVERY_ROAD_VEHICLE_GROUP_EMPTY, STR_LIVERY_SHIP_GROUP_EMPTY, STR_LIVERY_AIRCRAFT_GROUP_EMPTY };
-				VehicleType vtype = (VehicleType)(this->livery_class - LC_GROUP_RAIL);
-				DrawString(ir.left, ir.right, y + text_offs, empty_labels[vtype], TC_BLACK);
+				VehicleType vtype = static_cast<VehicleType>(this->livery_class - LiveryClass::GroupRail);
+				DrawString(ir.left, ir.right, y + text_offs, empty_labels[vtype], TextColour::Black);
 			}
 		}
 	}
@@ -946,25 +946,20 @@ public:
 			case WID_SCL_GROUPS_SHIP:
 			case WID_SCL_GROUPS_AIRCRAFT:
 				this->RaiseWidget(WID_SCL_CLASS_GENERAL + this->livery_class);
-				this->livery_class = (LiveryClass)(widget - WID_SCL_CLASS_GENERAL);
+				this->livery_class = static_cast<LiveryClass>(widget - WID_SCL_CLASS_GENERAL);
 				this->LowerWidget(WID_SCL_CLASS_GENERAL + this->livery_class);
 
 				/* Select the first item in the list */
-				if (this->livery_class < LC_GROUP_RAIL) {
-					this->sel = 0;
-					for (LiveryScheme scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
-						if (_livery_class[scheme] == this->livery_class && HasBit(_loaded_newgrf_features.used_liveries, scheme)) {
-							this->sel = 1 << scheme;
-							break;
-						}
-					}
+				if (this->livery_class < LiveryClass::GroupRail) {
+					this->BuildLiveryList();
+					this->sel.schemes = this->visible_schemes.GetNthSetBit(0).value_or(LiveryScheme::Default);
 				} else {
-					this->sel = GroupID::Invalid().base();
+					this->sel.group = GroupID::Invalid();
 					this->groups.ForceRebuild();
 					this->BuildGroupList(this->window_number);
 
 					if (!this->groups.empty()) {
-						this->sel = this->groups[0].group->index.base();
+						this->sel.group = this->groups[0].group->index;
 					}
 				}
 
@@ -981,27 +976,22 @@ public:
 				break;
 
 			case WID_SCL_MATRIX: {
-				if (this->livery_class < LC_GROUP_RAIL) {
+				if (this->livery_class < LiveryClass::GroupRail) {
 					uint row = this->vscroll->GetScrolledRowFromWidget(pt.y, this, widget);
 					if (row >= this->rows) return;
 
-					LiveryScheme j = (LiveryScheme)row;
-
-					for (LiveryScheme scheme = LS_BEGIN; scheme <= j && scheme < LS_END; scheme++) {
-						if (_livery_class[scheme] != this->livery_class || !HasBit(_loaded_newgrf_features.used_liveries, scheme)) j++;
-					}
-					assert(j < LS_END);
+					LiveryScheme scheme = this->visible_schemes.GetNthSetBit(row).value();
 
 					if (_ctrl_pressed) {
-						ToggleBit(this->sel, j);
+						this->sel.schemes.Flip(scheme);
 					} else {
-						this->sel = 1 << j;
+						this->sel.schemes = scheme;
 					}
 				} else {
 					auto it = this->vscroll->GetScrolledItemFromWidget(this->groups, pt.y, this, widget);
 					if (it == std::end(this->groups)) return;
 
-					this->sel = it->group->index.base();
+					this->sel.group = it->group->index;
 				}
 				this->SetDirty();
 				break;
@@ -1022,17 +1012,17 @@ public:
 		Colours colour = static_cast<Colours>(index);
 		if (colour >= Colours::End) colour = Colours::Invalid;
 
-		if (this->livery_class < LC_GROUP_RAIL) {
+		if (this->livery_class < LiveryClass::GroupRail) {
 			/* Set company colour livery */
-			for (LiveryScheme scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
+			for (LiveryScheme scheme : this->visible_schemes) {
 				/* Changed colour for the selected scheme, or all visible schemes if CTRL is pressed. */
-				if (HasBit(this->sel, scheme) || (_ctrl_pressed && _livery_class[scheme] == this->livery_class && HasBit(_loaded_newgrf_features.used_liveries, scheme))) {
+				if (this->sel.schemes.Test(scheme) || _ctrl_pressed) {
 					Command<Commands::SetCompanyColour>::Post(scheme, widget == WID_SCL_PRI_COL_DROPDOWN, colour);
 				}
 			}
 		} else {
 			/* Setting group livery */
-			Command<Commands::SetGroupLivery>::Post(static_cast<GroupID>(this->sel), widget == WID_SCL_PRI_COL_DROPDOWN, colour);
+			Command<Commands::SetGroupLivery>::Post(this->sel.group, widget == WID_SCL_PRI_COL_DROPDOWN, colour);
 		}
 	}
 
@@ -1046,15 +1036,15 @@ public:
 		if (!gui_scope) return;
 
 		if (data != -1) {
-			/* data contains a VehicleType, rebuild list if it displayed */
-			if (this->livery_class == data + LC_GROUP_RAIL) {
+			/* data contains a VehicleType, rebuild list if it is displayed */
+			if (this->livery_class == static_cast<LiveryClass>(to_underlying(LiveryClass::GroupRail) + data)) {
 				this->groups.ForceRebuild();
 				this->BuildGroupList(this->window_number);
 				this->SetRows();
 
-				if (!Group::IsValidID(this->sel)) {
-					this->sel = GroupID::Invalid().base();
-					if (!this->groups.empty()) this->sel = this->groups[0].group->index.base();
+				if (!Group::IsValidID(this->sel.group)) {
+					this->sel.group = GroupID::Invalid();
+					if (!this->groups.empty()) this->sel.group = this->groups[0].group->index;
 				}
 
 				this->SetDirty();
@@ -1064,15 +1054,13 @@ public:
 
 		this->SetWidgetsDisabledState(true, WID_SCL_CLASS_RAIL, WID_SCL_CLASS_ROAD, WID_SCL_CLASS_SHIP, WID_SCL_CLASS_AIRCRAFT);
 
-		bool current_class_valid = this->livery_class == LC_OTHER || this->livery_class >= LC_GROUP_RAIL;
+		bool current_class_valid = this->livery_class == LiveryClass::Other || this->livery_class >= LiveryClass::GroupRail;
 		if (_settings_client.gui.liveries == LIT_ALL || (_settings_client.gui.liveries == LIT_COMPANY && this->window_number == _local_company)) {
-			for (LiveryScheme scheme = LS_DEFAULT; scheme < LS_END; scheme++) {
-				if (HasBit(_loaded_newgrf_features.used_liveries, scheme)) {
-					if (_livery_class[scheme] == this->livery_class) current_class_valid = true;
-					this->EnableWidget(WID_SCL_CLASS_GENERAL + _livery_class[scheme]);
-				} else if (this->livery_class < LC_GROUP_RAIL) {
-					ClrBit(this->sel, scheme);
-				}
+			/* Clear selection of unused schemes. */
+			this->sel.schemes &= _loaded_newgrf_features.used_liveries;
+			for (LiveryScheme scheme : _loaded_newgrf_features.used_liveries) {
+				if (_livery_class[scheme] == this->livery_class) current_class_valid = true;
+				this->EnableWidget(WID_SCL_CLASS_GENERAL + _livery_class[scheme]);
 			}
 		}
 
@@ -1120,14 +1108,14 @@ static constexpr std::initializer_list<NWidgetPart> _nested_select_company_liver
 /** Window definition for the company livery configuration window. */
 static WindowDesc _select_company_livery_desc(
 	WindowPosition::Automatic, "company_colour_scheme", 0, 0,
-	WC_COMPANY_COLOUR, WC_NONE,
+	WindowClass::CompanyLivery, WindowClass::None,
 	{},
 	_nested_select_company_livery_widgets
 );
 
 void ShowCompanyLiveryWindow(CompanyID company, GroupID group)
 {
-	SelectCompanyLiveryWindow *w = (SelectCompanyLiveryWindow *)BringWindowToFrontById(WC_COMPANY_COLOUR, company);
+	SelectCompanyLiveryWindow *w = (SelectCompanyLiveryWindow *)BringWindowToFrontById(WindowClass::CompanyLivery, company);
 	if (w == nullptr) {
 		new SelectCompanyLiveryWindow(_select_company_livery_desc, company, group);
 	} else if (group != GroupID::Invalid()) {
@@ -1361,7 +1349,7 @@ public:
 				Rect tr = ir.Shrink(RectPadding::zero, WidgetDimensions::scaled.matrix).CentreToHeight(GetCharacterHeight(FontSize::Normal)).Indent(SETTING_BUTTON_WIDTH + WidgetDimensions::scaled.hsep_wide, rtl);
 
 				DrawArrowButtons(br.left, br.top, Colours::Yellow, this->selected_var == UINT_MAX - 1 ? this->click_state : 0, true, true);
-				DrawString(tr, GetString(STR_FACE_SETTING_NUMERIC, STR_FACE_STYLE, this->face.style + 1, GetNumCompanyManagerFaceStyles()), TC_WHITE);
+				DrawString(tr, GetString(STR_FACE_SETTING_NUMERIC, STR_FACE_STYLE, this->face.style + 1, GetNumCompanyManagerFaceStyles()), TextColour::White);
 				break;
 			}
 
@@ -1382,10 +1370,10 @@ public:
 					uint val = vars[var].GetBits(this->face);
 					if (facevar.type == FaceVarType::Toggle) {
 						DrawBoolButton(br.left, br.top, Colours::Yellow, Colours::Grey, val == 1, true);
-						DrawString(tr, GetString(STR_FACE_SETTING_TOGGLE, facevar.name, val == 1 ? STR_FACE_YES : STR_FACE_NO), TC_WHITE);
+						DrawString(tr, GetString(STR_FACE_SETTING_TOGGLE, facevar.name, val == 1 ? STR_FACE_YES : STR_FACE_NO), TextColour::White);
 					} else {
 						DrawArrowButtons(br.left, br.top, Colours::Yellow, this->selected_var == var ? this->click_state : 0, true, true);
-						DrawString(tr, GetString(STR_FACE_SETTING_NUMERIC, facevar.name, val + 1, facevar.valid_values), TC_WHITE);
+						DrawString(tr, GetString(STR_FACE_SETTING_NUMERIC, facevar.name, val + 1, facevar.valid_values), TextColour::White);
 					}
 
 					ir = ir.Translate(0, this->line_height);
@@ -1420,7 +1408,7 @@ public:
 			case WID_SCMF_LOAD: {
 				auto cmf = ParseCompanyManagerFaceCode(_company_manager_face);
 				if (cmf.has_value()) this->face = *cmf;
-				ShowErrorMessage(GetEncodedString(STR_FACE_LOAD_DONE), {}, WL_INFO);
+				ShowErrorMessage(GetEncodedString(STR_FACE_LOAD_DONE), {}, WarningLevel::Info);
 				this->UpdateData();
 				this->SetDirty();
 				break;
@@ -1434,7 +1422,7 @@ public:
 			/* Save button */
 			case WID_SCMF_SAVE:
 				_company_manager_face = FormatCompanyManagerFaceCode(this->face);
-				ShowErrorMessage(GetEncodedString(STR_FACE_SAVE_DONE), {}, WL_INFO);
+				ShowErrorMessage(GetEncodedString(STR_FACE_SAVE_DONE), {}, WarningLevel::Info);
 				break;
 
 			/* Randomize face button */
@@ -1530,11 +1518,11 @@ public:
 		auto cmf = ParseCompanyManagerFaceCode(*str);
 		if (cmf.has_value()) {
 			this->face = *cmf;
-			ShowErrorMessage(GetEncodedString(STR_FACE_FACECODE_SET), {}, WL_INFO);
+			ShowErrorMessage(GetEncodedString(STR_FACE_FACECODE_SET), {}, WarningLevel::Info);
 			this->UpdateData();
 			this->SetDirty();
 		} else {
-			ShowErrorMessage(GetEncodedString(STR_FACE_FACECODE_ERR), {}, WL_INFO);
+			ShowErrorMessage(GetEncodedString(STR_FACE_FACECODE_ERR), {}, WarningLevel::Info);
 		}
 	}
 };
@@ -1542,7 +1530,7 @@ public:
 /** Company manager face selection window description */
 static WindowDesc _select_company_manager_face_desc(
 	WindowPosition::Automatic, {}, 0, 0,
-	WC_COMPANY_MANAGER_FACE, WC_NONE,
+	WindowClass::CompanyManagerFace, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_select_company_manager_face_widgets
 );
@@ -1556,7 +1544,7 @@ static void DoSelectCompanyManagerFace(Window *parent)
 {
 	if (!Company::IsValidID(parent->window_number)) return;
 
-	if (BringWindowToFrontById(WC_COMPANY_MANAGER_FACE, parent->window_number)) return;
+	if (BringWindowToFrontById(WindowClass::CompanyManagerFace, parent->window_number)) return;
 	new SelectCompanyManagerFaceWindow(_select_company_manager_face_desc, parent);
 }
 
@@ -1797,7 +1785,7 @@ struct CompanyInfrastructureWindow : Window
 			switch (it->type) {
 				case InfrastructureItemType::Header:
 					/* Header is allowed to fill the window's width. */
-					DrawString(ir.left, ir.right, labelr.top, GetString(it->label), TC_ORANGE);
+					DrawString(ir.left, ir.right, labelr.top, GetString(it->label), TextColour::Orange);
 					break;
 
 				case InfrastructureItemType::Spacer:
@@ -1806,14 +1794,14 @@ struct CompanyInfrastructureWindow : Window
 				case InfrastructureItemType::Total:
 					/* Draw line in the spacer above the total. */
 					GfxFillRect(costr.Translate(0, -WidgetDimensions::scaled.vsep_normal).WithHeight(WidgetDimensions::scaled.fullbevel.top), PC_WHITE);
-					DrawString(costr, GetString(TimerGameEconomy::UsingWallclockUnits() ? STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD : STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR, it->cost * 12), TC_BLACK, SA_RIGHT | SA_FORCE);
+					DrawString(costr, GetString(TimerGameEconomy::UsingWallclockUnits() ? STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD : STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR, it->cost * 12), TextColour::Black, SA_RIGHT | SA_FORCE);
 					break;
 
 				case InfrastructureItemType::Value:
-					DrawString(labelr.Indent(WidgetDimensions::scaled.hsep_indent, rtl), GetString(it->label), TC_WHITE);
-					DrawString(countr, GetString(STR_JUST_COMMA, it->count), TC_WHITE, SA_RIGHT | SA_FORCE);
+					DrawString(labelr.Indent(WidgetDimensions::scaled.hsep_indent, rtl), GetString(it->label), TextColour::White);
+					DrawString(countr, GetString(STR_JUST_COMMA, it->count), TextColour::White, SA_RIGHT | SA_FORCE);
 					if (_settings_game.economy.infrastructure_maintenance) {
-						DrawString(costr, GetString(TimerGameEconomy::UsingWallclockUnits() ? STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD : STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR, it->cost * 12), TC_BLACK, SA_RIGHT | SA_FORCE);
+						DrawString(costr, GetString(TimerGameEconomy::UsingWallclockUnits() ? STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD : STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR, it->cost * 12), TextColour::Black, SA_RIGHT | SA_FORCE);
 					}
 					break;
 			}
@@ -1850,7 +1838,7 @@ struct CompanyInfrastructureWindow : Window
 /** Window definition for the company infrastructure statistics window. */
 static WindowDesc _company_infrastructure_desc(
 	WindowPosition::Automatic, "company_infrastructure", 0, 0,
-	WC_COMPANY_INFRASTRUCTURE, WC_NONE,
+	WindowClass::CompanyInfrastructure, WindowClass::None,
 	{},
 	_nested_company_infrastructure_widgets
 );
@@ -2135,7 +2123,7 @@ struct CompanyWindow : Window
 				break;
 
 			case WID_C_FACE_TITLE:
-				DrawStringMultiLine(r, GetString(STR_COMPANY_VIEW_PRESIDENT_MANAGER_TITLE, c->index), TC_FROMSTRING, SA_HOR_CENTER);
+				DrawStringMultiLine(r, GetString(STR_COMPANY_VIEW_PRESIDENT_MANAGER_TITLE, c->index), TextColour::FromString, SA_HOR_CENTER);
 				break;
 
 			case WID_C_DESC_COLOUR_SCHEME_EXAMPLE: {
@@ -2330,7 +2318,7 @@ struct CompanyWindow : Window
 /** Window definition for the company window. */
 static WindowDesc _company_desc(
 	WindowPosition::Automatic, "company", 0, 0,
-	WC_COMPANY, WC_NONE,
+	WindowClass::Company, WindowClass::None,
 	{},
 	_nested_company_widgets
 );
@@ -2352,8 +2340,8 @@ void ShowCompany(CompanyID company)
  */
 void DirtyCompanyInfrastructureWindows(CompanyID company)
 {
-	SetWindowDirty(WC_COMPANY, company);
-	SetWindowDirty(WC_COMPANY_INFRASTRUCTURE, company);
+	SetWindowDirty(WindowClass::Company, company);
+	SetWindowDirty(WindowClass::CompanyInfrastructure, company);
 }
 
 struct BuyCompanyWindow : Window {
@@ -2401,7 +2389,7 @@ struct BuyCompanyWindow : Window {
 
 			case WID_BC_QUESTION: {
 				const Company *c = Company::Get(this->window_number);
-				DrawStringMultiLine(r, GetString(this->hostile_takeover ? STR_BUY_COMPANY_HOSTILE_TAKEOVER : STR_BUY_COMPANY_MESSAGE, c->index, this->company_value), TC_FROMSTRING, SA_CENTER);
+				DrawStringMultiLine(r, GetString(this->hostile_takeover ? STR_BUY_COMPANY_HOSTILE_TAKEOVER : STR_BUY_COMPANY_MESSAGE, c->index, this->company_value), TextColour::FromString, SA_CENTER);
 				break;
 			}
 		}
@@ -2462,7 +2450,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_buy_company_widgets 
 /** Window definition for the window to buy a company. */
 static WindowDesc _buy_company_desc(
 	WindowPosition::Automatic, {}, 0, 0,
-	WC_BUY_COMPANY, WC_NONE,
+	WindowClass::BuyCompany, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_buy_company_widgets
 );
@@ -2474,7 +2462,7 @@ static WindowDesc _buy_company_desc(
  */
 void ShowBuyCompanyDialog(CompanyID company, bool hostile_takeover)
 {
-	auto window = BringWindowToFrontById(WC_BUY_COMPANY, company);
+	auto window = BringWindowToFrontById(WindowClass::BuyCompany, company);
 	if (window == nullptr) {
 		new BuyCompanyWindow(_buy_company_desc, company, hostile_takeover);
 	}

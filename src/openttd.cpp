@@ -874,11 +874,11 @@ static void MakeNewGameDone()
 	 * Colours::End corresponds to Random colour */
 
 	if (_settings_client.gui.starting_colour != Colours::End) {
-		Command<Commands::SetCompanyColour>::Post(LS_DEFAULT, true, _settings_client.gui.starting_colour);
+		Command<Commands::SetCompanyColour>::Post(LiveryScheme::Default, true, _settings_client.gui.starting_colour);
 	}
 
-	if (_settings_client.gui.starting_colour_secondary != Colours::End && HasBit(_loaded_newgrf_features.used_liveries, LS_DEFAULT)) {
-		Command<Commands::SetCompanyColour>::Post(LS_DEFAULT, false, _settings_client.gui.starting_colour_secondary);
+	if (_settings_client.gui.starting_colour_secondary != Colours::End && _loaded_newgrf_features.used_liveries.Test(LiveryScheme::Default)) {
+		Command<Commands::SetCompanyColour>::Post(LiveryScheme::Default, false, _settings_client.gui.starting_colour_secondary);
 	}
 
 	OnStartGame(false);
@@ -1099,7 +1099,7 @@ void SwitchToMode(SwitchMode new_mode)
 			ResetWindowSystem();
 
 			if (!SafeLoad(_file_to_saveload.name, _file_to_saveload.file_op, _file_to_saveload.ftype.detailed, GM_NORMAL, Subdirectory::None)) {
-				ShowErrorMessage(GetSaveLoadErrorType(), GetSaveLoadErrorMessage(), WL_CRITICAL);
+				ShowErrorMessage(GetSaveLoadErrorType(), GetSaveLoadErrorMessage(), WarningLevel::Critical);
 			} else {
 				if (_file_to_saveload.ftype.abstract == AbstractFileType::Scenario) {
 					OnStartScenario();
@@ -1141,7 +1141,7 @@ void SwitchToMode(SwitchMode new_mode)
 				/* Cancel the saveload pausing */
 				Command<Commands::Pause>::Post(PauseMode::SaveLoad, false);
 			} else {
-				ShowErrorMessage(GetSaveLoadErrorType(), GetSaveLoadErrorMessage(), WL_CRITICAL);
+				ShowErrorMessage(GetSaveLoadErrorType(), GetSaveLoadErrorMessage(), WarningLevel::Critical);
 			}
 
 			UpdateSocialIntegration(GM_EDITOR);
@@ -1158,7 +1158,7 @@ void SwitchToMode(SwitchMode new_mode)
 		case SM_MENU: // Switch to game intro menu
 			LoadIntroGame();
 			if (BaseSounds::ini_set.empty() && BaseSounds::GetUsedSet()->fallback && SoundDriver::GetInstance()->HasOutput()) {
-				ShowErrorMessage(GetEncodedString(STR_WARNING_FALLBACK_SOUNDSET), {}, WL_CRITICAL);
+				ShowErrorMessage(GetEncodedString(STR_WARNING_FALLBACK_SOUNDSET), {}, WarningLevel::Critical);
 				BaseSounds::ini_set = BaseSounds::GetUsedSet()->name;
 			}
 			if (_settings_client.network.participate_survey == ParticipateSurvey::Ask) {
@@ -1176,15 +1176,15 @@ void SwitchToMode(SwitchMode new_mode)
 		case SM_SAVE_GAME: // Save game.
 			/* Make network saved games on pause compatible to singleplayer mode */
 			if (SaveOrLoad(_file_to_saveload.name, SaveLoadOperation::Save, DetailedFileType::GameFile, Subdirectory::None) != SaveLoadResult::Ok) {
-				ShowErrorMessage(GetSaveLoadErrorType(), GetSaveLoadErrorMessage(), WL_ERROR);
+				ShowErrorMessage(GetSaveLoadErrorType(), GetSaveLoadErrorMessage(), WarningLevel::Error);
 			} else {
-				CloseWindowById(WC_SAVELOAD, 0);
+				CloseWindowById(WindowClass::SaveLoad, 0);
 			}
 			break;
 
 		case SM_SAVE_HEIGHTMAP: // Save heightmap.
 			MakeHeightmapScreenshot(_file_to_saveload.name);
-			CloseWindowById(WC_SAVELOAD, 0);
+			CloseWindowById(WindowClass::SaveLoad, 0);
 			break;
 
 		case SM_GENRANDLAND: // Generate random land within scenario editor
@@ -1290,13 +1290,13 @@ static IntervalTimer<TimerGameRealtime> _autosave_interval({std::chrono::millise
 	_pause_mode.Reset(PauseMode::CommandDuringPause);
 
 	_do_autosave = true;
-	SetWindowDirty(WC_STATUS_BAR, 0);
+	SetWindowDirty(WindowClass::Statusbar, 0);
 
 	static FiosNumberedSaveName _autosave_ctr("autosave");
 	DoAutoOrNetsave(_autosave_ctr);
 
 	_do_autosave = false;
-	SetWindowDirty(WC_STATUS_BAR, 0);
+	SetWindowDirty(WindowClass::Statusbar, 0);
 });
 
 /**
@@ -1385,7 +1385,7 @@ void GameLoop()
 		StateGameLoop();
 	}
 
-	if (_pause_mode.None() && HasBit(_display_opt, DO_FULL_ANIMATION)) DoPaletteAnimations();
+	if (_pause_mode.None() && _display_opt.Test(DisplayOption::FullAnimation)) DoPaletteAnimations();
 
 	SoundDriver::GetInstance()->MainLoop();
 	MusicLoop();

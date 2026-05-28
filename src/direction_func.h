@@ -42,7 +42,7 @@ inline bool IsValidDirection(Direction d)
  */
 inline bool IsValidAxis(Axis d)
 {
-	return d < AXIS_END;
+	return d < Axis::End;
 }
 
 /**
@@ -197,7 +197,7 @@ inline Direction DiagDirToDir(DiagDirection dir)
 inline Axis OtherAxis(Axis a)
 {
 	assert(IsValidAxis(a));
-	return (Axis)(a ^ 1);
+	return static_cast<Axis>(to_underlying(a) ^ 1);
 }
 
 
@@ -214,7 +214,7 @@ inline Axis OtherAxis(Axis a)
 inline Axis DiagDirToAxis(DiagDirection d)
 {
 	assert(IsValidDiagDirection(d));
-	return (Axis)(d & 1);
+	return static_cast<Axis>(d & 1);
 }
 
 
@@ -232,7 +232,7 @@ inline Axis DiagDirToAxis(DiagDirection d)
 inline DiagDirection AxisToDiagDir(Axis a)
 {
 	assert(IsValidAxis(a));
-	return (DiagDirection)(2 - a);
+	return static_cast<DiagDirection>(2 - to_underlying(a));
 }
 
 /**
@@ -247,7 +247,7 @@ inline DiagDirection AxisToDiagDir(Axis a)
 inline DiagDirections AxisToDiagDirs(Axis a)
 {
 	assert(IsValidAxis(a));
-	return a == AXIS_X
+	return a == Axis::X
 		? DiagDirections{DIAGDIR_NE, DIAGDIR_SW}
 		: DiagDirections{DIAGDIR_SE, DIAGDIR_NW};
 }
@@ -266,7 +266,7 @@ inline DiagDirections AxisToDiagDirs(Axis a)
 inline Direction AxisToDirection(Axis a)
 {
 	assert(IsValidAxis(a));
-	return (Direction)(5 - 2 * a);
+	return static_cast<Direction>(5 - 2 * to_underlying(a));
 }
 
 /**
@@ -278,7 +278,7 @@ inline Direction AxisToDirection(Axis a)
 inline DiagDirection XYNSToDiagDir(Axis xy, uint ns)
 {
 	assert(IsValidAxis(xy));
-	return (DiagDirection)(xy * 3 ^ ns * 2);
+	return static_cast<DiagDirection>(to_underlying(xy) * 3 ^ ns * 2);
 }
 
 /**

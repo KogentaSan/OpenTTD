@@ -472,7 +472,7 @@ inline int RoadVehicle::GetCurrentMaxSpeed() const
 			if (this->state <= RVSB_TRACKDIR_MASK && IsReversingRoadTrackdir((Trackdir)this->state)) {
 				max_speed = this->gcache.cached_max_track_speed / 2;
 				break;
-			} else if ((u->direction & 1) == 0) {
+			} else if (!IsDiagonalDirection(u->direction)) {
 				max_speed = this->gcache.cached_max_track_speed * 3 / 4;
 			}
 		}
@@ -823,7 +823,7 @@ static void RoadVehCheckOvertake(RoadVehicle *v, RoadVehicle *u)
 	if (v->HasArticulatedPart()) return;
 
 	/* Vehicles are not driving in same direction || direction is not a diagonal direction */
-	if (v->direction != u->direction || !(v->direction & 1)) return;
+	if (v->direction != u->direction || !IsDiagonalDirection(v->direction)) return;
 
 	/* Check if vehicle is in a road stop, depot, tunnel or bridge or not on a straight road */
 	if (v->state >= RVSB_IN_ROAD_STOP || !IsStraightRoadTrackdir((Trackdir)(v->state & RVSB_TRACKDIR_MASK))) return;
@@ -1049,7 +1049,7 @@ bool RoadVehLeaveDepot(RoadVehicle *v, bool first)
 	v->UpdatePosition();
 	v->UpdateInclination(true, true);
 
-	InvalidateWindowData(WC_VEHICLE_DEPOT, v->tile);
+	InvalidateWindowData(WindowClass::VehicleDepot, v->tile);
 
 	return true;
 }
@@ -1552,7 +1552,7 @@ again:
 		if (IsBayRoadStopTile(v->tile)) rs->SetEntranceBusy(true);
 
 		StartRoadVehSound(v);
-		SetWindowWidgetDirty(WC_VEHICLE_VIEW, v->index, WID_VV_START_STOP);
+		SetWindowWidgetDirty(WindowClass::VehicleView, v->index, WID_VV_START_STOP);
 	}
 
 	/* Check tile position conditions - i.e. stop position in depot,
@@ -1699,7 +1699,7 @@ static void CheckIfRoadVehNeedsService(RoadVehicle *v)
 			 * suddenly moved farther away, we continue our normal
 			 * schedule? */
 			v->current_order.MakeDummy();
-			SetWindowWidgetDirty(WC_VEHICLE_VIEW, v->index, WID_VV_START_STOP);
+			SetWindowWidgetDirty(WindowClass::VehicleView, v->index, WID_VV_START_STOP);
 		}
 		return;
 	}
@@ -1715,7 +1715,7 @@ static void CheckIfRoadVehNeedsService(RoadVehicle *v)
 	SetBit(v->gv_flags, GVF_SUPPRESS_IMPLICIT_ORDERS);
 	v->current_order.MakeGoToDepot(depot, OrderDepotTypeFlag::Service);
 	v->SetDestTile(rfdd.tile);
-	SetWindowWidgetDirty(WC_VEHICLE_VIEW, v->index, WID_VV_START_STOP);
+	SetWindowWidgetDirty(WindowClass::VehicleView, v->index, WID_VV_START_STOP);
 }
 
 /** Calender day handler */
@@ -1747,8 +1747,8 @@ void RoadVehicle::OnNewEconomyDay()
 
 	SubtractMoneyFromCompanyFract(this->owner, cost);
 
-	SetWindowDirty(WC_VEHICLE_DETAILS, this->index);
-	SetWindowClassesDirty(WC_ROADVEH_LIST);
+	SetWindowDirty(WindowClass::VehicleDetails, this->index);
+	SetWindowClassesDirty(WindowClass::RoadVehicleList);
 }
 
 Trackdir RoadVehicle::GetVehicleTrackdir() const

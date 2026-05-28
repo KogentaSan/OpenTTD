@@ -116,7 +116,7 @@ struct SignList {
 	/** Filter sign list by owner. @copydoc GUIList::FilterFunction */
 	static bool OwnerVisibilityFilter(const Sign * const *item, [[maybe_unused]] StringFilter &filter)
 	{
-		assert(!HasBit(_display_opt, DO_SHOW_COMPETITOR_SIGNS));
+		assert(!_display_opt.Test(DisplayOption::ShowCompetitorSigns));
 		/* Hide sign if non-own signs are hidden in the viewport */
 		return (*item)->owner == _local_company || (*item)->owner == OWNER_DEITY;
 	}
@@ -126,7 +126,7 @@ struct SignList {
 	{
 		this->signs.Filter(&SignNameFilter, this->string_filter);
 		if (_game_mode != GM_EDITOR) this->signs.Filter(&OwnerDeityFilter, this->string_filter);
-		if (!HasBit(_display_opt, DO_SHOW_COMPETITOR_SIGNS)) {
+		if (!_display_opt.Test(DisplayOption::ShowCompetitorSigns)) {
 			this->signs.Filter(&OwnerVisibilityFilter, this->string_filter);
 		}
 	}
@@ -216,7 +216,7 @@ struct SignListWindow : Window, SignList {
 
 					if (si->owner != OWNER_NONE) DrawCompanyIcon(si->owner, icon_left, tr.top + sprite_offset_y);
 
-					DrawString(tr.left, tr.right, tr.top + text_offset_y, GetString(STR_SIGN_NAME, si->index), TC_YELLOW);
+					DrawString(tr.left, tr.right, tr.top + text_offset_y, GetString(STR_SIGN_NAME, si->index), TextColour::Yellow);
 					tr.top += this->resize.step_height;
 				}
 				break;
@@ -363,7 +363,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_sign_list_widgets = 
 /** Window definition for the sign list window. */
 static WindowDesc _sign_list_desc(
 	WindowPosition::Automatic, "list_signs", 358, 138,
-	WC_SIGN_LIST, WC_NONE,
+	WindowClass::SignList, WindowClass::None,
 	{},
 	_nested_sign_list_widgets,
 	&SignListWindow::hotkeys
@@ -416,7 +416,7 @@ struct SignWindow : Window, SignList {
 		this->name_editbox.cancel_button = WID_QES_CANCEL;
 		this->name_editbox.ok_button = WID_QES_OK;
 
-		this->InitNested(WN_QUERY_STRING_SIGN);
+		this->InitNested(QueryStringWindowNumber::Sign);
 
 		if (_game_mode != GameMode::GM_EDITOR) {
 			this->GetWidget<NWidgetStacked>(WID_QES_COLOUR_PANE)->SetDisplayedPlane(SZSP_VERTICAL);
@@ -593,7 +593,7 @@ struct SignWindow : Window, SignList {
 static constexpr std::initializer_list<NWidgetPart> _nested_query_sign_edit_widgets = {
 	NWidget(NWID_HORIZONTAL),
 		NWidget(WWT_CLOSEBOX, Colours::Grey),
-		NWidget(WWT_CAPTION, Colours::Grey, WID_QES_CAPTION), SetTextStyle(TC_WHITE),
+		NWidget(WWT_CAPTION, Colours::Grey, WID_QES_CAPTION), SetTextStyle(TextColour::White),
 		NWidget(WWT_PUSHIMGBTN, Colours::Grey, WID_QES_LOCATION), SetAspect(WidgetDimensions::ASPECT_LOCATION), SetSpriteTip(SPR_GOTO_LOCATION, STR_EDIT_SIGN_LOCATION_TOOLTIP),
 	EndContainer(),
 	NWidget(WWT_PANEL, Colours::Grey),
@@ -616,7 +616,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_query_sign_edit_widg
 /** Window definition for the sign editor window. */
 static WindowDesc _query_sign_edit_desc(
 	WindowPosition::Center, {}, 0, 0,
-	WC_QUERY_STRING, WC_NONE,
+	WindowClass::QueryString, WindowClass::None,
 	WindowDefaultFlag::Construction,
 	_nested_query_sign_edit_widgets
 );
@@ -645,7 +645,7 @@ void HandleClickOnSign(const Sign *si)
 void ShowRenameSignWindow(const Sign *si)
 {
 	/* Delete all other edit windows */
-	CloseWindowByClass(WC_QUERY_STRING);
+	CloseWindowByClass(WindowClass::QueryString);
 
 	new SignWindow(_query_sign_edit_desc, si);
 }
@@ -656,7 +656,7 @@ void ShowRenameSignWindow(const Sign *si)
  */
 void DeleteRenameSignWindow(SignID sign)
 {
-	SignWindow *w = dynamic_cast<SignWindow *>(FindWindowById(WC_QUERY_STRING, WN_QUERY_STRING_SIGN));
+	SignWindow *w = dynamic_cast<SignWindow *>(FindWindowById(WindowClass::QueryString, QueryStringWindowNumber::Sign));
 
 	if (w != nullptr && w->cur_sign == sign) w->Close();
 }

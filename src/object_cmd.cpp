@@ -97,7 +97,7 @@ void BuildObject(ObjectType type, TileIndex tile, CompanyID owner, Town *town, u
 	if (owner == OWNER_NONE) {
 		o->recolour_offset = Random();
 	} else {
-		o->recolour_offset = Company::Get(owner)->GetCompanyRecolourOffset(LS_DEFAULT);
+		o->recolour_offset = Company::Get(owner)->GetCompanyRecolourOffset(LiveryScheme::Default);
 	}
 
 	/* If the object wants only one colour, then give it that colour. */
@@ -192,7 +192,7 @@ void UpdateObjectColours(const Company *c)
 		/* Using the object colour callback, so not using company colour. */
 		if (spec->callback_mask.Test(ObjectCallbackMask::Colour)) continue;
 
-		obj->recolour_offset = c->GetCompanyRecolourOffset(LS_DEFAULT, spec->flags.Test(ObjectFlag::Uses2CC));
+		obj->recolour_offset = c->GetCompanyRecolourOffset(LiveryScheme::Default, spec->flags.Test(ObjectFlag::Uses2CC));
 	}
 }
 
@@ -350,7 +350,7 @@ CommandCost CmdBuildObject(DoCommandFlags flags, TileIndex tile, ObjectType type
 			if (flags.Test(DoCommandFlag::Execute)) {
 				hq_score = UpdateCompanyRatingAndValue(c, false);
 				c->location_of_HQ = tile;
-				SetWindowDirty(WC_COMPANY, c->index);
+				SetWindowDirty(WindowClass::Company, c->index);
 			}
 			break;
 		}
@@ -592,7 +592,7 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlags flags)
 			Company *c = Company::Get(GetTileOwner(tile));
 			if (flags.Test(DoCommandFlag::Execute)) {
 				c->location_of_HQ = INVALID_TILE; // reset HQ position
-				SetWindowDirty(WC_COMPANY, c->index);
+				SetWindowDirty(WindowClass::Company, c->index);
 				CargoPacket::InvalidateAllFrom({c->index, SourceType::Headquarters});
 			}
 
@@ -605,7 +605,7 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlags flags)
 			if (flags.Test(DoCommandFlag::Execute)) {
 				Town *town = o->town;
 				town->statues.Reset(GetTileOwner(tile));
-				SetWindowDirty(WC_TOWN_AUTHORITY, town->index);
+				SetWindowDirty(WindowClass::TownAuthority, town->index);
 			}
 			break;
 
@@ -819,7 +819,7 @@ static bool TryBuildCoastLighthouse()
 	int perimeter = (GB(r, 16, 16) % (2 * (maxx + maxy))) - maxy;
 	DiagDirection dir;
 	for (dir = DIAGDIR_NE; perimeter > 0; dir++) {
-		perimeter -= (DiagDirToAxis(dir) == AXIS_X) ? maxx : maxy;
+		perimeter -= (DiagDirToAxis(dir) == Axis::X) ? maxx : maxy;
 	}
 
 	TileIndex tile;
@@ -875,7 +875,7 @@ static bool TryBuildTransmitter()
 void GenerateObjects()
 {
 	/* Set a guestimate on how much we progress */
-	SetGeneratingWorldProgress(GWP_OBJECT, (uint)ObjectSpec::Count());
+	SetGeneratingWorldProgress(GenWorldProgress::Objects, static_cast<uint>(ObjectSpec::Count()));
 
 	/* Determine number of water tiles at map border needed for freeform_edges */
 	uint num_water_tiles = 0;
@@ -930,7 +930,7 @@ void GenerateObjects()
 				}
 				break;
 		}
-		IncreaseGeneratingWorldProgress(GWP_OBJECT);
+		IncreaseGeneratingWorldProgress(GenWorldProgress::Objects);
 	}
 }
 
@@ -959,7 +959,7 @@ static void ChangeTileOwner_Object(TileIndex tile, Owner old_owner, Owner new_ow
 			do_clear = true;
 		}
 
-		SetWindowDirty(WC_TOWN_AUTHORITY, t->index);
+		SetWindowDirty(WindowClass::TownAuthority, t->index);
 	} else {
 		do_clear = true;
 	}

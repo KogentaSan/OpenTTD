@@ -460,7 +460,7 @@ void Station::UpdateVirtCoord()
 
 	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeStation(this->index));
 
-	SetWindowDirty(WC_STATION_VIEW, this->index);
+	SetWindowDirty(WindowClass::StationView, this->index);
 }
 
 /**
@@ -671,7 +671,7 @@ void UpdateStationAcceptance(Station *st, bool show_msg)
 	}
 
 	/* redraw the station view since acceptance changed */
-	SetWindowWidgetDirty(WC_STATION_VIEW, st->index, WID_SV_ACCEPT_RATING_LIST);
+	SetWindowWidgetDirty(WindowClass::StationView, st->index, WID_SV_ACCEPT_RATING_LIST);
 }
 
 static void UpdateStationSignCoord(BaseStation *st)
@@ -743,7 +743,7 @@ static void DeleteStationIfEmpty(BaseStation *st)
 {
 	if (!st->IsInUse()) {
 		st->delete_ctr = 0;
-		InvalidateWindowData(WC_STATION_LIST, st->owner, 0);
+		InvalidateWindowData(WindowClass::StationList, st->owner, 0);
 	}
 	/* station remains but it probably lost some parts - station sign should stay in the station boundaries */
 	UpdateStationSignCoord(st);
@@ -762,30 +762,30 @@ void Station::AfterStationTileSetChange(bool adding, StationType type)
 	if (adding) {
 		this->RecomputeCatchment();
 		MarkCatchmentTilesDirty();
-		InvalidateWindowData(WC_STATION_LIST, this->owner, 0);
+		InvalidateWindowData(WindowClass::StationList, this->owner, 0);
 	} else {
 		MarkCatchmentTilesDirty();
 	}
 
 	switch (type) {
 		case StationType::Rail:
-			SetWindowWidgetDirty(WC_STATION_VIEW, this->index, WID_SV_TRAINS);
+			SetWindowWidgetDirty(WindowClass::StationView, this->index, WID_SV_TRAINS);
 			break;
 		case StationType::Airport:
 			break;
 		case StationType::Truck:
 		case StationType::Bus:
-			SetWindowWidgetDirty(WC_STATION_VIEW, this->index, WID_SV_ROADVEHS);
+			SetWindowWidgetDirty(WindowClass::StationView, this->index, WID_SV_ROADVEHS);
 			break;
 		case StationType::Dock:
-			SetWindowWidgetDirty(WC_STATION_VIEW, this->index, WID_SV_SHIPS);
+			SetWindowWidgetDirty(WindowClass::StationView, this->index, WID_SV_SHIPS);
 			break;
 		default: NOT_REACHED();
 	}
 
 	if (adding) {
 		UpdateStationAcceptance(this, false);
-		InvalidateWindowData(WC_SELECT_STATION, 0, 0);
+		InvalidateWindowData(WindowClass::JoinStation, 0, 0);
 	} else {
 		DeleteStationIfEmpty(this);
 		this->RecomputeCatchment();
@@ -878,7 +878,7 @@ static CommandCost CheckFlatLandAirport(AirportTileTableIterator tile_iter, DoCo
  */
 static StringID GetBridgeTooLowMessageForStationType(StationType type)
 {
-	static constexpr std::array<StringID, to_underlying(StationType::End)> too_low_msgs = {
+	static constexpr EnumIndexArray<StringID, StationType, StationType::End> too_low_msgs{
 		STR_ERROR_BRIDGE_TOO_LOW_FOR_STATION, // Rail
 		INVALID_STRING_ID, // Airport
 		STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADSTOP, // Truck
@@ -889,7 +889,7 @@ static StringID GetBridgeTooLowMessageForStationType(StationType type)
 		STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT, // RailWaypoint
 		STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT, // RoadWaypoint
 	};
-	return too_low_msgs[to_underlying(type)];
+	return too_low_msgs[type];
 };
 
 /**
@@ -926,7 +926,7 @@ static CommandCost IsStationBridgeAboveOk(TileIndex tile, std::span<const Bridge
  */
 static std::span<const BridgeableTileInfo> GetStationBridgeableTileInfo(StationType type)
 {
-	return _station_bridgeable_info[to_underlying(type)];
+	return _station_bridgeable_info[type];
 }
 
 /**
@@ -1099,7 +1099,7 @@ static CommandCost CheckFlatLandRoadStop(TileIndex cur_tile, int &allowed_z, con
 	if (ret.Failed()) return ret;
 	cost.AddCost(ret.GetCost());
 
-	ret = IsRoadStationBridgeAboveOk(cur_tile, spec, station_type, is_drive_through ? GFX_TRUCK_BUS_DRIVETHROUGH_OFFSET + axis : FindFirstBit(invalid_dirs.base()));
+	ret = IsRoadStationBridgeAboveOk(cur_tile, spec, station_type, is_drive_through ? GFX_TRUCK_BUS_DRIVETHROUGH_OFFSET + to_underlying(axis) : FindFirstBit(invalid_dirs.base()));
 	if (ret.Failed()) return ret;
 
 	/* If station is set, then we have special handling to allow building on top of already existing stations.
@@ -1128,7 +1128,7 @@ static CommandCost CheckFlatLandRoadStop(TileIndex cur_tile, int &allowed_z, con
 		bool build_over_road = is_drive_through && IsNormalRoadTile(cur_tile);
 		/* Road bits in the wrong direction. */
 		RoadBits rb = IsNormalRoadTile(cur_tile) ? GetAllRoadBits(cur_tile) : RoadBits{};
-		if (build_over_road && rb.Any(axis == AXIS_X ? ROAD_Y : ROAD_X)) {
+		if (build_over_road && rb.Any(AxisToRoadBits(OtherAxis(axis)))) {
 			/* Someone was pedantic and *NEEDED* three fracking different error messages. */
 			switch (rb.Count()) {
 				case 1:
@@ -1463,7 +1463,7 @@ CommandCost CmdBuildRailStation(DoCommandFlags flags, TileIndex tile_org, RailTy
 	if (plat_len == 0 || numtracks == 0) return CMD_ERROR;
 
 	int w_org, h_org;
-	if (axis == AXIS_X) {
+	if (axis == Axis::X) {
 		w_org = plat_len;
 		h_org = numtracks;
 	} else {
@@ -1514,12 +1514,12 @@ CommandCost CmdBuildRailStation(DoCommandFlags flags, TileIndex tile_org, RailTy
 			/* Don't check the layout if there's no bridge above anyway. */
 			if (!IsBridgeAbove(tile)) continue;
 
-			StationGfx gfx = *it + axis;
+			StationGfx gfx = *it + to_underlying(axis);
 			if (statspec != nullptr) {
-				uint32_t platinfo = GetPlatformInfo(AXIS_X, gfx, plat_len, numtracks, j, i, false);
+				uint32_t platinfo = GetPlatformInfo(Axis::X, gfx, plat_len, numtracks, j, i, false);
 				/* As the station is not yet completely finished, the station does not yet exist. */
 				uint16_t callback = GetStationCallback(CBID_STATION_BUILD_TILE_LAYOUT, platinfo, 0, statspec, nullptr, INVALID_TILE);
-				if (callback != CALLBACK_FAILED && callback <= UINT8_MAX) gfx = (callback & ~1) + axis;
+				if (callback != CALLBACK_FAILED && callback <= UINT8_MAX) gfx = (callback & ~1) + to_underlying(axis);
 			}
 
 			ret = IsRailStationBridgeAboveOk(tile, statspec, StationType::Rail, gfx);
@@ -1592,13 +1592,13 @@ CommandCost CmdBuildRailStation(DoCommandFlags flags, TileIndex tile_org, RailTy
 
 				if (statspec != nullptr) {
 					/* Use a fixed axis for GetPlatformInfo as our platforms / numtracks are always the right way around */
-					uint32_t platinfo = GetPlatformInfo(AXIS_X, GetStationGfx(tile), plat_len, numtracks, j, i, false);
+					uint32_t platinfo = GetPlatformInfo(Axis::X, GetStationGfx(tile), plat_len, numtracks, j, i, false);
 
 					/* As the station is not yet completely finished, the station does not yet exist. */
 					uint16_t callback = GetStationCallback(CBID_STATION_BUILD_TILE_LAYOUT, platinfo, 0, statspec, nullptr, tile);
 					if (callback != CALLBACK_FAILED) {
 						if (callback <= UINT8_MAX) {
-							SetStationGfx(tile, (callback & ~1) + axis);
+							SetStationGfx(tile, (callback & ~1) + to_underlying(axis));
 						} else {
 							ErrorUnknownCallbackResult(statspec->grf_prop.grfid, CBID_STATION_BUILD_TILE_LAYOUT, callback);
 						}
@@ -1624,7 +1624,7 @@ CommandCost CmdBuildRailStation(DoCommandFlags flags, TileIndex tile_org, RailTy
 
 		/* Check whether we need to expand the reservation of trains already on the station. */
 		TileArea update_reservation_area;
-		if (axis == AXIS_X) {
+		if (axis == Axis::X) {
 			update_reservation_area = TileArea(tile_org, 1, numtracks);
 		} else {
 			update_reservation_area = TileArea(tile_org, numtracks, 1);
@@ -1844,8 +1844,8 @@ CommandCost RemoveFromRailBaseStation(TileArea ta, std::vector<T *> &affected_st
 		/* if we deleted the whole station, delete the train facility. */
 		if (st->train_station.tile == INVALID_TILE) {
 			st->facilities.Reset(StationFacility::Train);
-			SetWindowClassesDirty(WC_VEHICLE_ORDERS);
-			SetWindowWidgetDirty(WC_STATION_VIEW, st->index, WID_SV_TRAINS);
+			SetWindowClassesDirty(WindowClass::VehicleOrders);
+			SetWindowWidgetDirty(WindowClass::StationView, st->index, WID_SV_TRAINS);
 			MarkCatchmentTilesDirty();
 			st->UpdateVirtCoord();
 			DeleteStationIfEmpty(st);
@@ -1879,7 +1879,7 @@ CommandCost CmdRemoveFromRailStation(DoCommandFlags flags, TileIndex start, Tile
 	/* Do all station specific functions here. */
 	for (Station *st : affected_stations) {
 
-		if (st->train_station.tile == INVALID_TILE) SetWindowWidgetDirty(WC_STATION_VIEW, st->index, WID_SV_TRAINS);
+		if (st->train_station.tile == INVALID_TILE) SetWindowWidgetDirty(WindowClass::StationView, st->index, WID_SV_TRAINS);
 		st->MarkTilesDirty(false);
 		MarkCatchmentTilesDirty();
 		st->RecomputeCatchment();
@@ -2293,7 +2293,7 @@ static CommandCost RemoveRoadStop(TileIndex tile, DoCommandFlags flags, int repl
 			/* removed the only stop? */
 			if (*primary_stop == nullptr) {
 				st->facilities.Reset(is_truck ? StationFacility::TruckStop : StationFacility::BusStop);
-				SetWindowClassesDirty(WC_VEHICLE_ORDERS);
+				SetWindowClassesDirty(WindowClass::VehicleOrders);
 			}
 		} else {
 			/* tell the predecessor in the list to skip this stop */
@@ -2414,7 +2414,7 @@ CommandCost RemoveRoadWaypointStop(TileIndex tile, DoCommandFlags flags, int rep
 			/* if we deleted the whole waypoint, delete the road facility. */
 			if (wp->road_waypoint_area.tile == INVALID_TILE) {
 				wp->facilities.Reset({StationFacility::BusStop, StationFacility::TruckStop});
-				SetWindowWidgetDirty(WC_STATION_VIEW, wp->index, WID_SV_ROADVEHS);
+				SetWindowWidgetDirty(WindowClass::StationView, wp->index, WID_SV_ROADVEHS);
 				wp->UpdateVirtCoord();
 				DeleteStationIfEmpty(wp);
 			}
@@ -2751,10 +2751,10 @@ CommandCost CmdBuildAirport(DoCommandFlags flags, TileIndex tile, uint8_t airpor
 		Company::Get(st->owner)->infrastructure.airport++;
 
 		st->AfterStationTileSetChange(true, StationType::Airport);
-		InvalidateWindowData(WC_STATION_VIEW, st->index, -1);
+		InvalidateWindowData(WindowClass::StationView, st->index, -1);
 
 		if (_settings_game.economy.station_noise_level) {
-			SetWindowDirty(WC_TOWN_VIEW, nearest->index);
+			SetWindowDirty(WindowClass::TownView, nearest->index);
 		}
 	}
 
@@ -2791,7 +2791,7 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlags flags)
 		for (uint i = 0; i < st->airport.GetNumHangars(); ++i) {
 			TileIndex tile_cur = st->airport.GetHangarTile(i);
 			OrderBackup::Reset(tile_cur, false);
-			CloseWindowById(WC_VEHICLE_DEPOT, tile_cur);
+			CloseWindowById(WindowClass::VehicleDepot, tile_cur);
 		}
 
 		/* The noise level is the noise from the airport and reduce it to account for the distance to the town center.
@@ -2802,7 +2802,7 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlags flags)
 		nearest->noise_reached -= GetAirportNoiseLevelForDistance(st->airport.GetSpec(), dist);
 
 		if (_settings_game.economy.station_noise_level) {
-			SetWindowDirty(WC_TOWN_VIEW, nearest->index);
+			SetWindowDirty(WindowClass::TownView, nearest->index);
 		}
 	}
 
@@ -2828,9 +2828,9 @@ static CommandCost RemoveAirport(TileIndex tile, DoCommandFlags flags)
 
 		st->airport.Clear();
 		st->facilities.Reset(StationFacility::Airport);
-		SetWindowClassesDirty(WC_VEHICLE_ORDERS);
+		SetWindowClassesDirty(WindowClass::VehicleOrders);
 
-		InvalidateWindowData(WC_STATION_VIEW, st->index, -1);
+		InvalidateWindowData(WindowClass::StationView, st->index, -1);
 
 		Company::Get(st->owner)->infrastructure.airport--;
 
@@ -2860,7 +2860,7 @@ CommandCost CmdOpenCloseAirport(DoCommandFlags flags, StationID station_id)
 
 	if (flags.Test(DoCommandFlag::Execute)) {
 		st->airport.blocks.Flip(AirportBlock::AirportClosed);
-		SetWindowWidgetDirty(WC_STATION_VIEW, st->index, WID_SV_CLOSE_AIRPORT);
+		SetWindowWidgetDirty(WindowClass::StationView, st->index, WID_SV_CLOSE_AIRPORT);
 	}
 	return CommandCost();
 }
@@ -3087,7 +3087,7 @@ static CommandCost RemoveDock(TileIndex tile, DoCommandFlags flags)
 			st->ship_station.Clear();
 			st->docking_station.Clear();
 			st->facilities.Reset(StationFacility::Dock);
-			SetWindowClassesDirty(WC_VEHICLE_ORDERS);
+			SetWindowClassesDirty(WindowClass::VehicleOrders);
 		}
 
 		Company::Get(st->owner)->infrastructure.station -= 2;
@@ -3130,7 +3130,7 @@ static CommandCost RemoveDock(TileIndex tile, DoCommandFlags flags)
  */
 const DrawTileSprites *GetStationTileLayout(StationType st, uint8_t gfx)
 {
-	const auto &layouts = _station_display_datas[to_underlying(st)];
+	const auto &layouts = _station_display_datas[st];
 	if (gfx >= layouts.size()) gfx &= 1;
 	return layouts.data() + gfx;
 }
@@ -3310,7 +3310,7 @@ static void DrawTile_Station(TileInfo *ti)
 
 				if (statspec->callback_mask.Test(StationCallbackMask::DrawTileLayout)) {
 					uint16_t callback = GetStationCallback(CBID_STATION_DRAW_TILE_LAYOUT, 0, 0, statspec, st, ti->tile);
-					if (callback != CALLBACK_FAILED) tile_layout = (callback & ~1) + GetRailStationAxis(ti->tile);
+					if (callback != CALLBACK_FAILED) tile_layout = (callback & ~1) + to_underlying(GetRailStationAxis(ti->tile));
 				}
 
 				/* Ensure the chosen tile layout is valid for this custom station */
@@ -3453,7 +3453,7 @@ static void DrawTile_Station(TileInfo *ti)
 
 			/* PBS debugging, draw reserved tracks darker */
 			if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation && HasStationRail(ti->tile) && HasStationReservation(ti->tile)) {
-				DrawGroundSprite(GetRailStationAxis(ti->tile) == AXIS_X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH);
+				DrawGroundSprite(GetRailStationAxis(ti->tile) == Axis::X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH);
 			}
 		}
 	}
@@ -3502,7 +3502,7 @@ static void DrawTile_Station(TileInfo *ti)
 
 		if (IsDriveThroughStopTile(ti->tile)) {
 			if (type != StationType::RoadWaypoint && (stopspec == nullptr || stop_draw_mode.Test(RoadStopDrawMode::Overlay))) {
-				uint sprite_offset = GetDriveThroughStopAxis(ti->tile) == AXIS_X ? 1 : 0;
+				uint sprite_offset = GetDriveThroughStopAxis(ti->tile) == Axis::X ? 1 : 0;
 				DrawRoadOverlays(ti, PAL_NONE, road_rti, tram_rti, sprite_offset, sprite_offset);
 			}
 		} else {
@@ -3873,7 +3873,7 @@ static VehicleEnterTileStates VehicleEnterTile_Station(Vehicle *v, TileIndex til
 		x &= 0xF;
 		y &= 0xF;
 
-		if (DiagDirToAxis(dir) != AXIS_X) std::swap(x, y);
+		if (DiagDirToAxis(dir) != Axis::X) std::swap(x, y);
 		if (y == TILE_SIZE / 2) {
 			if (dir != DIAGDIR_SE && dir != DIAGDIR_SW) x = TILE_SIZE - 1 - x;
 			stop &= TILE_SIZE - 1;
@@ -4142,9 +4142,9 @@ static void UpdateStationRating(Station *st)
 
 	StationID index = st->index;
 	if (waiting_changed) {
-		SetWindowDirty(WC_STATION_VIEW, index); // update whole window
+		SetWindowDirty(WindowClass::StationView, index); // update whole window
 	} else {
-		SetWindowWidgetDirty(WC_STATION_VIEW, index, WID_SV_ACCEPT_RATING_LIST); // update only ratings list
+		SetWindowWidgetDirty(WindowClass::StationView, index, WID_SV_ACCEPT_RATING_LIST); // update only ratings list
 	}
 }
 
@@ -4447,7 +4447,7 @@ static uint UpdateStationWaiting(Station *st, CargoType cargo, uint amount, Sour
 	if (lg != nullptr) (*lg)[ge.node].UpdateSupply(amount);
 
 	if (!ge.HasRating()) {
-		InvalidateWindowData(WC_STATION_LIST, st->owner);
+		InvalidateWindowData(WindowClass::StationList, st->owner);
 		ge.status.Set(GoodsEntry::State::Rating);
 	}
 
@@ -4458,7 +4458,7 @@ static uint UpdateStationWaiting(Station *st, CargoType cargo, uint amount, Sour
 	TriggerRoadStopAnimation(st, st->xy, StationAnimationTrigger::NewCargo, cargo);
 
 
-	SetWindowDirty(WC_STATION_VIEW, st->index);
+	SetWindowDirty(WindowClass::StationView, st->index);
 	st->MarkTilesDirty(true);
 	return amount;
 }
@@ -4503,7 +4503,7 @@ CommandCost CmdRenameStation(DoCommandFlags flags, StationID station_id, const s
 		}
 
 		st->UpdateVirtCoord();
-		InvalidateWindowData(WC_STATION_LIST, st->owner, 1);
+		InvalidateWindowData(WindowClass::StationList, st->owner, 1);
 	}
 
 	return CommandCost();
@@ -4853,7 +4853,7 @@ static void ChangeTileOwner_Station(TileIndex tile, Owner old_owner, Owner new_o
 
 		/* for buoys, owner of tile is owner of water, st->owner == OWNER_NONE */
 		SetTileOwner(tile, new_owner);
-		InvalidateWindowClassesData(WC_STATION_LIST, 0);
+		InvalidateWindowClassesData(WindowClass::StationList, 0);
 	} else {
 		if (IsDriveThroughStopTile(tile)) {
 			/* Remove the drive-through road stop */

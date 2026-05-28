@@ -492,10 +492,10 @@ void ResetNewGRFData()
 	/* Reset misc GRF features and train list display variables */
 	_misc_grf_features = {};
 
-	_loaded_newgrf_features.has_2CC           = false;
-	_loaded_newgrf_features.used_liveries     = 1 << LS_DEFAULT;
-	_loaded_newgrf_features.shore             = ShoreReplacement::None;
-	_loaded_newgrf_features.tram              = TramDepotReplacement::None;
+	_loaded_newgrf_features.has_2CC = false;
+	_loaded_newgrf_features.used_liveries = LiveryScheme::Default;
+	_loaded_newgrf_features.shore = ShoreReplacement::None;
+	_loaded_newgrf_features.tram = TramDepotReplacement::None;
 
 	/* Clear all GRF overrides */
 	_grf_id_overrides.clear();
@@ -888,23 +888,23 @@ static void FinaliseEngineArray()
 		/* Skip wagons, there livery is defined via the engine */
 		if (e->type != VehicleType::Train || e->VehInfo<RailVehicleInfo>().railveh_type != RailVehicleType::Wagon) {
 			LiveryScheme ls = GetEngineLiveryScheme(e->index, EngineID::Invalid(), nullptr);
-			SetBit(_loaded_newgrf_features.used_liveries, ls);
+			_loaded_newgrf_features.used_liveries.Set(ls);
 			/* Note: For ships and roadvehicles we assume that they cannot be refitted between passenger and freight */
 
 			if (e->type == VehicleType::Train) {
-				SetBit(_loaded_newgrf_features.used_liveries, LS_FREIGHT_WAGON);
+				_loaded_newgrf_features.used_liveries.Set(LiveryScheme::FreightWagon);
 				switch (ls) {
-					case LS_STEAM:
-					case LS_DIESEL:
-					case LS_ELECTRIC:
-					case LS_MONORAIL:
-					case LS_MAGLEV:
-						SetBit(_loaded_newgrf_features.used_liveries, LS_PASSENGER_WAGON_STEAM + ls - LS_STEAM);
+					case LiveryScheme::Steam:
+					case LiveryScheme::Diesel:
+					case LiveryScheme::Electric:
+					case LiveryScheme::Monorail:
+					case LiveryScheme::Maglev:
+						_loaded_newgrf_features.used_liveries.Set(LiveryScheme::PassengerWagonSteam + ls - LiveryScheme::Steam);
 						break;
 
-					case LS_DMU:
-					case LS_EMU:
-						SetBit(_loaded_newgrf_features.used_liveries, LS_PASSENGER_WAGON_DIESEL + ls - LS_DMU);
+					case LiveryScheme::DMU:
+					case LiveryScheme::EMU:
+						_loaded_newgrf_features.used_liveries.Set(LiveryScheme::PassengerWagonDiesel + ls - LiveryScheme::DMU);
 						break;
 
 					default: NOT_REACHED();
@@ -1767,16 +1767,16 @@ void LoadNewGRF(SpriteID load_index, uint num_baseset)
 	 * so all NewGRFs are loaded equally. For this we use the
 	 * start date of the game and we set the counters, etc. to
 	 * 0 so they're the same too. */
-	TimerGameCalendar::Date date            = TimerGameCalendar::date;
-	TimerGameCalendar::Year year            = TimerGameCalendar::year;
-	TimerGameCalendar::DateFract date_fract = TimerGameCalendar::date_fract;
+	AutoRestoreBackup backup_date{TimerGameCalendar::date};
+	AutoRestoreBackup backup_year{TimerGameCalendar::year};
+	AutoRestoreBackup backup_date_fract{TimerGameCalendar::date_fract};
 
-	TimerGameEconomy::Date economy_date = TimerGameEconomy::date;
-	TimerGameEconomy::Year economy_year = TimerGameEconomy::year;
-	TimerGameEconomy::DateFract economy_date_fract = TimerGameEconomy::date_fract;
+	AutoRestoreBackup backup_economy_date{TimerGameEconomy::date};
+	AutoRestoreBackup backup_economy_year{TimerGameEconomy::year};
+	AutoRestoreBackup backup_economy_date_fract{TimerGameEconomy::date_fract};
 
-	uint64_t tick_counter  = TimerGameTick::counter;
-	uint8_t display_opt     = _display_opt;
+	AutoRestoreBackup backup_tick_counter{TimerGameTick::counter};
+	AutoRestoreBackup backup_display_opt{_display_opt};
 
 	if (_networking) {
 		TimerGameCalendar::year = _settings_game.game_creation.starting_year;
@@ -1788,7 +1788,7 @@ void LoadNewGRF(SpriteID load_index, uint num_baseset)
 		TimerGameEconomy::date_fract = 0;
 
 		TimerGameTick::counter = 0;
-		_display_opt  = 0;
+		_display_opt.Reset();
 	}
 
 	InitializePatchFlags();
@@ -1883,18 +1883,6 @@ void LoadNewGRF(SpriteID load_index, uint num_baseset)
 
 	/* Call any functions that should be run after GRFs have been loaded. */
 	AfterLoadGRFs();
-
-	/* Now revert back to the original situation */
-	TimerGameCalendar::year = year;
-	TimerGameCalendar::date = date;
-	TimerGameCalendar::date_fract = date_fract;
-
-	TimerGameEconomy::year = economy_year;
-	TimerGameEconomy::date = economy_date;
-	TimerGameEconomy::date_fract = economy_date_fract;
-
-	TimerGameTick::counter = tick_counter;
-	_display_opt  = display_opt;
 }
 
 /**

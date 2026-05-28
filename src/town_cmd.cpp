@@ -118,8 +118,8 @@ Town::~Town()
 
 	/* Delete town authority window
 	 * and remove from list of sorted towns */
-	CloseWindowById(WC_TOWN_VIEW, this->index);
-	CloseWindowById(WC_TOWN_CARGO_GRAPH, this->index);
+	CloseWindowById(WindowClass::TownView, this->index);
+	CloseWindowById(WindowClass::TownCargoGraph, this->index);
 
 #ifdef WITH_ASSERT
 	/* Check no industry is related to us. */
@@ -174,7 +174,7 @@ Town::~Town()
  */
 void Town::PostDestructor([[maybe_unused]] size_t index)
 {
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_REBUILD);
+	InvalidateWindowData(WindowClass::TownDirectory, 0, TDIWD_FORCE_REBUILD);
 	UpdateNearestTownForRoadTiles(false);
 
 	/* Give objects a new home! */
@@ -404,7 +404,7 @@ void Town::UpdateVirtCoord()
 
 	_viewport_sign_kdtree.Insert(ViewportSignKdtreeItem::MakeTown(this->index));
 
-	SetWindowDirty(WC_TOWN_VIEW, this->index);
+	SetWindowDirty(WindowClass::TownView, this->index);
 }
 
 /** Update the virtual coords needed to draw the town sign for all towns. */
@@ -433,10 +433,10 @@ static void ChangePopulation(Town *t, int mod)
 	t->cache.population += mod;
 	if (_generating_town) [[unlikely]] return;
 
-	InvalidateWindowData(WC_TOWN_VIEW, t->index); // Cargo requirements may appear/vanish for small populations
+	InvalidateWindowData(WindowClass::TownView, t->index); // Cargo requirements may appear/vanish for small populations
 	if (_settings_client.gui.population_in_label) t->UpdateVirtCoord();
 
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_POPULATION_CHANGE);
+	InvalidateWindowData(WindowClass::TownDirectory, 0, TDIWD_POPULATION_CHANGE);
 }
 
 /**
@@ -991,11 +991,11 @@ bool CheckTownRoadTypes()
 		ShowErrorMessage(
 			GetEncodedString(STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET),
 			GetEncodedString(STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET_EXPLANATION, min_date),
-			WL_CRITICAL);
+			WarningLevel::Critical);
 	} else {
 		ShowErrorMessage(
 			GetEncodedString(STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL),
-			GetEncodedString(STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL_EXPLANATION), WL_CRITICAL);
+			GetEncodedString(STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL_EXPLANATION), WarningLevel::Critical);
 	}
 	return false;
 }
@@ -1063,7 +1063,7 @@ static bool IsRoadAllowedHere(Town *t, TileIndex tile, DiagDirection dir)
 		}
 	}
 
-	Slope cur_slope = _settings_game.construction.build_on_slopes ? std::get<0>(GetFoundationSlope(tile)) : GetTileSlope(tile);
+	Slope cur_slope = _settings_game.construction.build_on_slopes ? std::get<Slope>(GetFoundationSlope(tile)) : GetTileSlope(tile);
 	bool ret = !IsNeighbourRoadTile(tile, dir, t->layout == TL_ORIGINAL ? 1 : 2);
 	if (cur_slope == SLOPE_FLAT) return ret;
 
@@ -1075,7 +1075,7 @@ static bool IsRoadAllowedHere(Town *t, TileIndex tile, DiagDirection dir)
 			CommandCost res = CMD_ERROR;
 			if (!_generating_world && Chance16(1, 10)) {
 				/* Note: Do not replace "^ SLOPE_ELEVATED" with ComplementSlope(). The slope might be steep. */
-				res = std::get<0>(Command<Commands::TerraformLand>::Do({DoCommandFlag::Execute, DoCommandFlag::Auto, DoCommandFlag::NoWater},
+				res = ExtractCommandCost(Command<Commands::TerraformLand>::Do({DoCommandFlag::Execute, DoCommandFlag::Auto, DoCommandFlag::NoWater},
 						tile, Chance16(1, 16) ? cur_slope : cur_slope ^ SLOPE_ELEVATED, false));
 			}
 			if (res.Failed() && Chance16(1, 3)) {
@@ -1092,7 +1092,7 @@ static bool TerraformTownTile(TileIndex tile, Slope edges, bool dir)
 {
 	assert(tile < Map::Size());
 
-	CommandCost r = std::get<0>(Command<Commands::TerraformLand>::Do({DoCommandFlag::Auto, DoCommandFlag::NoWater}, tile, edges, dir));
+	CommandCost r = ExtractCommandCost(Command<Commands::TerraformLand>::Do({DoCommandFlag::Auto, DoCommandFlag::NoWater}, tile, edges, dir));
 	if (r.Failed() || r.GetCost() >= (_price[Price::Terraform] + 2) * 8) return false;
 	Command<Commands::TerraformLand>::Do({DoCommandFlag::Auto, DoCommandFlag::NoWater, DoCommandFlag::Execute}, tile, edges, dir);
 	return true;
@@ -2074,7 +2074,7 @@ static void DoCreateTown(Town *t, TileIndex tile, uint32_t townnameparts, TownSi
 	} while (--i);
 
 	t->UpdateVirtCoord();
-	InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_REBUILD);
+	InvalidateWindowData(WindowClass::TownDirectory, 0, TDIWD_FORCE_REBUILD);
 
 	t->cache.num_houses -= x;
 	UpdateTownRadius(t);
@@ -2433,7 +2433,7 @@ bool GenerateTowns(TownLayout layout, std::optional<uint> number)
 	uint32_t townnameparts;
 	TownNames town_names;
 
-	SetGeneratingWorldProgress(GWP_TOWN, total);
+	SetGeneratingWorldProgress(GenWorldProgress::Towns, total);
 
 	/* Pre-populate the town names list with the names of any towns already on the map */
 	for (const Town *town : Town::Iterate()) {
@@ -2449,7 +2449,7 @@ bool GenerateTowns(TownLayout layout, std::optional<uint> number)
 	 * We would not like the system to lock up just because the user wanted 100 cities on a 64*64 map, would we? */
 	do {
 		bool city = (_settings_game.economy.larger_towns != 0 && ((city_random_offset + current_number) % _settings_game.economy.larger_towns) == 0);
-		IncreaseGeneratingWorldProgress(GWP_TOWN);
+		IncreaseGeneratingWorldProgress(GenWorldProgress::Towns);
 		/* Get a unique name for the town. */
 		if (!GenerateTownName(_random, &townnameparts, &town_names)) continue;
 		/* try 20 times to create a random-sized town for the first loop. */
@@ -2472,7 +2472,7 @@ bool GenerateTowns(TownLayout layout, std::optional<uint> number)
 
 	/* If there are no towns at all and we are generating new game, bail out */
 	if (Town::GetNumItems() == 0 && _game_mode != GM_EDITOR) {
-		ShowErrorMessage(GetEncodedString(STR_ERROR_COULD_NOT_CREATE_TOWN), {}, WL_CRITICAL);
+		ShowErrorMessage(GetEncodedString(STR_ERROR_COULD_NOT_CREATE_TOWN), {}, WarningLevel::Critical);
 	}
 
 	return false;  // we are still without a town? we failed, simply
@@ -3143,7 +3143,7 @@ CommandCost CmdRenameTown(DoCommandFlags flags, TownID town_id, const std::strin
 		}
 
 		t->UpdateVirtCoord();
-		InvalidateWindowData(WC_TOWN_DIRECTORY, 0, TDIWD_FORCE_RESORT);
+		InvalidateWindowData(WindowClass::TownDirectory, 0, TDIWD_FORCE_RESORT);
 		ClearAllStationCachedNames();
 		ClearAllIndustryCachedNames();
 		UpdateAllStationVirtCoords();
@@ -3188,7 +3188,7 @@ CommandCost CmdTownCargoGoal(DoCommandFlags flags, TownID town_id, TownAcceptanc
 	if (flags.Test(DoCommandFlag::Execute)) {
 		t->goal[tae] = goal;
 		UpdateTownGrowth(t);
-		InvalidateWindowData(WC_TOWN_VIEW, town_id);
+		InvalidateWindowData(WindowClass::TownView, town_id);
 	}
 
 	return CommandCost();
@@ -3210,7 +3210,7 @@ CommandCost CmdTownSetText(DoCommandFlags flags, TownID town_id, const EncodedSt
 	if (flags.Test(DoCommandFlag::Execute)) {
 		t->text.clear();
 		if (!text.empty()) t->text = text;
-		InvalidateWindowData(WC_TOWN_VIEW, town_id);
+		InvalidateWindowData(WindowClass::TownView, town_id);
 	}
 
 	return CommandCost();
@@ -3247,7 +3247,7 @@ CommandCost CmdTownGrowthRate(DoCommandFlags flags, TownID town_id, uint16_t gro
 			t->flags.Set(TownFlag::CustomGrowth);
 		}
 		UpdateTownGrowth(t);
-		InvalidateWindowData(WC_TOWN_VIEW, town_id);
+		InvalidateWindowData(WindowClass::TownView, town_id);
 	}
 
 	return CommandCost();
@@ -3273,7 +3273,7 @@ CommandCost CmdTownRating(DoCommandFlags flags, TownID town_id, CompanyID compan
 	int16_t new_rating = Clamp(rating, RATING_MINIMUM, RATING_MAXIMUM);
 	if (flags.Test(DoCommandFlag::Execute)) {
 		t->ratings[company_id] = new_rating;
-		InvalidateWindowData(WC_TOWN_AUTHORITY, town_id);
+		InvalidateWindowData(WindowClass::TownAuthority, town_id);
 	}
 
 	return CommandCost();
@@ -3602,7 +3602,7 @@ static CommandCost TownActionFundBuildings(Town *t, DoCommandFlags flags)
 		 */
 		t->grow_counter = std::min<uint16_t>(t->grow_counter, 2 * Ticks::TOWN_GROWTH_TICKS - (t->growth_rate - t->grow_counter) % Ticks::TOWN_GROWTH_TICKS);
 
-		SetWindowDirty(WC_TOWN_VIEW, t->index);
+		SetWindowDirty(WindowClass::TownView, t->index);
 	}
 	return CommandCost();
 }
@@ -3625,7 +3625,7 @@ static CommandCost TownActionBuyRights(Town *t, DoCommandFlags flags)
 
 		ModifyStationRatingAround(t->xy, _current_company, 130, 17);
 
-		SetWindowClassesDirty(WC_STATION_VIEW);
+		SetWindowClassesDirty(WindowClass::StationView);
 
 		/* Spawn news message */
 		auto cni = std::make_unique<CompanyNewsInformation>(STR_NEWS_EXCLUSIVE_RIGHTS_TITLE, Company::Get(_current_company));
@@ -3660,7 +3660,7 @@ static CommandCost TownActionBribe(Town *t, DoCommandFlags flags)
 
 			/* only show error message to the executing player. All errors are handled command.c
 			 * but this is special, because it can only 'fail' on a DoCommandFlag::Execute */
-			if (IsLocalCompany()) ShowErrorMessage(GetEncodedString(STR_ERROR_BRIBE_FAILED), {}, WL_INFO);
+			if (IsLocalCompany()) ShowErrorMessage(GetEncodedString(STR_ERROR_BRIBE_FAILED), {}, WarningLevel::Info);
 
 			/* decrease by a lot!
 			 * ChangeTownRating is only for stuff in demolishing. Bribe failure should
@@ -3668,7 +3668,7 @@ static CommandCost TownActionBribe(Town *t, DoCommandFlags flags)
 			 */
 			if (t->ratings[_current_company] > RATING_BRIBE_DOWN_TO) {
 				t->ratings[_current_company] = RATING_BRIBE_DOWN_TO;
-				SetWindowDirty(WC_TOWN_AUTHORITY, t->index);
+				SetWindowDirty(WindowClass::TownAuthority, t->index);
 			}
 		} else {
 			ChangeTownRating(t, RATING_BRIBE_UP_STEP, RATING_BRIBE_MAXIMUM, DoCommandFlag::Execute);
@@ -3769,7 +3769,7 @@ CommandCost CmdDoTownAction(DoCommandFlags flags, TownID town_id, TownAction act
 	if (ret.Failed()) return ret;
 
 	if (flags.Test(DoCommandFlag::Execute)) {
-		SetWindowDirty(WC_TOWN_AUTHORITY, town_id);
+		SetWindowDirty(WindowClass::TownAuthority, town_id);
 	}
 
 	return cost;
@@ -3822,7 +3822,7 @@ static void UpdateTownRating(Town *t)
 		*it = Clamp(*it, RATING_MINIMUM, RATING_MAXIMUM);
 	}
 
-	SetWindowDirty(WC_TOWN_AUTHORITY, t->index);
+	SetWindowDirty(WindowClass::TownAuthority, t->index);
 }
 
 
@@ -3897,7 +3897,7 @@ static void UpdateTownGrowthRate(Town *t)
 	uint old_rate = t->growth_rate;
 	t->growth_rate = GetNormalGrowthRate(t);
 	UpdateTownGrowCounter(t, old_rate);
-	SetWindowDirty(WC_TOWN_VIEW, t->index);
+	SetWindowDirty(WindowClass::TownView, t->index);
 }
 
 /**
@@ -3909,7 +3909,7 @@ static void UpdateTownGrowth(Town *t)
 	UpdateTownGrowthRate(t);
 
 	t->flags.Reset(TownFlag::IsGrowing);
-	SetWindowDirty(WC_TOWN_VIEW, t->index);
+	SetWindowDirty(WindowClass::TownView, t->index);
 
 	if (_settings_game.economy.town_growth_rate == 0 && t->fund_buildings_months == 0) return;
 
@@ -3932,14 +3932,14 @@ static void UpdateTownGrowth(Town *t)
 
 	if (t->flags.Test(TownFlag::CustomGrowth)) {
 		if (t->growth_rate != TOWN_GROWTH_RATE_NONE) t->flags.Set(TownFlag::IsGrowing);
-		SetWindowDirty(WC_TOWN_VIEW, t->index);
+		SetWindowDirty(WindowClass::TownView, t->index);
 		return;
 	}
 
 	if (t->fund_buildings_months == 0 && CountActiveStations(t) == 0 && !Chance16(1, 12)) return;
 
 	t->flags.Set(TownFlag::IsGrowing);
-	SetWindowDirty(WC_TOWN_VIEW, t->index);
+	SetWindowDirty(WindowClass::TownView, t->index);
 }
 
 /**
@@ -4094,7 +4094,7 @@ void ChangeTownRating(Town *t, int add, int max, DoCommandFlags flags)
 	} else {
 		t->have_ratings.Set(_current_company);
 		t->ratings[_current_company] = rating;
-		SetWindowDirty(WC_TOWN_AUTHORITY, t->index);
+		SetWindowDirty(WindowClass::TownAuthority, t->index);
 	}
 }
 
@@ -4189,7 +4189,7 @@ static const IntervalTimer<TimerGameEconomy> _economy_towns_monthly({TimerGameEc
 		UpdateTownGrowth(t);
 		UpdateTownRating(t);
 
-		SetWindowDirty(WC_TOWN_VIEW, t->index);
+		SetWindowDirty(WindowClass::TownView, t->index);
 	}
 });
 

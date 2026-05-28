@@ -210,7 +210,7 @@ struct GoalListWindow : public Window {
 						case GC_PROGRESS:
 							if (!s->progress.empty()) {
 								StringID str = s->completed ? STR_GOALS_PROGRESS_COMPLETE : STR_GOALS_PROGRESS;
-								DrawString(r.WithWidth(progress_col_width, !rtl), GetString(str, s->progress.GetDecodedString()), TC_FROMSTRING, SA_RIGHT | SA_FORCE);
+								DrawString(r.WithWidth(progress_col_width, !rtl), GetString(str, s->progress.GetDecodedString()), TextColour::FromString, SA_RIGHT | SA_FORCE);
 							}
 							break;
 					}
@@ -299,7 +299,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_goals_list_widgets =
 /** Window definition for the goal listing window. */
 static WindowDesc _goals_list_desc(
 	WindowPosition::Automatic, "list_goals", 500, 127,
-	WC_GOALS_LIST, WC_NONE,
+	WindowClass::GoalList, WindowClass::None,
 	{},
 	_nested_goals_list_widgets
 );
@@ -442,25 +442,25 @@ static constexpr auto _nested_goal_question_widgets_error    = NestedGoalWidgets
 static WindowDesc _goal_question_list_desc[] = {
 	{
 		WindowPosition::Center, {}, 0, 0,
-		WC_GOAL_QUESTION, WC_NONE,
+		WindowClass::GoalQuestion, WindowClass::None,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_question,
 	},
 	{
 		WindowPosition::Center, {}, 0, 0,
-		WC_GOAL_QUESTION, WC_NONE,
+		WindowClass::GoalQuestion, WindowClass::None,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_info,
 	},
 	{
 		WindowPosition::Center, {}, 0, 0,
-		WC_GOAL_QUESTION, WC_NONE,
+		WindowClass::GoalQuestion, WindowClass::None,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_warning,
 	},
 	{
 		WindowPosition::Center, {}, 0, 0,
-		WC_GOAL_QUESTION, WC_NONE,
+		WindowClass::GoalQuestion, WindowClass::None,
 		WindowDefaultFlag::Construction,
 		_nested_goal_question_widgets_error,
 	},
@@ -476,5 +476,5 @@ static WindowDesc _goal_question_list_desc[] = {
 void ShowGoalQuestion(uint16_t id, uint8_t type, uint32_t button_mask, const EncodedString &question)
 {
 	assert(type < GQT_END);
-	new GoalQuestionWindow(_goal_question_list_desc[type], id, type == 3 ? TC_WHITE : TC_BLACK, button_mask, question);
+	new GoalQuestionWindow(_goal_question_list_desc[type], id, type == 3 ? TextColour::White : TextColour::Black, button_mask, question);
 }

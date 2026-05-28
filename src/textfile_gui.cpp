@@ -78,7 +78,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_textfile_widgets = {
 /** Window definition for the textfile window */
 static WindowDesc _textfile_desc(
 	WindowPosition::Center, "textfile", 630, 460,
-	WC_TEXTFILE, WC_NONE,
+	WindowClass::Textfile, WindowClass::None,
 	{},
 	_nested_textfile_widgets
 );
@@ -495,7 +495,7 @@ void TextfileWindow::AfterLoadMarkdown()
 		/* All lines beginning with # are headings. */
 		if (!line.text.empty() && line.text[0] == '#') {
 			this->jumplist.push_back(line_index);
-			this->lines[line_index].colour = TC_GOLD;
+			this->lines[line_index].colour = TextColour::Gold;
 			this->link_anchors.emplace_back(line_index, 0, 0, MakeAnchorSlug(line.text));
 		}
 	}

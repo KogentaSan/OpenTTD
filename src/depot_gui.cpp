@@ -89,7 +89,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_train_depot_widgets 
 /** Window definition for the train depot window. */
 static WindowDesc _train_depot_desc(
 	WindowPosition::Automatic, "depot_train", 362, 123,
-	WC_VEHICLE_DEPOT, WC_NONE,
+	WindowClass::VehicleDepot, WindowClass::None,
 	{},
 	_nested_train_depot_widgets
 );
@@ -97,7 +97,7 @@ static WindowDesc _train_depot_desc(
 /** Window definition for the road depot window. */
 static WindowDesc _road_depot_desc(
 	WindowPosition::Automatic, "depot_roadveh", 316, 97,
-	WC_VEHICLE_DEPOT, WC_NONE,
+	WindowClass::VehicleDepot, WindowClass::None,
 	{},
 	_nested_train_depot_widgets
 );
@@ -105,7 +105,7 @@ static WindowDesc _road_depot_desc(
 /** Window definition for the ship depot window. */
 static WindowDesc _ship_depot_desc(
 	WindowPosition::Automatic, "depot_ship", 306, 99,
-	WC_VEHICLE_DEPOT, WC_NONE,
+	WindowClass::VehicleDepot, WindowClass::None,
 	{},
 	_nested_train_depot_widgets
 );
@@ -113,7 +113,7 @@ static WindowDesc _ship_depot_desc(
 /** Window definition for the aircraft depot window. */
 static WindowDesc _aircraft_depot_desc(
 	WindowPosition::Automatic, "depot_aircraft", 332, 99,
-	WC_VEHICLE_DEPOT, WC_NONE,
+	WindowClass::VehicleDepot, WindowClass::None,
 	{},
 	_nested_train_depot_widgets
 );
@@ -301,7 +301,7 @@ struct DepotWindow : Window {
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		CloseWindowById(WC_BUILD_VEHICLE, this->window_number);
+		CloseWindowById(WindowClass::BuildVehicle, this->window_number);
 		CloseWindowById(GetWindowClassForVehicleType(this->type), VehicleListIdentifier(VL_DEPOT_LIST, this->type, this->owner, this->GetDestinationIndex()).ToWindowNumber(), false);
 		OrderBackup::Reset(TileIndex(this->window_number));
 		this->Window::Close();
@@ -365,7 +365,7 @@ struct DepotWindow : Window {
 				Rect count = text.WithWidth(this->count_width - WidgetDimensions::scaled.hsep_normal, !rtl);
 				DrawString(count.left, count.right, count.bottom - GetCharacterHeight(FontSize::Small) + 1,
 						GetString(STR_JUST_DECIMAL, CeilDiv(length * 10, TILE_SIZE), 1),
-						TC_BLACK, SA_RIGHT | SA_FORCE, false, FontSize::Small); // Draw the counter
+						TextColour::Black, SA_RIGHT | SA_FORCE, false, FontSize::Small); // Draw the counter
 				break;
 			}
 
@@ -393,7 +393,7 @@ struct DepotWindow : Window {
 			Rect flag = r.WithWidth(this->flag_size.width, rtl).WithHeight(this->flag_size.height).Translate(0, diff_y);
 			DrawSpriteIgnorePadding((v->vehstatus.Test(VehState::Stopped)) ? SPR_FLAG_VEH_STOPPED : SPR_FLAG_VEH_RUNNING, PAL_NONE, flag, SA_CENTER);
 
-			DrawString(text, GetString(STR_JUST_COMMA, v->unitnumber), (v->max_age - CalendarTime::DAYS_IN_LEAP_YEAR) >= v->age ? TC_BLACK : TC_RED);
+			DrawString(text, GetString(STR_JUST_COMMA, v->unitnumber), (v->max_age - CalendarTime::DAYS_IN_LEAP_YEAR) >= v->age ? TextColour::Black : TextColour::Red);
 		}
 	}
 
@@ -966,11 +966,11 @@ struct DepotWindow : Window {
 					OnVehicleSelect(*begin);
 				} else {
 					ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_BUY_TRAIN + to_underlying((*begin)->type)),
-						GetEncodedString(STR_ERROR_CAN_T_COPY_ORDER_VEHICLE_LIST), WL_INFO);
+						GetEncodedString(STR_ERROR_CAN_T_COPY_ORDER_VEHICLE_LIST), WarningLevel::Info);
 				}
 			} else {
 				ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_BUY_TRAIN + to_underlying((*begin)->type)),
-					GetEncodedString(STR_ERROR_CAN_T_CLONE_VEHICLE_LIST), WL_INFO);
+					GetEncodedString(STR_ERROR_CAN_T_CLONE_VEHICLE_LIST), WarningLevel::Info);
 			}
 		} else {
 			/* If CTRL is pressed: If all the vehicles in this list share orders, then copy orders */
@@ -983,11 +983,11 @@ struct DepotWindow : Window {
 					OnVehicleSelect(*begin);
 				} else {
 					ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_BUY_TRAIN + to_underlying((*begin)->type)),
-						GetEncodedString(STR_ERROR_CAN_T_SHARE_ORDER_VEHICLE_LIST), WL_INFO);
+						GetEncodedString(STR_ERROR_CAN_T_SHARE_ORDER_VEHICLE_LIST), WarningLevel::Info);
 				}
 			} else {
 				ShowErrorMessage(GetEncodedString(STR_ERROR_CAN_T_BUY_TRAIN + to_underlying((*begin)->type)),
-					GetEncodedString(STR_ERROR_CAN_T_CLONE_VEHICLE_LIST), WL_INFO);
+					GetEncodedString(STR_ERROR_CAN_T_CLONE_VEHICLE_LIST), WarningLevel::Info);
 			}
 		}
 
@@ -1182,7 +1182,7 @@ static void DepotSellAllConfirmationCallback(Window *win, bool confirmed)
  */
 void ShowDepotWindow(TileIndex tile, VehicleType type)
 {
-	if (BringWindowToFrontById(WC_VEHICLE_DEPOT, tile) != nullptr) return;
+	if (BringWindowToFrontById(WindowClass::VehicleDepot, tile) != nullptr) return;
 
 	switch (type) {
 		default: NOT_REACHED();
@@ -1206,7 +1206,7 @@ void DeleteDepotHighlightOfVehicle(const Vehicle *v)
 	 */
 	if (_special_mouse_mode != WSM_DRAGDROP) return;
 
-	w = dynamic_cast<DepotWindow*>(FindWindowById(WC_VEHICLE_DEPOT, v->tile));
+	w = dynamic_cast<DepotWindow*>(FindWindowById(WindowClass::VehicleDepot, v->tile));
 	if (w != nullptr) {
 		if (w->sel == v->index) ResetObjectToPlace();
 	}

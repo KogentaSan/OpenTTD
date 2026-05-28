@@ -85,7 +85,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_ai_config_widgets = 
 /** Window definition for the configure AI window. */
 static WindowDesc _ai_config_desc(
 	WindowPosition::Center, {}, 0, 0,
-	WC_GAME_OPTIONS, WC_NONE,
+	WindowClass::GameOptions, WindowClass::None,
 	{},
 	_nested_ai_config_widgets
 );
@@ -100,7 +100,7 @@ struct AIConfigWindow : public Window {
 
 	AIConfigWindow() : Window(_ai_config_desc)
 	{
-		this->InitNested(WN_GAME_OPTIONS_AI); // Initializes 'this->line_height' as a side effect.
+		this->InitNested(GameOptionsWindowNumber::AI); // Initializes 'this->line_height' as a side effect.
 		this->vscroll = this->GetScrollbar(WID_AIC_SCROLLBAR);
 		this->selected_slot = CompanyID::Invalid();
 		NWidgetCore *nwi = this->GetWidget<NWidgetCore>(WID_AIC_LIST);
@@ -111,8 +111,8 @@ struct AIConfigWindow : public Window {
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		CloseWindowByClass(WC_SCRIPT_LIST);
-		CloseWindowByClass(WC_SCRIPT_SETTINGS);
+		CloseWindowByClass(WindowClass::ScriptList);
+		CloseWindowByClass(WindowClass::ScriptSettings);
 		this->Window::Close();
 	}
 
@@ -181,10 +181,10 @@ struct AIConfigWindow : public Window {
 	 */
 	TextColour GetSlotColour(CompanyID cid, CompanyID max_slot) const
 	{
-		if (this->selected_slot == cid) return TC_WHITE;
-		if (IsEditable(cid)) return cid < max_slot ? TC_ORANGE : TC_SILVER;
-		if (Company::IsValidAiID(cid)) return TC_GREEN;
-		return TC_SILVER;
+		if (this->selected_slot == cid) return TextColour::White;
+		if (IsEditable(cid)) return cid < max_slot ? TextColour::Orange : TextColour::Silver;
+		if (Company::IsValidAiID(cid)) return TextColour::Green;
+		return TextColour::Silver;
 	}
 
 	void DrawWidget(const Rect &r, WidgetID widget) const override
@@ -293,7 +293,7 @@ struct AIConfigWindow : public Window {
 
 			case WID_AIC_CONTENT_DOWNLOAD:
 				if (!_network_available) {
-					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WL_ERROR);
+					ShowErrorMessage(GetEncodedString(STR_NETWORK_ERROR_NOTAVAILABLE), {}, WarningLevel::Error);
 				} else {
 					ShowNetworkContentListWindow(nullptr, ContentType::Ai);
 				}
@@ -335,7 +335,7 @@ struct AIConfigWindow : public Window {
 /** Open the AI config window. */
 void ShowAIConfigWindow()
 {
-	CloseWindowByClass(WC_GAME_OPTIONS);
+	CloseWindowByClass(WindowClass::GameOptions);
 	new AIConfigWindow();
 }
 

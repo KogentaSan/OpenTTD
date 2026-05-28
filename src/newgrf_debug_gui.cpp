@@ -393,7 +393,7 @@ struct NewGRFInspectWindow : Window {
 		offset -= this->vscroll->GetPosition();
 		if (offset < 0 || offset >= this->vscroll->GetCapacity()) return;
 
-		::DrawString(r.Shrink(WidgetDimensions::scaled.frametext).Shrink(0, offset * this->resize.step_height, 0, 0), string, TC_BLACK);
+		::DrawString(r.Shrink(WidgetDimensions::scaled.frametext).Shrink(0, offset * this->resize.step_height, 0, 0), string, TextColour::Black);
 	}
 
 	/**
@@ -681,7 +681,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_newgrf_inspect_widge
 /** Window definition for the NewGRF chain inspection window. */
 static WindowDesc _newgrf_inspect_chain_desc(
 	WindowPosition::Automatic, "newgrf_inspect_chain", 400, 300,
-	WC_NEWGRF_INSPECT, WC_NONE,
+	WindowClass::NewGRFInspect, WindowClass::None,
 	{},
 	_nested_newgrf_inspect_chain_widgets
 );
@@ -689,7 +689,7 @@ static WindowDesc _newgrf_inspect_chain_desc(
 /** Window definition for the NewGRF inspection window. */
 static WindowDesc _newgrf_inspect_desc(
 	WindowPosition::Automatic, "newgrf_inspect", 400, 300,
-	WC_NEWGRF_INSPECT, WC_NONE,
+	WindowClass::NewGRFInspect, WindowClass::None,
 	{},
 	_nested_newgrf_inspect_widgets
 );
@@ -726,7 +726,7 @@ void InvalidateNewGRFInspectWindow(GrfSpecFeature feature, uint index)
 	if (feature == GrfSpecFeature::Invalid) return;
 
 	WindowNumber wno = GetInspectWindowNumber(feature, index);
-	InvalidateWindowData(WC_NEWGRF_INSPECT, wno);
+	InvalidateWindowData(WindowClass::NewGRFInspect, wno);
 }
 
 /**
@@ -742,12 +742,12 @@ void DeleteNewGRFInspectWindow(GrfSpecFeature feature, uint index)
 	if (feature == GrfSpecFeature::Invalid) return;
 
 	WindowNumber wno = GetInspectWindowNumber(feature, index);
-	CloseWindowById(WC_NEWGRF_INSPECT, wno);
+	CloseWindowById(WindowClass::NewGRFInspect, wno);
 
 	/* Reinitialise the land information window to remove the "debug" sprite if needed.
 	 * Note: Since we might be called from a command here, it is important to not execute
 	 * the invalidation immediately. The landinfo window tests commands itself. */
-	InvalidateWindowData(WC_LAND_INFO, 0, 1);
+	InvalidateWindowData(WindowClass::LandInfo, 0, 1);
 }
 
 /**
@@ -942,9 +942,9 @@ struct SpriteAlignerWindow : Window {
 				for (auto it = first; it != last; ++it) {
 					const SpriteFile *file = GetOriginFile(*it);
 					if (file == nullptr) {
-						DrawString(ir, GetString(STR_JUST_COMMA, *it), *it == this->current_sprite ? TC_WHITE : (TC_GREY | TC_NO_SHADE), SA_RIGHT | SA_FORCE);
+						DrawString(ir, GetString(STR_JUST_COMMA, *it), *it == this->current_sprite ? TextColour::White : ExtendedTextColour{TextColour::Grey, ExtendedTextColourFlag::NoShade}, SA_RIGHT | SA_FORCE);
 					} else {
-						DrawString(ir, GetString(STR_SPRITE_ALIGNER_SPRITE, file->GetSimplifiedFilename(), GetSpriteLocalID(*it)), *it == this->current_sprite ? TC_WHITE : TC_BLACK);
+						DrawString(ir, GetString(STR_SPRITE_ALIGNER_SPRITE, file->GetSimplifiedFilename(), GetSpriteLocalID(*it)), *it == this->current_sprite ? TextColour::White : TextColour::Black);
 					}
 					ir.top += step_size;
 				}
@@ -1188,7 +1188,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_sprite_aligner_widge
 /** Window definition for the sprite aligner window. */
 static WindowDesc _sprite_aligner_desc(
 	WindowPosition::Automatic, "sprite_aligner", 400, 300,
-	WC_SPRITE_ALIGNER, WC_NONE,
+	WindowClass::SpriteAligner, WindowClass::None,
 	{},
 	_nested_sprite_aligner_widgets
 );

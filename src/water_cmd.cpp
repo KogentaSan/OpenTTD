@@ -906,7 +906,7 @@ static void DrawWaterLock(const TileInfo *ti)
 static void DrawWaterDepot(const TileInfo *ti)
 {
 	DrawWaterClassGround(ti);
-	DrawWaterTileStruct(ti, _shipdepot_display_data[GetShipDepotAxis(ti->tile)][to_underlying(GetShipDepotPart(ti->tile))].seq, 0, 0, GetCompanyPalette(GetTileOwner(ti->tile)), CF_END);
+	DrawWaterTileStruct(ti, _shipdepot_display_data[GetShipDepotAxis(ti->tile)][GetShipDepotPart(ti->tile)].seq, 0, 0, GetCompanyPalette(GetTileOwner(ti->tile)), CF_END);
 }
 
 static void DrawRiverWater(const TileInfo *ti)
@@ -993,7 +993,7 @@ static void DrawTile_Water(TileInfo *ti)
 
 		case WaterTileType::Lock:
 			DrawWaterLock(ti);
-			DrawBridgeMiddle(ti, DiagDirToAxis(GetLockDirection(ti->tile)) == AXIS_X
+			DrawBridgeMiddle(ti, DiagDirToAxis(GetLockDirection(ti->tile)) == Axis::X
 				? BridgePillarFlags{BridgePillarFlag::EdgeNE, BridgePillarFlag::EdgeSW}
 				: BridgePillarFlags{BridgePillarFlag::EdgeNW, BridgePillarFlag::EdgeSE});
 			break;
@@ -1006,7 +1006,7 @@ static void DrawTile_Water(TileInfo *ti)
 
 void DrawShipDepotSprite(int x, int y, Axis axis, DepotPart part)
 {
-	const DrawTileSprites &dts = _shipdepot_display_data[axis][to_underlying(part)];
+	const DrawTileSprites &dts = _shipdepot_display_data[axis][part];
 
 	DrawSprite(dts.ground.sprite, dts.ground.pal, x, y);
 	DrawOrigTileSeqInGUI(x, y, &dts, GetCompanyPalette(_local_company));
@@ -1327,7 +1327,7 @@ void TileLoop_Water(TileIndex tile)
 		}
 
 		case FLOOD_DRYUP: {
-			Slope slope_here = std::get<0>(GetFoundationSlope(tile)) & ~SLOPE_HALFTILE_MASK & ~SLOPE_STEEP;
+			Slope slope_here = std::get<Slope>(GetFoundationSlope(tile)) & ~SLOPE_HALFTILE_MASK & ~SLOPE_STEEP;
 			for (Direction dir : _flood_from_dirs[slope_here]) {
 				TileIndex dest = AddTileIndexDiffCWrap(tile, TileIndexDiffCByDir(dir));
 				/* Contrary to flooding, drying up does consider TileType::Void tiles. */

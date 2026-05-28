@@ -49,7 +49,7 @@ void CcBuildWagon(Commands, const CommandCost &result, VehicleID new_veh_id, uin
 		found = found->Last();
 		/* put the new wagon at the end of the loco. */
 		Command<Commands::MoveRailVehicle>::Post(found->tile, new_veh_id, found->index, false);
-		InvalidateWindowClassesData(WC_TRAINS_LIST, 0);
+		InvalidateWindowClassesData(WindowClass::TrainList, 0);
 	}
 }
 
@@ -224,7 +224,7 @@ static void TrainDetailsCargoTab(const CargoSummaryItem *item, int left, int rig
 	} else {
 		str = GetString(STR_VEHICLE_DETAILS_CARGO_FROM, item->cargo, item->amount, item->source);
 	}
-	DrawString(left, right, y, str, TC_LIGHT_BLUE);
+	DrawString(left, right, y, str, TextColour::LightBlue);
 }
 
 /**
@@ -413,7 +413,7 @@ void DrawTrainDetails(const Train *v, const Rect &r, int vscroll_pos, uint16_t v
 							if (i < _cargo_summary.size()) {
 								TrainDetailsCargoTab(&_cargo_summary[i], dr.left, dr.right, py);
 							} else {
-								DrawString(dr.left, dr.right, py, STR_QUANTITY_N_A, TC_LIGHT_BLUE);
+								DrawString(dr.left, dr.right, py, STR_QUANTITY_N_A, TextColour::LightBlue);
 							}
 							break;
 
