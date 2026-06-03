@@ -59,7 +59,7 @@ static bool IsPossibleCrossing(const TileIndex tile, Axis ax)
 RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
 {
 	if (!IsValidTile(tile)) return {};
-	for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
+	for (DiagDirection dir = DiagDirection::Begin; dir < DiagDirection::End; dir++) {
 		const TileIndex neighbour_tile = TileAddByDiagDir(tile, dir);
 
 		/* Get the Roadbit pointing to the neighbour_tile */
@@ -122,7 +122,7 @@ RoadBits CleanUpRoadBits(const TileIndex tile, RoadBits org_rb)
  */
 bool HasRoadTypeAvail(const CompanyID company, RoadType roadtype)
 {
-	if (company == OWNER_DEITY || company == OWNER_TOWN || _game_mode == GM_EDITOR || _generating_world) {
+	if (company == OWNER_DEITY || company == OWNER_TOWN || _game_mode == GameMode::Editor || _generating_world) {
 		const RoadTypeInfo *rti = GetRoadTypeInfo(roadtype);
 		if (rti->label == 0) return false;
 

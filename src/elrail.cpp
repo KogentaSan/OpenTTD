@@ -133,7 +133,7 @@ static TrackBits MaskWireBits(TileIndex t, TrackBits tracks)
 	if (!IsPlainRailTile(t)) return tracks;
 
 	TrackdirBits neighbour_tdb = TRACKDIR_BIT_NONE;
-	for (DiagDirection d = DIAGDIR_BEGIN; d < DIAGDIR_END; d++) {
+	for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
 		/* If the neighbour tile is either not electrified or has no tracks that can be reached
 		 * from this tile, mark all trackdirs that can be reached from the neighbour tile
 		 * as needing no catenary. We make an exception for blocked station tiles with a matching
@@ -141,7 +141,7 @@ static TrackBits MaskWireBits(TileIndex t, TrackBits tracks)
 		TileIndex next_tile = TileAddByDiagDir(t, d);
 		RailType rt = GetTileRailType(next_tile);
 		if (rt == INVALID_RAILTYPE || !HasRailCatenary(rt) ||
-				((TrackStatusToTrackBits(GetTileTrackStatus(next_tile, TRANSPORT_RAIL, RoadTramType::Invalid)) & DiagdirReachesTracks(d)) == TRACK_BIT_NONE &&
+				((TrackdirBitsToTrackBits(GetTileTrackStatus(next_tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs) & DiagdirReachesTracks(d)) == TRACK_BIT_NONE &&
 				(!HasStationTileRail(next_tile) || GetRailStationAxis(next_tile) != DiagDirToAxis(d) || !CanStationTileHaveWires(next_tile)))) {
 			neighbour_tdb |= DiagdirReachesTrackdirs(ReverseDiagDir(d));
 		}
@@ -262,7 +262,7 @@ void DrawRailCatenaryOnTunnel(const TileInfo *ti)
 	SpriteID wire_base = GetWireBase(ti->tile);
 
 	const SortableSpriteStruct &sss = _rail_catenary_sprite_data_tunnel[dir];
-	AddSortableSpriteToDraw(wire_base + sss.image_offset, PAL_NONE, ti->x, ti->y, GetTilePixelZ(ti->tile), sss, IsTransparencySet(TO_CATENARY));
+	AddSortableSpriteToDraw(wire_base + sss.image_offset, PAL_NONE, ti->x, ti->y, GetTilePixelZ(ti->tile), sss, IsTransparencySet(TransparencyOption::Catenary));
 }
 
 /**
@@ -290,8 +290,8 @@ static void DrawRailCatenaryRailway(const TileInfo *ti)
 	TileLocationGroup tlg = GetTileLocationGroup(ti->tile);
 	DiagDirections pcp_status{};
 	DiagDirections override_pcp{};
-	std::array<Directions, DIAGDIR_END> ppp_preferred{};
-	std::array<Directions, DIAGDIR_END> ppp_allowed{};
+	DiagDirectionIndexArray<Directions> ppp_preferred{};
+	DiagDirectionIndexArray<Directions> ppp_allowed{};
 
 	/* Find which rail bits are present, and select the override points.
 	 * We don't draw a pylon:
@@ -309,14 +309,8 @@ static void DrawRailCatenaryRailway(const TileInfo *ti)
 	SpriteID pylon_normal = GetPylonBase(ti->tile);
 	SpriteID pylon_halftile = (halftile_corner != CORNER_INVALID) ? GetPylonBase(ti->tile, TCX_UPPER_HALFTILE) : pylon_normal;
 
-	for (DiagDirection i = DIAGDIR_BEGIN; i < DIAGDIR_END; i++) {
-		static const uint edge_corners[] = {
-			1 << CORNER_N | 1 << CORNER_E, // DIAGDIR_NE
-			1 << CORNER_S | 1 << CORNER_E, // DIAGDIR_SE
-			1 << CORNER_S | 1 << CORNER_W, // DIAGDIR_SW
-			1 << CORNER_N | 1 << CORNER_W, // DIAGDIR_NW
-		};
-		SpriteID pylon_base = (halftile_corner != CORNER_INVALID && HasBit(edge_corners[i], halftile_corner)) ? pylon_halftile : pylon_normal;
+	for (DiagDirection i = DiagDirection::Begin; i < DiagDirection::End; i++) {
+		SpriteID pylon_base = (halftile_corner != CORNER_INVALID && HasBit(InclinedSlope(i), halftile_corner)) ? pylon_halftile : pylon_normal;
 		TileIndex neighbour = ti->tile + TileOffsByDiagDir(i);
 		int elevation = GetPCPElevation(ti->tile, i);
 
@@ -419,7 +413,7 @@ static void DrawRailCatenaryRailway(const TileInfo *ti)
 				(!HasStationTileRail(ti->tile) || CanStationTileHavePylons(ti->tile))) {
 
 			const auto &ppp_orders = _ppp_order[i][GetTileLocationGroup(ti->tile)];
-			for (Direction k = DIR_BEGIN; k < DIR_END; k++) {
+			for (Direction k = Direction::Begin; k < Direction::End; k++) {
 				Direction temp = ppp_orders[k];
 
 				if (ppp_allowed[i].Test(temp)) {
@@ -434,7 +428,7 @@ static void DrawRailCatenaryRailway(const TileInfo *ti)
 					}
 
 					AddSortableSpriteToDraw(pylon_base + _pylon_sprites[temp], PAL_NONE, x, y, elevation,
-						{{-1, -1, 0}, {1, 1, BB_HEIGHT_UNDER_BRIDGE}, {1, 1, 0}}, IsTransparencySet(TO_CATENARY));
+						{{-1, -1, 0}, {1, 1, BB_HEIGHT_UNDER_BRIDGE}, {1, 1, 0}}, IsTransparencySet(TransparencyOption::Catenary));
 
 					break; // We already have drawn a pylon, bail out
 				}
@@ -446,7 +440,7 @@ static void DrawRailCatenaryRailway(const TileInfo *ti)
 	if (IsTunnelTile(ti->tile)) return;
 
 	/* Don't draw a wire under a low bridge */
-	if (IsBridgeAbove(ti->tile) && !IsTransparencySet(TO_BRIDGES)) {
+	if (IsBridgeAbove(ti->tile) && !IsTransparencySet(TransparencyOption::Bridges)) {
 		int height = GetBridgeHeight(GetNorthernBridgeEnd(ti->tile));
 
 		if (height <= GetTileMaxZ(ti->tile) + 1) return;
@@ -484,7 +478,7 @@ static void DrawRailCatenaryRailway(const TileInfo *ti)
 		 * down to the nearest full height change.
 		 */
 		int z = (GetSlopePixelZ(ti->x + sss.origin.x, ti->y + sss.origin.y, true) + 4) / 8 * 8;
-		AddSortableSpriteToDraw(wire_base + sss.image_offset, PAL_NONE, ti->x, ti->y, z, sss, IsTransparencySet(TO_CATENARY));
+		AddSortableSpriteToDraw(wire_base + sss.image_offset, PAL_NONE, ti->x, ti->y, z, sss, IsTransparencySet(TransparencyOption::Catenary));
 	}
 }
 
@@ -522,7 +516,7 @@ void DrawRailCatenaryOnBridge(const TileInfo *ti)
 
 	SpriteID wire_base = GetWireBase(end, TCX_ON_BRIDGE);
 
-	AddSortableSpriteToDraw(wire_base + sss->image_offset, PAL_NONE, ti->x, ti->y, height, *sss, IsTransparencySet(TO_CATENARY));
+	AddSortableSpriteToDraw(wire_base + sss->image_offset, PAL_NONE, ti->x, ti->y, height, *sss, IsTransparencySet(TransparencyOption::Catenary));
 
 	SpriteID pylon_base = GetPylonBase(end, TCX_ON_BRIDGE);
 
@@ -531,22 +525,22 @@ void DrawRailCatenaryOnBridge(const TileInfo *ti)
 	/* Finished with wires, draw pylons
 	 * every other tile needs a pylon on the northern end */
 	if (num % 2) {
-		DiagDirection pcp_pos = (axis == Axis::X ? DIAGDIR_NE : DIAGDIR_NW);
-		Direction ppp_pos = (axis == Axis::X ? DIR_NW : DIR_NE);
+		DiagDirection pcp_pos = (axis == Axis::X ? DiagDirection::NE : DiagDirection::NW);
+		Direction ppp_pos = (axis == Axis::X ? Direction::NW : Direction::NE);
 		if (HasBit(tlg, (axis == Axis::X ? 0 : 1))) ppp_pos = ReverseDir(ppp_pos);
 		uint x = ti->x + _x_pcp_offsets[pcp_pos] + _x_ppp_offsets[ppp_pos];
 		uint y = ti->y + _y_pcp_offsets[pcp_pos] + _y_ppp_offsets[ppp_pos];
-		AddSortableSpriteToDraw(pylon_base + _pylon_sprites[ppp_pos], PAL_NONE, x, y, height, pylon_bounds, IsTransparencySet(TO_CATENARY));
+		AddSortableSpriteToDraw(pylon_base + _pylon_sprites[ppp_pos], PAL_NONE, x, y, height, pylon_bounds, IsTransparencySet(TransparencyOption::Catenary));
 	}
 
 	/* need a pylon on the southern end of the bridge */
 	if (GetTunnelBridgeLength(ti->tile, start) + 1 == length) {
-		DiagDirection pcp_pos = (axis == Axis::X ? DIAGDIR_SW : DIAGDIR_SE);
-		Direction ppp_pos = (axis == Axis::X ? DIR_NW : DIR_NE);
+		DiagDirection pcp_pos = (axis == Axis::X ? DiagDirection::SW : DiagDirection::SE);
+		Direction ppp_pos = (axis == Axis::X ? Direction::NW : Direction::NE);
 		if (HasBit(tlg, (axis == Axis::X ? 0 : 1))) ppp_pos = ReverseDir(ppp_pos);
 		uint x = ti->x + _x_pcp_offsets[pcp_pos] + _x_ppp_offsets[ppp_pos];
 		uint y = ti->y + _y_pcp_offsets[pcp_pos] + _y_ppp_offsets[ppp_pos];
-		AddSortableSpriteToDraw(pylon_base + _pylon_sprites[ppp_pos], PAL_NONE, x, y, height, pylon_bounds, IsTransparencySet(TO_CATENARY));
+		AddSortableSpriteToDraw(pylon_base + _pylon_sprites[ppp_pos], PAL_NONE, x, y, height, pylon_bounds, IsTransparencySet(TransparencyOption::Catenary));
 	}
 }
 
@@ -565,7 +559,7 @@ void DrawRailCatenary(const TileInfo *ti)
 				SpriteID wire_base = GetWireBase(ti->tile);
 
 				/* This wire is not visible with the default depot sprites */
-				AddSortableSpriteToDraw(wire_base + sss.image_offset, PAL_NONE, ti->x, ti->y, GetTileMaxPixelZ(ti->tile), sss, IsTransparencySet(TO_CATENARY));
+				AddSortableSpriteToDraw(wire_base + sss.image_offset, PAL_NONE, ti->x, ti->y, GetTileMaxPixelZ(ti->tile), sss, IsTransparencySet(TransparencyOption::Catenary));
 				return;
 			}
 			break;

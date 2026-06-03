@@ -234,8 +234,8 @@ static void PlaceRoadStop(TileIndex start_tile, TileIndex end_tile, RoadStopType
 {
 	TileArea ta(start_tile, end_tile);
 	DiagDirection ddir = _roadstop_gui.orientation;
-	bool drive_through = ddir >= DIAGDIR_END;
-	if (drive_through) ddir = static_cast<DiagDirection>(ddir - DIAGDIR_END); // Adjust picker result to actual direction.
+	bool drive_through = ddir >= DiagDirection::End;
+	if (drive_through) ddir = ddir - DiagDirection::End; // Adjust picker result to actual direction.
 	RoadStopClassID spec_class = _roadstop_gui.sel_class;
 	uint16_t spec_index = _roadstop_gui.sel_type;
 
@@ -284,7 +284,7 @@ static void PlaceRoad_BusStation(TileIndex tile)
 	if (_remove_button_clicked) {
 		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_REMOVE_BUSSTOP);
 	} else {
-		if (_roadstop_gui.orientation < DIAGDIR_END) { // Not a drive-through stop.
+		if (_roadstop_gui.orientation < DiagDirection::End) { // Not a drive-through stop.
 			VpStartPlaceSizing(tile, (DiagDirToAxis(_roadstop_gui.orientation) == Axis::X) ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_BUSSTOP);
 		} else {
 			VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_BUSSTOP);
@@ -302,7 +302,7 @@ static void PlaceRoad_TruckStation(TileIndex tile)
 	if (_remove_button_clicked) {
 		VpStartPlaceSizing(tile, VPM_X_AND_Y, DDSP_REMOVE_TRUCKSTOP);
 	} else {
-		if (_roadstop_gui.orientation < DIAGDIR_END) { // Not a drive-through stop.
+		if (_roadstop_gui.orientation < DiagDirection::End) { // Not a drive-through stop.
 			VpStartPlaceSizing(tile, (DiagDirToAxis(_roadstop_gui.orientation) == Axis::X) ? VPM_X_LIMITED : VPM_Y_LIMITED, DDSP_BUILD_TRUCKSTOP);
 		} else {
 			VpStartPlaceSizing(tile, VPM_X_AND_Y_LIMITED, DDSP_BUILD_TRUCKSTOP);
@@ -367,7 +367,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		if (_game_mode == GM_NORMAL && (this->IsWidgetLowered(WID_ROT_BUS_STATION) || this->IsWidgetLowered(WID_ROT_TRUCK_STATION))) SetViewportCatchmentStation(nullptr, true);
+		if (_game_mode == GameMode::Normal && (this->IsWidgetLowered(WID_ROT_BUS_STATION) || this->IsWidgetLowered(WID_ROT_TRUCK_STATION))) SetViewportCatchmentStation(nullptr, true);
 		if (_settings_client.gui.link_terraform_toolbar) CloseWindowById(WindowClass::ScenarioGenerateLandscape, 0, false);
 		this->Window::Close();
 	}
@@ -402,7 +402,7 @@ struct BuildRoadToolbarWindow : Window {
 			CloseWindowById(WindowClass::BuildWaypoint, TRANSPORT_ROAD);
 		}
 
-		if (_game_mode != GM_EDITOR) {
+		if (_game_mode != GameMode::Editor) {
 			if (!can_build) {
 				/* Show in the tooltip why this button is disabled. */
 				this->GetWidget<NWidgetCore>(WID_ROT_DEPOT)->SetToolTip(STR_TOOLBAR_DISABLED_NO_VEHICLE_AVAILABLE);
@@ -425,7 +425,7 @@ struct BuildRoadToolbarWindow : Window {
 		this->GetWidget<NWidgetCore>(WID_ROT_ROAD_X)->SetSprite(rti->gui_sprites.build_x_road);
 		this->GetWidget<NWidgetCore>(WID_ROT_ROAD_Y)->SetSprite(rti->gui_sprites.build_y_road);
 		this->GetWidget<NWidgetCore>(WID_ROT_AUTOROAD)->SetSprite(rti->gui_sprites.auto_road);
-		if (_game_mode != GM_EDITOR) {
+		if (_game_mode != GameMode::Editor) {
 			this->GetWidget<NWidgetCore>(WID_ROT_DEPOT)->SetSprite(rti->gui_sprites.build_depot);
 		}
 		this->GetWidget<NWidgetCore>(WID_ROT_CONVERT_ROAD)->SetSprite(rti->gui_sprites.convert_road);
@@ -710,7 +710,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	void OnPlaceObjectAbort() override
 	{
-		if (_game_mode != GM_EDITOR && (this->IsWidgetLowered(WID_ROT_BUS_STATION) || this->IsWidgetLowered(WID_ROT_TRUCK_STATION))) SetViewportCatchmentStation(nullptr, true);
+		if (_game_mode != GameMode::Editor && (this->IsWidgetLowered(WID_ROT_BUS_STATION) || this->IsWidgetLowered(WID_ROT_TRUCK_STATION))) SetViewportCatchmentStation(nullptr, true);
 
 		this->RaiseButtons();
 		this->SetWidgetDisabledState(WID_ROT_REMOVE, true);
@@ -874,7 +874,7 @@ struct BuildRoadToolbarWindow : Window {
 
 	void OnRealtimeTick([[maybe_unused]] uint delta_ms) override
 	{
-		if (_game_mode == GM_NORMAL && this->IsWidgetLowered(WID_ROT_BUILD_WAYPOINT)) CheckRedrawRoadWaypointCoverage(this);
+		if (_game_mode == GameMode::Normal && this->IsWidgetLowered(WID_ROT_BUILD_WAYPOINT)) CheckRedrawRoadWaypointCoverage(this);
 	}
 
 	/**
@@ -888,11 +888,11 @@ struct BuildRoadToolbarWindow : Window {
 	{
 		Window *w = nullptr;
 		switch (_game_mode) {
-			case GM_NORMAL:
+			case GameMode::Normal:
 				w = ShowBuildRoadToolbar(last_build);
 				break;
 
-			case GM_EDITOR:
+			case GameMode::Editor:
 				if (!GetRoadTypes(true).Any(GetMaskForRoadTramType(rtt))) return ES_NOT_HANDLED;
 				w = ShowBuildRoadScenToolbar(last_build);
 				break;
@@ -1193,7 +1193,7 @@ struct BuildRoadDepotWindow : public PickerWindowBase {
 			AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
 			int x = (ir.Width()  - ScaleSpriteTrad(64)) / 2 + ScaleSpriteTrad(31);
 			int y = (ir.Height() + ScaleSpriteTrad(48)) / 2 - ScaleSpriteTrad(31);
-			DrawRoadDepotSprite(x, y, (DiagDirection)(widget - WID_BROD_DEPOT_NE + DIAGDIR_NE), _cur_roadtype);
+			DrawRoadDepotSprite(x, y, static_cast<DiagDirection>(widget - WID_BROD_DEPOT_NE + to_underlying(DiagDirection::NE)), _cur_roadtype);
 		}
 	}
 
@@ -1322,11 +1322,11 @@ public:
 	{
 		const auto *spec = this->GetSpec(cls_id, id);
 		if (spec == nullptr) {
-			StationPickerDrawSprite(x, y, roadstoptype == RoadStopType::Bus ? StationType::Bus : StationType::Truck, INVALID_RAILTYPE, _cur_roadtype, _roadstop_gui.orientation);
+			StationPickerDrawSprite(x, y, roadstoptype == RoadStopType::Bus ? StationType::Bus : StationType::Truck, INVALID_RAILTYPE, _cur_roadtype, to_underlying(_roadstop_gui.orientation));
 		} else {
 			DiagDirection orientation = _roadstop_gui.orientation;
-			if (orientation < DIAGDIR_END && spec->flags.Test(RoadStopSpecFlag::DriveThroughOnly)) orientation = DIAGDIR_END;
-			DrawRoadStopTile(x, y, _cur_roadtype, spec, roadstoptype == RoadStopType::Bus ? StationType::Bus : StationType::Truck, (uint8_t)orientation);
+			if (orientation < DiagDirection::End && spec->flags.Test(RoadStopSpecFlag::DriveThroughOnly)) orientation = DiagDirection::End;
+			DrawRoadStopTile(x, y, _cur_roadtype, spec, roadstoptype == RoadStopType::Bus ? StationType::Bus : StationType::Truck, to_underlying(orientation));
 		}
 	}
 
@@ -1378,11 +1378,11 @@ private:
 			this->LowerWidget(WID_BROS_STATION_NE + _roadstop_gui.orientation);
 		}
 
-		if (_roadstop_gui.orientation >= DIAGDIR_END) return;
+		if (_roadstop_gui.orientation >= DiagDirection::End) return;
 
 		if (spec != nullptr && spec->flags.Test(RoadStopSpecFlag::DriveThroughOnly)) {
 			this->RaiseWidget(WID_BROS_STATION_NE + _roadstop_gui.orientation);
-			_roadstop_gui.orientation = DIAGDIR_END;
+			_roadstop_gui.orientation = DiagDirection::End;
 			this->LowerWidget(WID_BROS_STATION_NE + _roadstop_gui.orientation);
 			this->SetDirty();
 			CloseWindowById(WindowClass::JoinStation, 0);
@@ -1395,8 +1395,8 @@ public:
 		this->coverage_height = 2 * GetCharacterHeight(FontSize::Normal) + WidgetDimensions::scaled.vsep_normal;
 
 		/* Trams don't have non-drivethrough stations */
-		if (RoadTypeIsTram(_cur_roadtype) && _roadstop_gui.orientation < DIAGDIR_END) {
-			_roadstop_gui.orientation = DIAGDIR_END;
+		if (RoadTypeIsTram(_cur_roadtype) && _roadstop_gui.orientation < DiagDirection::End) {
+			_roadstop_gui.orientation = DiagDirection::End;
 		}
 		this->ConstructWindow();
 
@@ -1815,19 +1815,10 @@ static void ShowBuildRoadWaypointPicker(Window *parent)
 
 void InitializeRoadGui()
 {
-	_road_depot_orientation = DIAGDIR_NW;
-	_roadstop_gui.orientation = DIAGDIR_NW;
+	_road_depot_orientation = DiagDirection::NW;
+	_roadstop_gui.orientation = DiagDirection::NW;
 	_waypoint_gui.sel_class = ROADSTOP_CLASS_WAYP;
 	_waypoint_gui.sel_type = 0;
-}
-
-/**
- * I really don't know why rail_gui.cpp has this too, shouldn't be included in the other one?
- */
-void InitializeRoadGUI()
-{
-	BuildRoadToolbarWindow *w = dynamic_cast<BuildRoadToolbarWindow *>(FindWindowById(WindowClass::BuildToolbar, TRANSPORT_ROAD));
-	if (w != nullptr) w->ModifyRoadType(_cur_roadtype);
 }
 
 DropDownList GetRoadTypeDropDownList(RoadTramTypes rtts, bool for_replacement, bool all_option)

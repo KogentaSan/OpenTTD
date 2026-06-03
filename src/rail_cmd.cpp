@@ -391,7 +391,7 @@ Foundation GetRailFoundation(Slope tileh, TrackBits bits)
 static CommandCost CheckRailSlope(Slope tileh, TrackBits rail_bits, TrackBits existing, TileIndex tile)
 {
 	/* don't allow building on the lower side of a coast */
-	if (GetFloodingBehaviour(tile) != FLOOD_NONE) {
+	if (GetFloodingBehaviour(tile) != FloodingBehaviour::None) {
 		if (!IsSteepSlope(tileh) && ((~_valid_tracks_on_leveled_foundation[tileh] & (rail_bits | existing)) != 0)) return CommandCost(STR_ERROR_CAN_T_BUILD_ON_WATER);
 	}
 
@@ -803,15 +803,26 @@ bool FloodHalftile(TileIndex t)
 	return flooded;
 }
 
-static const TileIndexDiffC _trackdelta[] = {
+/** Tile deltas for each trackdir. */
+static const TrackdirIndexArray<TileIndexDiffC> _trackdelta{{{
 	{ -1,  0 }, {  0,  1 }, { -1,  0 }, {  0,  1 }, {  1,  0 }, {  0,  1 },
 	{  0,  0 },
 	{  0,  0 },
 	{  1,  0 }, {  0, -1 }, {  0, -1 }, {  1,  0 }, {  0, -1 }, { -1,  0 },
 	{  0,  0 },
 	{  0,  0 }
-};
+}}};
 
+/**
+ * Get the other Trackdir for a non-diagonal Trackdir.
+ * i.e. upper -> lower, left -> right, etc.
+ * @param trackdir the trackdir.
+ * @return The other trackdir.
+ */
+static Trackdir GetOtherTrackdir(Trackdir trackdir)
+{
+	return static_cast<Trackdir>(to_underlying(trackdir) ^ 1);
+}
 
 static CommandCost ValidateAutoDrag(Trackdir *trackdir, TileIndex start, TileIndex end)
 {
@@ -831,8 +842,8 @@ static CommandCost ValidateAutoDrag(Trackdir *trackdir, TileIndex start, TileInd
 	int trdy = _trackdelta[*trackdir].y;
 
 	if (!IsDiagonalTrackdir(*trackdir)) {
-		trdx += _trackdelta[*trackdir ^ 1].x;
-		trdy += _trackdelta[*trackdir ^ 1].y;
+		trdx += _trackdelta[GetOtherTrackdir(*trackdir)].x;
+		trdy += _trackdelta[GetOtherTrackdir(*trackdir)].y;
 	}
 
 	/* validate the direction */
@@ -909,7 +920,7 @@ static CommandCost CmdRailTrackHelper(DoCommandFlags flags, TileIndex tile, Tile
 		tile += ToTileIndexDiff(_trackdelta[trackdir]);
 
 		/* toggle railbit for the non-diagonal tracks */
-		if (!IsDiagonalTrackdir(trackdir)) ToggleBit(trackdir, 0);
+		if (!IsDiagonalTrackdir(trackdir)) trackdir = GetOtherTrackdir(trackdir);
 	}
 
 	if (had_success) return total_cost;
@@ -1016,7 +1027,7 @@ CommandCost CmdBuildTrainDepot(DoCommandFlags flags, TileIndex tile, RailType ra
 		}
 
 		MarkTileDirtyByTile(tile);
-		AddSideToSignalBuffer(tile, INVALID_DIAGDIR, _current_company);
+		AddSideToSignalBuffer(tile, DiagDirection::Invalid, _current_company);
 		YapfNotifyTrackLayoutChange(tile, DiagDirToDiagTrack(dir));
 	}
 
@@ -1200,7 +1211,7 @@ static bool AdvanceSignalAutoFill(TileIndex &tile, Trackdir &trackdir, bool remo
 	if (tile == INVALID_TILE) return false;
 
 	/* Check for track bits on the new tile */
-	TrackdirBits trackdirbits = TrackStatusToTrackdirBits(GetTileTrackStatus(tile, TRANSPORT_RAIL, RoadTramType::Invalid));
+	TrackdirBits trackdirbits = GetTileTrackStatus(tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs;
 
 	if (TracksOverlap(TrackdirBitsToTrackBits(trackdirbits))) return false;
 	trackdirbits &= TrackdirReachesTrackdirs(trackdir);
@@ -1413,7 +1424,7 @@ static CommandCost CmdSignalTrackHelper(DoCommandFlags flags, TileIndex tile, Ti
 			/* toggle railbit for the non-diagonal tracks (|, -- tracks) */
 
 			tile += ToTileIndexDiff(_trackdelta[trackdir]);
-			if (!IsDiagonalTrackdir(trackdir)) ToggleBit(trackdir, 0);
+			if (!IsDiagonalTrackdir(trackdir)) trackdir = GetOtherTrackdir(trackdir);
 		}
 	}
 
@@ -1597,9 +1608,7 @@ CommandCost CmdConvertRail(DoCommandFlags flags, TileIndex tile, TileIndex area_
 				}
 			}
 			if (flags.Test(DoCommandFlag::Execute)) { // we can safely convert, too
-				TrackBits reserved = GetReservedTrackbits(tile);
-				Track     track;
-				while ((track = RemoveFirstTrack(&reserved)) != INVALID_TRACK) {
+				for (Track track : SetTrackBitIterator(GetReservedTrackbits(tile))) {
 					Train *v = GetTrainForReservation(tile, track);
 					if (v != nullptr && !HasPowerOnRail(v->railtypes, totype)) {
 						/* No power on new rail type, reroute. */
@@ -1651,9 +1660,8 @@ CommandCost CmdConvertRail(DoCommandFlags flags, TileIndex tile, TileIndex area_
 					default: // RailTileType::Normal, RailTileType::Signals
 						if (flags.Test(DoCommandFlag::Execute)) {
 							/* notify YAPF about the track layout change */
-							TrackBits tracks = GetTrackBits(tile);
-							while (tracks != TRACK_BIT_NONE) {
-								YapfNotifyTrackLayoutChange(tile, RemoveFirstTrack(&tracks));
+							for (Track track : SetTrackBitIterator(GetTrackBits(tile))) {
+								YapfNotifyTrackLayoutChange(tile, track);
 							}
 						}
 						found_convertible_track = true;
@@ -1813,9 +1821,7 @@ static CommandCost ClearTile_Rail(TileIndex tile, DoCommandFlags flags)
 			/* Is there flat water on the lower halftile that gets cleared expensively? */
 			bool water_ground = (GetRailGroundType(tile) == RailGroundType::HalfTileWater && IsSlopeWithOneCornerRaised(tileh));
 
-			TrackBits tracks = GetTrackBits(tile);
-			while (tracks != TRACK_BIT_NONE) {
-				Track track = RemoveFirstTrack(&tracks);
+			for (Track track : SetTrackBitIterator(GetTrackBits(tile))) {
 				CommandCost ret = Command<Commands::RemoveRail>::Do(flags, tile, track);
 				if (ret.Failed()) return ret;
 				cost.AddCost(ret.GetCost());
@@ -2358,7 +2364,7 @@ static void DrawTrackBits(TileInfo *ti, TrackBits track)
 	}
 
 	/* PBS debugging, draw reserved tracks darker */
-	if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation) {
+	if (_game_mode != GameMode::Menu && _settings_client.gui.show_track_reservation) {
 		/* Get reservation, but mask track on halftile slope */
 		TrackBits pbs = GetRailReservationTrackBits(ti->tile) & track;
 		if (pbs & TRACK_BIT_X) {
@@ -2396,7 +2402,7 @@ static void DrawTrackBits(TileInfo *ti, TrackBits track)
 		}
 		DrawGroundSprite(image, pal, &(_halftile_sub_sprite[halftile_corner]));
 
-		if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation && HasReservedTracks(ti->tile, CornerToTrackBits(halftile_corner))) {
+		if (_game_mode != GameMode::Menu && _settings_client.gui.show_track_reservation && HasReservedTracks(ti->tile, CornerToTrackBits(halftile_corner))) {
 			static const uint8_t _corner_to_track_sprite[] = {3, 1, 2, 0};
 			DrawGroundSprite(_corner_to_track_sprite[halftile_corner] + rti->base_sprites.single_n, PALETTE_CRASH, nullptr, 0, -(int)TILE_HEIGHT);
 		}
@@ -2468,7 +2474,7 @@ static void DrawTile_Rail(TileInfo *ti)
 
 		if (ti->tileh != SLOPE_FLAT) DrawFoundation(ti, FOUNDATION_LEVELED);
 
-		if (IsInvisibilitySet(TO_BUILDINGS)) {
+		if (IsInvisibilitySet(TransparencyOption::Buildings)) {
 			/* Draw rail instead of depot */
 			dts = &_depot_invisible_gfx_table[dir];
 		} else {
@@ -2498,16 +2504,16 @@ static void DrawTile_Rail(TileInfo *ti)
 			SpriteID ground = GetCustomRailSprite(rti, ti->tile, RailSpriteType::Ground);
 
 			switch (GetRailDepotDirection(ti->tile)) {
-				case DIAGDIR_NE:
-					if (!IsInvisibilitySet(TO_BUILDINGS)) break;
+				case DiagDirection::NE:
+					if (!IsInvisibilitySet(TransparencyOption::Buildings)) break;
 					[[fallthrough]];
-				case DIAGDIR_SW:
+				case DiagDirection::SW:
 					DrawGroundSprite(ground + RTO_X, PAL_NONE);
 					break;
-				case DIAGDIR_NW:
-					if (!IsInvisibilitySet(TO_BUILDINGS)) break;
+				case DiagDirection::NW:
+					if (!IsInvisibilitySet(TransparencyOption::Buildings)) break;
 					[[fallthrough]];
-				case DIAGDIR_SE:
+				case DiagDirection::SE:
 					DrawGroundSprite(ground + RTO_Y, PAL_NONE);
 					break;
 				default:
@@ -2518,16 +2524,16 @@ static void DrawTile_Rail(TileInfo *ti)
 				SpriteID overlay = GetCustomRailSprite(rti, ti->tile, RailSpriteType::Overlay);
 
 				switch (GetRailDepotDirection(ti->tile)) {
-					case DIAGDIR_NE:
-						if (!IsInvisibilitySet(TO_BUILDINGS)) break;
+					case DiagDirection::NE:
+						if (!IsInvisibilitySet(TransparencyOption::Buildings)) break;
 						[[fallthrough]];
-					case DIAGDIR_SW:
+					case DiagDirection::SW:
 						DrawGroundSprite(overlay + RTO_X, PALETTE_CRASH);
 						break;
-					case DIAGDIR_NW:
-						if (!IsInvisibilitySet(TO_BUILDINGS)) break;
+					case DiagDirection::NW:
+						if (!IsInvisibilitySet(TransparencyOption::Buildings)) break;
 						[[fallthrough]];
-					case DIAGDIR_SE:
+					case DiagDirection::SE:
 						DrawGroundSprite(overlay + RTO_Y, PALETTE_CRASH);
 						break;
 					default:
@@ -2536,18 +2542,18 @@ static void DrawTile_Rail(TileInfo *ti)
 			}
 		} else {
 			/* PBS debugging, draw reserved tracks darker */
-			if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation && HasDepotReservation(ti->tile)) {
+			if (_game_mode != GameMode::Menu && _settings_client.gui.show_track_reservation && HasDepotReservation(ti->tile)) {
 				switch (GetRailDepotDirection(ti->tile)) {
-					case DIAGDIR_NE:
-						if (!IsInvisibilitySet(TO_BUILDINGS)) break;
+					case DiagDirection::NE:
+						if (!IsInvisibilitySet(TransparencyOption::Buildings)) break;
 						[[fallthrough]];
-					case DIAGDIR_SW:
+					case DiagDirection::SW:
 						DrawGroundSprite(rti->base_sprites.single_x, PALETTE_CRASH);
 						break;
-					case DIAGDIR_NW:
-						if (!IsInvisibilitySet(TO_BUILDINGS)) break;
+					case DiagDirection::NW:
+						if (!IsInvisibilitySet(TransparencyOption::Buildings)) break;
 						[[fallthrough]];
-					case DIAGDIR_SE:
+					case DiagDirection::SE:
 						DrawGroundSprite(rti->base_sprites.single_y, PALETTE_CRASH);
 						break;
 					default:
@@ -2560,13 +2566,20 @@ static void DrawTile_Rail(TileInfo *ti)
 
 		if (HasRailCatenaryDrawn(GetRailType(ti->tile))) DrawRailCatenary(ti);
 
-		DrawRailTileSeq(ti, dts, TO_BUILDINGS, relocation, 0, pal);
+		DrawRailTileSeq(ti, dts, TransparencyOption::Buildings, relocation, 0, pal);
 		/* Depots can't have bridges above so no blocked pillars. */
 	}
 	DrawBridgeMiddle(ti, blocked_pillars);
 }
 
-void DrawTrainDepotSprite(int x, int y, int dir, RailType railtype)
+/**
+ * Draw train depot sprite in the UI.
+ * @param x X position.
+ * @param y Y position.
+ * @param dir Direction of depot.
+ * @param railtype Railtype of depot.
+ */
+void DrawTrainDepotSprite(int x, int y, DiagDirection dir, RailType railtype)
 {
 	const DrawTileSprites *dts = &_depot_gfx_table[dir];
 	const RailTypeInfo *rti = GetRailTypeInfo(railtype);
@@ -2582,8 +2595,8 @@ void DrawTrainDepotSprite(int x, int y, int dir, RailType railtype)
 		SpriteID ground = GetCustomRailSprite(rti, INVALID_TILE, RailSpriteType::Ground);
 
 		switch (dir) {
-			case DIAGDIR_SW: DrawSprite(ground + RTO_X, PAL_NONE, x, y); break;
-			case DIAGDIR_SE: DrawSprite(ground + RTO_Y, PAL_NONE, x, y); break;
+			case DiagDirection::SW: DrawSprite(ground + RTO_X, PAL_NONE, x, y); break;
+			case DiagDirection::SE: DrawSprite(ground + RTO_Y, PAL_NONE, x, y); break;
 			default: break;
 		}
 	}
@@ -2701,8 +2714,8 @@ static void TileLoop_Rail(TileIndex tile)
 		Owner owner = GetTileOwner(tile);
 		DiagDirections fences{};
 
-		for (DiagDirection d = DIAGDIR_BEGIN; d < DIAGDIR_END; d++) {
-			static const TrackBits dir_to_trackbits[DIAGDIR_END] = {TRACK_BIT_3WAY_NE, TRACK_BIT_3WAY_SE, TRACK_BIT_3WAY_SW, TRACK_BIT_3WAY_NW};
+		for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
+			static constexpr DiagDirectionIndexArray<TrackBits> dir_to_trackbits{TRACK_BIT_3WAY_NE, TRACK_BIT_3WAY_SE, TRACK_BIT_3WAY_SW, TRACK_BIT_3WAY_NW};
 
 			/* Track bit on this edge => no fence. */
 			if ((rail & dir_to_trackbits[d]) != TRACK_BIT_NONE) continue;
@@ -2718,16 +2731,16 @@ static void TileLoop_Rail(TileIndex tile)
 
 		switch (fences.base()) {
 			case DiagDirections{}.base(): break;
-			case DiagDirections{DIAGDIR_NE}.base(): new_ground = RailGroundType::FenceNE; break;
-			case DiagDirections{DIAGDIR_SE}.base(): new_ground = RailGroundType::FenceSE; break;
-			case DiagDirections{DIAGDIR_SW}.base(): new_ground = RailGroundType::FenceSW; break;
-			case DiagDirections{DIAGDIR_NW}.base(): new_ground = RailGroundType::FenceNW; break;
-			case DiagDirections{DIAGDIR_NE, DIAGDIR_SW}.base(): new_ground = RailGroundType::FenceNESW; break;
-			case DiagDirections{DIAGDIR_SE, DIAGDIR_NW}.base(): new_ground = RailGroundType::FenceSENW; break;
-			case DiagDirections{DIAGDIR_NE, DIAGDIR_SE}.base(): new_ground = RailGroundType::FenceVert1; break;
-			case DiagDirections{DIAGDIR_NE, DIAGDIR_NW}.base(): new_ground = RailGroundType::FenceHoriz2; break;
-			case DiagDirections{DIAGDIR_SE, DIAGDIR_SW}.base(): new_ground = RailGroundType::FenceHoriz1; break;
-			case DiagDirections{DIAGDIR_SW, DIAGDIR_NW}.base(): new_ground = RailGroundType::FenceVert2; break;
+			case DiagDirections{DiagDirection::NE}.base(): new_ground = RailGroundType::FenceNE; break;
+			case DiagDirections{DiagDirection::SE}.base(): new_ground = RailGroundType::FenceSE; break;
+			case DiagDirections{DiagDirection::SW}.base(): new_ground = RailGroundType::FenceSW; break;
+			case DiagDirections{DiagDirection::NW}.base(): new_ground = RailGroundType::FenceNW; break;
+			case DiagDirections{DiagDirection::NE, DiagDirection::SW}.base(): new_ground = RailGroundType::FenceNESW; break;
+			case DiagDirections{DiagDirection::SE, DiagDirection::NW}.base(): new_ground = RailGroundType::FenceSENW; break;
+			case DiagDirections{DiagDirection::NE, DiagDirection::SE}.base(): new_ground = RailGroundType::FenceVert1; break;
+			case DiagDirections{DiagDirection::NE, DiagDirection::NW}.base(): new_ground = RailGroundType::FenceHoriz2; break;
+			case DiagDirections{DiagDirection::SE, DiagDirection::SW}.base(): new_ground = RailGroundType::FenceHoriz1; break;
+			case DiagDirections{DiagDirection::SW, DiagDirection::NW}.base(): new_ground = RailGroundType::FenceVert2; break;
 			default: NOT_REACHED();
 		}
 	}
@@ -2753,10 +2766,10 @@ static TrackStatus GetTileTrackStatus_Rail(TileIndex tile, TransportType mode, [
 			case TRACK_BIT_LEFT:  tb = TRACK_BIT_RIGHT; break;
 			case TRACK_BIT_RIGHT: tb = TRACK_BIT_LEFT;  break;
 		}
-		return CombineTrackStatus(TrackBitsToTrackdirBits(tb), TRACKDIR_BIT_NONE);
+		return {TrackBitsToTrackdirBits(tb), TRACKDIR_BIT_NONE};
 	}
 
-	if (mode != TRANSPORT_RAIL) return 0;
+	if (mode != TRANSPORT_RAIL) return {};
 
 	TrackBits trackbits = TRACK_BIT_NONE;
 	TrackdirBits red_signals = TRACKDIR_BIT_NONE;
@@ -2793,14 +2806,14 @@ static TrackStatus GetTileTrackStatus_Rail(TileIndex tile, TransportType mode, [
 		case RailTileType::Depot: {
 			DiagDirection dir = GetRailDepotDirection(tile);
 
-			if (side != INVALID_DIAGDIR && side != dir) break;
+			if (side != DiagDirection::Invalid && side != dir) break;
 
 			trackbits = DiagDirToDiagTrackBits(dir);
 			break;
 		}
 	}
 
-	return CombineTrackStatus(TrackBitsToTrackdirBits(trackbits), red_signals);
+	return {TrackBitsToTrackdirBits(trackbits), red_signals};
 }
 
 /** @copydoc ClickTileProc */
@@ -2935,13 +2948,32 @@ static void ChangeTileOwner_Rail(TileIndex tile, Owner old_owner, Owner new_owne
 	}
 }
 
-static const uint8_t _fractcoords_behind[4] = { 0x8F, 0x8, 0x80, 0xF8 };
-static const uint8_t _fractcoords_enter[4] = { 0x8A, 0x48, 0x84, 0xA8 };
-static const int8_t _deltacoord_leaveoffset[8] = {
-	-1,  0,  1,  0, /* x */
-	 0,  1,  0, -1  /* y */
-};
+/** Coordinates to detect when a train is approaching a depot from behind for each depot direction. */
+static constexpr DiagDirectionIndexArray<Coord2D<uint8_t>> _fractcoords_behind{{{
+	{15, 8}, // NE
+	{8, 0}, // SE
+	{0, 8}, // SW
+	{8, 15}, // NW
+}}};
 
+/** Coordinates where a train should enter a depot for each depot direction. */
+static constexpr DiagDirectionIndexArray<Coord2D<uint8_t>> _fractcoords_enter{{{
+	{10, 8}, // NE
+	{8, 4}, // SE
+	{4, 8}, // SW
+	{8, 10}, // NW
+}}};
+
+/**
+ * Offsets (to be multiplied by length) from the depot enter coordinates where
+ * a train should appear when exiting a depot for each depot direction.
+ */
+static constexpr DiagDirectionIndexArray<Coord2D<int8_t>> _deltacoord_leaveoffset{{{
+	{-1, 0}, // NE
+	{0, 1}, // SE
+	{1, 0}, // SW
+	{0, -1}, // NW
+}}};
 
 /**
  * Compute number of ticks when next wagon will leave a depot.
@@ -2952,13 +2984,13 @@ static const int8_t _deltacoord_leaveoffset[8] = {
 int TicksToLeaveDepot(const Train *v)
 {
 	DiagDirection dir = GetRailDepotDirection(v->tile);
-	int length = v->CalcNextVehicleOffset();
+	int length = v->CalcNextVehicleOffset() + 1;
 
 	switch (dir) {
-		case DIAGDIR_NE: return  ((int)(v->x_pos & 0x0F) - ((_fractcoords_enter[dir] & 0x0F) - (length + 1)));
-		case DIAGDIR_SE: return -((int)(v->y_pos & 0x0F) - ((_fractcoords_enter[dir] >> 4)   + (length + 1)));
-		case DIAGDIR_SW: return -((int)(v->x_pos & 0x0F) - ((_fractcoords_enter[dir] & 0x0F) + (length + 1)));
-		case DIAGDIR_NW: return  ((int)(v->y_pos & 0x0F) - ((_fractcoords_enter[dir] >> 4)   - (length + 1)));
+		case DiagDirection::NE: return  (static_cast<int>(v->x_pos & TILE_UNIT_MASK) - (_fractcoords_enter[dir].x - length));
+		case DiagDirection::SE: return -(static_cast<int>(v->y_pos & TILE_UNIT_MASK) - (_fractcoords_enter[dir].y + length));
+		case DiagDirection::SW: return -(static_cast<int>(v->x_pos & TILE_UNIT_MASK) - (_fractcoords_enter[dir].x + length));
+		case DiagDirection::NW: return  (static_cast<int>(v->y_pos & TILE_UNIT_MASK) - (_fractcoords_enter[dir].y - length));
 		default: NOT_REACHED();
 	}
 }
@@ -2972,7 +3004,9 @@ static VehicleEnterTileStates VehicleEnterTile_Rail(Vehicle *v, TileIndex tile, 
 	/* Depot direction. */
 	DiagDirection dir = GetRailDepotDirection(tile);
 
-	uint8_t fract_coord = (x & 0xF) + ((y & 0xF) << 4);
+	Coord2D<uint8_t> fract_coord{
+		static_cast<uint8_t>(x & TILE_UNIT_MASK),
+		static_cast<uint8_t>(y & TILE_UNIT_MASK)};
 
 	/* Make sure a train is not entering the tile from behind. */
 	if (_fractcoords_behind[dir] == fract_coord) return VehicleEnterTileState::CannotEnter;
@@ -2980,13 +3014,11 @@ static VehicleEnterTileStates VehicleEnterTile_Rail(Vehicle *v, TileIndex tile, 
 	/* Leaving depot? */
 	if (v->GetMovingDirection() == DiagDirToDir(dir)) {
 		/* Calculate the point where the following wagon should be activated. */
-		int length = Train::From(v)->CalcNextVehicleOffset();
+		int length = Train::From(v)->CalcNextVehicleOffset() + 1;
 
-		uint8_t fract_coord_leave =
-			((_fractcoords_enter[dir] & 0x0F) + // x
-				(length + 1) * _deltacoord_leaveoffset[dir]) +
-			(((_fractcoords_enter[dir] >> 4) +  // y
-				((length + 1) * _deltacoord_leaveoffset[dir + 4])) << 4);
+		Coord2D<uint8_t> fract_coord_leave{
+			static_cast<uint8_t>(_fractcoords_enter[dir].x + length * _deltacoord_leaveoffset[dir].x),
+			static_cast<uint8_t>(_fractcoords_enter[dir].y + length * _deltacoord_leaveoffset[dir].y)};
 
 		if (fract_coord_leave == fract_coord) {
 			/* Leave the depot. */

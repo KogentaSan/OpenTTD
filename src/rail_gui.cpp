@@ -129,18 +129,18 @@ static void PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track)
 }
 
 /** Additional pieces of track to add at the entrance of a depot. */
-static const Track _place_depot_extra_track[12] = {
-	TRACK_LEFT,  TRACK_UPPER, TRACK_UPPER, TRACK_RIGHT, // First additional track for directions 0..3
-	TRACK_X,     TRACK_Y,     TRACK_X,     TRACK_Y,     // Second additional track
-	TRACK_LOWER, TRACK_LEFT,  TRACK_RIGHT, TRACK_LOWER, // Third additional track
-};
+static constexpr std::array<DiagDirectionIndexArray<Track>, 3> _place_depot_extra_track{{
+	{TRACK_LEFT,  TRACK_UPPER, TRACK_UPPER, TRACK_RIGHT}, // First additional track for directions 0..3
+	{TRACK_X,     TRACK_Y,     TRACK_X,     TRACK_Y},     // Second additional track
+	{TRACK_LOWER, TRACK_LEFT,  TRACK_RIGHT, TRACK_LOWER}, // Third additional track
+}};
 
 /** Direction to check for existing track pieces. */
-static const DiagDirection _place_depot_extra_dir[12] = {
-	DIAGDIR_SE, DIAGDIR_SW, DIAGDIR_SE, DIAGDIR_SW,
-	DIAGDIR_SW, DIAGDIR_NW, DIAGDIR_NE, DIAGDIR_SE,
-	DIAGDIR_NW, DIAGDIR_NE, DIAGDIR_NW, DIAGDIR_NE,
-};
+static constexpr std::array<DiagDirectionIndexArray<DiagDirection>, 3> _place_depot_extra_dir{{
+	{DiagDirection::SE, DiagDirection::SW, DiagDirection::SE, DiagDirection::SW}, // First additional track for directions 0..3
+	{DiagDirection::SW, DiagDirection::NW, DiagDirection::NE, DiagDirection::SE}, // Second additional track
+	{DiagDirection::NW, DiagDirection::NE, DiagDirection::NW, DiagDirection::NE}, // Third additional track
+}};
 
 void CcRailDepot(Commands, const CommandCost &result, TileIndex tile, RailType, DiagDirection dir)
 {
@@ -152,14 +152,14 @@ void CcRailDepot(Commands, const CommandCost &result, TileIndex tile, RailType, 
 	tile += TileOffsByDiagDir(dir);
 
 	if (IsTileType(tile, TileType::Railway)) {
-		PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir], _place_depot_extra_track[dir]);
+		PlaceExtraDepotRail(tile, _place_depot_extra_dir[0][dir], _place_depot_extra_track[0][dir]);
 
 		/* Don't place the rail straight out of the depot of there is another depot across from it. */
 		Tile double_depot_tile = tile + TileOffsByDiagDir(dir);
 		bool is_double_depot = IsValidTile(double_depot_tile) && IsRailDepotTile(double_depot_tile);
-		if (!is_double_depot) PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 4], _place_depot_extra_track[dir + 4]);
+		if (!is_double_depot) PlaceExtraDepotRail(tile, _place_depot_extra_dir[1][dir], _place_depot_extra_track[1][dir]);
 
-		PlaceExtraDepotRail(tile, _place_depot_extra_dir[dir + 8], _place_depot_extra_track[dir + 8]);
+		PlaceExtraDepotRail(tile, _place_depot_extra_dir[2][dir], _place_depot_extra_track[2][dir]);
 	}
 }
 
@@ -237,7 +237,7 @@ static void PlaceRail_Station(TileIndex tile)
  */
 static void GenericPlaceSignals(TileIndex tile)
 {
-	TrackBits trackbits = TrackStatusToTrackBits(GetTileTrackStatus(tile, TRANSPORT_RAIL, RoadTramType::Invalid));
+	TrackBits trackbits = TrackdirBitsToTrackBits(GetTileTrackStatus(tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs);
 
 	if (trackbits & TRACK_BIT_VERT) { // N-S direction
 		trackbits = (_tile_fract_coords.x <= _tile_fract_coords.y) ? TRACK_BIT_RIGHT : TRACK_BIT_LEFT;
@@ -873,7 +873,7 @@ struct BuildRailToolbarWindow : Window {
 	 */
 	static EventState RailToolbarGlobalHotkeys(int hotkey)
 	{
-		if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
+		if (_game_mode != GameMode::Normal) return ES_NOT_HANDLED;
 		Window *w = ShowBuildRailToolbar(_last_built_railtype);
 		if (w == nullptr) return ES_NOT_HANDLED;
 		return w->OnHotkey(hotkey);
@@ -1418,7 +1418,7 @@ public:
 	 */
 	static EventState BuildRailStationGlobalHotkeys(int hotkey)
 	{
-		if (_game_mode == GM_MENU) return ES_NOT_HANDLED;
+		if (_game_mode == GameMode::Menu) return ES_NOT_HANDLED;
 		Window *w = ShowStationBuilder(FindWindowById(WindowClass::BuildToolbar, TRANSPORT_RAIL));
 		if (w == nullptr) return ES_NOT_HANDLED;
 		return w->OnHotkey(hotkey);
@@ -1780,7 +1780,7 @@ struct BuildRailDepotWindow : public PickerWindowBase {
 			AutoRestoreBackup dpi_backup(_cur_dpi, &tmp_dpi);
 			int x = (ir.Width()  - ScaleSpriteTrad(64)) / 2 + ScaleSpriteTrad(31);
 			int y = (ir.Height() + ScaleSpriteTrad(48)) / 2 - ScaleSpriteTrad(31);
-			DrawTrainDepotSprite(x, y, widget - WID_BRAD_DEPOT_NE + DIAGDIR_NE, _cur_railtype);
+			DrawTrainDepotSprite(x, y, static_cast<DiagDirection>(widget - WID_BRAD_DEPOT_NE + to_underlying(DiagDirection::NE)), _cur_railtype);
 		}
 	}
 
@@ -1962,7 +1962,7 @@ static void ShowBuildWaypointPicker(Window *parent)
  */
 void InitializeRailGui()
 {
-	_build_depot_direction = DIAGDIR_NW;
+	_build_depot_direction = DiagDirection::NW;
 	_station_gui.sel_class = STAT_CLASS_DFLT;
 	_station_gui.sel_type = 0;
 	_waypoint_gui.sel_class = STAT_CLASS_WAYP;
@@ -2025,8 +2025,6 @@ void SetDefaultRailGui()
 	}
 
 	_last_built_railtype = _cur_railtype = rt;
-	BuildRailToolbarWindow *w = dynamic_cast<BuildRailToolbarWindow *>(FindWindowById(WindowClass::BuildToolbar, TRANSPORT_RAIL));
-	if (w != nullptr) w->ModifyRailType(_cur_railtype);
 }
 
 /**
@@ -2056,13 +2054,10 @@ static const IntervalTimer<TimerGameCalendar> _check_reset_signal{{TimerGameCale
 }};
 
 /**
- * Resets the rail GUI - sets default railtype to build
- * and resets the signal GUI
+ * Resets the signal GUI.
  */
-void InitializeRailGUI()
+void InitializeSignalGui()
 {
-	SetDefaultRailGui();
-
 	_convert_signal_button = false;
 	_cur_signal_type = _settings_client.gui.default_signal_type;
 	ResetSignalVariant();

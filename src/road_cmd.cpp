@@ -254,7 +254,7 @@ static Foundation GetRoadFoundation(Slope tileh, RoadBits bits);
  */
 CommandCost CheckAllowRemoveRoad(TileIndex tile, RoadBits remove, Owner owner, RoadTramType rtt, DoCommandFlags flags, bool town_check)
 {
-	if (_game_mode == GM_EDITOR || remove.None()) return CommandCost();
+	if (_game_mode == GameMode::Editor || remove.None()) return CommandCost();
 
 	/* Water can always flood and towns can always remove "normal" road pieces.
 	 * Towns are not be allowed to remove non "normal" road pieces, like tram
@@ -1367,7 +1367,7 @@ static bool DrawRoadAsSnowOrDesert(bool snow_or_desert, Roadside roadside)
 void DrawRoadTypeCatenary(const TileInfo *ti, RoadType rt, RoadBits rb)
 {
 	/* Don't draw the catenary under a low bridge */
-	if (IsBridgeAbove(ti->tile) && !IsTransparencySet(TO_CATENARY)) {
+	if (IsBridgeAbove(ti->tile) && !IsTransparencySet(TransparencyOption::Catenary)) {
 		int height = GetBridgeHeight(GetNorthernBridgeEnd(ti->tile));
 
 		if (height <= GetTileMaxZ(ti->tile) + 1) return;
@@ -1377,7 +1377,7 @@ void DrawRoadTypeCatenary(const TileInfo *ti, RoadType rt, RoadBits rb)
 		/* On junctions we check whether neighbouring tiles also have catenary, and possibly
 		 * do not draw catenary towards those neighbours, which do not have catenary. */
 		RoadBits rb_new{};
-		for (DiagDirection dir = DIAGDIR_BEGIN; dir < DIAGDIR_END; dir++) {
+		for (DiagDirection dir = DiagDirection::Begin; dir < DiagDirection::End; dir++) {
 			if (rb.Any(DiagDirToRoadBits(dir))) {
 				TileIndex neighbour = TileAddByDiagDir(ti->tile, dir);
 				if (MayHaveRoad(neighbour)) {
@@ -1425,13 +1425,13 @@ void DrawRoadTypeCatenary(const TileInfo *ti, RoadType rt, RoadBits rb)
 		int8_t west_z = GetSlopePixelZInCorner(ti->tileh, CORNER_W);
 		int8_t north_z = GetSlopePixelZInCorner(ti->tileh, CORNER_N);
 		int8_t east_z = GetSlopePixelZInCorner(ti->tileh, CORNER_E);
-		AddSortableSpriteToDraw(back, pal, *ti, {{15, 0, west_z}, {1, 1, z_wires}, {-15, 0, static_cast<int8_t>(-west_z)}}, IsTransparencySet(TO_CATENARY), &west);
-		AddSortableSpriteToDraw(back, pal, *ti, {{0, 0, north_z}, {1, 1, z_wires}, {0, 0, static_cast<int8_t>(-north_z)}}, IsTransparencySet(TO_CATENARY), &north);
-		AddSortableSpriteToDraw(back, pal, *ti, {{0, 15, east_z}, {1, 1, z_wires}, {0, -15, static_cast<int8_t>(-east_z)}}, IsTransparencySet(TO_CATENARY), &east);
+		AddSortableSpriteToDraw(back, pal, *ti, {{15, 0, west_z}, {1, 1, z_wires}, {-15, 0, static_cast<int8_t>(-west_z)}}, IsTransparencySet(TransparencyOption::Catenary), &west);
+		AddSortableSpriteToDraw(back, pal, *ti, {{0, 0, north_z}, {1, 1, z_wires}, {0, 0, static_cast<int8_t>(-north_z)}}, IsTransparencySet(TransparencyOption::Catenary), &north);
+		AddSortableSpriteToDraw(back, pal, *ti, {{0, 15, east_z}, {1, 1, z_wires}, {0, -15, static_cast<int8_t>(-east_z)}}, IsTransparencySet(TransparencyOption::Catenary), &east);
 	}
 	if (front != 0) {
 		/* Draw the "front" sprite (containing south pillar and wires) at a Z height that is both above the vehicles and above the "back" pillars. */
-		AddSortableSpriteToDraw(front, pal, *ti, {{0, 0, static_cast<int8_t>(z_wires)}, {TILE_SIZE, TILE_SIZE, 1}, {0, 0, static_cast<int8_t>(-z_wires)}}, IsTransparencySet(TO_CATENARY));
+		AddSortableSpriteToDraw(front, pal, *ti, {{0, 0, static_cast<int8_t>(z_wires)}, {TILE_SIZE, TILE_SIZE, 1}, {0, 0, static_cast<int8_t>(-z_wires)}}, IsTransparencySet(TransparencyOption::Catenary));
 	}
 }
 
@@ -1687,15 +1687,15 @@ static void DrawRoadBits(TileInfo *ti)
 	if (road.Count() <= 1) return;
 
 	/* Do not draw details when invisible. */
-	if (roadside == Roadside::Trees && IsInvisibilitySet(TO_TREES)) return;
-	if (roadside == Roadside::StreetLights && IsInvisibilitySet(TO_HOUSES)) return;
+	if (roadside == Roadside::Trees && IsInvisibilitySet(TransparencyOption::Trees)) return;
+	if (roadside == Roadside::StreetLights && IsInvisibilitySet(TransparencyOption::Houses)) return;
 
 	/* Check whether details should be transparent. */
 	bool is_transparent = false;
-	if (roadside == Roadside::Trees && IsTransparencySet(TO_TREES)) {
+	if (roadside == Roadside::Trees && IsTransparencySet(TransparencyOption::Trees)) {
 		is_transparent = true;
 	}
-	if (roadside == Roadside::StreetLights && IsTransparencySet(TO_HOUSES)) {
+	if (roadside == Roadside::StreetLights && IsTransparencySet(TransparencyOption::Houses)) {
 		is_transparent = true;
 	}
 
@@ -1787,17 +1787,15 @@ static void DrawTile_Road(TileInfo *ti)
 			DrawRoadOverlays(ti, pal, road_rti, tram_rti, to_underlying(axis), to_underlying(axis));
 
 			/* Draw rail/PBS overlay */
-			bool draw_pbs = _game_mode != GM_MENU && _settings_client.gui.show_track_reservation && HasCrossingReservation(ti->tile);
+			bool draw_pbs = _game_mode != GameMode::Menu && _settings_client.gui.show_track_reservation && HasCrossingReservation(ti->tile);
 			if (rti->UsesOverlay()) {
 				pal = draw_pbs ? PALETTE_CRASH : PAL_NONE;
 				SpriteID rail = GetCustomRailSprite(rti, ti->tile, RailSpriteType::Crossing) + to_underlying(axis);
 				DrawGroundSprite(rail, pal);
 
-				const Axis road_axis = GetCrossingRoadAxis(ti->tile);
-				const DiagDirection dir1 = AxisToDiagDir(road_axis);
-				const DiagDirection dir2 = ReverseDiagDir(dir1);
+				Axis road_axis = GetCrossingRoadAxis(ti->tile);
 				DiagDirections adjacent_diagdirs{};
-				for (DiagDirection dir : { dir1, dir2 }) {
+				for (DiagDirection dir : AxisToDiagDirs(road_axis)) {
 					const TileIndex t = TileAddByDiagDir(ti->tile, dir);
 					if (t < Map::Size() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == road_axis) {
 						adjacent_diagdirs.Set(dir);
@@ -1806,23 +1804,23 @@ static void DrawTile_Road(TileInfo *ti)
 
 				switch (adjacent_diagdirs.base()) {
 					case DiagDirections{}.base():
-						DrawRailTileSeq(ti, &_crossing_layout, TO_CATENARY, rail, 0, PAL_NONE);
+						DrawRailTileSeq(ti, &_crossing_layout, TransparencyOption::Catenary, rail, 0, PAL_NONE);
 						break;
 
-					case DiagDirections{DIAGDIR_NE}.base():
-						DrawRailTileSeq(ti, &_crossing_layout_SW, TO_CATENARY, rail, 0, PAL_NONE);
+					case DiagDirections{DiagDirection::NE}.base():
+						DrawRailTileSeq(ti, &_crossing_layout_SW, TransparencyOption::Catenary, rail, 0, PAL_NONE);
 						break;
 
-					case DiagDirections{DIAGDIR_SE}.base():
-						DrawRailTileSeq(ti, &_crossing_layout_NW, TO_CATENARY, rail, 0, PAL_NONE);
+					case DiagDirections{DiagDirection::SE}.base():
+						DrawRailTileSeq(ti, &_crossing_layout_NW, TransparencyOption::Catenary, rail, 0, PAL_NONE);
 						break;
 
-					case DiagDirections{DIAGDIR_SW}.base():
-						DrawRailTileSeq(ti, &_crossing_layout_NE, TO_CATENARY, rail, 0, PAL_NONE);
+					case DiagDirections{DiagDirection::SW}.base():
+						DrawRailTileSeq(ti, &_crossing_layout_NE, TransparencyOption::Catenary, rail, 0, PAL_NONE);
 						break;
 
-					case DiagDirections{DIAGDIR_NW}.base():
-						DrawRailTileSeq(ti, &_crossing_layout_SE, TO_CATENARY, rail, 0, PAL_NONE);
+					case DiagDirections{DiagDirection::NW}.base():
+						DrawRailTileSeq(ti, &_crossing_layout_SE, TransparencyOption::Catenary, rail, 0, PAL_NONE);
 						break;
 
 					default:
@@ -1886,7 +1884,7 @@ static void DrawTile_Road(TileInfo *ti)
 				}
 			}
 
-			DrawRailTileSeq(ti, dts, TO_BUILDINGS, relocation, 0, palette);
+			DrawRailTileSeq(ti, dts, TransparencyOption::Buildings, relocation, 0, palette);
 			/* Depots can't have bridges above so no blocked pillars. */
 			break;
 		}
@@ -2160,7 +2158,7 @@ static TrackStatus GetTileTrackStatus_Road(TileIndex tile, TransportType mode, R
 					RoadBits bits = GetRoadBits(tile, rtt);
 
 					/* no roadbit at this side of tile, return 0 */
-					if (side != INVALID_DIAGDIR && !DiagDirToRoadBits(side).Any(bits)) break;
+					if (side != DiagDirection::Invalid && !DiagDirToRoadBits(side).Any(bits)) break;
 
 					uint multiplier = drd_to_multiplier[(rtt == RoadTramType::Tram) ? 0 : GetDisallowedRoadDirections(tile).base()];
 					if (!HasRoadWorks(tile)) trackdirbits = static_cast<TrackdirBits>(_road_trackbits[bits.base()] * multiplier);
@@ -2170,7 +2168,7 @@ static TrackStatus GetTileTrackStatus_Road(TileIndex tile, TransportType mode, R
 				case RoadTileType::Crossing: {
 					Axis axis = GetCrossingRoadAxis(tile);
 
-					if (side != INVALID_DIAGDIR && axis != DiagDirToAxis(side)) break;
+					if (side != DiagDirection::Invalid && axis != DiagDirToAxis(side)) break;
 
 					trackdirbits = TrackBitsToTrackdirBits(AxisToTrackBits(axis));
 					if (IsCrossingBarred(tile)) {
@@ -2192,7 +2190,7 @@ static TrackStatus GetTileTrackStatus_Road(TileIndex tile, TransportType mode, R
 				case RoadTileType::Depot: {
 					DiagDirection dir = GetRoadDepotDirection(tile);
 
-					if (side != INVALID_DIAGDIR && side != dir) break;
+					if (side != DiagDirection::Invalid && side != dir) break;
 
 					trackdirbits = TrackBitsToTrackdirBits(DiagDirToDiagTrackBits(dir));
 					break;
@@ -2203,7 +2201,7 @@ static TrackStatus GetTileTrackStatus_Road(TileIndex tile, TransportType mode, R
 
 		default: break;
 	}
-	return CombineTrackStatus(trackdirbits, red_signals);
+	return {trackdirbits, red_signals};
 }
 
 static const StringID _road_tile_strings[] = {
@@ -2288,7 +2286,7 @@ static void GetTileDesc_Road(TileIndex tile, TileDesc &td)
  * Given the direction the road depot is pointing, this is the direction the
  * vehicle should be travelling in in order to enter the depot.
  */
-static const uint8_t _roadveh_enter_depot_dir[4] = {
+static constexpr DiagDirectionIndexArray<Trackdir> _roadveh_enter_depot_dir{
 	TRACKDIR_X_SW, TRACKDIR_Y_NW, TRACKDIR_X_NE, TRACKDIR_Y_SE
 };
 

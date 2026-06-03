@@ -424,7 +424,7 @@ void AskExitGame()
 static void AskExitToGameMenuCallback(Window *, bool confirmed)
 {
 	if (confirmed) {
-		_switch_mode = SM_MENU;
+		_switch_mode = SwitchMode::Menu;
 		ClearErrorMessages();
 	}
 }
@@ -433,7 +433,7 @@ void AskExitToGameMenu()
 {
 	ShowQuery(
 		GetEncodedString(STR_ABANDON_GAME_CAPTION),
-		GetEncodedString((_game_mode != GM_EDITOR) ? STR_ABANDON_GAME_QUERY : STR_ABANDON_SCENARIO_QUERY),
+		GetEncodedString((_game_mode != GameMode::Editor) ? STR_ABANDON_GAME_QUERY : STR_ABANDON_SCENARIO_QUERY),
 		nullptr,
 		AskExitToGameMenuCallback,
 		true

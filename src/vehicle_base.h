@@ -64,16 +64,6 @@ struct NewGRFCache {
 	auto operator<=>(const NewGRFCache &) const = default;
 };
 
-/** Models for spawning visual effects. */
-enum VisualEffectSpawnModel : uint8_t {
-	VESM_NONE              = 0, ///< No visual effect
-	VESM_STEAM,                 ///< Steam model
-	VESM_DIESEL,                ///< Diesel model
-	VESM_ELECTRIC,              ///< Electric model
-
-	VESM_END
-};
-
 /**
  * Enum to handle ground vehicle subtypes.
  * This is defined here instead of at #GroundVehicle because some common function require access to these flags.
@@ -158,7 +148,7 @@ struct VehicleSpriteSeq {
  * or calculating the viewport.
  */
 struct MutableSpriteCache {
-	Direction last_direction = INVALID_DIR; ///< Last direction we obtained sprites for
+	Direction last_direction = Direction::Invalid; ///< Last direction we obtained sprites for
 	bool revalidate_before_draw = false; ///< We need to do a GetImage() and check bounds before drawing this sprite
 	bool is_viewport_candidate = false; ///< This vehicle can potentially be drawn on a viewport
 	Rect old_coord{}; ///< Co-ordinates from the last valid bounding box
@@ -266,7 +256,7 @@ public:
 	int32_t x_pos = 0; ///< x coordinate.
 	int32_t y_pos = 0; ///< y coordinate.
 	int32_t z_pos = 0; ///< z coordinate.
-	Direction direction = INVALID_DIR; ///< facing
+	Direction direction = Direction::Invalid; ///< facing
 
 	Owner owner = INVALID_OWNER; ///< Which company owns the vehicle?
 	/**

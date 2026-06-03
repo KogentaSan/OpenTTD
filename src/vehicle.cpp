@@ -936,7 +936,7 @@ static void VehicleEnteredDepotThisTick(Vehicle *v)
  */
 void RunVehicleCalendarDayProc()
 {
-	if (_game_mode != GM_NORMAL) return;
+	if (_game_mode != GameMode::Normal) return;
 
 	/* Run the calendar day proc for every DAY_TICKS vehicle starting at TimerGameCalendar::date_fract. */
 	for (size_t i = TimerGameCalendar::date_fract; i < Vehicle::GetPoolSize(); i += Ticks::DAY_TICKS) {
@@ -953,7 +953,7 @@ void RunVehicleCalendarDayProc()
  */
 static void RunEconomyVehicleDayProc()
 {
-	if (_game_mode != GM_NORMAL) return;
+	if (_game_mode != GameMode::Normal) return;
 
 	/* Run the economy day proc for every DAY_TICKS vehicle starting at TimerGameEconomy::date_fract. */
 	for (size_t i = TimerGameEconomy::date_fract; i < Vehicle::GetPoolSize(); i += Ticks::DAY_TICKS) {
@@ -1129,7 +1129,7 @@ static void DoDrawVehicle(const Vehicle *v)
 		/* Check whether the vehicle shall be transparent/invisible due to GUI settings.
 		 * However, transparent smoke and bubbles look weird, so always hide them. */
 		TransparencyOption to = EffectVehicle::From(v)->GetTransparencyOption();
-		if (to != TO_INVALID && (IsTransparencySet(to) || IsInvisibilitySet(to))) return;
+		if (to != TransparencyOption::Invalid && (IsTransparencySet(to) || IsInvisibilitySet(to))) return;
 	}
 
 	StartSpriteCombine();
@@ -1318,7 +1318,7 @@ static const uint8_t _breakdown_chance[64] = {
 void CheckVehicleBreakdown(Vehicle *v)
 {
 	/* Vehicles in the menu don't break down. */
-	if (_game_mode == GM_MENU) return;
+	if (_game_mode == GameMode::Menu) return;
 
 	/* If both breakdowns and automatic servicing are disabled, we don't decrease reliability or break down. */
 	if (_settings_game.difficulty.vehicle_breakdowns == VehicleBreakdowns::None && _settings_game.order.no_servicing_if_no_breakdowns) return;
@@ -1572,7 +1572,7 @@ void VehicleEnterDepot(Vehicle *v)
 			SetDepotReservation(t->tile, false);
 			if (_settings_client.gui.show_track_reservation) MarkTileDirtyByTile(t->tile);
 
-			UpdateSignalsOnSegment(t->tile, INVALID_DIAGDIR, t->owner);
+			UpdateSignalsOnSegment(t->tile, DiagDirection::Invalid, t->owner);
 			t->wait_counter = 0;
 			t->force_proceed = TFP_NONE;
 			t->flags.Reset(VehicleRailFlag::Reversed);
@@ -1801,13 +1801,20 @@ bool Vehicle::MarkAllViewportsDirty() const
  */
 GetNewVehiclePosResult GetNewVehiclePos(const Vehicle *v)
 {
-	static const int8_t _delta_coord[16] = {
-		-1,-1,-1, 0, 1, 1, 1, 0, /* x */
-		-1, 0, 1, 1, 1, 0,-1,-1, /* y */
-	};
+	static constexpr DirectionIndexArray<Coord2D<int8_t>> delta_coord{{{
+		{-1, -1}, // N
+		{-1, 0}, // NE
+		{-1, 1}, // E
+		{0, 1}, // SE
+		{1, 1}, // S
+		{1, 0}, // SW
+		{1, -1}, // W
+		{0, -1}, // NW
+	}}};
 
-	int x = v->x_pos + _delta_coord[v->GetMovingDirection()];
-	int y = v->y_pos + _delta_coord[v->GetMovingDirection() + 8];
+	const Coord2D<int8_t> &coord = delta_coord[v->GetMovingDirection()];
+	int x = v->x_pos + coord.x;
+	int y = v->y_pos + coord.y;
 
 	GetNewVehiclePosResult gp;
 	gp.x = x;
@@ -1818,9 +1825,9 @@ GetNewVehiclePosResult GetNewVehiclePos(const Vehicle *v)
 }
 
 static const Direction _new_direction_table[] = {
-	DIR_N,  DIR_NW, DIR_W,
-	DIR_NE, DIR_SE, DIR_SW,
-	DIR_E,  DIR_SE, DIR_S
+	Direction::N,  Direction::NW, Direction::W,
+	Direction::NE, Direction::SE, Direction::SW,
+	Direction::E,  Direction::SE, Direction::S
 };
 
 Direction GetDirectionTowards(const Vehicle *v, int x, int y)
@@ -2350,7 +2357,7 @@ void Vehicle::CancelReservation(StationID next, Station *st)
 {
 	for (Vehicle *v = this; v != nullptr; v = v->next) {
 		VehicleCargoList &cargo = v->cargo;
-		if (cargo.ActionCount(VehicleCargoList::MTA_LOAD) > 0) {
+		if (cargo.ActionCount(VehicleCargoList::MoveToAction::Load) > 0) {
 			Debug(misc, 1, "cancelling cargo reservation");
 			cargo.Return(UINT_MAX, &st->goods[v->cargo_type].GetOrCreateData().cargo, next, v->tile);
 		}
@@ -2733,7 +2740,8 @@ void Vehicle::UpdateVisualEffect(bool allow_power_change)
 	}
 }
 
-static const int8_t _vehicle_smoke_pos[8] = {
+/** Vehicle smoke effect position offsets. */
+static constexpr DirectionIndexArray<int8_t> _vehicle_smoke_pos{
 	1, 1, 1, 0, -1, -1, -1, 0
 };
 
@@ -2810,6 +2818,17 @@ static bool IsBridgeAboveVehicle(const Vehicle *v)
 	return IsBridgeAbove(v->tile);
 }
 
+
+/** Models for spawning visual effects. */
+enum VisualEffectSpawnModel : uint8_t {
+	None = 0, ///< No visual effect
+	Steam, ///< Steam model
+	Diesel, ///< Diesel model
+	Electric, ///< Electric model
+
+	End, ///< End marker.
+};
+
 /**
  * Draw visual effects (smoke and/or sparks) for a vehicle chain.
  * @pre this->IsPrimaryVehicle()
@@ -2852,17 +2871,17 @@ void Vehicle::ShowVisualEffect() const
 	do {
 		bool advanced = HasBit(v->vcache.cached_vis_effect, VE_ADVANCED_EFFECT);
 		int effect_offset = GB(v->vcache.cached_vis_effect, VE_OFFSET_START, VE_OFFSET_COUNT) - VE_OFFSET_CENTRE;
-		VisualEffectSpawnModel effect_model = VESM_NONE;
+		VisualEffectSpawnModel effect_model = VisualEffectSpawnModel::None;
 		if (advanced) {
 			effect_offset = VE_OFFSET_CENTRE;
-			effect_model = (VisualEffectSpawnModel)GB(v->vcache.cached_vis_effect, 0, VE_ADVANCED_EFFECT);
-			if (effect_model >= VESM_END) effect_model = VESM_NONE; // unknown spawning model
+			effect_model = static_cast<VisualEffectSpawnModel>(GB(v->vcache.cached_vis_effect, 0, VE_ADVANCED_EFFECT));
+			if (effect_model >= VisualEffectSpawnModel::End) effect_model = VisualEffectSpawnModel::None; // unknown spawning model
 		} else {
-			effect_model = (VisualEffectSpawnModel)GB(v->vcache.cached_vis_effect, VE_TYPE_START, VE_TYPE_COUNT);
-			assert(effect_model != (VisualEffectSpawnModel)VE_TYPE_DEFAULT); // should have been resolved by UpdateVisualEffect
-			static_assert((uint)VESM_STEAM    == (uint)VE_TYPE_STEAM);
-			static_assert((uint)VESM_DIESEL   == (uint)VE_TYPE_DIESEL);
-			static_assert((uint)VESM_ELECTRIC == (uint)VE_TYPE_ELECTRIC);
+			effect_model = static_cast<VisualEffectSpawnModel>(GB(v->vcache.cached_vis_effect, VE_TYPE_START, VE_TYPE_COUNT));
+			assert(to_underlying(effect_model) != to_underlying(VE_TYPE_DEFAULT)); // should have been resolved by UpdateVisualEffect
+			static_assert(to_underlying(VisualEffectSpawnModel::Steam) == to_underlying(VE_TYPE_STEAM));
+			static_assert(to_underlying(VisualEffectSpawnModel::Diesel) == to_underlying(VE_TYPE_DIESEL));
+			static_assert(to_underlying(VisualEffectSpawnModel::Electric) == to_underlying(VE_TYPE_ELECTRIC));
 		}
 
 		/* Show no smoke when:
@@ -2872,7 +2891,7 @@ void Vehicle::ShowVisualEffect() const
 		 * - The vehicle is on a depot tile
 		 * - The vehicle is on a tunnel tile
 		 * - The vehicle is a train engine that is currently unpowered */
-		if (effect_model == VESM_NONE ||
+		if (effect_model == VisualEffectSpawnModel::None ||
 				v->vehstatus.Test(VehState::Hidden) ||
 				IsBridgeAboveVehicle(v) ||
 				IsDepotTile(v->tile) ||
@@ -2884,7 +2903,7 @@ void Vehicle::ShowVisualEffect() const
 
 		EffectVehicleType evt = EV_END;
 		switch (effect_model) {
-			case VESM_STEAM:
+			case VisualEffectSpawnModel::Steam:
 				/* Steam smoke - amount is gradually falling until vehicle reaches its maximum speed, after that it's normal.
 				 * Details: while vehicle's current speed is gradually increasing, steam plumes' density decreases by one third each
 				 * third of its maximum speed spectrum. Steam emission finally normalises at very close to vehicle's maximum speed.
@@ -2895,7 +2914,7 @@ void Vehicle::ShowVisualEffect() const
 				}
 				break;
 
-			case VESM_DIESEL: {
+			case VisualEffectSpawnModel::Diesel: {
 				/* Diesel smoke - thicker when vehicle is starting, gradually subsiding till it reaches its maximum speed
 				 * when smoke emission stops.
 				 * Details: Vehicle's (max.) speed spectrum is divided into 32 parts. When max. speed is reached, chance for smoke
@@ -2918,7 +2937,7 @@ void Vehicle::ShowVisualEffect() const
 				break;
 			}
 
-			case VESM_ELECTRIC:
+			case VisualEffectSpawnModel::Electric:
 				/* Electric train's spark - more often occurs when train is departing (more load)
 				 * Details: Electric locomotives are usually at least twice as powerful as their diesel counterparts, so spark
 				 * emissions are kept simple. Only when starting, creating huge force are sparks more likely to happen, but when
@@ -3326,4 +3345,63 @@ bool VehiclesHaveSameEngineList(const Vehicle *v1, const Vehicle *v2)
 bool VehiclesHaveSameOrderList(const Vehicle *v1, const Vehicle *v2)
 {
 	return std::ranges::equal(v1->Orders(), v2->Orders(), [](const Order &o1, const Order &o2) { return o1.Equals(o2); });
+}
+
+/** Vehicle sub-coordinate data for moving into a new tile. */
+struct VehicleSubcoordData : Coord2D<uint8_t> {
+	Direction dir = Direction::Invalid; ///< new direction.
+};
+
+/**
+ * Table of subtile coordinates and direction for each combination of chosen track and tile enter direction.
+ * Combinations that are not possible result in Direction::Invalid.
+ */
+static constexpr DiagDirectionIndexArray<TrackIndexArray<VehicleSubcoordData>> _vehicle_subcoord{{{
+	{{{ // NE
+		{{15, 8}, Direction::NE}, // TRACK_X
+		{}, // TRACK_Y
+		{}, // TRACK_UPPER
+		{{15, 8}, Direction::E}, // TRACK_LOWER
+		{{15, 7}, Direction::N}, // TRACK_LEFT
+		{}, // TRACK_RIGHT
+	}}},
+	{{{ // SE
+		{}, // TRACK_X
+		{{8, 0}, Direction::SE}, // TRACK_Y
+		{{7, 0}, Direction::E}, // TRACK_UPPER
+		{}, // TRACK_LOWER
+		{{8, 0}, Direction::S}, // TRACK_LEFT
+		{}, // TRACK_RIGHT
+	}}},
+	{{{ // SW
+		{{0, 8}, Direction::SW}, // TRACK_X
+		{}, // TRACK_Y
+		{{0, 7}, Direction::W}, // TRACK_UPPER
+		{}, // TRACK_LOWER
+		{}, // TRACK_LEFT
+		{{0, 8}, Direction::S}, // TRACK_RIGHT
+	}}},
+	{{{ // NW
+		{}, // TRACK_X
+		{{8, 15}, Direction::NW}, // TRACK_Y
+		{}, // TRACK_UPPER
+		{{8, 15}, Direction::W}, // TRACK_LOWER
+		{}, // TRACK_LEFT
+		{{7, 15}, Direction::N}, // TRACK_RIGHT
+	}}},
+}}};
+
+/**
+ * Lookup new subposition coordinates and direction to use when entering a new tile, applying the subcoordinates to the vehicle position result.
+ * @param gp new vehicle position result to apply subcoordinates to.
+ * @param enterdir the enter direction for the tile.
+ * @param track The chosen track for the tile.
+ * @return the new vehicle direction.
+ */
+Direction VehicleEnterTileCoordinates(GetNewVehiclePosResult &gp, DiagDirection enterdir, Track track)
+{
+	const VehicleSubcoordData &b = _vehicle_subcoord[enterdir][track];
+	gp.x = (gp.x & ~TILE_UNIT_MASK) | b.x;
+	gp.y = (gp.y & ~TILE_UNIT_MASK) | b.y;
+	return b.dir;
 }

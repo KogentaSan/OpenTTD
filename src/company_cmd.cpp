@@ -115,9 +115,10 @@ Money Company::GetMaxLoan() const
  * Sets the local company and updates the settings that are set on a
  * per-company basis to reflect the core's state in the GUI.
  * @param new_company the new company
+ * @param switching_game Whether we are switching the game, e.g. a new game or loading a game.
  * @pre Company::IsValidID(new_company) || new_company == COMPANY_SPECTATOR || new_company == OWNER_NONE
  */
-void SetLocalCompany(CompanyID new_company)
+void SetLocalCompany(CompanyID new_company, bool switching_game)
 {
 	/* company could also be COMPANY_SPECTATOR or OWNER_NONE */
 	assert(Company::IsValidID(new_company) || new_company == COMPANY_SPECTATOR || new_company == OWNER_NONE);
@@ -137,16 +138,21 @@ void SetLocalCompany(CompanyID new_company)
 		InvalidateWindowClassesData(WindowClass::VehicleView);
 		/* Delete any construction windows... */
 		CloseConstructionWindows();
+	}
+
+	if (switching_company || switching_game) {
 		/* Update the default rail based on most used */
 		SetDefaultRailGui();
 	}
 
-	/* ... and redraw the whole screen. */
-	MarkWholeScreenDirty();
-	InvalidateWindowClassesData(WindowClass::SignList, -1);
-	InvalidateWindowClassesData(WindowClass::GoalList);
-	InvalidateWindowClassesData(WindowClass::CompanyLivery, -1);
-	ResetVehicleColourMap();
+	if (!switching_game) {
+		/* ... and redraw the whole screen. */
+		MarkWholeScreenDirty();
+		InvalidateWindowClassesData(WindowClass::SignList, -1);
+		InvalidateWindowClassesData(WindowClass::GoalList);
+		InvalidateWindowClassesData(WindowClass::CompanyLivery, -1);
+		ResetVehicleColourMap();
+	}
 }
 
 /**
@@ -649,7 +655,7 @@ Company *DoStartupNewCompany(bool is_ai, CompanyID company = CompanyID::Invalid(
 
 /** Start a new competitor company if possible. */
 TimeoutTimer<TimerGameTick> _new_competitor_timeout({ TimerGameTick::Priority::CompetitorTimeout, 0 }, []() {
-	if (_game_mode == GM_MENU || !AI::CanStartNew()) return;
+	if (_game_mode == GameMode::Menu || !AI::CanStartNew()) return;
 	if (_networking && Company::GetNumItems() >= _settings_client.network.max_companies) return;
 	if (_settings_game.difficulty.competitors_interval == 0) return;
 
@@ -762,7 +768,7 @@ static void HandleBankruptcyTakeover(Company *c)
 /** Called every tick for updating some company info. */
 void OnTick_Companies()
 {
-	if (_game_mode == GM_EDITOR) return;
+	if (_game_mode == GameMode::Editor) return;
 
 	Company *c = Company::GetIfValid(_cur_company_tick_index);
 	if (c != nullptr) {
@@ -770,7 +776,7 @@ void OnTick_Companies()
 		if (c->bankrupt_asked.Any()) HandleBankruptcyTakeover(c);
 	}
 
-	if (_new_competitor_timeout.HasFired() && _game_mode != GM_MENU && AI::CanStartNew()) {
+	if (_new_competitor_timeout.HasFired() && _game_mode != GameMode::Menu && AI::CanStartNew()) {
 		int32_t timeout = _settings_game.difficulty.competitors_interval * 60 * Ticks::TICKS_PER_SECOND;
 		/* If the interval is zero, start as many competitors as needed then check every ~10 minutes if a company went bankrupt and needs replacing. */
 		if (timeout == 0) {

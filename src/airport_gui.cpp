@@ -190,7 +190,7 @@ struct BuildAirToolbarWindow : Window {
 	 */
 	static EventState AirportToolbarGlobalHotkeys(int hotkey)
 	{
-		if (_game_mode != GM_NORMAL) return ES_NOT_HANDLED;
+		if (_game_mode != GameMode::Normal) return ES_NOT_HANDLED;
 		Window *w = ShowBuildAirToolbar();
 		if (w == nullptr) return ES_NOT_HANDLED;
 		return w->OnHotkey(hotkey);
@@ -485,7 +485,7 @@ public:
 			int w = as->size_x;
 			int h = as->size_y;
 			Direction rotation = as->layouts[_selected_airport_layout].rotation;
-			if (rotation == DIR_E || rotation == DIR_W) std::swap(w, h);
+			if (rotation == Direction::E || rotation == Direction::W) std::swap(w, h);
 			SetTileSelectSize(w, h);
 
 			this->preview_sprite = GetCustomAirportSprite(as, _selected_airport_layout);

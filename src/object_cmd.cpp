@@ -213,11 +213,11 @@ CommandCost CmdBuildObject(DoCommandFlags flags, TileIndex tile, ObjectType type
 
 	if (type >= ObjectSpec::Count()) return CMD_ERROR;
 	const ObjectSpec *spec = ObjectSpec::Get(type);
-	if (_game_mode == GM_NORMAL && !spec->IsAvailable() && !_generating_world) return CMD_ERROR;
-	if ((_game_mode == GM_EDITOR || _generating_world) && !spec->WasEverAvailable()) return CMD_ERROR;
+	if (_game_mode == GameMode::Normal && !spec->IsAvailable() && !_generating_world) return CMD_ERROR;
+	if ((_game_mode == GameMode::Editor || _generating_world) && !spec->WasEverAvailable()) return CMD_ERROR;
 
-	if (spec->flags.Test(ObjectFlag::OnlyInScenedit) && ((!_generating_world && _game_mode != GM_EDITOR) || _current_company != OWNER_NONE)) return CMD_ERROR;
-	if (spec->flags.Test(ObjectFlag::OnlyInGame) && (_generating_world || _game_mode != GM_NORMAL || _current_company > MAX_COMPANIES)) return CMD_ERROR;
+	if (spec->flags.Test(ObjectFlag::OnlyInScenedit) && ((!_generating_world && _game_mode != GameMode::Editor) || _current_company != OWNER_NONE)) return CMD_ERROR;
+	if (spec->flags.Test(ObjectFlag::OnlyInGame) && (_generating_world || _game_mode != GameMode::Normal || _current_company > MAX_COMPANIES)) return CMD_ERROR;
 	if (view >= spec->views) return CMD_ERROR;
 
 	if (!Object::CanAllocateItem()) return CommandCost(STR_ERROR_TOO_MANY_OBJECTS);
@@ -483,9 +483,9 @@ static void DrawTile_Object(TileInfo *ti)
 			DrawGroundSprite(dts->ground.sprite, palette);
 		}
 
-		if (!IsInvisibilitySet(TO_STRUCTURES)) {
+		if (!IsInvisibilitySet(TransparencyOption::Structures)) {
 			for (const DrawTileSeqStruct &dtss : dts->GetSequence()) {
-				AddSortableSpriteToDraw(dtss.image.sprite, palette, *ti, dtss, IsTransparencySet(TO_STRUCTURES));
+				AddSortableSpriteToDraw(dtss.image.sprite, palette, *ti, dtss, IsTransparencySet(TransparencyOption::Structures));
 			}
 		}
 	} else {
@@ -564,7 +564,7 @@ static CommandCost ClearTile_Object(TileIndex tile, DoCommandFlags flags)
 		} else if (!spec->flags.Test(ObjectFlag::Autoremove) && flags.Test(DoCommandFlag::Auto)) {
 			/* No automatic removal by overbuilding stuff. */
 			return CommandCost(type == OBJECT_HQ ? STR_ERROR_COMPANY_HEADQUARTERS_IN : STR_ERROR_OBJECT_IN_THE_WAY);
-		} else if (_game_mode == GM_EDITOR) {
+		} else if (_game_mode == GameMode::Editor) {
 			/* No further limitations for the editor. */
 		} else if (GetTileOwner(tile) == OWNER_NONE) {
 			/* Owned by nobody and unremovable, so we can only remove it with brute force! */
@@ -818,17 +818,17 @@ static bool TryBuildCoastLighthouse()
 	/* Pick a random perimeter tile to start from. */
 	int perimeter = (GB(r, 16, 16) % (2 * (maxx + maxy))) - maxy;
 	DiagDirection dir;
-	for (dir = DIAGDIR_NE; perimeter > 0; dir++) {
+	for (dir = DiagDirection::NE; perimeter > 0; dir++) {
 		perimeter -= (DiagDirToAxis(dir) == Axis::X) ? maxx : maxy;
 	}
 
 	TileIndex tile;
 	switch (dir) {
 		default:
-		case DIAGDIR_NE: tile = TileXY(maxx - 1, r % maxy); break;
-		case DIAGDIR_SE: tile = TileXY(r % maxx, 1); break;
-		case DIAGDIR_SW: tile = TileXY(1, r % maxy); break;
-		case DIAGDIR_NW: tile = TileXY(r % maxx, maxy - 1); break;
+		case DiagDirection::NE: tile = TileXY(maxx - 1, r % maxy); break;
+		case DiagDirection::SE: tile = TileXY(r % maxx, 1); break;
+		case DiagDirection::SW: tile = TileXY(1, r % maxy); break;
+		case DiagDirection::NW: tile = TileXY(r % maxx, maxy - 1); break;
 	}
 
 	/* Now walk inwards until we find a valid tile, or hit the other edge of the map. */

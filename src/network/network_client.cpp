@@ -185,7 +185,7 @@ void ClientNetworkGameSocketHandler::ClientError(NetworkRecvStatus res)
 
 	CloseWindowById(WindowClass::NetworkStatus, NetworkStatusWindowNumber::Join);
 
-	if (_game_mode != GM_MENU) _switch_mode = SM_MENU;
+	if (_game_mode != GameMode::Menu) _switch_mode = SwitchMode::Menu;
 	_networking = false;
 }
 
@@ -863,7 +863,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::ReceiveServerMapDone(Packet &)
 	/* Set the abstract filetype. This is read during savegame load. */
 	_file_to_saveload.SetMode(FIOS_TYPE_FILE, SaveLoadOperation::Load);
 
-	bool load_success = SafeLoad({}, SaveLoadOperation::Load, DetailedFileType::GameFile, GM_NORMAL, Subdirectory::None, this->savegame);
+	bool load_success = SafeLoad({}, SaveLoadOperation::Load, DetailedFileType::GameFile, GameMode::Normal, Subdirectory::None, this->savegame);
 	this->savegame = nullptr;
 
 	/* Long savegame loads shouldn't affect the lag calculation! */
@@ -888,7 +888,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::ReceiveServerMapDone(Packet &)
 	/* New company/spectator (invalid company) or company we want to join is not active
 	 * Switch local company to spectator and await the server's judgement */
 	if (_network_join.company == COMPANY_NEW_COMPANY || !Company::IsValidID(_network_join.company)) {
-		SetLocalCompany(COMPANY_SPECTATOR);
+		SetLocalCompany(COMPANY_SPECTATOR, true);
 
 		if (_network_join.company != COMPANY_SPECTATOR) {
 			/* We have arrived and ready to start playing; send a command to make a new company;
@@ -900,7 +900,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::ReceiveServerMapDone(Packet &)
 		}
 	} else {
 		/* take control over an existing company */
-		SetLocalCompany(_network_join.company);
+		SetLocalCompany(_network_join.company, true);
 	}
 
 	SocialIntegration::EventEnterMultiplayer(Map::SizeX(), Map::SizeY());

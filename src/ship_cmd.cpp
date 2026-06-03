@@ -75,7 +75,7 @@ bool IsValidImageIndex<VehicleType::Ship>(uint8_t image_index)
 
 static inline TrackBits GetTileShipTrackStatus(TileIndex tile)
 {
-	return TrackStatusToTrackBits(GetTileTrackStatus(tile, TRANSPORT_WATER, RoadTramType::Invalid));
+	return TrackdirBitsToTrackBits(GetTileTrackStatus(tile, TRANSPORT_WATER, RoadTramType::Invalid).trackdirs);
 }
 
 static void GetShipIcon(EngineID engine, EngineImageType image_type, VehicleSpriteSeq *result)
@@ -84,14 +84,14 @@ static void GetShipIcon(EngineID engine, EngineImageType image_type, VehicleSpri
 	uint8_t spritenum = e->VehInfo<ShipVehicleInfo>().image_index;
 
 	if (IsCustomVehicleSpriteNum(spritenum)) {
-		GetCustomVehicleIcon(engine, DIR_W, image_type, result);
+		GetCustomVehicleIcon(engine, Direction::W, image_type, result);
 		if (result->IsValid()) return;
 
 		spritenum = e->original_image_index;
 	}
 
 	assert(IsValidImageIndex<VehicleType::Ship>(spritenum));
-	result->Set(DIR_W + _ship_sprites[spritenum]);
+	result->Set(to_underlying(Direction::W) + _ship_sprites[spritenum]);
 }
 
 void DrawShipEngine(int left, int right, int preferred_x, int y, EngineID engine, PaletteID pal, EngineImageType image_type)
@@ -145,7 +145,7 @@ void Ship::GetImage(Direction direction, EngineImageType image_type, VehicleSpri
 	}
 
 	assert(IsValidImageIndex<VehicleType::Ship>(spritenum));
-	result->Set(_ship_sprites[spritenum] + direction);
+	result->Set(_ship_sprites[spritenum] + to_underlying(direction));
 }
 
 static const Depot *FindClosestShipDepot(const Vehicle *v, uint max_distance)
@@ -330,7 +330,7 @@ TileIndex Ship::GetOrderStationLocation(StationID station)
 
 void Ship::UpdateDeltaXY()
 {
-	static constexpr SpriteBounds ship_bounds[DIR_END] = {
+	static constexpr DirectionIndexArray<SpriteBounds> ship_bounds{{{
 		{{ -3,  -3, 0}, { 6,  6, 6}, {}}, // N
 		{{-16,  -3, 0}, {32,  6, 6}, {}}, // NE
 		{{ -3,  -3, 0}, { 6,  6, 6}, {}}, // E
@@ -339,7 +339,7 @@ void Ship::UpdateDeltaXY()
 		{{-16,  -3, 0}, {32,  6, 6}, {}}, // SW
 		{{ -3,  -3, 0}, { 6,  6, 6}, {}}, // W
 		{{ -3, -16, 0}, { 6, 32, 6}, {}}, // NW
-	};
+	}}};
 
 	this->bounds = ship_bounds[this->rotation];
 
@@ -509,56 +509,6 @@ static inline TrackBits GetAvailShipTracks(TileIndex tile, DiagDirection dir)
 	return tracks;
 }
 
-/** Structure for ship sub-coordinate data for moving into a new tile via a Diagdir onto a Track. */
-struct ShipSubcoordData {
-	uint8_t x_subcoord; ///< New X sub-coordinate on the new tile
-	uint8_t y_subcoord; ///< New Y sub-coordinate on the new tile
-	Direction dir;   ///< New Direction to move in on the new track
-};
-/** Ship sub-coordinate data for moving into a new tile via a Diagdir onto a Track.
- * Array indexes are Diagdir, Track.
- * There will always be three possible tracks going into an adjacent tile via a Diagdir,
- * so each Diagdir sub-array will have three valid and three invalid structures per Track.
- */
-static const ShipSubcoordData _ship_subcoord[DIAGDIR_END][TRACK_END] = {
-	/* DIAGDIR_NE */
-	{
-		{15,  8, DIR_NE},      // TRACK_X
-		{ 0,  0, INVALID_DIR}, // TRACK_Y
-		{ 0,  0, INVALID_DIR}, // TRACK_UPPER
-		{15,  8, DIR_E},       // TRACK_LOWER
-		{15,  7, DIR_N},       // TRACK_LEFT
-		{ 0,  0, INVALID_DIR}, // TRACK_RIGHT
-	},
-	/* DIAGDIR_SE */
-	{
-		{ 0,  0, INVALID_DIR}, // TRACK_X
-		{ 8,  0, DIR_SE},      // TRACK_Y
-		{ 7,  0, DIR_E},       // TRACK_UPPER
-		{ 0,  0, INVALID_DIR}, // TRACK_LOWER
-		{ 8,  0, DIR_S},       // TRACK_LEFT
-		{ 0,  0, INVALID_DIR}, // TRACK_RIGHT
-	},
-	/* DIAGDIR_SW */
-	{
-		{ 0,  8, DIR_SW},      // TRACK_X
-		{ 0,  0, INVALID_DIR}, // TRACK_Y
-		{ 0,  7, DIR_W},       // TRACK_UPPER
-		{ 0,  0, INVALID_DIR}, // TRACK_LOWER
-		{ 0,  0, INVALID_DIR}, // TRACK_LEFT
-		{ 0,  8, DIR_S},       // TRACK_RIGHT
-	},
-	/* DIAGDIR_NW */
-	{
-		{ 0,  0, INVALID_DIR}, // TRACK_X
-		{ 8, 15, DIR_NW},      // TRACK_Y
-		{ 0,  0, INVALID_DIR}, // TRACK_UPPER
-		{ 8, 15, DIR_W},       // TRACK_LOWER
-		{ 0,  0, INVALID_DIR}, // TRACK_LEFT
-		{ 7, 15, DIR_N},       // TRACK_RIGHT
-	}
-};
-
 /**
  * Test if a ship is in the centre of a lock and should move up or down.
  * @param v Ship being tested.
@@ -619,7 +569,7 @@ bool IsShipDestinationTile(TileIndex tile, StationID station)
 {
 	assert(IsDockingTile(tile));
 	/* Check each tile adjacent to docking tile. */
-	for (DiagDirection d = DIAGDIR_BEGIN; d != DIAGDIR_END; d++) {
+	for (DiagDirection d = DiagDirection::Begin; d != DiagDirection::End; d++) {
 		TileIndex t = tile + TileOffsByDiagDir(d);
 		if (!IsValidTile(t)) continue;
 		if (IsDockTile(t) && GetStationIndex(t) == station && IsDockWaterPart(t)) return true;
@@ -634,13 +584,13 @@ bool IsShipDestinationTile(TileIndex tile, StationID station)
 
 static void ReverseShipIntoTrackdir(Ship *v, Trackdir trackdir)
 {
-	static constexpr Direction _trackdir_to_direction[] = {
-		DIR_NE, DIR_SE, DIR_E, DIR_E, DIR_S, DIR_S, INVALID_DIR, INVALID_DIR,
-		DIR_SW, DIR_NW, DIR_W, DIR_W, DIR_N, DIR_N, INVALID_DIR, INVALID_DIR,
+	static constexpr TrackdirIndexArray<Direction> _trackdir_to_direction{
+		Direction::NE, Direction::SE, Direction::E, Direction::E, Direction::S, Direction::S, Direction::Invalid, Direction::Invalid,
+		Direction::SW, Direction::NW, Direction::W, Direction::W, Direction::N, Direction::N, Direction::Invalid, Direction::Invalid,
 	};
 
 	v->direction = _trackdir_to_direction[trackdir];
-	assert(v->direction != INVALID_DIR);
+	assert(v->direction != Direction::Invalid);
 	v->state = TrackdirBitsToTrackBits(TrackdirToTrackdirBits(trackdir));
 
 	/* Remember our current location to avoid movement glitch */
@@ -692,7 +642,7 @@ static void ShipController(Ship *v)
 			DirDiff diff = DirDifference(v->direction, v->rotation);
 			v->rotation = ChangeDir(v->rotation, LimitDirDiff(diff));
 			/* Invalidate the sprite cache direction to force recalculation of viewport */
-			v->sprite_cache.last_direction = INVALID_DIR;
+			v->sprite_cache.last_direction = Direction::Invalid;
 			v->UpdateViewport(true, true);
 		}
 		return;
@@ -725,7 +675,7 @@ static void ShipController(Ship *v)
 						/* Test if continuing forward would lead to a dead-end, moving into the dock. */
 						const DiagDirection exitdir = VehicleExitDir(v->direction, v->state);
 						const TileIndex tile = TileAddByDiagDir(v->tile, exitdir);
-						if (TrackStatusToTrackBits(GetTileTrackStatus(tile, TRANSPORT_WATER, RoadTramType::Invalid, exitdir)) == TRACK_BIT_NONE) return ReverseShip(v);
+						if (TrackdirBitsToTrackBits(GetTileTrackStatus(tile, TRANSPORT_WATER, RoadTramType::Invalid, exitdir).trackdirs) == TRACK_BIT_NONE) return ReverseShip(v);
 					} else if (v->dest_tile != INVALID_TILE) {
 						/* We have a target, let's see if we reached it... */
 						if (v->current_order.IsType(OT_GOTO_WAYPOINT) &&
@@ -763,7 +713,7 @@ static void ShipController(Ship *v)
 				if (!IsValidTile(gp.new_tile)) return ReverseShip(v);
 
 				const DiagDirection diagdir = DiagdirBetweenTiles(gp.old_tile, gp.new_tile);
-				assert(diagdir != INVALID_DIAGDIR);
+				assert(diagdir != DiagDirection::Invalid);
 				const TrackBits tracks = GetAvailShipTracks(gp.new_tile, diagdir);
 				if (tracks == TRACK_BIT_NONE) {
 					Trackdir trackdir = INVALID_TRACKDIR;
@@ -776,10 +726,8 @@ static void ShipController(Ship *v)
 				const Track track = ChooseShipTrack(v, gp.new_tile, tracks);
 				if (track == INVALID_TRACK) return ReverseShip(v);
 
-				const ShipSubcoordData &b = _ship_subcoord[diagdir][track];
-
-				gp.x = (gp.x & ~0xF) | b.x_subcoord;
-				gp.y = (gp.y & ~0xF) | b.y_subcoord;
+				/* Update XY to reflect the entrance to the new tile, and select the direction to use */
+				Direction chosen_dir = VehicleEnterTileCoordinates(gp, diagdir, track);
 
 				/* Call the landscape function and tell it that the vehicle entered the tile */
 				auto vets = VehicleEnterTile(v, gp.new_tile, gp.x, gp.y);
@@ -793,7 +741,7 @@ static void ShipController(Ship *v)
 					if (GetEffectiveWaterClass(gp.old_tile) != GetEffectiveWaterClass(gp.new_tile)) v->UpdateCache();
 				}
 
-				const Direction new_direction = b.dir;
+				const Direction new_direction = chosen_dir;
 				const DirDiff diff = DirDifference(new_direction, v->direction);
 				switch (diff) {
 					case DirDiff::Same:

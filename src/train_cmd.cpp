@@ -50,8 +50,10 @@ static TileIndex TrainApproachingCrossingTile(const Train *v);
 static void CheckIfTrainNeedsService(Train *v);
 static void CheckNextTrainTile(Train *v);
 
-static const uint8_t _vehicle_initial_x_fract[4] = {10, 8, 4,  8};
-static const uint8_t _vehicle_initial_y_fract[4] = { 8, 4, 8, 10};
+/** Initial x subtile coordinate of rail vehicles for each direction. */
+static constexpr DiagDirectionIndexArray<uint8_t> _vehicle_initial_x_fract{10, 8, 4,  8};
+/** Initial y subtile coordinate of rail vehicles for each direction. */
+static constexpr DiagDirectionIndexArray<uint8_t> _vehicle_initial_y_fract{ 8, 4, 8, 10};
 
 /** @copydoc IsValidImageIndex */
 template <>
@@ -498,7 +500,7 @@ int Train::GetDisplayImageWidth(Point *offset) const
 static SpriteID GetDefaultTrainSprite(uint8_t spritenum, Direction direction)
 {
 	assert(IsValidImageIndex<VehicleType::Train>(spritenum));
-	return ((direction + _engine_sprite_add[spritenum]) & _engine_sprite_and[spritenum]) + _engine_sprite_base[spritenum];
+	return ((to_underlying(direction) + _engine_sprite_add[spritenum]) & _engine_sprite_and[spritenum]) + _engine_sprite_base[spritenum];
 }
 
 /**
@@ -532,7 +534,7 @@ void Train::GetImage(Direction direction, EngineImageType image_type, VehicleSpr
 static void GetRailIcon(EngineID engine, bool rear_head, int &y, EngineImageType image_type, VehicleSpriteSeq *result)
 {
 	const Engine *e = Engine::Get(engine);
-	Direction dir = rear_head ? DIR_E : DIR_W;
+	Direction dir = rear_head ? Direction::E : Direction::W;
 	uint8_t spritenum = e->VehInfo<RailVehicleInfo>().image_index;
 
 	if (IsCustomVehicleSpriteNum(spritenum)) {
@@ -549,7 +551,7 @@ static void GetRailIcon(EngineID engine, bool rear_head, int &y, EngineImageType
 
 	if (rear_head) spritenum++;
 
-	result->Set(GetDefaultTrainSprite(spritenum, DIR_W));
+	result->Set(GetDefaultTrainSprite(spritenum, Direction::W));
 }
 
 void DrawTrainEngine(int left, int right, int preferred_x, int y, EngineID engine, PaletteID pal, EngineImageType image_type)
@@ -1538,13 +1540,13 @@ void Train::UpdateDeltaXY()
 	if (flipped) dir = ReverseDir(dir);
 
 	if (!IsDiagonalDirection(dir)) {
-		static const Point _sign_table[] = {
+		static constexpr DiagDirectionIndexArray<Point> _sign_table{{{
 			/* x, y */
-			{-1, -1}, // DIR_N
-			{-1,  1}, // DIR_E
-			{ 1,  1}, // DIR_S
-			{ 1, -1}, // DIR_W
-		};
+			{-1, -1}, // DiagDirection::N
+			{-1,  1}, // DiagDirection::E
+			{ 1,  1}, // DiagDirection::S
+			{ 1, -1}, // DiagDirection::W
+		}}};
 
 		int half_shorten = (VEHICLE_LENGTH - this->gcache.cached_veh_length + flipped) / 2;
 
@@ -1555,13 +1557,13 @@ void Train::UpdateDeltaXY()
 		switch (dir) {
 				/* Shorten southern corner of the bounding box according the vehicle length
 				 * and center the bounding box on the vehicle. */
-			case DIR_NE:
+			case Direction::NE:
 				this->bounds.origin.x = -(this->gcache.cached_veh_length + 1) / 2 + flip_offs;
 				this->bounds.extent.x = this->gcache.cached_veh_length;
 				this->bounds.offset.x = 1;
 				break;
 
-			case DIR_NW:
+			case Direction::NW:
 				this->bounds.origin.y = -(this->gcache.cached_veh_length + 1) / 2 + flip_offs;
 				this->bounds.extent.y = this->gcache.cached_veh_length;
 				this->bounds.offset.y = 1;
@@ -1569,13 +1571,13 @@ void Train::UpdateDeltaXY()
 
 				/* Move northern corner of the bounding box down according to vehicle length
 				 * and center the bounding box on the vehicle. */
-			case DIR_SW:
+			case Direction::SW:
 				this->bounds.origin.x = -(this->gcache.cached_veh_length) / 2 - flip_offs;
 				this->bounds.extent.x = this->gcache.cached_veh_length;
 				this->bounds.offset.x = 1 - (VEHICLE_LENGTH - this->gcache.cached_veh_length);
 				break;
 
-			case DIR_SE:
+			case Direction::SE:
 				this->bounds.origin.y = -(this->gcache.cached_veh_length) / 2 - flip_offs;
 				this->bounds.extent.y = this->gcache.cached_veh_length;
 				this->bounds.offset.y = 1 - (VEHICLE_LENGTH - this->gcache.cached_veh_length);
@@ -1829,12 +1831,11 @@ void UpdateLevelCrossing(TileIndex tile, bool sound, bool force_bar)
 
 	bool forced_state = force_bar;
 
-	const Axis axis = GetCrossingRoadAxis(tile);
-	const DiagDirection dir1 = AxisToDiagDir(axis);
-	const DiagDirection dir2 = ReverseDiagDir(dir1);
+	Axis axis = GetCrossingRoadAxis(tile);
+	DiagDirections diagdirs = AxisToDiagDirs(axis);
 
 	/* Check if an adjacent crossing is barred. */
-	for (DiagDirection dir : { dir1, dir2 }) {
+	for (DiagDirection dir : diagdirs) {
 		for (TileIndex t = tile; !forced_state && t < Map::Size() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == axis; t = TileAddByDiagDir(t, dir)) {
 			forced_state |= CheckLevelCrossing(t);
 		}
@@ -1843,7 +1844,7 @@ void UpdateLevelCrossing(TileIndex tile, bool sound, bool force_bar)
 	/* Now that we know whether all tiles in this crossing should be barred or open,
 	 * we need to update those tiles. We start with the tile itself, then look along the road axis. */
 	UpdateLevelCrossingTile(tile, sound, forced_state);
-	for (DiagDirection dir : { dir1, dir2 }) {
+	for (DiagDirection dir : diagdirs) {
 		for (TileIndex t = TileAddByDiagDir(tile, dir); t < Map::Size() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == axis; t = TileAddByDiagDir(t, dir)) {
 			UpdateLevelCrossingTile(t, sound, forced_state);
 		}
@@ -1857,9 +1858,7 @@ void UpdateLevelCrossing(TileIndex tile, bool sound, bool force_bar)
  */
 void MarkDirtyAdjacentLevelCrossingTiles(TileIndex tile, Axis road_axis)
 {
-	const DiagDirection dir1 = AxisToDiagDir(road_axis);
-	const DiagDirection dir2 = ReverseDiagDir(dir1);
-	for (DiagDirection dir : { dir1, dir2 }) {
+	for (DiagDirection dir : AxisToDiagDirs(road_axis)) {
 		const TileIndex t = TileAddByDiagDir(tile, dir);
 		if (t < Map::Size() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == road_axis) {
 			MarkTileDirtyByTile(t);
@@ -1874,9 +1873,7 @@ void MarkDirtyAdjacentLevelCrossingTiles(TileIndex tile, Axis road_axis)
  */
 void UpdateAdjacentLevelCrossingTilesOnLevelCrossingRemoval(TileIndex tile, Axis road_axis)
 {
-	const DiagDirection dir1 = AxisToDiagDir(road_axis);
-	const DiagDirection dir2 = ReverseDiagDir(dir1);
-	for (DiagDirection dir : { dir1, dir2 }) {
+	for (DiagDirection dir : AxisToDiagDirs(road_axis)) {
 		const TileIndexDiff diff = TileOffsByDiagDir(dir);
 		bool occupied = false;
 		for (TileIndex t = tile + diff; t < Map::Size() && IsLevelCrossingTile(t) && GetCrossingRoadAxis(t) == road_axis; t += diff) {
@@ -2092,7 +2089,7 @@ static void ReverseTrainDirection(Train *consist)
 	/* VehicleExitDir does not always produce the desired dir for depots and
 	 * tunnels/bridges that is needed for UpdateSignalsOnSegment. */
 	DiagDirection dir = VehicleExitDir(moving_front->GetMovingDirection(), moving_front->track);
-	if (IsRailDepotTile(moving_front->tile) || IsTileType(moving_front->tile, TileType::TunnelBridge)) dir = INVALID_DIAGDIR;
+	if (IsRailDepotTile(moving_front->tile) || IsTileType(moving_front->tile, TileType::TunnelBridge)) dir = DiagDirection::Invalid;
 
 	if (UpdateSignalsOnSegment(moving_front->tile, dir, consist->owner) == SIGSEG_PBS || _settings_game.pf.reserve_paths) {
 		/* If we are currently on a tile with conventional signals, we can't treat the
@@ -2371,14 +2368,14 @@ static bool CheckTrainStayInDepot(Train *v)
 
 		v->wait_counter = 0;
 
-		seg_state = _settings_game.pf.reserve_paths ? SIGSEG_PBS : UpdateSignalsOnSegment(v->tile, INVALID_DIAGDIR, v->owner);
+		seg_state = _settings_game.pf.reserve_paths ? SIGSEG_PBS : UpdateSignalsOnSegment(v->tile, DiagDirection::Invalid, v->owner);
 		if (seg_state == SIGSEG_FULL || HasDepotReservation(v->tile)) {
 			/* Full and no PBS signal in block or depot reserved, can't exit. */
 			SetWindowClassesDirty(WindowClass::TrainList);
 			return true;
 		}
 	} else {
-		seg_state = _settings_game.pf.reserve_paths ? SIGSEG_PBS : UpdateSignalsOnSegment(v->tile, INVALID_DIAGDIR, v->owner);
+		seg_state = _settings_game.pf.reserve_paths ? SIGSEG_PBS : UpdateSignalsOnSegment(v->tile, DiagDirection::Invalid, v->owner);
 	}
 
 	/* We are leaving a depot, but have to go to the exact same one; re-enter. */
@@ -2411,7 +2408,7 @@ static bool CheckTrainStayInDepot(Train *v)
 
 	v->UpdateViewport(true, true);
 	v->UpdatePosition();
-	UpdateSignalsOnSegment(v->tile, INVALID_DIAGDIR, v->owner);
+	UpdateSignalsOnSegment(v->tile, DiagDirection::Invalid, v->owner);
 	v->UpdateAcceleration();
 	InvalidateWindowData(WindowClass::VehicleDepot, v->tile);
 
@@ -2526,15 +2523,6 @@ void FreeTrainTrackReservation(const Train *consist)
 
 	UpdateSignalsInBuffer();
 }
-
-static const uint8_t _initial_tile_subcoord[6][4][3] = {
-{{ 15, 8, 1 }, { 0, 0, 0 }, { 0, 8, 5 }, { 0,  0, 0 }},
-{{  0, 0, 0 }, { 8, 0, 3 }, { 0, 0, 0 }, { 8, 15, 7 }},
-{{  0, 0, 0 }, { 7, 0, 2 }, { 0, 7, 6 }, { 0,  0, 0 }},
-{{ 15, 8, 2 }, { 0, 0, 0 }, { 0, 0, 0 }, { 8, 15, 6 }},
-{{ 15, 7, 0 }, { 8, 0, 4 }, { 0, 0, 0 }, { 0,  0, 0 }},
-{{  0, 0, 0 }, { 0, 0, 0 }, { 0, 8, 4 }, { 7, 15, 0 }},
-};
 
 /**
  * Perform pathfinding for a train.
@@ -2895,8 +2883,8 @@ static Track ChooseTrainTrack(Train *consist, TileIndex tile, DiagDirection ente
 	while (!IsSafeWaitingPosition(consist, res_dest.tile, res_dest.trackdir, true, _settings_game.pf.forbid_90_deg)) {
 		/* Extend reservation until we have found a safe position. */
 		DiagDirection exitdir = TrackdirToExitdir(res_dest.trackdir);
-		TileIndex     next_tile = TileAddByDiagDir(res_dest.tile, exitdir);
-		TrackBits reachable = TrackStatusToTrackBits(GetTileTrackStatus(next_tile, TRANSPORT_RAIL, RoadTramType::Invalid)) & DiagdirReachesTracks(exitdir);
+		TileIndex next_tile = TileAddByDiagDir(res_dest.tile, exitdir);
+		TrackBits reachable = TrackdirBitsToTrackBits(GetTileTrackStatus(next_tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs) & DiagdirReachesTracks(exitdir);
 		if (Rail90DegTurnDisallowed(GetTileRailType(res_dest.tile), GetTileRailType(next_tile))) {
 			reachable &= ~TrackCrossesTracks(TrackdirToTrack(res_dest.trackdir));
 		}
@@ -2997,8 +2985,8 @@ bool TryPathReserve(Train *consist, bool mark_as_stuck, bool first_tile_okay)
 	}
 
 	DiagDirection exitdir = TrackdirToExitdir(origin.trackdir);
-	TileIndex     new_tile = TileAddByDiagDir(origin.tile, exitdir);
-	TrackBits     reachable = TrackdirBitsToTrackBits(TrackStatusToTrackdirBits(GetTileTrackStatus(new_tile, TRANSPORT_RAIL, RoadTramType::Invalid)) & DiagdirReachesTrackdirs(exitdir));
+	TileIndex new_tile = TileAddByDiagDir(origin.tile, exitdir);
+	TrackBits reachable = TrackdirBitsToTrackBits(GetTileTrackStatus(new_tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs & DiagdirReachesTrackdirs(exitdir));
 
 	if (Rail90DegTurnDisallowed(GetTileRailType(origin.tile), GetTileRailType(new_tile))) reachable &= ~TrackCrossesTracks(TrackdirToTrack(origin.trackdir));
 
@@ -3365,7 +3353,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 
 	/* For every vehicle after and including the given vehicle */
 	for (prev = v->GetMovingPrev(); v != nomove; prev = v, v = v->GetMovingNext()) {
-		DiagDirection enterdir = DIAGDIR_BEGIN;
+		DiagDirection enterdir = DiagDirection::Begin;
 		bool update_signals_crossing = false; // will we update signals or crossing state?
 
 		GetNewVehiclePosResult gp = GetNewVehiclePos(v);
@@ -3404,8 +3392,8 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 				TrackStatus ts = GetTileTrackStatus(gp.new_tile, TRANSPORT_RAIL, RoadTramType::Invalid, ReverseDiagDir(enterdir));
 				TrackdirBits reachable_trackdirs = DiagdirReachesTrackdirs(enterdir);
 
-				TrackdirBits trackdirbits = TrackStatusToTrackdirBits(ts) & reachable_trackdirs;
-				TrackBits red_signals = TrackdirBitsToTrackBits(TrackStatusToRedSignals(ts) & reachable_trackdirs);
+				TrackdirBits trackdirbits = ts.trackdirs & reachable_trackdirs;
+				TrackBits red_signals = TrackdirBitsToTrackBits(ts.signals & reachable_trackdirs);
 
 				TrackBits bits = TrackdirBitsToTrackBits(trackdirbits);
 				if (Rail90DegTurnDisallowed(GetTileRailType(gp.old_tile), GetTileRailType(gp.new_tile)) && prev == nullptr) {
@@ -3514,12 +3502,12 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 						 *  2) some orientations of tunnel entries, where the vehicle is already inside the wormhole at 8/16 from the tile edge.
 						 *     Is also the train just reversing, the wagon inside the tunnel is 'on' the tile of the opposite tunnel entry.
 						 */
-						static const TrackBits _connecting_track[DIAGDIR_END][DIAGDIR_END] = {
+						static const DiagDirectionIndexArray<DiagDirectionIndexArray<TrackBits>> _connecting_track{{{
 							{TRACK_BIT_X,     TRACK_BIT_LOWER, TRACK_BIT_NONE,  TRACK_BIT_LEFT },
 							{TRACK_BIT_UPPER, TRACK_BIT_Y,     TRACK_BIT_LEFT,  TRACK_BIT_NONE },
 							{TRACK_BIT_NONE,  TRACK_BIT_RIGHT, TRACK_BIT_X,     TRACK_BIT_UPPER},
 							{TRACK_BIT_RIGHT, TRACK_BIT_NONE,  TRACK_BIT_LOWER, TRACK_BIT_Y    }
-						};
+						}}};
 						DiagDirection exitdir = DiagdirBetweenTiles(gp.new_tile, prev->tile);
 						assert(IsValidDiagDirection(exitdir));
 						chosen_track = _connecting_track[enterdir][exitdir];
@@ -3527,17 +3515,8 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 					chosen_track &= bits;
 				}
 
-				/* Make sure chosen track is a valid track */
-				assert(
-						chosen_track == TRACK_BIT_X     || chosen_track == TRACK_BIT_Y ||
-						chosen_track == TRACK_BIT_UPPER || chosen_track == TRACK_BIT_LOWER ||
-						chosen_track == TRACK_BIT_LEFT  || chosen_track == TRACK_BIT_RIGHT);
-
 				/* Update XY to reflect the entrance to the new tile, and select the direction to use */
-				const uint8_t *b = _initial_tile_subcoord[FindFirstBit(chosen_track)][enterdir];
-				gp.x = (gp.x & ~0xF) | b[0];
-				gp.y = (gp.y & ~0xF) | b[1];
-				Direction chosen_dir = (Direction)b[2];
+				Direction chosen_dir = VehicleEnterTileCoordinates(gp, enterdir, TrackBitsToTrack(chosen_track));
 
 				/* Call the landscape function and tell it that the vehicle entered the tile */
 				auto vets = VehicleEnterTile(v, gp.new_tile, gp.x, gp.y);
@@ -3769,7 +3748,7 @@ static void DeleteLastWagon(Train *v)
 
 	/* Update signals */
 	if (IsTileType(tile, TileType::TunnelBridge) || IsRailDepotTile(tile)) {
-		UpdateSignalsOnSegment(tile, INVALID_DIAGDIR, owner);
+		UpdateSignalsOnSegment(tile, DiagDirection::Invalid, owner);
 	} else {
 		SetSignalsOnBothDir(tile, track, owner);
 	}
@@ -3870,13 +3849,13 @@ static bool TrainApproachingLineEnd(Train *moving_front, bool signal, bool rever
 	/* for diagonal directions, 'x' will be 0..15 -
 	 * for other directions, it will be 1, 3, 5, ..., 15 */
 	switch (vdir) {
-		case DIR_N : x = ~x + ~y + 25; break;
-		case DIR_NW: x = y;            [[fallthrough]];
-		case DIR_NE: x = ~x + 16;      break;
-		case DIR_E : x = ~x + y + 9;   break;
-		case DIR_SE: x = y;            break;
-		case DIR_S : x = x + y - 7;    break;
-		case DIR_W : x = ~y + x + 9;   break;
+		case Direction::N : x = ~x + ~y + 25; break;
+		case Direction::NW: x = y;            [[fallthrough]];
+		case Direction::NE: x = ~x + 16;      break;
+		case Direction::E : x = ~x + y + 9;   break;
+		case Direction::SE: x = y;            break;
+		case Direction::S : x = x + y - 7;    break;
+		case Direction::W : x = ~y + x + 9;   break;
 		default: break;
 	}
 
@@ -3992,8 +3971,8 @@ static bool TrainCheckIfLineEnds(Train *moving_front, bool reverse)
 	TrackStatus ts = GetTileTrackStatus(tile, TRANSPORT_RAIL, RoadTramType::Invalid, ReverseDiagDir(dir));
 	TrackdirBits reachable_trackdirs = DiagdirReachesTrackdirs(dir);
 
-	TrackdirBits trackdirbits = TrackStatusToTrackdirBits(ts) & reachable_trackdirs;
-	TrackdirBits red_signals = TrackStatusToRedSignals(ts) & reachable_trackdirs;
+	TrackdirBits trackdirbits = ts.trackdirs & reachable_trackdirs;
+	TrackdirBits red_signals = ts.signals & reachable_trackdirs;
 
 	/* We are sure the train is not entering a depot, it is detected above */
 
@@ -4059,7 +4038,7 @@ static bool TrainLocoHandler(Train *consist, bool mode)
 		 * when an overlength train gets turned around in a station. */
 		const Train *moving_front = consist->GetMovingFront();
 		DiagDirection dir = VehicleExitDir(moving_front->GetMovingDirection(), moving_front->track);
-		if (IsRailDepotTile(moving_front->tile) || IsTileType(moving_front->tile, TileType::TunnelBridge)) dir = INVALID_DIAGDIR;
+		if (IsRailDepotTile(moving_front->tile) || IsTileType(moving_front->tile, TileType::TunnelBridge)) dir = DiagDirection::Invalid;
 
 		if (UpdateSignalsOnSegment(moving_front->tile, dir, consist->owner) == SIGSEG_PBS || _settings_game.pf.reserve_paths) {
 			TryPathReserve(consist, true, true);
