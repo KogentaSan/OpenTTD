@@ -78,7 +78,7 @@ size_t ObjectSpec::Count()
 bool ObjectSpec::IsEverAvailable() const
 {
 	return this->IsEnabled() && this->climate.Test(_settings_game.game_creation.landscape) &&
-			!this->flags.Test((_game_mode != GM_EDITOR && !_generating_world) ? ObjectFlag::OnlyInScenedit : ObjectFlag::OnlyInGame);
+			!this->flags.Test((_game_mode != GameMode::Editor && !_generating_world) ? ObjectFlag::OnlyInScenedit : ObjectFlag::OnlyInGame);
 }
 
 /**
@@ -464,7 +464,7 @@ static void DrawTileLayout(const TileInfo *ti, const DrawTileSpriteSpan &dts, co
 		}
 	}
 
-	DrawNewGRFTileSeq(ti, &dts, TO_STRUCTURES, 0, palette);
+	DrawNewGRFTileSeq(ti, &dts, TransparencyOption::Structures, 0, palette);
 }
 
 /**

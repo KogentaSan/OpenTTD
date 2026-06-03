@@ -78,7 +78,7 @@ inline bool IsStraightRoad(RoadBits r)
 inline RoadBits DiagDirToRoadBits(DiagDirection d)
 {
 	assert(IsValidDiagDirection(d));
-	return static_cast<RoadBits>(RoadBits{RoadBit::NW}.base() << (3 ^ d));
+	return static_cast<RoadBits>(RoadBits{RoadBit::NW}.base() << (3 ^ to_underlying(d)));
 }
 
 /**
@@ -128,7 +128,7 @@ inline bool HasRoadCatenary(RoadType roadtype)
  */
 inline bool HasRoadCatenaryDrawn(RoadType roadtype)
 {
-	return HasRoadCatenary(roadtype) && !IsInvisibilitySet(TO_CATENARY);
+	return HasRoadCatenary(roadtype) && !IsInvisibilitySet(TransparencyOption::Catenary);
 }
 
 bool HasRoadTypeAvail(CompanyID company, RoadType roadtype);

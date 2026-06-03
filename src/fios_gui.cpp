@@ -360,13 +360,13 @@ private:
 	static void SaveGameConfirmationCallback(Window *, bool confirmed)
 	{
 		/* File name has already been written to _file_to_saveload */
-		if (confirmed) _switch_mode = SM_SAVE_GAME;
+		if (confirmed) _switch_mode = SwitchMode::SaveGame;
 	}
 
 	static void SaveHeightmapConfirmationCallback(Window *, bool confirmed)
 	{
 		/* File name has already been written to _file_to_saveload */
-		if (confirmed) _switch_mode = SM_SAVE_HEIGHTMAP;
+		if (confirmed) _switch_mode = SwitchMode::SaveHeightmap;
 	}
 
 	static void DeleteFileConfirmationCallback(Window *window, bool confirmed)
@@ -457,7 +457,7 @@ public:
 
 		/* pause is only used in single-player, non-editor mode, non-menu mode. It
 		 * will be unpaused in the WE_DESTROY event handler. */
-		if (_game_mode != GM_MENU && !_networking && _game_mode != GM_EDITOR) {
+		if (_game_mode != GameMode::Menu && !_networking && _game_mode != GameMode::Editor) {
 			Command<Commands::Pause>::Post(PauseMode::SaveLoad, true);
 		}
 		SetObjectToPlace(SPR_CURSOR_ZZZ, PAL_NONE, HT_NONE, WindowClass::MainWindow, 0);
@@ -500,7 +500,7 @@ public:
 	void Close([[maybe_unused]] int data = 0) override
 	{
 		/* pause is only used in single-player, non-editor mode, non menu mode */
-		if (!_networking && _game_mode != GM_EDITOR && _game_mode != GM_MENU) {
+		if (!_networking && _game_mode != GameMode::Editor && _game_mode != GameMode::Menu) {
 			Command<Commands::Pause>::Post(PauseMode::SaveLoad, false);
 		}
 		this->Window::Close();
@@ -718,7 +718,7 @@ public:
 					this->Close();
 					LoadTownData();
 				} else if (!_load_check_data.HasNewGrfs() || _load_check_data.grf_compatibility != GRFListCompatibility::NotFound || _settings_client.gui.UserIsAllowedToChangeNewGRFs()) {
-					_switch_mode = (_game_mode == GM_EDITOR) ? SM_LOAD_SCENARIO : SM_LOAD_GAME;
+					_switch_mode = (_game_mode == GameMode::Editor) ? SwitchMode::LoadScenario : SwitchMode::LoadGame;
 					ClearErrorMessages();
 					this->Close();
 				}
@@ -853,7 +853,7 @@ public:
 					ShowQuery(GetEncodedString(STR_SAVELOAD_OVERWRITE_TITLE), GetEncodedString(STR_SAVELOAD_OVERWRITE_WARNING),
 							this, SaveLoadWindow::SaveGameConfirmationCallback);
 				} else {
-					_switch_mode = SM_SAVE_GAME;
+					_switch_mode = SwitchMode::SaveGame;
 				}
 			} else {
 				_file_to_saveload.name = FiosMakeHeightmapName(this->filename_editbox.text.GetText());
@@ -861,12 +861,12 @@ public:
 					ShowQuery(GetEncodedString(STR_SAVELOAD_OVERWRITE_TITLE), GetEncodedString(STR_SAVELOAD_OVERWRITE_WARNING),
 							this, SaveLoadWindow::SaveHeightmapConfirmationCallback);
 				} else {
-					_switch_mode = SM_SAVE_HEIGHTMAP;
+					_switch_mode = SwitchMode::SaveHeightmap;
 				}
 			}
 
 			/* In the editor set up the vehicle engines correctly (date might have changed) */
-			if (_game_mode == GM_EDITOR) StartupEngines();
+			if (_game_mode == GameMode::Editor) StartupEngines();
 		}
 	}
 

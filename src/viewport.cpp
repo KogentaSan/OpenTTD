@@ -1403,7 +1403,7 @@ static void ViewportAddSignStrings(DrawPixelInfo *dpi, const std::vector<const S
 	ViewportStringFlags deity_flags{ flags };
 	deity_flags.Set(ViewportStringFlag::TextColour);
 
-	flags.Set(IsTransparencySet(TO_SIGNS) ? ViewportStringFlag::TransparentRect : ViewportStringFlag::ColourRect);
+	flags.Set(IsTransparencySet(TransparencyOption::Signs) ? ViewportStringFlag::TransparentRect : ViewportStringFlag::ColourRect);
 
 	for (const Sign *si : signs) {
 		/* Workaround to make sure white is actually white. The string drawing logic changes all
@@ -1427,7 +1427,7 @@ static void ViewportAddSignStrings(DrawPixelInfo *dpi, const std::vector<const S
 static void ViewportAddStationStrings(DrawPixelInfo *dpi, const std::vector<const BaseStation *> &stations, bool small)
 {
 	/* Transparent station signs have colour text instead of a colour panel. */
-	ViewportStringFlags flags{IsTransparencySet(TO_SIGNS) ? ViewportStringFlag::TextColour : ViewportStringFlag::ColourRect};
+	ViewportStringFlags flags{IsTransparencySet(TransparencyOption::Signs) ? ViewportStringFlag::TextColour : ViewportStringFlag::ColourRect};
 	if (small) flags.Set(ViewportStringFlag::Small);
 
 	for (const BaseStation *st : stations) {
@@ -1447,10 +1447,10 @@ static void ViewportAddKdtreeSigns(DrawPixelInfo *dpi)
 	Rect search_rect{ dpi->left, dpi->top, dpi->left + dpi->width, dpi->top + dpi->height };
 	search_rect = ExpandRectWithViewportSignMargins(search_rect, dpi->zoom);
 
-	bool show_stations = _display_opt.Test(DisplayOption::ShowStationNames) && _game_mode != GM_MENU;
-	bool show_waypoints = _display_opt.Test(DisplayOption::ShowWaypointNames) && _game_mode != GM_MENU;
-	bool show_towns = _display_opt.Test(DisplayOption::ShowTownNames) && _game_mode != GM_MENU;
-	bool show_signs = _display_opt.Test(DisplayOption::ShowSigns) && !IsInvisibilitySet(TO_SIGNS);
+	bool show_stations = _display_opt.Test(DisplayOption::ShowStationNames) && _game_mode != GameMode::Menu;
+	bool show_waypoints = _display_opt.Test(DisplayOption::ShowWaypointNames) && _game_mode != GameMode::Menu;
+	bool show_towns = _display_opt.Test(DisplayOption::ShowTownNames) && _game_mode != GameMode::Menu;
+	bool show_signs = _display_opt.Test(DisplayOption::ShowSigns) && !IsInvisibilitySet(TransparencyOption::Signs);
 	bool show_competitors = _display_opt.Test(DisplayOption::ShowCompetitorSigns);
 
 	/* Collect all the items first and draw afterwards, to ensure layering */
@@ -1518,7 +1518,7 @@ static void ViewportAddKdtreeSigns(DrawPixelInfo *dpi)
 	ViewportAddTownStrings(dpi, towns, small);
 
 	/* Do not draw signs nor station names if they are set invisible */
-	if (IsInvisibilitySet(TO_SIGNS)) return;
+	if (IsInvisibilitySet(TransparencyOption::Signs)) return;
 
 	ViewportAddSignStrings(dpi, signs, small);
 	ViewportAddStationStrings(dpi, stations, small);
@@ -2286,7 +2286,7 @@ static bool CheckClickOnViewportSign(const Viewport &vp, int x, int y, const Vie
  */
 static bool CheckClickOnViewportSign(const Viewport &vp, int x, int y)
 {
-	if (_game_mode == GM_MENU) return false;
+	if (_game_mode == GameMode::Menu) return false;
 
 	x = ScaleByZoom(x - vp.left, vp.zoom) + vp.virtual_left;
 	y = ScaleByZoom(y - vp.top, vp.zoom) + vp.virtual_top;
@@ -2294,10 +2294,10 @@ static bool CheckClickOnViewportSign(const Viewport &vp, int x, int y)
 	Rect search_rect{ x - 1, y - 1, x + 1, y + 1 };
 	search_rect = ExpandRectWithViewportSignMargins(search_rect, vp.zoom);
 
-	bool show_stations = _display_opt.Test(DisplayOption::ShowStationNames) && !IsInvisibilitySet(TO_SIGNS);
-	bool show_waypoints = _display_opt.Test(DisplayOption::ShowWaypointNames) && !IsInvisibilitySet(TO_SIGNS);
+	bool show_stations = _display_opt.Test(DisplayOption::ShowStationNames) && !IsInvisibilitySet(TransparencyOption::Signs);
+	bool show_waypoints = _display_opt.Test(DisplayOption::ShowWaypointNames) && !IsInvisibilitySet(TransparencyOption::Signs);
 	bool show_towns = _display_opt.Test(DisplayOption::ShowTownNames);
-	bool show_signs = _display_opt.Test(DisplayOption::ShowSigns) && !IsInvisibilitySet(TO_SIGNS);
+	bool show_signs = _display_opt.Test(DisplayOption::ShowSigns) && !IsInvisibilitySet(TransparencyOption::Signs);
 	bool show_competitors = _display_opt.Test(DisplayOption::ShowCompetitorSigns);
 
 	/* Topmost of each type that was hit */
@@ -2891,7 +2891,7 @@ static void VpStartPreSizing()
  * @param direction The rough direction the drag has been made in.
  * @return The highlight style of the first tile.
  * @note Depending on where on the start tile the click was, and some hysterasis, the
- *       direction for dragging to the east could be either DIAGDIR_NE or DIAGDIR_SE.
+ *       direction for dragging to the east could be either DiagDirection::NE or DiagDirection::SE.
  */
 static HighLightStyle Check2x1AutoRail(DiagDirection direction)
 {
@@ -2902,22 +2902,22 @@ static HighLightStyle Check2x1AutoRail(DiagDirection direction)
 
 	switch (direction) {
 		default: NOT_REACHED();
-		case DIAGDIR_SE: // end piece is lower right
+		case DiagDirection::SE: // end piece is lower right
 			if (fxpy >= 20 && sxpy <= 12) return HT_DIR_HL;
 			if (fxmy < -3 && sxmy > 3) return HT_DIR_VR;
 			return HT_DIR_Y;
 
-		case DIAGDIR_NW:
+		case DiagDirection::NW:
 			if (fxmy > 3 && sxmy < -3) return HT_DIR_VL;
 			if (fxpy <= 12 && sxpy >= 20) return HT_DIR_HU;
 			return HT_DIR_Y;
 
-		case DIAGDIR_SW:
+		case DiagDirection::SW:
 			if (fxmy > 3 && sxmy < -3) return HT_DIR_VL;
 			if (fxpy >= 20 && sxpy <= 12) return HT_DIR_HL;
 			return HT_DIR_X;
 
-		case DIAGDIR_NE:
+		case DiagDirection::NE:
 			if (fxmy < -3 && sxmy > 3) return HT_DIR_VR;
 			if (fxpy <= 12 && sxpy >= 20) return HT_DIR_HU;
 			return HT_DIR_X;
@@ -2927,10 +2927,10 @@ static HighLightStyle Check2x1AutoRail(DiagDirection direction)
 /**
  * Check if the direction of start and end tile should be swapped based on
  * the dragging-style. Default directions are:
- * in the case of a line (HT_RAIL, HT_LINE):  DIR_NE, DIR_NW, DIR_N, DIR_E
- * in the case of a rect (HT_RECT, HT_POINT): DIR_S, DIR_E
+ * in the case of a line (HT_RAIL, HT_LINE):  Direction::NE, Direction::NW, Direction::N, Direction::E
+ * in the case of a rect (HT_RECT, HT_POINT): Direction::S, Direction::E
  * For example dragging a rectangle area from south to north should be swapped to
- * north-south (DIR_S) to obtain the same results with less code. This is what
+ * north-south (Direction::S) to obtain the same results with less code. This is what
  * the return value signifies.
  * @param style HighLightStyle dragging style
  * @param start_tile start tile of drag
@@ -2985,11 +2985,11 @@ static int CalcHeightdiff(HighLightStyle style, uint distance, TileIndex start_t
 			 * east by checking the X-coordinates of the tiles */
 			if (TileX(end_tile) > TileX(start_tile)) {
 				/* Dragging south does not need to change the start tile. */
-				end_tile = TileAddByDir(end_tile, DIR_S);
+				end_tile = TileAddByDir(end_tile, Direction::S);
 			} else {
 				/* Dragging east. */
-				start_tile = TileAddByDir(start_tile, DIR_SW);
-				end_tile = TileAddByDir(end_tile, DIR_SE);
+				start_tile = TileAddByDir(start_tile, Direction::SW);
+				end_tile = TileAddByDir(end_tile, Direction::SE);
 			}
 			[[fallthrough]];
 
@@ -3193,18 +3193,18 @@ static void CalcRaildirsDrawstyle(int x, int y, int method)
 		}
 	} else if (h == TILE_SIZE) { // Is this in X direction?
 		if (dx == (int)TILE_SIZE) { // 2x1 special handling
-			b = Check2x1AutoRail(DIAGDIR_NE) | HT_LINE;
+			b = Check2x1AutoRail(DiagDirection::NE) | HT_LINE;
 		} else if (dx == -(int)TILE_SIZE) {
-			b = Check2x1AutoRail(DIAGDIR_SW) | HT_LINE;
+			b = Check2x1AutoRail(DiagDirection::SW) | HT_LINE;
 		} else {
 			b = HT_LINE | HT_DIR_X;
 		}
 		y = _thd.selstart.y;
 	} else if (w == TILE_SIZE) { // Or Y direction?
 		if (dy == (int)TILE_SIZE) { // 2x1 special handling
-			b = Check2x1AutoRail(DIAGDIR_NW) | HT_LINE;
+			b = Check2x1AutoRail(DiagDirection::NW) | HT_LINE;
 		} else if (dy == -(int)TILE_SIZE) { // 2x1 other direction
-			b = Check2x1AutoRail(DIAGDIR_SE) | HT_LINE;
+			b = Check2x1AutoRail(DiagDirection::SE) | HT_LINE;
 		} else {
 			b = HT_LINE | HT_DIR_Y;
 		}

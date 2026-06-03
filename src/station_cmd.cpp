@@ -828,7 +828,7 @@ CommandCost CheckBuildableTile(TileIndex tile, DiagDirections invalid_dirs, int 
 	int flat_z = z + GetSlopeMaxZ(tileh);
 	if (tileh != SLOPE_FLAT) {
 		/* Forbid building if the tile faces a slope in a invalid direction. */
-		for (DiagDirection dir = DIAGDIR_BEGIN; dir != DIAGDIR_END; dir++) {
+		for (DiagDirection dir = DiagDirection::Begin; dir != DiagDirection::End; dir++) {
 			if (invalid_dirs.Test(dir) && !CanBuildDepotByTileh(dir, tileh)) {
 				return CommandCost(STR_ERROR_FLAT_LAND_REQUIRED);
 			}
@@ -1048,12 +1048,9 @@ static CommandCost CheckFlatLandRailStation(TileIndex tile_cur, TileIndex north_
 
 			/* The current rail type must have power on the to-be-built type (e.g. convert normal rail to electrified rail). */
 			if (HasPowerOnRail(GetRailType(tile_cur), rt)) {
-				TrackBits tracks = GetTrackBits(tile_cur);
-				Track track = RemoveFirstTrack(&tracks);
-				Track expected_track = invalid_dirs.Test(DIAGDIR_NE) ? TRACK_X : TRACK_Y;
-
 				/* The existing track must align with the desired station axis. */
-				if (tracks == TRACK_BIT_NONE && track == expected_track) {
+				Track track = AxisToTrack(axis);
+				if (GetTrackBits(tile_cur) == TrackToTrackBits(track)) {
 					/* Check for trains having a reservation for this tile. */
 					if (HasBit(GetRailReservationTrackBits(tile_cur), track)) {
 						Train *v = GetTrainForReservation(tile_cur, track);
@@ -1516,7 +1513,7 @@ CommandCost CmdBuildRailStation(DoCommandFlags flags, TileIndex tile_org, RailTy
 
 			StationGfx gfx = *it + to_underlying(axis);
 			if (statspec != nullptr) {
-				uint32_t platinfo = GetPlatformInfo(Axis::X, gfx, plat_len, numtracks, j, i, false);
+				uint32_t platinfo = GetPlatformInfo(gfx, numtracks, plat_len, i, j, false);
 				/* As the station is not yet completely finished, the station does not yet exist. */
 				uint16_t callback = GetStationCallback(CBID_STATION_BUILD_TILE_LAYOUT, platinfo, 0, statspec, nullptr, INVALID_TILE);
 				if (callback != CALLBACK_FAILED && callback <= UINT8_MAX) gfx = (callback & ~1) + to_underlying(axis);
@@ -1591,8 +1588,7 @@ CommandCost CmdBuildRailStation(DoCommandFlags flags, TileIndex tile_org, RailTy
 				SetAnimationFrame(tile, 0);
 
 				if (statspec != nullptr) {
-					/* Use a fixed axis for GetPlatformInfo as our platforms / numtracks are always the right way around */
-					uint32_t platinfo = GetPlatformInfo(Axis::X, GetStationGfx(tile), plat_len, numtracks, j, i, false);
+					uint32_t platinfo = GetPlatformInfo(*it + to_underlying(axis), numtracks, plat_len, i, j, false);
 
 					/* As the station is not yet completely finished, the station does not yet exist. */
 					uint16_t callback = GetStationCallback(CBID_STATION_BUILD_TILE_LAYOUT, platinfo, 0, statspec, nullptr, tile);
@@ -2038,13 +2034,7 @@ static CommandCost FindJoiningRoadStop(StationID existing_stop, StationID statio
  */
 CommandCost CalculateRoadStopCost(TileArea tile_area, DoCommandFlags flags, bool is_drive_through, StationType station_type, const RoadStopSpec *roadstopspec, Axis axis, DiagDirection ddir, StationID *station, RoadType rt, Money unit_cost)
 {
-	DiagDirections invalid_dirs{};
-	if (is_drive_through) {
-		invalid_dirs.Set(AxisToDiagDir(axis));
-		invalid_dirs.Set(ReverseDiagDir(AxisToDiagDir(axis)));
-	} else {
-		invalid_dirs.Set(ddir);
-	}
+	DiagDirections invalid_dirs = is_drive_through ? AxisToDiagDirs(axis) : ddir;
 
 	/* Check every tile in the area. */
 	int allowed_z = -1;
@@ -2574,7 +2564,7 @@ Town *AirportGetNearestTown(const AirportSpec *as, Direction rotation, TileIndex
 
 	auto width = as->size_x;
 	auto height = as->size_y;
-	if (rotation == DIR_E || rotation == DIR_W) std::swap(width, height);
+	if (rotation == Direction::E || rotation == Direction::W) std::swap(width, height);
 
 	uint perimeter_min_x = TileX(tile);
 	uint perimeter_min_y = TileY(tile);
@@ -2660,7 +2650,7 @@ CommandCost CmdBuildAirport(DoCommandFlags flags, TileIndex tile, uint8_t airpor
 	Direction rotation = as->layouts[layout].rotation;
 	int w = as->size_x;
 	int h = as->size_y;
-	if (rotation == DIR_E || rotation == DIR_W) std::swap(w, h);
+	if (rotation == Direction::E || rotation == Direction::W) std::swap(w, h);
 	TileArea airport_area = TileArea(tile, w, h);
 
 	if (w > _settings_game.station.station_spread || h > _settings_game.station.station_spread) {
@@ -2888,14 +2878,17 @@ bool HasStationInUse(StationID station, bool include_company, CompanyID company)
 	return false;
 }
 
-static const TileIndexDiffC _dock_tileoffs_chkaround[] = {
+/** Offset of northern-most dock tile for each direction. */
+static constexpr DiagDirectionIndexArray<TileIndexDiffC> _dock_tileoffs_chkaround{{{
 	{-1,  0},
 	{ 0,  0},
 	{ 0,  0},
 	{ 0, -1}
-};
-static const uint8_t _dock_w_chk[4] = { 2, 1, 2, 1 };
-static const uint8_t _dock_h_chk[4] = { 1, 2, 1, 2 };
+}}};
+/** X dimension of dock for each direction.  */
+static constexpr DiagDirectionIndexArray<uint8_t> _dock_w_chk{2, 1, 2, 1};
+/** Y dimension of dock for each direction.  */
+static constexpr DiagDirectionIndexArray<uint8_t> _dock_h_chk{1, 2, 1, 2};
 
 /**
  * Build a dock/haven.
@@ -2914,7 +2907,7 @@ CommandCost CmdBuildDock(DoCommandFlags flags, TileIndex tile, StationID station
 	if (distant_join && (!_settings_game.station.distant_join_stations || !Station::IsValidID(station_to_join))) return CMD_ERROR;
 
 	DiagDirection direction = GetInclinedSlopeDirection(GetTileSlope(tile));
-	if (direction == INVALID_DIAGDIR) return CommandCost(STR_ERROR_SITE_UNSUITABLE);
+	if (direction == DiagDirection::Invalid) return CommandCost(STR_ERROR_SITE_UNSUITABLE);
 	direction = ReverseDiagDir(direction);
 
 	/* Docks cannot be placed on rapids */
@@ -2995,7 +2988,7 @@ CommandCost CmdBuildDock(DoCommandFlags flags, TileIndex tile, StationID station
 
 void RemoveDockingTile(TileIndex t)
 {
-	for (DiagDirection d = DIAGDIR_BEGIN; d != DIAGDIR_END; d++) {
+	for (DiagDirection d = DiagDirection::Begin; d != DiagDirection::End; d++) {
 		TileIndex tile = t + TileOffsByDiagDir(d);
 		if (!IsValidTile(tile)) continue;
 
@@ -3019,7 +3012,7 @@ void ClearDockingTilesCheckingNeighbours(TileIndex tile)
 	assert(IsValidTile(tile));
 
 	/* Clear and maybe re-set docking tile */
-	for (DiagDirection d = DIAGDIR_BEGIN; d != DIAGDIR_END; d++) {
+	for (DiagDirection d = DiagDirection::Begin; d != DiagDirection::End; d++) {
 		TileIndex docking_tile = tile + TileOffsByDiagDir(d);
 		if (!IsValidTile(docking_tile)) continue;
 
@@ -3042,7 +3035,7 @@ static TileIndex FindDockLandPart(TileIndex t)
 	StationGfx gfx = GetStationGfx(t);
 	if (gfx < GFX_DOCK_BASE_WATER_PART) return t;
 
-	for (DiagDirection d = DIAGDIR_BEGIN; d != DIAGDIR_END; d++) {
+	for (DiagDirection d = DiagDirection::Begin; d != DiagDirection::End; d++) {
 		TileIndex tile = t + TileOffsByDiagDir(d);
 		if (!IsValidTile(tile)) continue;
 		if (!IsDockTile(tile)) continue;
@@ -3442,7 +3435,7 @@ static void DrawTile_Station(TileInfo *ti)
 			DrawGroundSprite(image, PAL_NONE);
 			DrawGroundSprite(ground + overlay_offset, PAL_NONE);
 
-			if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation && HasStationReservation(ti->tile)) {
+			if (_game_mode != GameMode::Menu && _settings_client.gui.show_track_reservation && HasStationReservation(ti->tile)) {
 				SpriteID overlay = GetCustomRailSprite(rti, ti->tile, RailSpriteType::Overlay);
 				DrawGroundSprite(overlay + overlay_offset, PALETTE_CRASH);
 			}
@@ -3452,7 +3445,7 @@ static void DrawTile_Station(TileInfo *ti)
 			DrawGroundSprite(image, GroundSpritePaletteTransform(image, pal, palette));
 
 			/* PBS debugging, draw reserved tracks darker */
-			if (_game_mode != GM_MENU && _settings_client.gui.show_track_reservation && HasStationRail(ti->tile) && HasStationReservation(ti->tile)) {
+			if (_game_mode != GameMode::Menu && _settings_client.gui.show_track_reservation && HasStationRail(ti->tile) && HasStationReservation(ti->tile)) {
 				DrawGroundSprite(GetRailStationAxis(ti->tile) == Axis::X ? rti->base_sprites.single_x : rti->base_sprites.single_y, PALETTE_CRASH);
 			}
 		}
@@ -3527,7 +3520,7 @@ static void DrawTile_Station(TileInfo *ti)
 		total_offset = 0;
 	}
 
-	DrawRailTileSeq(ti, t, TO_BUILDINGS, total_offset, relocation, palette);
+	DrawRailTileSeq(ti, t, TransparencyOption::Buildings, total_offset, relocation, palette);
 	DrawBridgeMiddle(ti, GetStationBlockedPillars(bridgeable_info, GetStationGfx(ti->tile)));
 }
 
@@ -3724,11 +3717,11 @@ static TrackStatus GetTileTrackStatus_Station(TileIndex tile, TransportType mode
 
 				if (IsBayRoadStopTile(tile)) {
 					DiagDirection dir = GetBayRoadStopDir(tile);
-					if (side != INVALID_DIAGDIR && dir != side) break;
+					if (side != DiagDirection::Invalid && dir != side) break;
 					trackbits = DiagDirToDiagTrackBits(dir);
 				} else {
 					Axis axis = GetDriveThroughStopAxis(tile);
-					if (side != INVALID_DIAGDIR && axis != DiagDirToAxis(side)) break;
+					if (side != DiagDirection::Invalid && axis != DiagDirToAxis(side)) break;
 					trackbits = AxisToTrackBits(axis);
 				}
 			}
@@ -3738,7 +3731,7 @@ static TrackStatus GetTileTrackStatus_Station(TileIndex tile, TransportType mode
 			break;
 	}
 
-	return CombineTrackStatus(TrackBitsToTrackdirBits(trackbits), TRACKDIR_BIT_NONE);
+	return {TrackBitsToTrackdirBits(trackbits), TRACKDIR_BIT_NONE};
 }
 
 
@@ -3875,7 +3868,7 @@ static VehicleEnterTileStates VehicleEnterTile_Station(Vehicle *v, TileIndex til
 
 		if (DiagDirToAxis(dir) != Axis::X) std::swap(x, y);
 		if (y == TILE_SIZE / 2) {
-			if (dir != DIAGDIR_SE && dir != DIAGDIR_SW) x = TILE_SIZE - 1 - x;
+			if (dir != DiagDirection::SE && dir != DiagDirection::SW) x = TILE_SIZE - 1 - x;
 			stop &= TILE_SIZE - 1;
 
 			if (x == stop) {
@@ -4358,7 +4351,7 @@ static void StationHandleSmallTick(BaseStation *st)
 
 void OnTick_Station()
 {
-	if (_game_mode == GM_EDITOR) return;
+	if (_game_mode == GameMode::Editor) return;
 
 	for (BaseStation *st : BaseStation::Iterate()) {
 		StationHandleSmallTick(st);
@@ -4746,7 +4739,7 @@ void BuildOilRig(TileIndex tile)
 
 	st->owner = OWNER_NONE;
 	st->airport.type = AT_OILRIG;
-	st->airport.rotation = DIR_N;
+	st->airport.rotation = Direction::N;
 	st->airport.Add(tile);
 	st->ship_station.Add(tile);
 	st->facilities = {StationFacility::Airport, StationFacility::Dock};
