@@ -5,20 +5,16 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file script_roadtypelist.cpp Implementation of ScriptRoadTypeList and friends. */
+/** @file goal_gui.h Goal GUI functions. */
 
-#include "../../stdafx.h"
-#include "script_roadtypelist.hpp"
-#include "../../road_func.h"
+#ifndef GOAL_GUI_H
+#define GOAL_GUI_H
 
-#include "../../safeguards.h"
+#include "company_type.h"
+#include "goal_type.h"
+#include "strings_type.h"
 
-ScriptRoadTypeList::ScriptRoadTypeList(ScriptRoad::RoadTramTypes rtts)
-{
-	EnforceDeityOrCompanyModeValid_Void();
-	::CompanyID owner = ScriptObject::GetCompany();
-	for (RoadType rt : EnumRange(ROADTYPE_END)) {
-		if (!::RoadTramTypes{rtts}.Test(GetRoadTramType(rt))) continue;
-		if (::HasRoadTypeAvail(owner, rt)) this->AddItem(rt);
-	}
-}
+void ShowGoalsList(CompanyID company);
+void ShowGoalQuestion(uint16_t id, GoalQuestionType type, GoalQuestionButtons buttons, const EncodedString &question);
+
+#endif /* GOAL_TYPE_H */

@@ -187,7 +187,7 @@ uint ApplyFoundationToSlope(Foundation f, Slope &s)
 		return dz;
 	}
 
-	if (f != FOUNDATION_STEEP_BOTH && IsNonContinuousFoundation(f)) {
+	if (f != Foundation::SteepBoth && IsNonContinuousFoundation(f)) {
 		s = HalftileSlope(s, GetHalftileFoundationCorner(f));
 		return 0;
 	}
@@ -201,19 +201,19 @@ uint ApplyFoundationToSlope(Foundation f, Slope &s)
 	Corner highest_corner = GetHighestSlopeCorner(s);
 
 	switch (f) {
-		case FOUNDATION_INCLINED_X:
+		case Foundation::InclinedX:
 			s = (((highest_corner == CORNER_W) || (highest_corner == CORNER_S)) ? SLOPE_SW : SLOPE_NE);
 			break;
 
-		case FOUNDATION_INCLINED_Y:
+		case Foundation::InclinedY:
 			s = (((highest_corner == CORNER_S) || (highest_corner == CORNER_E)) ? SLOPE_SE : SLOPE_NW);
 			break;
 
-		case FOUNDATION_STEEP_LOWER:
+		case Foundation::SteepLower:
 			s = SlopeWithOneCornerRaised(highest_corner);
 			break;
 
-		case FOUNDATION_STEEP_BOTH:
+		case Foundation::SteepBoth:
 			s = HalftileSlope(SlopeWithOneCornerRaised(highest_corner), highest_corner);
 			break;
 
@@ -437,7 +437,7 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 	if (!IsFoundation(f)) return;
 
 	/* Two part foundations must be drawn separately */
-	assert(f != FOUNDATION_STEEP_BOTH);
+	assert(f != Foundation::SteepBoth);
 
 	uint sprite_block = 0;
 	auto [slope, z] = GetFoundationPixelSlope(ti->tile);
@@ -468,18 +468,18 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 
 		if (IsInclinedFoundation(f)) {
 			/* inclined foundation */
-			uint8_t inclined = highest_corner * 2 + (f == FOUNDATION_INCLINED_Y ? 1 : 0);
+			uint8_t inclined = highest_corner * 2 + (f == Foundation::InclinedY ? 1 : 0);
 
 			SpriteBounds bounds{{}, {1, 1, TILE_HEIGHT}, {}};
-			if (f == FOUNDATION_INCLINED_X) bounds.extent.x = TILE_SIZE;
-			if (f == FOUNDATION_INCLINED_Y) bounds.extent.y = TILE_SIZE;
+			if (f == Foundation::InclinedX) bounds.extent.x = TILE_SIZE;
+			if (f == Foundation::InclinedY) bounds.extent.y = TILE_SIZE;
 			AddSortableSpriteToDraw(inclined_base + inclined, PAL_NONE, *ti, bounds);
 			OffsetGroundSprite(0, 0);
 		} else if (IsLeveledFoundation(f)) {
 			static constexpr SpriteBounds bounds{{0, 0, -(int)TILE_HEIGHT}, {TILE_SIZE, TILE_SIZE, TILE_HEIGHT - 1}, {}};
 			AddSortableSpriteToDraw(leveled_base + SlopeWithOneCornerRaised(highest_corner), PAL_NONE, *ti, bounds);
 			OffsetGroundSprite(0, -(int)TILE_HEIGHT);
-		} else if (f == FOUNDATION_STEEP_LOWER) {
+		} else if (f == Foundation::SteepLower) {
 			/* one corner raised */
 			OffsetGroundSprite(0, -(int)TILE_HEIGHT);
 		} else {
@@ -527,11 +527,11 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 			OffsetGroundSprite(0, 0);
 		} else {
 			/* inclined foundation */
-			uint8_t inclined = GetHighestSlopeCorner(ti->tileh) * 2 + (f == FOUNDATION_INCLINED_Y ? 1 : 0);
+			uint8_t inclined = GetHighestSlopeCorner(ti->tileh) * 2 + (f == Foundation::InclinedY ? 1 : 0);
 
 			SpriteBounds bounds{{}, {1, 1, TILE_HEIGHT}, {}};
-			if (f == FOUNDATION_INCLINED_X) bounds.extent.x = TILE_SIZE;
-			if (f == FOUNDATION_INCLINED_Y) bounds.extent.y = TILE_SIZE;
+			if (f == Foundation::InclinedX) bounds.extent.x = TILE_SIZE;
+			if (f == Foundation::InclinedY) bounds.extent.y = TILE_SIZE;
 			AddSortableSpriteToDraw(inclined_base + inclined, PAL_NONE, *ti, bounds);
 			OffsetGroundSprite(0, 0);
 		}
@@ -1046,7 +1046,7 @@ static bool FindSpring(TileIndex tile)
 	};
 
 	uint num_hills = 0;
-	for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
+	for (DiagDirection d : EnumRange(DiagDirection::End)) {
 		TileIndex check_tile = tile;
 		for (uint i = 0; i < max_hill_distance; i++) {
 			check_tile = TileAddByDiagDir(check_tile, d);
@@ -1089,7 +1089,7 @@ static void MakeLake(TileIndex lake_centre, uint height_lake)
 	for (uint loops = 0; loops < 2; ++loops) {
 		for (TileIndex tile : SpiralTileSequence(lake_centre, diameter)) {
 			if (!IsValidRiverTerminusTile(tile, height_lake)) continue;
-			for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
+			for (DiagDirection d : EnumRange(DiagDirection::End)) {
 				TileIndex t = tile + TileOffsByDiagDir(d);
 				if (IsWaterTile(t)) {
 					MakeRiverAndModifyDesertZoneAround(tile);
@@ -1209,7 +1209,7 @@ void RiverMakeWider(TileIndex tile, TileIndex origin_tile)
 		 */
 
 		/* First, determine the desired slope based on adjacent river tiles. This doesn't necessarily match the origin tile for the SpiralTileSequence. */
-		for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
+		for (DiagDirection d : EnumRange(DiagDirection::End)) {
 			TileIndex other_tile = TileAddByDiagDir(tile, d);
 			Slope other_slope = GetTileSlope(other_tile);
 
@@ -1240,7 +1240,7 @@ void RiverMakeWider(TileIndex tile, TileIndex origin_tile)
 		/* If the river is flat and the adjacent tile has one corner lowered, we want to raise it. */
 		if (desired_slope == SLOPE_FLAT && IsSlopeWithThreeCornersRaised(cur_slope)) {
 			/* Make sure we're not affecting an existing river slope tile. */
-			for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
+			for (DiagDirection d : EnumRange(DiagDirection::End)) {
 				TileIndex other_tile = TileAddByDiagDir(tile, d);
 				if (IsInclinedSlope(GetTileSlope(other_tile)) && IsWaterTile(other_tile)) return;
 			}
@@ -1363,7 +1363,7 @@ static bool CountConnectedSeaTiles(TileIndex tile, std::unordered_set<TileIndex>
 	if (sea.size() > limit) return false;
 
 	/* Count adjacent tiles using recursion. */
-	for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
+	for (DiagDirection d : EnumRange(DiagDirection::End)) {
 		TileIndex t = tile + TileOffsByDiagDir(d);
 		if (IsValidTile(t) && !sea.contains(t)) {
 			if (CountConnectedSeaTiles(t, sea, limit)) return true;
@@ -1430,7 +1430,7 @@ static std::tuple<bool, bool> FlowRiver(TileIndex spring, TileIndex begin, uint 
 			}
 		}
 
-		for (DiagDirection d = DiagDirection::Begin; d < DiagDirection::End; d++) {
+		for (DiagDirection d : EnumRange(DiagDirection::End)) {
 			TileIndex t = end + TileOffsByDiagDir(d);
 			if (IsValidTile(t) && !marks.contains(t) && RiverFlowsDown(end, t)) {
 				marks.insert(t);
@@ -1542,7 +1542,7 @@ static uint CalculateCoverageLine(uint coverage, uint edge_multiplier)
 
 		if (edge_multiplier != 0) {
 			/* Check if any of our neighbours is below us. */
-			for (DiagDirection dir = DiagDirection::Begin; dir != DiagDirection::End; dir++) {
+			for (DiagDirection dir : EnumRange(DiagDirection::End)) {
 				TileIndex neighbour_tile = AddTileIndexDiffCWrap(tile, TileIndexDiffCByDiagDir(dir));
 				if (IsValidTile(neighbour_tile) && TileHeight(neighbour_tile) < h) {
 					edge_histogram[h]++;
@@ -1600,7 +1600,7 @@ static uint CalculateCoverageLine(uint coverage, uint edge_multiplier)
 static void CalculateSnowLine()
 {
 	/* We do not have snow sprites on coastal tiles, so never allow "1" as height. */
-	_settings_game.game_creation.snow_line_height = std::max(CalculateCoverageLine(_settings_game.game_creation.snow_coverage, 0), 2u);
+	_settings_game.game_creation.snow_line_height = std::max<uint8_t>(CalculateCoverageLine(_settings_game.game_creation.snow_coverage, 0), 2u);
 }
 
 /**

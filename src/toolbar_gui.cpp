@@ -52,6 +52,7 @@
 #include "highscore.h"
 #include "game/game.hpp"
 #include "goal_base.h"
+#include "goal_gui.h"
 #include "story_base.h"
 #include "toolbar_gui.h"
 #include "framerate_type.h"
@@ -2089,10 +2090,10 @@ struct MainToolbarWindow : Window {
 			case MTHK_CLIENT_LIST: if (_networking) ShowClientList(); break;
 			case MTHK_SIGN_LIST: ShowSignList(); break;
 			case MTHK_LANDINFO: cbf = PlaceLandBlockInfo(); break;
-			default: return ES_NOT_HANDLED;
+			default: return EventState::NotHandled;
 		}
 		if (cbf != CallBackFunction::None) _last_started_action = cbf;
-		return ES_HANDLED;
+		return EventState::Handled;
 	}
 
 	void OnPlaceObject([[maybe_unused]] Point pt, TileIndex tile) override
@@ -2456,13 +2457,13 @@ struct ScenarioEditorToolbarWindow : Window {
 				case MainToolbarEditorHotkeys::GenerateTown: ShowFoundTownWindow(); break;
 				case MainToolbarEditorHotkeys::BuildRoad: ShowBuildRoadScenToolbar(_last_built_roadtype); break;
 				case MainToolbarEditorHotkeys::BuildTram: ShowBuildRoadScenToolbar(_last_built_tramtype); break;
-				default: return ES_NOT_HANDLED;
+				default: return EventState::NotHandled;
 			}
 			if (cbf != CallBackFunction::None) _last_started_action = cbf;
 		} else {
 			this->OnClick({}, hotkey, 0);
 		}
-		return ES_HANDLED;
+		return EventState::Handled;
 	}
 
 	void OnPlaceObject([[maybe_unused]] Point pt, TileIndex tile) override
@@ -2618,10 +2619,6 @@ static WindowDesc _toolb_scen_desc(
 /** Allocate the toolbar. */
 void AllocateToolbar()
 {
-	/* Clean old GUI values; railtype is (re)set by rail_gui.cpp */
-	_last_built_roadtype = ROADTYPE_ROAD;
-	_last_built_tramtype = ROADTYPE_TRAM;
-
 	if (_game_mode == GameMode::Editor) {
 		new ScenarioEditorToolbarWindow(_toolb_scen_desc);
 	} else {

@@ -114,7 +114,7 @@ void SetWaterClassDependingOnSurroundings(Tile t, bool include_invalid_water_cla
 	bool has_canal = false;
 	bool has_river = false;
 
-	for (DiagDirection dir = DiagDirection::Begin; dir < DiagDirection::End; dir++) {
+	for (DiagDirection dir : EnumRange(DiagDirection::End)) {
 		Tile neighbour = TileAddByDiagDir(t, dir);
 		switch (GetTileType(neighbour)) {
 			case TileType::Water:
@@ -436,10 +436,10 @@ static void FixOwnerOfRailTrack(Tile t)
 	}
 
 	/* try to find any connected rail */
-	for (DiagDirection dd = DiagDirection::Begin; dd < DiagDirection::End; dd++) {
+	for (DiagDirection dd : EnumRange(DiagDirection::End)) {
 		TileIndex tt{t + TileOffsByDiagDir(dd)};
-		if (GetTileTrackStatus(t, TRANSPORT_RAIL, RoadTramType::Invalid, dd).trackdirs != TRACKDIR_BIT_NONE &&
-				GetTileTrackStatus(tt, TRANSPORT_RAIL, RoadTramType::Invalid, ReverseDiagDir(dd)).trackdirs != TRACKDIR_BIT_NONE &&
+		if (GetTileTrackStatus(t, TRANSPORT_RAIL, RoadTramType::Invalid, dd).trackdirs.Any() &&
+				GetTileTrackStatus(tt, TRANSPORT_RAIL, RoadTramType::Invalid, ReverseDiagDir(dd)).trackdirs.Any() &&
 				Company::IsValidID(GetTileOwner(tt))) {
 			SetTileOwner(t, GetTileOwner(tt));
 			return;
@@ -619,8 +619,8 @@ bool AfterLoadGame()
 			int dx = TileX(t) - TileX(st->train_station.tile);
 			int dy = TileY(t) - TileY(st->train_station.tile);
 			assert(dx >= 0 && dy >= 0);
-			st->train_station.w = std::max<uint>(st->train_station.w, dx + 1);
-			st->train_station.h = std::max<uint>(st->train_station.h, dy + 1);
+			st->train_station.w = std::max<uint16_t>(st->train_station.w, dx + 1);
+			st->train_station.h = std::max<uint16_t>(st->train_station.h, dy + 1);
 		}
 	}
 
@@ -701,7 +701,7 @@ bool AfterLoadGame()
 	}
 
 	/* convert road side to my format. */
-	if (_settings_game.vehicle.road_side) _settings_game.vehicle.road_side = 1;
+	if (to_underlying(_settings_game.vehicle.road_side) != 0) _settings_game.vehicle.road_side = RoadVehicleDrivingSide::Right;
 
 	/* Check if all NewGRFs are present, we are very strict in MP mode */
 	GRFListCompatibility gcf_res = IsGoodGRFConfigList(_grfconfig);
@@ -1235,7 +1235,7 @@ bool AfterLoadGame()
 							MakeRailNormal(
 								t,
 								GetTileOwner(t),
-								AxisToTrackBits(OtherAxis(axis)),
+								AxisToTrack(OtherAxis(axis)),
 								GetRailType(t)
 							);
 						} else {
@@ -1297,7 +1297,7 @@ bool AfterLoadGame()
 				continue;
 			}
 			if (v->type == VehicleType::Train) {
-				Train::From(v)->track = TRACK_BIT_WORMHOLE;
+				Train::From(v)->track = Track::Wormhole;
 			} else {
 				RoadVehicle::From(v)->state = RVSB_WORMHOLE;
 			}
@@ -1400,11 +1400,11 @@ bool AfterLoadGame()
 						 * version 48 they are in m2. The bits has been already moved to m2
 						 * (see the code somewhere above) so don't use m4, use m2 instead. */
 
-						/* convert PBS signals to combo-signals */
-						if (HasBit(t.m2(), 2)) SB(t.m2(), 0, 2, SIGTYPE_COMBO);
+						/* convert old PBS signals to combo-signals */
+						if (HasBit(t.m2(), 2)) SB(t.m2(), 0, 2, to_underlying(SignalType::Combo));
 
 						/* move the signal variant back */
-						SB(t.m2(), 2, 1, HasBit(t.m2(), 3) ? SIG_SEMAPHORE : SIG_ELECTRIC);
+						SB(t.m2(), 2, 1, to_underlying(HasBit(t.m2(), 3) ? SignalVariant::Semaphore : SignalVariant::Electric));
 						ClrBit(t.m2(), 3);
 					}
 
@@ -1439,7 +1439,7 @@ bool AfterLoadGame()
 		}
 	}
 
-	YapfNotifyTrackLayoutChange(INVALID_TILE, INVALID_TRACK);
+	YapfNotifyTrackLayoutChange(INVALID_TILE, Track::Invalid);
 
 	if (IsSavegameVersionBefore(SLV_34)) {
 		for (Company *c : Company::Iterate()) ResetCompanyLivery(c);
@@ -2026,8 +2026,8 @@ bool AfterLoadGame()
 				case TileType::Railway:
 					if (HasSignals(t)) {
 						/* move the signal variant */
-						SetSignalVariant(t, TRACK_UPPER, HasBit(t.m2(), 2) ? SIG_SEMAPHORE : SIG_ELECTRIC);
-						SetSignalVariant(t, TRACK_LOWER, HasBit(t.m2(), 6) ? SIG_SEMAPHORE : SIG_ELECTRIC);
+						SetSignalVariant(t, Track::Upper, HasBit(t.m2(), 2) ? SignalVariant::Semaphore : SignalVariant::Electric);
+						SetSignalVariant(t, Track::Lower, HasBit(t.m2(), 6) ? SignalVariant::Semaphore : SignalVariant::Electric);
 						ClrBit(t.m2(), 2);
 						ClrBit(t.m2(), 6);
 					}
@@ -2036,7 +2036,7 @@ bool AfterLoadGame()
 					if (IsRailDepot(t)) {
 						SetDepotReservation(t, false);
 					} else {
-						SetTrackReservation(t, TRACK_BIT_NONE);
+						SetTrackReservation(t, {});
 					}
 					break;
 
@@ -2672,16 +2672,16 @@ bool AfterLoadGame()
 				v->vehstatus.Set(VehState::Hidden);
 
 				switch (v->type) {
-					case VehicleType::Train: Train::From(v)->track       = TRACK_BIT_WORMHOLE; break;
-					case VehicleType::Road:  RoadVehicle::From(v)->state = RVSB_WORMHOLE;      break;
+					case VehicleType::Train: Train::From(v)->track = Track::Wormhole; break;
+					case VehicleType::Road: RoadVehicle::From(v)->state = RVSB_WORMHOLE; break;
 					default: NOT_REACHED();
 				}
 			} else {
 				v->vehstatus.Reset(VehState::Hidden);
 
 				switch (v->type) {
-					case VehicleType::Train: Train::From(v)->track       = DiagDirToDiagTrackBits(vdir); break;
-					case VehicleType::Road:  RoadVehicle::From(v)->state = DiagDirToDiagTrackdir(vdir); RoadVehicle::From(v)->frame = frame; break;
+					case VehicleType::Train: Train::From(v)->track = DiagDirToDiagTrack(vdir); break;
+					case VehicleType::Road: RoadVehicle::From(v)->state = to_underlying(DiagDirToDiagTrackdir(vdir)); RoadVehicle::From(v)->frame = frame; break;
 					default: NOT_REACHED();
 				}
 			}
@@ -2695,7 +2695,7 @@ bool AfterLoadGame()
 			bool loading = rv->current_order.IsType(OT_LOADING) || rv->current_order.IsType(OT_LEAVESTATION);
 			if (HasBit(rv->state, RVS_IN_ROAD_STOP)) {
 				extern const uint8_t _road_stop_stop_frame[];
-				SB(rv->state, RVS_ENTERED_STOP, 1, loading || rv->frame > _road_stop_stop_frame[rv->state - RVSB_IN_ROAD_STOP + (_settings_game.vehicle.road_side << RVS_DRIVE_SIDE)]);
+				SB(rv->state, RVS_ENTERED_STOP, 1, loading || rv->frame > _road_stop_stop_frame[rv->state - RVSB_IN_ROAD_STOP + (to_underlying(_settings_game.vehicle.road_side) << RVS_DRIVE_SIDE)]);
 			} else if (HasBit(rv->state, RVS_IN_DT_ROAD_STOP)) {
 				SB(rv->state, RVS_ENTERED_STOP, 1, loading || rv->frame > RVC_DRIVE_THROUGH_STOP_FRAME);
 			}
@@ -2757,7 +2757,7 @@ bool AfterLoadGame()
 					if (t->vehstatus.Test(VehState::Crashed)) break;
 
 					/* Only X/Y tracks can be sloped. */
-					if (t->track != TRACK_BIT_X && t->track != TRACK_BIT_Y) break;
+					if (t->track != Track::X && t->track != Track::Y) break;
 
 					t->gv_flags |= FixVehicleInclination(t, t->direction);
 					break;
@@ -2776,12 +2776,12 @@ bool AfterLoadGame()
 					TrackBits trackbits = TrackdirBitsToTrackBits(ts.trackdirs);
 
 					/* Only X/Y tracks can be sloped. */
-					if (trackbits != TRACK_BIT_X && trackbits != TRACK_BIT_Y) break;
+					if (trackbits != Track::X && trackbits != Track::Y) break;
 
 					Direction dir = rv->direction;
 
 					/* Test if we are reversing. */
-					Axis a = trackbits == TRACK_BIT_X ? Axis::X : Axis::Y;
+					Axis a = trackbits == Track::X ? Axis::X : Axis::Y;
 					if (AxisToDirection(a) != dir &&
 							AxisToDirection(a) != ReverseDir(dir)) {
 						/* When reversing, the road vehicle is on the edge of the tile,
@@ -2808,10 +2808,10 @@ bool AfterLoadGame()
 				if (v->type == VehicleType::Train && !v->vehstatus.Test(VehState::Crashed) &&
 						v->direction != DiagDirToDir(dir)) {
 					/* If the train has left the bridge, it shouldn't have
-					 * track == TRACK_BIT_WORMHOLE - this could happen
+					 * track == Track::Wormhole - this could happen
 					 * when the train was reversed while on the last "tick"
 					 * on the ramp before leaving the ramp to the bridge. */
-					Train::From(v)->track = DiagDirToDiagTrackBits(dir);
+					Train::From(v)->track = DiagDirToDiagTrack(dir);
 				}
 			}
 
@@ -2935,10 +2935,10 @@ bool AfterLoadGame()
 			if (!t->IsPrimaryVehicle()) continue;
 
 			/* Front not in depot -> consist not entering depot */
-			if (t->track != TRACK_BIT_DEPOT) continue;
+			if (t->track != Track::Depot) continue;
 			/* Back in depot -> consist completely in depot */
-			if (t->Last()->track == TRACK_BIT_DEPOT) continue;
-			for (Train *u = t; u->track == TRACK_BIT_DEPOT; u = u->Next()) {
+			if (t->Last()->track == Track::Depot) continue;
+			for (Train *u = t; u->track == Track::Depot; u = u->Next()) {
 				u->direction = ReverseDir(u->direction);
 			}
 		}
@@ -3067,7 +3067,7 @@ bool AfterLoadGame()
 		 * Now they have the same length, but that means that trailing articulated parts will
 		 * take longer to go through the curve than the parts in front which already left the curve.
 		 * So, make articulated parts catch up. */
-		bool roadside = _settings_game.vehicle.road_side == 1;
+		bool roadside = _settings_game.vehicle.road_side == RoadVehicleDrivingSide::Right;
 		std::vector<uint> skip_frames;
 		for (RoadVehicle *v : RoadVehicle::Iterate()) {
 			if (!v->IsFrontEngine()) continue;

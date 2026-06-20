@@ -111,7 +111,7 @@ static Textbuf _iconsole_cmdline(ICON_CMDLN_SIZE);
 static ConsoleAutoCompletion _iconsole_tab_completion(&_iconsole_cmdline);
 static std::deque<std::string> _iconsole_history;
 static ptrdiff_t _iconsole_historypos;
-IConsoleModes _iconsole_mode;
+IConsoleMode _iconsole_mode;
 
 /* *************** *
  *  end of header  *
@@ -154,7 +154,7 @@ struct IConsoleWindow : Window
 
 	IConsoleWindow() : Window(_console_window_desc)
 	{
-		_iconsole_mode = ICONSOLE_OPENED;
+		_iconsole_mode = IConsoleMode::Opened;
 
 		this->InitNested(0);
 		ResizeWindow(this, _screen.width, _screen.height / 3);
@@ -169,7 +169,7 @@ struct IConsoleWindow : Window
 
 	void Close([[maybe_unused]] int data = 0) override
 	{
-		_iconsole_mode = ICONSOLE_CLOSED;
+		_iconsole_mode = IConsoleMode::Closed;
 		VideoDriver::GetInstance()->EditBoxLostFocus();
 		this->Window::Close();
 	}
@@ -239,7 +239,7 @@ struct IConsoleWindow : Window
 
 	EventState OnKeyPress([[maybe_unused]] char32_t key, uint16_t keycode) override
 	{
-		if (_focused_window != this) return ES_NOT_HANDLED;
+		if (_focused_window != this) return EventState::NotHandled;
 
 		const int scroll_height = (this->height / this->line_height) - 1;
 		switch (keycode) {
@@ -286,7 +286,7 @@ struct IConsoleWindow : Window
 			}
 
 			case WKC_CTRL | WKC_RETURN:
-				_iconsole_mode = (_iconsole_mode == ICONSOLE_FULL) ? ICONSOLE_OPENED : ICONSOLE_FULL;
+				_iconsole_mode = (_iconsole_mode == IConsoleMode::Full) ? IConsoleMode::Opened : IConsoleMode::Full;
 				IConsoleResize(this);
 				MarkWholeScreenDirty();
 				break;
@@ -311,12 +311,12 @@ struct IConsoleWindow : Window
 					IConsoleResetHistoryPos();
 					this->SetDirty();
 				} else {
-					return ES_NOT_HANDLED;
+					return EventState::NotHandled;
 				}
 				break;
 			}
 		}
-		return ES_HANDLED;
+		return EventState::Handled;
 	}
 
 	void InsertTextString(WidgetID, std::string_view str, bool marked, std::optional<size_t> caret, std::optional<size_t> insert_location, std::optional<size_t> replacement_end) override
@@ -384,7 +384,7 @@ size_t IConsoleWindow::scroll = 0;
 void IConsoleGUIInit()
 {
 	IConsoleResetHistoryPos();
-	_iconsole_mode = ICONSOLE_CLOSED;
+	_iconsole_mode = IConsoleMode::Closed;
 
 	IConsoleClearBuffer();
 
@@ -412,11 +412,11 @@ void IConsoleGUIFree()
 void IConsoleResize(Window *w)
 {
 	switch (_iconsole_mode) {
-		case ICONSOLE_OPENED:
+		case IConsoleMode::Opened:
 			w->height = _screen.height / 3;
 			w->width = _screen.width;
 			break;
-		case ICONSOLE_FULL:
+		case IConsoleMode::Full:
 			w->height = _screen.height - ICON_BOTTOM_BORDERWIDTH;
 			w->width = _screen.width;
 			break;
@@ -430,11 +430,12 @@ void IConsoleResize(Window *w)
 void IConsoleSwitch()
 {
 	switch (_iconsole_mode) {
-		case ICONSOLE_CLOSED:
+		case IConsoleMode::Closed:
 			new IConsoleWindow();
 			break;
 
-		case ICONSOLE_OPENED: case ICONSOLE_FULL:
+		case IConsoleMode::Opened:
+		case IConsoleMode::Full:
 			CloseWindowById(WindowClass::Console, 0);
 			break;
 	}
@@ -445,7 +446,7 @@ void IConsoleSwitch()
 /** Close the in-game console. */
 void IConsoleClose()
 {
-	if (_iconsole_mode == ICONSOLE_OPENED) IConsoleSwitch();
+	if (_iconsole_mode == IConsoleMode::Opened) IConsoleSwitch();
 }
 
 /**
@@ -546,7 +547,7 @@ bool IsValidConsoleColour(ExtendedTextColour c)
 
 	/* A text colour from the palette is used; must be the company
 	 * colour gradient, so it must be one of those. */
-	for (Colours i = Colours::Begin; i < Colours::End; i++) {
+	for (Colours i : EnumRange(Colours::End)) {
 		if (ExtendedTextColour{GetColourGradient(i, Shade::Normal)} == c) return true;
 	}
 

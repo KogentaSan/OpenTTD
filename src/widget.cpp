@@ -813,19 +813,17 @@ void Window::DrawWidgets() const
 /**
  * Draw a sort button's up or down arrow symbol.
  * @param widget Sort button widget
- * @param state State of sort button
+ * @param descending Draw the button for sorting descending.
  */
-void Window::DrawSortButtonState(WidgetID widget, SortButtonState state) const
+void Window::DrawSortButton(WidgetID widget, bool descending) const
 {
-	if (state == SBS_OFF) return;
-
 	assert(!this->widget_lookup.empty());
 	Rect r = this->GetWidget<NWidgetBase>(widget)->GetCurrentRect();
 
 	/* Sort button uses the same sprites as vertical scrollbar */
 	Dimension dim = NWidgetScrollbar::GetVerticalDimension();
 
-	DrawSpriteIgnorePadding(state == SBS_DOWN ? SPR_ARROW_DOWN : SPR_ARROW_UP, PAL_NONE, r.WithWidth(dim.width, _current_text_dir == TD_LTR), SA_CENTER);
+	DrawSpriteIgnorePadding(descending ? SPR_ARROW_DOWN : SPR_ARROW_UP, PAL_NONE, r.WithWidth(dim.width, _current_text_dir == TD_LTR), SA_CENTER);
 }
 
 /**
@@ -1024,6 +1022,7 @@ void NWidgetResizeBase::SetAspect(float ratio, AspectFlags flags)
  */
 void NWidgetResizeBase::SetAspect(int x_ratio, int y_ratio, AspectFlags flags)
 {
+	assert(x_ratio > 0 && y_ratio > 0);
 	this->SetAspect(static_cast<float>(x_ratio) / static_cast<float>(y_ratio), flags);
 }
 
@@ -2466,14 +2465,14 @@ Scrollbar::size_type Scrollbar::GetScrolledRowFromWidget(int clickpos, const Win
  * This does not update the actual position of this scroll bar, that is left to the caller. It does,
  * however use the capacity and count of the scroll bar for the bounds and amount to scroll.
  *
- * When the count is 0 or the return is ES_NOT_HANDLED, then the position is not updated.
+ * When the count is 0 or the return is EventState::NotHandled, then the position is not updated.
  * With WKC_UP and WKC_DOWN the position goes one up or down respectively.
  * With WKC_PAGEUP and WKC_PAGEDOWN the position goes one capacity up or down respectively.
  * With WKC_HOME the first position is selected and with WKC_END the last position is selected.
  * This function ensures that pos is in the range [0..count).
  * @param list_position The current position in the list.
  * @param keycode The pressed key code.
- * @return ES_NOT_HANDLED when another key than the 6 specific keys was pressed, otherwise ES_HANDLED.
+ * @return EventState::NotHandled when another key than the 6 specific keys was pressed, otherwise EventState::Handled.
  */
 EventState Scrollbar::UpdateListPositionOnKeyPress(int &list_position, uint16_t keycode) const
 {
@@ -2510,14 +2509,14 @@ EventState Scrollbar::UpdateListPositionOnKeyPress(int &list_position, uint16_t 
 			break;
 
 		default:
-			return ES_NOT_HANDLED;
+			return EventState::NotHandled;
 	}
 
 	/* If there are no elements, there is nothing to scroll/update. */
 	if (this->GetCount() != 0) {
 		list_position = Clamp(new_pos, 0, this->GetCount() - 1);
 	}
-	return ES_HANDLED;
+	return EventState::Handled;
 }
 
 
@@ -2758,28 +2757,28 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, WidgetID index, const Wi
 			this->SetFill(0, 0);
 			this->SetMinimalSize(WidgetDimensions::WD_STICKYBOX_WIDTH, WidgetDimensions::WD_CAPTION_HEIGHT);
 			this->SetToolTip(STR_TOOLTIP_STICKY);
-			this->SetAspect(this->min_x, this->min_y);
+			this->SetAspect(this->uz_min_x, this->uz_min_y);
 			break;
 
 		case WWT_SHADEBOX:
 			this->SetFill(0, 0);
 			this->SetMinimalSize(WidgetDimensions::WD_SHADEBOX_WIDTH, WidgetDimensions::WD_CAPTION_HEIGHT);
 			this->SetToolTip(STR_TOOLTIP_SHADE);
-			this->SetAspect(this->min_x, this->min_y);
+			this->SetAspect(this->uz_min_x, this->uz_min_y);
 			break;
 
 		case WWT_DEBUGBOX:
 			this->SetFill(0, 0);
 			this->SetMinimalSize(WidgetDimensions::WD_DEBUGBOX_WIDTH, WidgetDimensions::WD_CAPTION_HEIGHT);
 			this->SetToolTip(STR_TOOLTIP_DEBUG);
-			this->SetAspect(this->min_x, this->min_y);
+			this->SetAspect(this->uz_min_x, this->uz_min_y);
 			break;
 
 		case WWT_DEFSIZEBOX:
 			this->SetFill(0, 0);
 			this->SetMinimalSize(WidgetDimensions::WD_DEFSIZEBOX_WIDTH, WidgetDimensions::WD_CAPTION_HEIGHT);
 			this->SetToolTip(STR_TOOLTIP_DEFSIZE);
-			this->SetAspect(this->min_x, this->min_y);
+			this->SetAspect(this->uz_min_x, this->uz_min_y);
 			break;
 
 		case WWT_RESIZEBOX:
@@ -2793,7 +2792,7 @@ NWidgetLeaf::NWidgetLeaf(WidgetType tp, Colours colour, WidgetID index, const Wi
 			this->SetFill(0, 0);
 			this->SetMinimalSize(WidgetDimensions::WD_CLOSEBOX_WIDTH, WidgetDimensions::WD_CAPTION_HEIGHT);
 			this->SetToolTip(STR_TOOLTIP_CLOSE_WINDOW);
-			this->SetAspect(this->min_x, this->min_y);
+			this->SetAspect(this->uz_min_x, this->uz_min_y);
 			break;
 
 		case WWT_DROPDOWN:

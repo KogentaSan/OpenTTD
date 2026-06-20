@@ -517,7 +517,7 @@ void ShowCostOrIncomeAnimation(int x, int y, int z, Money cost)
 		cost = -cost;
 		msg = STR_INCOME_FLOAT_INCOME;
 	}
-	AddTextEffect(GetEncodedString(msg, cost), pt.x, pt.y, Ticks::DAY_TICKS, TE_RISING);
+	AddTextEffect(GetEncodedString(msg, cost), pt.x, pt.y, Ticks::DAY_TICKS, TextEffectMode::Rising);
 }
 
 /**
@@ -533,14 +533,14 @@ void ShowFeederIncomeAnimation(int x, int y, int z, Money transfer, Money income
 	Point pt = RemapCoords(x, y, z);
 
 	if (income == 0) {
-		AddTextEffect(GetEncodedString(STR_FEEDER, transfer), pt.x, pt.y, Ticks::DAY_TICKS, TE_RISING);
+		AddTextEffect(GetEncodedString(STR_FEEDER, transfer), pt.x, pt.y, Ticks::DAY_TICKS, TextEffectMode::Rising);
 	} else {
 		StringID msg = STR_FEEDER_COST;
 		if (income < 0) {
 			income = -income;
 			msg = STR_FEEDER_INCOME;
 		}
-		AddTextEffect(GetEncodedString(msg, transfer, income), pt.x, pt.y, Ticks::DAY_TICKS, TE_RISING);
+		AddTextEffect(GetEncodedString(msg, transfer, income), pt.x, pt.y, Ticks::DAY_TICKS, TextEffectMode::Rising);
 	}
 }
 
@@ -559,7 +559,7 @@ TextEffectID ShowFillingPercent(int x, int y, int z, uint8_t percent, StringID s
 
 	assert(string != STR_NULL);
 
-	return AddTextEffect(GetEncodedString(string, percent), pt.x, pt.y, 0, TE_STATIC);
+	return AddTextEffect(GetEncodedString(string, percent), pt.x, pt.y, 0, TextEffectMode::Static);
 }
 
 /**
@@ -668,11 +668,11 @@ struct TooltipsWindow : public Window
 		/* We can show tooltips while dragging tools. These are shown as long as
 		 * we are dragging the tool. Normal tooltips work with hover or rmb. */
 		switch (this->close_cond) {
-			case TCC_RIGHT_CLICK: if (!_right_button_down) this->Close(); break;
-			case TCC_HOVER: if (!_mouse_hovering) this->Close(); break;
-			case TCC_NONE: break;
+			case TooltipCloseCondition::RightClick: if (!_right_button_down) this->Close(); break;
+			case TooltipCloseCondition::Hover: if (!_mouse_hovering) this->Close(); break;
+			case TooltipCloseCondition::None: break;
 
-			case TCC_EXIT_VIEWPORT: {
+			case TooltipCloseCondition::ExitViewport: {
 				Window *w = FindWindowFromPt(_cursor.pos.x, _cursor.pos.y);
 				if (w == nullptr || IsPtInWindowViewport(w, _cursor.pos.x, _cursor.pos.y) == nullptr) this->Close();
 				break;
@@ -1174,9 +1174,9 @@ struct QueryWindow : public Window {
 
 			case WKC_ESC:
 				this->Close();
-				return ES_HANDLED;
+				return EventState::Handled;
 		}
-		return ES_NOT_HANDLED;
+		return EventState::NotHandled;
 	}
 };
 
