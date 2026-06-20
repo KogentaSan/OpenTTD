@@ -9,7 +9,7 @@
 
 #include "../stdafx.h"
 #include "../debug.h"
-#include "../currency.h"
+#include "../currency_func.h"
 #include "../landscape.h"
 #include "../language.h"
 #include "../rev.h"
@@ -442,7 +442,7 @@ bool GetGlobalVariable(uint8_t param, uint32_t *value, const GRFFile *grffile)
 			return true;
 
 		case 0x06: // road traffic side, bit 4 clear=left, set=right
-			*value = _settings_game.vehicle.road_side << 4;
+			*value = to_underlying(_settings_game.vehicle.road_side) << 4;
 			return true;
 
 		case 0x09: // date fraction

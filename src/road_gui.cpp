@@ -615,7 +615,7 @@ struct BuildRoadToolbarWindow : Window {
 	/**
 	* Selects new RoadType based on SpecialHotkeys and order defined in _sorted_roadtypes.
 	* @param hotkey Defines what action to perform.
-	* @return ES_HANDLED if hotkey was accepted.
+	* @return EventState::Handled if hotkey was accepted.
 	*/
 	EventState ChangeRoadTypeOnHotkey(int hotkey)
 	{
@@ -636,7 +636,7 @@ struct BuildRoadToolbarWindow : Window {
 		if (_thd.GetCallbackWnd() == this) SetCursor(this->GetCursorForWidget(this->last_started_action), PAL_NONE);
 		for (WindowClass cls : {WindowClass::BuildBusStation, WindowClass::BuildTruckStation, WindowClass::BuildWaypoint, WindowClass::BuildDepot}) SetWindowDirty(cls, TRANSPORT_ROAD);
 
-		return ES_HANDLED;
+		return EventState::Handled;
 	}
 
 	EventState OnHotkey(int hotkey) override
@@ -863,13 +863,13 @@ struct BuildRoadToolbarWindow : Window {
 	void OnPlacePresize([[maybe_unused]] Point pt, TileIndex tile) override
 	{
 		Command<Commands::BuildTunnel>::Do(DoCommandFlag::Auto, tile, TRANSPORT_ROAD, INVALID_RAILTYPE, _cur_roadtype);
-		VpSetPresizeRange(tile, _build_tunnel_endtile == 0 ? tile : _build_tunnel_endtile);
+		VpSetPresizeRange(tile, _build_tunnel_endtile == INVALID_TILE ? tile : _build_tunnel_endtile);
 	}
 
 	EventState OnCTRLStateChange() override
 	{
-		if (RoadToolbar_CtrlChanged(this)) return ES_HANDLED;
-		return ES_NOT_HANDLED;
+		if (RoadToolbar_CtrlChanged(this)) return EventState::Handled;
+		return EventState::NotHandled;
 	}
 
 	void OnRealtimeTick([[maybe_unused]] uint delta_ms) override
@@ -882,7 +882,7 @@ struct BuildRoadToolbarWindow : Window {
 	 * @param hotkey Hotkey
 	 * @param last_build Last build road type
 	 * @param rtt The road/tram type.
-	 * @return ES_HANDLED if hotkey was accepted.
+	 * @return EventState::Handled if hotkey was accepted.
 	 */
 	static EventState RoadTramToolbarGlobalHotkeys(int hotkey, RoadType last_build, RoadTramType rtt)
 	{
@@ -893,7 +893,7 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 
 			case GameMode::Editor:
-				if (!GetRoadTypes(true).Any(GetMaskForRoadTramType(rtt))) return ES_NOT_HANDLED;
+				if (!GetRoadTypes(true).Any(GetMaskForRoadTramType(rtt))) return EventState::NotHandled;
 				w = ShowBuildRoadScenToolbar(last_build);
 				break;
 
@@ -901,7 +901,7 @@ struct BuildRoadToolbarWindow : Window {
 				break;
 		}
 
-		if (w == nullptr) return ES_NOT_HANDLED;
+		if (w == nullptr) return EventState::NotHandled;
 		return w->OnHotkey(hotkey);
 	}
 
@@ -1926,4 +1926,50 @@ DropDownList GetScenRoadTypeDropDownList(RoadTramTypes rtts)
 	}
 
 	return list;
+}
+
+/**
+ * Determine the default road type to use for a given RoadTramType.
+ * @param rtt Whether to find a road or tram type.
+ * @return The default RoadType based on the setting.
+ */
+static RoadType GetDefaultRoadType(RoadTramType rtt)
+{
+	const auto find_available = [rtt]<typename It>(It begin, It end) {
+		const RoadTypes mask = GetMaskForRoadTramType(rtt);
+		auto it = std::find_if(begin, end, [&](RoadType r) {
+			return HasRoadTypeAvail(_local_company, r) && mask.Test(r);
+		});
+		return it != end ? *it : ROADTYPE_BEGIN;
+	};
+
+	switch (_settings_client.gui.default_rail_road_type) {
+		case DefaultRailRoadType::MostUsed: {
+			const Company *c = Company::Get(_local_company);
+			std::array<uint, ROADTYPE_END> count{};
+			for (RoadType rt : GetMaskForRoadTramType(rtt)) {
+				count[rt] = c->infrastructure.road[rt];
+			}
+			auto best = static_cast<RoadType>(std::distance(std::begin(count), std::ranges::max_element(count)));
+			if (c->infrastructure.road[best] > 0) return best;
+
+			/* No tile of this kind has been built yet, fall through to first available. */
+			[[fallthrough]];
+		}
+		case DefaultRailRoadType::FirstAvailable:
+			return find_available(_sorted_roadtypes.begin(), _sorted_roadtypes.end());
+		case DefaultRailRoadType::LastAvailable:
+			return find_available(_sorted_roadtypes.rbegin(), _sorted_roadtypes.rend());
+		default:
+			NOT_REACHED();
+	}
+}
+
+/** Set the initial (default) road & tram type to use. */
+void SetDefaultRoadGui()
+{
+	if (_local_company == COMPANY_SPECTATOR || !Company::IsValidID(_local_company)) return;
+
+	_last_built_roadtype = GetDefaultRoadType(RoadTramType::Road);
+	_last_built_tramtype = GetDefaultRoadType(RoadTramType::Tram);
 }

@@ -41,6 +41,7 @@
 #include "timer/timer_game_economy.h"
 #include "timer/timer_game_tick.h"
 #include "timer/timer_window.h"
+#include "road_gui.h"
 
 #include "widgets/statusbar_widget.h"
 
@@ -141,8 +142,9 @@ void SetLocalCompany(CompanyID new_company, bool switching_game)
 	}
 
 	if (switching_company || switching_game) {
-		/* Update the default rail based on most used */
+		/* Update the default rail and road types */
 		SetDefaultRailGui();
+		SetDefaultRoadGui();
 	}
 
 	if (!switching_game) {
@@ -572,7 +574,7 @@ restart:;
  */
 void ResetCompanyLivery(Company *c)
 {
-	for (LiveryScheme scheme = LiveryScheme::Begin; scheme < LiveryScheme::End; scheme++) {
+	for (LiveryScheme scheme : EnumRange(LiveryScheme::End)) {
 		c->livery[scheme].in_use.Reset();
 		c->livery[scheme].colour1 = c->colour;
 		c->livery[scheme].colour2 = c->colour;
@@ -867,7 +869,7 @@ void CompanyAdminUpdate(const Company *company)
  */
 void CompanyAdminRemove(CompanyID company_id, CompanyRemoveReason reason)
 {
-	if (_network_server) NetworkAdminCompanyRemove(company_id, (AdminCompanyRemoveReason)reason);
+	if (_network_server) NetworkAdminCompanyRemove(company_id, static_cast<AdminCompanyRemoveReason>(reason));
 }
 
 /**
@@ -1091,7 +1093,7 @@ CommandCost CmdSetCompanyManagerFace(DoCommandFlags flags, uint style, uint32_t 
  */
 void UpdateCompanyLiveries(Company *c)
 {
-	for (LiveryScheme i = LiveryScheme::Steam; i < LiveryScheme::End; i++) {
+	for (LiveryScheme i : EnumRange(LiveryScheme::Steam, LiveryScheme::End)) {
 		if (!c->livery[i].in_use.Test(Livery::Flag::Primary)) c->livery[i].colour1 = c->livery[LiveryScheme::Default].colour1;
 		if (!c->livery[i].in_use.Test(Livery::Flag::Secondary)) c->livery[i].colour2 = c->livery[LiveryScheme::Default].colour2;
 	}
@@ -1153,8 +1155,8 @@ CommandCost CmdSetCompanyColour(DoCommandFlags flags, LiveryScheme scheme, bool 
 			/* Else loop through all schemes to see if any are left enabled.
 			 * If not, disable the default scheme too. */
 			c->livery[LiveryScheme::Default].in_use.Reset({Livery::Flag::Primary, Livery::Flag::Secondary});
-			for (scheme = LiveryScheme::Default; scheme < LiveryScheme::End; scheme++) {
-				if (c->livery[scheme].in_use.Any({Livery::Flag::Primary, Livery::Flag::Secondary})) {
+			for (LiveryScheme other_scheme : EnumRange(LiveryScheme::End)) {
+				if (c->livery[other_scheme].in_use.Any({Livery::Flag::Primary, Livery::Flag::Secondary})) {
 					c->livery[LiveryScheme::Default].in_use.Set(Livery::Flag::Primary);
 					break;
 				}

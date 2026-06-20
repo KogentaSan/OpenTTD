@@ -124,7 +124,6 @@ enum VarSpriteGroupScope : uint8_t {
 
 	VSG_END
 };
-DECLARE_INCREMENT_DECREMENT_OPERATORS(VarSpriteGroupScope)
 
 enum DeterministicSpriteGroupSize : uint8_t {
 	DSG_SIZE_BYTE,
@@ -463,7 +462,7 @@ public:
 	uint32_t GetReseedSum() const
 	{
 		uint32_t sum = 0;
-		for (VarSpriteGroupScope vsg = VSG_BEGIN; vsg < VSG_END; vsg++) {
+		for (VarSpriteGroupScope vsg : EnumRange(VSG_END)) {
 			sum |= this->reseed[vsg];
 		}
 		return sum;

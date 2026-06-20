@@ -58,7 +58,6 @@ enum class LiveryScheme : uint8_t {
 	End, ///< End marker.
 };
 
-DECLARE_INCREMENT_DECREMENT_OPERATORS(LiveryScheme)
 DECLARE_ENUM_AS_ADDABLE(LiveryScheme)
 
 /** Bitset of \c LiveryScheme elements. */
@@ -86,6 +85,8 @@ struct Livery {
 		Primary = 0, ///< Primary colour is set.
 		Secondary = 1, ///< Secondary colour is set.
 	};
+
+	/** Bitset of \c Flag elements. */
 	using Flags = EnumBitSet<Flag, uint8_t>;
 
 	Flags in_use{}; ///< Livery flags.

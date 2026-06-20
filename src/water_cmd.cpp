@@ -86,7 +86,7 @@ static inline void MarkTileDirtyIfCanalOrRiver(TileIndex tile)
  */
 static void MarkCanalsAndRiversAroundDirty(TileIndex tile)
 {
-	for (Direction dir = Direction::Begin; dir < Direction::End; dir++) {
+	for (Direction dir : EnumRange(Direction::End)) {
 		MarkTileDirtyIfCanalOrRiver(tile + TileOffsByDir(dir));
 	}
 }
@@ -97,7 +97,7 @@ static void MarkCanalsAndRiversAroundDirty(TileIndex tile)
  */
 void ClearNeighbourNonFloodingStates(TileIndex tile)
 {
-	for (Direction dir = Direction::Begin; dir != Direction::End; dir++) {
+	for (Direction dir : EnumRange(Direction::End)) {
 		TileIndex dest = tile + TileOffsByDir(dir);
 		if (IsValidTile(dest) && IsTileType(dest, TileType::Water)) SetNonFloodingWaterTile(dest, false);
 	}
@@ -186,7 +186,7 @@ bool IsPossibleDockingTile(Tile t)
 		case TileType::Railway:
 		case TileType::Station:
 		case TileType::TunnelBridge:
-			return TrackdirBitsToTrackBits(GetTileTrackStatus(t, TRANSPORT_WATER, RoadTramType::Invalid).trackdirs) != TRACK_BIT_NONE;
+			return TrackdirBitsToTrackBits(GetTileTrackStatus(t, TRANSPORT_WATER, RoadTramType::Invalid).trackdirs).Any();
 
 		default:
 			return false;
@@ -200,7 +200,7 @@ bool IsPossibleDockingTile(Tile t)
  */
 void CheckForDockingTile(TileIndex t)
 {
-	for (DiagDirection d = DiagDirection::Begin; d != DiagDirection::End; d++) {
+	for (DiagDirection d : EnumRange(DiagDirection::End)) {
 		TileIndex tile = t + TileOffsByDiagDir(d);
 		if (!IsValidTile(tile)) continue;
 
@@ -763,12 +763,12 @@ static void DrawWaterEdges(bool canal, uint offset, TileIndex tile)
 	CanalFeature feature;
 	SpriteID base = 0;
 	if (canal) {
-		feature = CF_DIKES;
-		base = GetCanalSprite(CF_DIKES, tile);
+		feature = CanalFeature::Dikes;
+		base = GetCanalSprite(CanalFeature::Dikes, tile);
 		if (base == 0) base = SPR_CANAL_DIKES_BASE;
 	} else {
-		feature = CF_RIVER_EDGE;
-		base = GetCanalSprite(CF_RIVER_EDGE, tile);
+		feature = CanalFeature::RiverEdge;
+		base = GetCanalSprite(CanalFeature::RiverEdge, tile);
 		if (base == 0) return; // Don't draw if no sprites provided.
 	}
 
@@ -823,12 +823,12 @@ static void DrawSeaWater(TileIndex)
 static void DrawCanalWater(TileIndex tile)
 {
 	SpriteID image = SPR_FLAT_WATER_TILE;
-	if (HasBit(_water_feature[CF_WATERSLOPE].flags, CFF_HAS_FLAT_SPRITE)) {
+	if (_water_feature[CanalFeature::LockWaterSlope].flags.Test(CanalFeatureFlag::HasFlatSprite)) {
 		/* First water slope sprite is flat water. */
-		image = GetCanalSprite(CF_WATERSLOPE, tile);
+		image = GetCanalSprite(CanalFeature::LockWaterSlope, tile);
 		if (image == 0) image = SPR_FLAT_WATER_TILE;
 	}
-	DrawWaterSprite(image, 0, CF_WATERSLOPE, tile);
+	DrawWaterSprite(image, 0, CanalFeature::LockWaterSlope, tile);
 
 	DrawWaterEdges(true, 0, tile);
 }
@@ -852,7 +852,7 @@ static void DrawWaterTileStruct(const TileInfo *ti, std::span<const DrawTileSeqS
 
 	for (const DrawTileSeqStruct &dtss : seq) {
 		uint tile_offs = offset + dtss.image.sprite;
-		if (feature < CF_END) tile_offs = GetCanalSpriteOffset(feature, ti->tile, tile_offs);
+		if (feature < CanalFeature::End) tile_offs = GetCanalSpriteOffset(feature, ti->tile, tile_offs);
 		AddSortableSpriteToDraw(base + tile_offs, palette, *ti, dtss, IsTransparencySet(TransparencyOption::Buildings));
 	}
 }
@@ -869,11 +869,11 @@ static void DrawWaterLock(const TileInfo *ti)
 	/* Draw ground sprite. */
 	SpriteID image = dts.ground.sprite;
 
-	SpriteID water_base = GetCanalSprite(CF_WATERSLOPE, ti->tile);
+	SpriteID water_base = GetCanalSprite(CanalFeature::LockWaterSlope, ti->tile);
 	if (water_base == 0) {
 		/* Use default sprites. */
 		water_base = SPR_CANALS_BASE;
-	} else if (HasBit(_water_feature[CF_WATERSLOPE].flags, CFF_HAS_FLAT_SPRITE)) {
+	} else if (_water_feature[CanalFeature::LockWaterSlope].flags.Test(CanalFeatureFlag::HasFlatSprite)) {
 		/* NewGRF supplies a flat sprite as first sprite. */
 		if (image == SPR_FLAT_WATER_TILE) {
 			image = water_base;
@@ -887,7 +887,7 @@ static void DrawWaterLock(const TileInfo *ti)
 
 	/* Draw structures. */
 	uint     zoffs = 0;
-	SpriteID base  = GetCanalSprite(CF_LOCKS, ti->tile);
+	SpriteID base  = GetCanalSprite(CanalFeature::Locks, ti->tile);
 
 	if (base == 0) {
 		/* If no custom graphics, use defaults. */
@@ -896,7 +896,7 @@ static void DrawWaterLock(const TileInfo *ti)
 		zoffs = ti->z > z_threshold ? 24 : 0;
 	}
 
-	DrawWaterTileStruct(ti, dts.GetSequence(), base, zoffs, PAL_NONE, CF_LOCKS);
+	DrawWaterTileStruct(ti, dts.GetSequence(), base, zoffs, PAL_NONE, CanalFeature::Locks);
 }
 
 /**
@@ -906,7 +906,7 @@ static void DrawWaterLock(const TileInfo *ti)
 static void DrawWaterDepot(const TileInfo *ti)
 {
 	DrawWaterClassGround(ti);
-	DrawWaterTileStruct(ti, _shipdepot_display_data[GetShipDepotAxis(ti->tile)][GetShipDepotPart(ti->tile)].seq, 0, 0, GetCompanyPalette(GetTileOwner(ti->tile)), CF_END);
+	DrawWaterTileStruct(ti, _shipdepot_display_data[GetShipDepotAxis(ti->tile)][GetShipDepotPart(ti->tile)].seq, 0, 0, GetCompanyPalette(GetTileOwner(ti->tile)), CanalFeature::End);
 }
 
 static void DrawRiverWater(const TileInfo *ti)
@@ -915,8 +915,8 @@ static void DrawRiverWater(const TileInfo *ti)
 	uint     offset = 0;
 	uint     edges_offset = 0;
 
-	if (ti->tileh != SLOPE_FLAT || HasBit(_water_feature[CF_RIVER_SLOPE].flags, CFF_HAS_FLAT_SPRITE)) {
-		image = GetCanalSprite(CF_RIVER_SLOPE, ti->tile);
+	if (ti->tileh != SLOPE_FLAT || _water_feature[CanalFeature::RiverSlope].flags.Test(CanalFeatureFlag::HasFlatSprite)) {
+		image = GetCanalSprite(CanalFeature::RiverSlope, ti->tile);
 		if (image == 0) {
 			switch (ti->tileh) {
 				case SLOPE_NW: image = SPR_WATER_SLOPE_Y_DOWN; break;
@@ -927,7 +927,7 @@ static void DrawRiverWater(const TileInfo *ti)
 			}
 		} else {
 			/* Flag bit 0 indicates that the first sprite is flat water. */
-			offset = HasBit(_water_feature[CF_RIVER_SLOPE].flags, CFF_HAS_FLAT_SPRITE) ? 1 : 0;
+			offset = _water_feature[CanalFeature::RiverSlope].flags.Test(CanalFeatureFlag::HasFlatSprite) ? 1 : 0;
 
 			switch (ti->tileh) {
 				case SLOPE_SE:              edges_offset += 12; break;
@@ -937,7 +937,7 @@ static void DrawRiverWater(const TileInfo *ti)
 				default:       offset  = 0; break;
 			}
 
-			offset = GetCanalSpriteOffset(CF_RIVER_SLOPE, ti->tile, offset);
+			offset = GetCanalSpriteOffset(CanalFeature::RiverSlope, ti->tile, offset);
 		}
 	}
 
@@ -1254,11 +1254,11 @@ static void DoDryUp(TileIndex tile)
 			assert(GetRailGroundType(tile) == RailGroundType::HalfTileWater);
 
 			RailGroundType new_ground;
-			switch (GetTrackBits(tile)) {
-				case TRACK_BIT_UPPER: new_ground = RailGroundType::FenceHoriz1; break;
-				case TRACK_BIT_LOWER: new_ground = RailGroundType::FenceHoriz2; break;
-				case TRACK_BIT_LEFT:  new_ground = RailGroundType::FenceVert1;  break;
-				case TRACK_BIT_RIGHT: new_ground = RailGroundType::FenceVert2;  break;
+			switch (TrackBitsToTrack(GetTrackBits(tile))) {
+				case Track::Upper: new_ground = RailGroundType::FenceHoriz1; break;
+				case Track::Lower: new_ground = RailGroundType::FenceHoriz2; break;
+				case Track::Left: new_ground = RailGroundType::FenceVert1; break;
+				case Track::Right: new_ground = RailGroundType::FenceVert2; break;
 				default: NOT_REACHED();
 			}
 			SetRailGroundType(tile, new_ground);
@@ -1299,7 +1299,7 @@ void TileLoop_Water(TileIndex tile)
 	switch (GetFloodingBehaviour(tile)) {
 		case FloodingBehaviour::Active: {
 			bool continue_flooding = false;
-			for (Direction dir = Direction::Begin; dir < Direction::End; dir++) {
+			for (Direction dir : EnumRange(Direction::End)) {
 				TileIndex dest = AddTileIndexDiffCWrap(tile, TileIndexDiffCByDir(dir));
 				/* Contrary to drying up, flooding does not consider TileType::Void tiles. */
 				if (!IsValidTile(dest)) continue;
@@ -1382,29 +1382,28 @@ void ConvertGroundTilesIntoWaterTiles()
 /** @copydoc GetTileTrackStatusProc */
 static TrackStatus GetTileTrackStatus_Water(TileIndex tile, TransportType mode, [[maybe_unused]] RoadTramType sub_mode, [[maybe_unused]] DiagDirection side)
 {
-	static const TrackBits coast_tracks[] = {TRACK_BIT_NONE, TRACK_BIT_RIGHT, TRACK_BIT_UPPER, TRACK_BIT_NONE, TRACK_BIT_LEFT, TRACK_BIT_NONE, TRACK_BIT_NONE,
-		TRACK_BIT_NONE, TRACK_BIT_LOWER, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE, TRACK_BIT_NONE};
+	static const TrackBits coast_tracks[] = {{}, Track::Right, Track::Upper, {}, Track::Left, {}, {}, {}, Track::Lower, {}, {}, {}, {}, {}, {}, {}};
 
 	TrackBits ts;
 
 	if (mode != TRANSPORT_WATER) return {};
 
 	switch (GetWaterTileType(tile)) {
-		case WaterTileType::Clear: ts = IsTileFlat(tile) ? TRACK_BIT_ALL : TRACK_BIT_NONE; break;
+		case WaterTileType::Clear: ts = IsTileFlat(tile) ? TRACK_BIT_ALL : TrackBits{}; break;
 		case WaterTileType::Coast: ts = coast_tracks[GetTileSlope(tile) & 0xF]; break;
-		case WaterTileType::Lock:  ts = DiagDirToDiagTrackBits(GetLockDirection(tile)); break;
-		case WaterTileType::Depot: ts = AxisToTrackBits(GetShipDepotAxis(tile)); break;
+		case WaterTileType::Lock: ts = DiagDirToDiagTrack(GetLockDirection(tile)); break;
+		case WaterTileType::Depot: ts = AxisToTrack(GetShipDepotAxis(tile)); break;
 		default: return {};
 	}
 	if (TileX(tile) == 0) {
 		/* NE border: remove tracks that connects NE tile edge */
-		ts &= ~(TRACK_BIT_X | TRACK_BIT_UPPER | TRACK_BIT_RIGHT);
+		ts.Reset({Track::X, Track::Upper, Track::Right});
 	}
 	if (TileY(tile) == 0) {
 		/* NW border: remove tracks that connects NW tile edge */
-		ts &= ~(TRACK_BIT_Y | TRACK_BIT_LEFT | TRACK_BIT_UPPER);
+		ts.Reset({Track::Y, Track::Left, Track::Upper});
 	}
-	return {TrackBitsToTrackdirBits(ts), TRACKDIR_BIT_NONE};
+	return {TrackBitsToTrackdirBits(ts), {}};
 }
 
 /** @copydoc ClickTileProc */

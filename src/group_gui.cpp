@@ -697,7 +697,7 @@ public:
 			}
 
 			case WID_GL_SORT_BY_ORDER:
-				this->DrawSortButtonState(WID_GL_SORT_BY_ORDER, this->vehgroups.IsDescSortOrder() ? SBS_DOWN : SBS_UP);
+				this->DrawSortButton(WID_GL_SORT_BY_ORDER, this->vehgroups.IsDescSortOrder());
 				break;
 
 			case WID_GL_LIST_VEHICLE:
@@ -1315,7 +1315,7 @@ void DeleteGroupHighlightOfVehicle(const Vehicle *v)
 	/* If we haven't got any vehicles on the mouse pointer, we haven't got any highlighted in any group windows either
 	 * If that is the case, we can skip looping though the windows and save time
 	 */
-	if (_special_mouse_mode != WSM_DRAGDROP) return;
+	if (_special_mouse_mode != SpecialMouseMode::DragDrop) return;
 
 	VehicleGroupWindow *w = FindVehicleGroupWindow(v->type, v->owner);
 	if (w != nullptr) w->UnselectVehicle(v->index);

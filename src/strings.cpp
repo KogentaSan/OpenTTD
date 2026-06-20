@@ -8,7 +8,7 @@
 /** @file strings.cpp Handling of translated strings. */
 
 #include "stdafx.h"
-#include "currency.h"
+#include "currency_func.h"
 #include "station_base.h"
 #include "town.h"
 #include "waypoint_base.h"
@@ -2070,7 +2070,7 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 	std::array<uint, TEXT_TAB_END> tab_start, tab_num;
 
 	uint count = 0;
-	for (uint i = 0; i < TEXT_TAB_END; i++) {
+	for (StringTab i : EnumRange(TEXT_TAB_END)) {
 		uint16_t num = FROM_LE16(lang_pack->offsets[i]);
 		if (num > TAB_SIZE) return false;
 
@@ -2105,7 +2105,6 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 	_current_language = lang;
 	_current_text_dir = (TextDirection)_current_language->text_dir;
 	_config_language_file = FS2OTTD(_current_language->file.filename().native());
-	SetCurrentGrfLangID(_current_language->newgrflangid);
 	_langpack.list_separator = GetString(STR_LIST_SEPARATOR);
 	_langpack.ellipsis = GetString(STR_TRUNCATION_ELLIPSIS);
 

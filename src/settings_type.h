@@ -178,6 +178,13 @@ struct DifficultySettings {
 	bool infinite_money; ///< whether spending money despite negative balance is allowed
 };
 
+/** Possible values for the `order_review_system` setting. */
+enum class OrderReviewSystem : uint8_t {
+	Off, ///< Do not review orders.
+	ExcludeStopped, ///< Review orders of vehicles which are not stopped in a depot, or manually by the player.
+	All, ///< Review orders of all vehicles.
+};
+
 /** Settings relating to viewport/smallmap scrolling. */
 enum class ViewportScrollMode : uint8_t {
 	ViewportRMBFixed, ///< Viewport moves with mouse movement on holding right mouse button, cursor position is fixed.
@@ -202,18 +209,33 @@ enum class OskActivation : uint8_t {
 	Immediately, ///< Focusing click already opens OSK.
 };
 
+/** How to select the default rail/road types */
+enum class DefaultRailRoadType : uint8_t {
+	FirstAvailable, ///< Use the first available to the player
+	LastAvailable, ///< Use the latest available to the player
+	MostUsed, ///< Use the most used by the company controlled by the player
+};
+
+/** Values for _settings_client.gui.auto_scrolling */
+enum class ViewportAutoscrolling : uint8_t {
+	Disabled, ///< Do not autoscroll when mouse is at edge of viewport.
+	MainViewportFullscreen, ///< Scroll main viewport at edge when using fullscreen.
+	MainViewport, ///< Scroll main viewport at edge.
+	EveryViewport, ///< Scroll all viewports at their edges.
+};
+
 /** Settings related to the GUI and other stuff that is not saved in the savegame. */
 struct GUISettings {
 	bool sg_full_load_any; ///< new full load calculation, any cargo must be full read from pre v93 savegames
 	bool lost_vehicle_warn; ///< if a vehicle can't find its destination, show a warning
-	uint8_t order_review_system; ///< perform order reviews on vehicles
+	OrderReviewSystem order_review_system; ///< perform order reviews on vehicles
 	bool vehicle_income_warn; ///< if a vehicle isn't generating income, show a warning
 	bool old_vehicle_warn; ///< if a vehicle is getting old, show a warning
 	bool show_finances; ///< show finances at end of year
 	bool sg_new_nonstop; ///< ttdpatch compatible nonstop handling read from pre v93 savegames
 	bool new_nonstop; ///< ttdpatch compatible nonstop handling
 	OrderStopLocation stop_location; ///< what is the default stop location of trains?
-	uint8_t auto_scrolling; ///< scroll when moving mouse to the edge (see #ViewportAutoscrolling)
+	ViewportAutoscrolling auto_scrolling; ///< scroll when moving mouse to the edge.
 	uint8_t errmsg_duration; ///< duration of error message
 	uint16_t hover_delay_ms; ///< time required to activate a hover event, in milliseconds
 	bool link_terraform_toolbar; ///< display terraform toolbar when displaying rail, road, water and airport toolbars
@@ -226,7 +248,7 @@ struct GUISettings {
 	bool prefer_teamchat; ///< choose the chat message target with \<ENTER\>, true=all clients, false=your team
 	uint8_t advanced_vehicle_list; ///< use the "advanced" vehicle list
 	uint8_t loading_indicators; ///< show loading indicators
-	uint8_t default_rail_type; ///< the default rail type for the rail GUI
+	DefaultRailRoadType default_rail_road_type; ///< the default rail type for the rail/road/tram GUI
 	uint8_t toolbar_pos; ///< position of toolbars, 0=left, 1=center, 2=right
 	uint8_t statusbar_pos; ///< position of statusbar, 0=left, 1=center, 2=right
 	uint8_t window_snap_radius; ///< windows snap at each other if closer than this
@@ -449,6 +471,13 @@ struct GameCreationSettings {
 	uint8_t amount_of_rivers; ///< the amount of rivers
 };
 
+/** Enumerations of the setting for the side of train signals. */
+enum class TrainSignalSide : uint8_t {
+	Left, ///< Signals at the left side.
+	RoadVehicleDrivingSide, ///< Signals at the driving side of road vehicles.
+	Right, ///< Signals at the right side.
+};
+
 /** Settings related to construction in-game */
 struct ConstructionSettings {
 	uint8_t map_height_limit; ///< the maximum allowed heightlevel
@@ -457,7 +486,7 @@ struct ConstructionSettings {
 	uint16_t max_bridge_length; ///< maximum length of bridges
 	uint8_t max_bridge_height; ///< maximum height of bridges
 	uint16_t max_tunnel_length; ///< maximum length of tunnels
-	uint8_t train_signal_side; ///< show signals on left / driving / right side
+	TrainSignalSide train_signal_side; ///< show signals on left / driving / right side
 	bool extra_dynamite; ///< extra dynamite
 	bool road_stop_on_town_road; ///< allow building of drive-through road stops on town owned roads
 	bool road_stop_on_competitor_road; ///< allow building of drive-through road stops on roads owned by competitors
@@ -557,6 +586,12 @@ struct OrderSettings {
 	bool station_length_loading_penalty; ///< make trains longer than the station load more slowly
 };
 
+/** Enumeration of the driving sides of a road vehicle. */
+enum class RoadVehicleDrivingSide : uint8_t {
+	Left, ///< Drive on the left side.
+	Right, ///< Drive on the right side.
+};
+
 /** Settings related to vehicles. */
 struct VehicleSettings {
 	uint8_t max_train_length; ///< maximum length for trains
@@ -576,7 +611,7 @@ struct VehicleSettings {
 	bool dynamic_engines; ///< enable dynamic allocation of engine data
 	bool never_expire_vehicles; ///< never expire vehicles
 	uint8_t extend_vehicle_life; ///< extend vehicle life by this many years
-	uint8_t road_side; ///< the side of the road vehicles drive on
+	RoadVehicleDrivingSide road_side; ///< the side of the road vehicles drive on
 	uint8_t plane_crashes; ///< number of plane crashes, 0 = none, 1 = reduced, 2 = normal
 	bool aircraft_range; ///< enable range limits for aircraft
 };

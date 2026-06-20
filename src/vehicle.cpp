@@ -1587,7 +1587,7 @@ void VehicleEnterDepot(Vehicle *v)
 		case VehicleType::Ship: {
 			SetWindowClassesDirty(WindowClass::ShipList);
 			Ship *ship = Ship::From(v);
-			ship->state = TRACK_BIT_DEPOT;
+			ship->state = Track::Depot;
 			ship->UpdateCache();
 			ship->UpdateViewport(true, true);
 			SetWindowDirty(WindowClass::VehicleDepot, v->tile);
@@ -2820,7 +2820,7 @@ static bool IsBridgeAboveVehicle(const Vehicle *v)
 
 
 /** Models for spawning visual effects. */
-enum VisualEffectSpawnModel : uint8_t {
+enum class VisualEffectSpawnModel : uint8_t {
 	None = 0, ///< No visual effect
 	Steam, ///< Steam model
 	Diesel, ///< Diesel model

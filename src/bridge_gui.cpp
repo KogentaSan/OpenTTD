@@ -241,7 +241,7 @@ public:
 	{
 		switch (widget) {
 			case WID_BBS_DROPDOWN_ORDER:
-				this->DrawSortButtonState(widget, this->bridges.IsDescSortOrder() ? SBS_DOWN : SBS_UP);
+				this->DrawSortButton(widget, this->bridges.IsDescSortOrder());
 				break;
 
 			case WID_BBS_BRIDGE_LIST: {
@@ -266,9 +266,9 @@ public:
 			/* Build the requested bridge */
 			this->BuildBridge(this->bridges[i].index);
 			this->Close();
-			return ES_HANDLED;
+			return EventState::Handled;
 		}
-		return ES_NOT_HANDLED;
+		return EventState::NotHandled;
 	}
 
 	void OnClick([[maybe_unused]] Point pt, WidgetID widget, [[maybe_unused]] int click_count) override

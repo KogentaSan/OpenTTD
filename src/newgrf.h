@@ -26,23 +26,30 @@ struct GRFConfig;
  * List of different canal 'features'.
  * Each feature gets an entry in the canal spritegroup table
  */
-enum CanalFeature : uint8_t {
-	CF_WATERSLOPE,
-	CF_LOCKS,
-	CF_DIKES,
-	CF_ICON,
-	CF_DOCKS,
-	CF_RIVER_SLOPE,
-	CF_RIVER_EDGE,
-	CF_RIVER_GUI,
-	CF_BUOY,
-	CF_END,
+enum class CanalFeature : uint8_t {
+	LockWaterSlope, ///< The sloped water tiles in locks.
+	Locks, ///< The sides of the lock.
+	Dikes, ///< The canal dikes/embankment.
+	Icon, ///< Unused: the TTDP UI icon for canals.
+	FlatDocks, ///< Unused: the graphics for TTDP flat docks.
+	RiverSlope, ///< The sloped water tiles for rivers.
+	RiverEdge, ///< The river banks.
+	RiverIcon, ///< Unused: the TTDP UI icons for rivers.
+	Buoy, ///< Buoy without underlying water.
+	End, ///< End marker.
 };
+
+/** Flags controlling the display of canals. */
+enum class CanalFeatureFlag : uint8_t {
+	HasFlatSprite = 0, ///< Additional flat ground sprite in the beginning.
+};
+/** CanalFeatureFlag bitmask. */
+using CanalFeatureFlags = EnumBitSet<CanalFeatureFlag, uint8_t>;
 
 /** Canal properties local to the NewGRF */
 struct CanalProperties {
-	CanalCallbackMasks callback_mask;  ///< Bitmask of canal callbacks that have to be called.
-	uint8_t flags;          ///< Flags controlling display.
+	CanalCallbackMasks callback_mask; ///< Bitmask of canal callbacks that have to be called.
+	CanalFeatureFlags flags; ///< Flags controlling display.
 };
 
 /** Stages of loading all NewGRFs. */
@@ -53,9 +60,8 @@ enum class GrfLoadingStage : uint8_t {
 	Init, ///< Second step of NewGRF loading; load all actions into memory.
 	Reserve, ///< Third step of NewGRF loading; reserve features and GRMs.
 	Activation, ///< Forth step of NewGRF loading; activate the features.
+	End, ///< End marker.
 };
-
-DECLARE_INCREMENT_DECREMENT_OPERATORS(GrfLoadingStage)
 
 /** Bits of NewGRF's GlobalVariable 1E/9E. */
 enum class GrfMiscBit : uint8_t {
@@ -68,6 +74,7 @@ enum class GrfMiscBit : uint8_t {
 	SecondRockyTileSet = 6, ///< Enable using the second rocky tile set.
 };
 
+/** Bitset of \c GrfMiscBit elements. */
 using GrfMiscBits = EnumBitSet<GrfMiscBit, uint8_t>;
 
 enum class GrfSpecFeature : uint8_t {
@@ -103,6 +110,8 @@ enum class GrfSpecFeature : uint8_t {
 
 	Invalid = 0xFF, ///< An invalid spec feature
 };
+
+/** Bitset of \c GrfSpecFeature elements. */
 using GrfSpecFeatures = EnumBitSet<GrfSpecFeature, uint32_t, GrfSpecFeature::End>;
 
 static const uint32_t INVALID_GRFID = 0xFFFFFFFF;
@@ -152,7 +161,7 @@ struct GRFFile {
 	std::vector<RoadTypeLabel> tramtype_list{}; ///< Roadtype translation table (tram)
 	std::array<RoadType, ROADTYPE_END> tramtype_map{};
 
-	std::array<CanalProperties, CF_END> canal_local_properties{}; ///< Canal properties as set by this NewGRF
+	EnumIndexArray<CanalProperties, CanalFeature, CanalFeature::End> canal_local_properties{}; ///< Canal properties as set by this NewGRF
 
 	std::unordered_map<uint8_t, LanguageMap> language_map{}; ///< Mappings related to the languages.
 

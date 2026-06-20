@@ -115,7 +115,7 @@ Foundation GetBridgeFoundation(Slope tileh, Axis axis)
 {
 	if (tileh == SLOPE_FLAT ||
 			((tileh == SLOPE_NE || tileh == SLOPE_SW) && axis == Axis::X) ||
-			((tileh == SLOPE_NW || tileh == SLOPE_SE) && axis == Axis::Y)) return FOUNDATION_NONE;
+			((tileh == SLOPE_NW || tileh == SLOPE_SE) && axis == Axis::Y)) return Foundation::None;
 
 	return (HasSlopeHighestCorner(tileh) ? InclinedFoundation(axis) : FlatteningFoundation(tileh));
 }
@@ -224,7 +224,7 @@ static CommandCost CheckBridgeSlope(BridgePieces bridge_piece, Axis axis, Slope 
 	}
 	if ((tileh != SLOPE_FLAT) && (tileh != valid_inclined)) return CMD_ERROR;
 
-	if (f == FOUNDATION_NONE) return CommandCost();
+	if (f == Foundation::None) return CommandCost();
 
 	return CommandCost(ExpensesType::Construction, _price[Price::BuildFoundation]);
 }
@@ -645,7 +645,7 @@ CommandCost CmdBuildTunnel(DoCommandFlags flags, TileIndex start_tile, Transport
 {
 	CompanyID company = _current_company;
 
-	_build_tunnel_endtile = TileIndex{};
+	_build_tunnel_endtile = INVALID_TILE;
 	switch (transport_type) {
 		case TRANSPORT_RAIL:
 			if (!ValParamRailType(railtype)) return CMD_ERROR;
@@ -1089,9 +1089,9 @@ static void DrawBridgePillars(const PalSpriteID &psid, const TileInfo *ti, Axis 
 	static constexpr AxisIndexArray<int> back_pillar_offset{0, 9}; ///< sprite position offset of back facing pillar
 
 	static const int INF = 1000; ///< big number compared to sprite size
-	static constexpr AxisIndexArray<SubSprite[2]> half_pillar_sub_sprite{{{
-		{ {  -14, -INF, INF, INF }, { -INF, -INF, -15, INF } }, // X axis, north and south
-		{ { -INF, -INF,  15, INF }, {   16, -INF, INF, INF } }, // Y axis, north and south
+	static constexpr AxisIndexArray<std::array<SubSprite, 2>> half_pillar_sub_sprite{{{
+		{{ {  -14, -INF, INF, INF }, { -INF, -INF, -15, INF } }}, // X axis, north and south
+		{{ { -INF, -INF,  15, INF }, {   16, -INF, INF, INF } }}, // Y axis, north and south
 	}}};
 
 	if (psid.sprite == 0) return;
@@ -1750,7 +1750,7 @@ static int GetSlopePixelZ_TunnelBridge(TileIndex tile, uint x, uint y, bool grou
 /** @copydoc GetFoundationProc */
 static Foundation GetFoundation_TunnelBridge(TileIndex tile, Slope tileh)
 {
-	return IsTunnel(tile) ? FOUNDATION_NONE : GetBridgeFoundation(tileh, DiagDirToAxis(GetTunnelBridgeDirection(tile)));
+	return IsTunnel(tile) ? Foundation::None : GetBridgeFoundation(tileh, DiagDirToAxis(GetTunnelBridgeDirection(tile)));
 }
 
 /** @copydoc GetTileDescProc */
@@ -1857,7 +1857,7 @@ static TrackStatus GetTileTrackStatus_TunnelBridge(TileIndex tile, TransportType
 
 	DiagDirection dir = GetTunnelBridgeDirection(tile);
 	if (side != DiagDirection::Invalid && side != ReverseDiagDir(dir)) return {};
-	return {TrackBitsToTrackdirBits(DiagDirToDiagTrackBits(dir)), TRACKDIR_BIT_NONE};
+	return {TrackBitsToTrackdirBits(DiagDirToDiagTrack(dir)), {}};
 }
 
 /** @copydoc ChangeTileOwnerProc */
@@ -1974,7 +1974,7 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 		if (v->type == VehicleType::Train) {
 			Train *t = Train::From(v);
 
-			if (t->track != TRACK_BIT_WORMHOLE && dir == vdir) {
+			if (t->track != Track::Wormhole && dir == vdir) {
 				if (t->IsMovingFront() && frame == TUNNEL_SOUND_FRAME) {
 					if (!PlayVehicleSound(t, VSE_TUNNEL) && RailVehInfo(t->engine_type)->engclass == EngineClass::Steam) {
 						SndPlayVehicleFx(SND_05_TRAIN_THROUGH_TUNNEL, v);
@@ -1983,7 +1983,7 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 				}
 				if (frame == _tunnel_visibility_frame[dir]) {
 					t->tile = tile;
-					t->track = TRACK_BIT_WORMHOLE;
+					t->track = Track::Wormhole;
 					t->vehstatus.Set(VehState::Hidden);
 					return VehicleEnterTileState::EnteredWormhole;
 				}
@@ -1992,8 +1992,8 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 			if (dir == ReverseDiagDir(vdir) && frame == TILE_SIZE - _tunnel_visibility_frame[dir] && z == 0) {
 				/* We're at the tunnel exit ?? */
 				t->tile = tile;
-				t->track = DiagDirToDiagTrackBits(vdir);
-				assert(t->track);
+				t->track = DiagDirToDiagTrack(vdir);
+				assert(t->track.Any());
 				t->vehstatus.Reset(VehState::Hidden);
 				return VehicleEnterTileState::EnteredWormhole;
 			}
@@ -2017,7 +2017,7 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 			/* We're at the tunnel exit ?? */
 			if (dir == ReverseDiagDir(vdir) && frame == TILE_SIZE - _tunnel_visibility_frame[dir] && z == 0) {
 				rv->tile = tile;
-				rv->state = DiagDirToDiagTrackdir(vdir);
+				rv->state = to_underlying(DiagDirToDiagTrackdir(vdir));
 				rv->frame = frame;
 				rv->vehstatus.Reset(VehState::Hidden);
 				return VehicleEnterTileState::EnteredWormhole;
@@ -2039,7 +2039,7 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 			switch (v->type) {
 				case VehicleType::Train: {
 					Train *t = Train::From(v);
-					t->track = TRACK_BIT_WORMHOLE;
+					t->track = Track::Wormhole;
 					PrepareToEnterBridge(t);
 					break;
 				}
@@ -2052,7 +2052,7 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 				}
 
 				case VehicleType::Ship:
-					Ship::From(v)->state = TRACK_BIT_WORMHOLE;
+					Ship::From(v)->state = Track::Wormhole;
 					break;
 
 				default: NOT_REACHED();
@@ -2063,8 +2063,8 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 			switch (v->type) {
 				case VehicleType::Train: {
 					Train *t = Train::From(v);
-					if (t->track == TRACK_BIT_WORMHOLE) {
-						t->track = DiagDirToDiagTrackBits(vdir);
+					if (t->track == Track::Wormhole) {
+						t->track = DiagDirToDiagTrack(vdir);
 						return VehicleEnterTileState::EnteredWormhole;
 					}
 					break;
@@ -2073,7 +2073,7 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 				case VehicleType::Road: {
 					RoadVehicle *rv = RoadVehicle::From(v);
 					if (rv->state == RVSB_WORMHOLE) {
-						rv->state = DiagDirToDiagTrackdir(vdir);
+						rv->state = to_underlying(DiagDirToDiagTrackdir(vdir));
 						rv->frame = 0;
 						return VehicleEnterTileState::EnteredWormhole;
 					}
@@ -2082,8 +2082,8 @@ static VehicleEnterTileStates VehicleEnterTile_TunnelBridge(Vehicle *v, TileInde
 
 				case VehicleType::Ship: {
 					Ship *ship = Ship::From(v);
-					if (ship->state == TRACK_BIT_WORMHOLE) {
-						ship->state = DiagDirToDiagTrackBits(vdir);
+					if (ship->state == Track::Wormhole) {
+						ship->state = DiagDirToDiagTrack(vdir);
 						return VehicleEnterTileState::EnteredWormhole;
 					}
 					break;

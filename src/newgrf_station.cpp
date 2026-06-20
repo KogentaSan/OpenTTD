@@ -222,7 +222,7 @@ static uint32_t GetRailContinuationInfo(TileIndex tile)
 	for (i = 0; i < lengthof(x_dir); i++, dir++, diagdir++) {
 		TileIndex neighbour_tile = tile + TileOffsByDir(*dir);
 		TrackBits trackbits = TrackdirBitsToTrackBits(GetTileTrackStatus(neighbour_tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs);
-		if (trackbits != TRACK_BIT_NONE) {
+		if (trackbits.Any()) {
 			/* If there is any track on the tile, set the bit in the second byte */
 			SetBit(res, i + 8);
 
@@ -233,7 +233,7 @@ static uint32_t GetRailContinuationInfo(TileIndex tile)
 			}
 
 			/* If any track reaches our exit direction, set the bit in the lower byte */
-			if (trackbits & DiagdirReachesTracks(*diagdir)) SetBit(res, i);
+			if (trackbits.Any(DiagdirReachesTracks(*diagdir))) SetBit(res, i);
 		}
 	}
 
@@ -430,7 +430,7 @@ uint32_t Station::GetNewGRFVariable(const ResolverObject &object, uint8_t variab
 			return value;
 		}
 
-		case 0x8A: return this->had_vehicle_of_type;
+		case 0x8A: return this->had_vehicle_of_type.base();
 		case 0xF1: return (this->airport.tile != INVALID_TILE) ? this->airport.GetSpec()->ttd_airport_type : ATP_TTDP_LARGE;
 		case 0xF2: return (this->truck_stops != nullptr) ? this->truck_stops->status.base() : 0;
 		case 0xF3: return (this->bus_stops != nullptr)   ? this->bus_stops->status.base()   : 0;
@@ -487,7 +487,7 @@ uint32_t Waypoint::GetNewGRFVariable(const ResolverObject &, uint8_t variable, [
 {
 	switch (variable) {
 		case 0x48: return 0; // Accepted cargo types
-		case 0x8A: return HVOT_WAYPOINT;
+		case 0x8A: return StationVehicleTypes{StationVehicleType::Waypoint}.base();
 		case 0xF1: return 0; // airport type
 		case 0xF2: return 0; // truck stop status
 		case 0xF3: return 0; // bus stop status

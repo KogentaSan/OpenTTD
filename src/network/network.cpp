@@ -611,7 +611,7 @@ void NetworkClose(bool close_admins)
 		}
 
 		for (NetworkClientSocket *cs : NetworkClientSocket::Iterate()) {
-			cs->CloseConnection(NETWORK_RECV_STATUS_CLIENT_QUIT);
+			cs->CloseConnection(NetworkRecvStatus::ClientQuit);
 		}
 		ServerNetworkGameSocketHandler::CloseListeners();
 		ServerNetworkAdminSocketHandler::CloseListeners();
@@ -620,7 +620,7 @@ void NetworkClose(bool close_admins)
 	} else {
 		if (MyClient::my_client != nullptr) {
 			MyClient::SendQuit();
-			MyClient::my_client->CloseConnection(NETWORK_RECV_STATUS_CLIENT_QUIT);
+			MyClient::my_client->CloseConnection(NetworkRecvStatus::ClientQuit);
 		}
 
 		_network_coordinator_client.CloseAllConnections();
@@ -668,7 +668,7 @@ public:
 		Debug(net, 9, "Query::OnFailure(): connection_string={}", this->connection_string);
 
 		NetworkGame *item = NetworkGameListAddItem(connection_string);
-		item->status = NGLS_OFFLINE;
+		item->status = NetworkGameStatus::Offline;
 		item->refreshing = false;
 
 		UpdateNetworkGameWindow();

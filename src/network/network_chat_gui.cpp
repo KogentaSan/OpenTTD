@@ -184,7 +184,7 @@ void NetworkDrawChatMessage()
 	/* First undraw if needed */
 	NetworkUndrawChatMessage();
 
-	if (_iconsole_mode == ICONSOLE_FULL) return;
+	if (_iconsole_mode == IConsoleMode::Full) return;
 
 	/* Check if we have anything to draw at all */
 	if (!HaveChatMessages(show_all)) return;
@@ -382,10 +382,10 @@ struct NetworkChatWindow : public Window {
 
 	EventState OnKeyPress([[maybe_unused]] char32_t key, uint16_t keycode) override
 	{
-		EventState state = ES_NOT_HANDLED;
+		EventState state = EventState::NotHandled;
 		if (keycode == WKC_TAB) {
 			ChatTabCompletion();
-			state = ES_HANDLED;
+			state = EventState::Handled;
 		}
 		return state;
 	}
