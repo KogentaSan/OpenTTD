@@ -19,10 +19,10 @@
 #include "../safeguards.h"
 
 static const SaveLoad _engine_desc[] = {
-	 SLE_CONDVAR(Engine, intro_date,          SLE_FILE_U16 | SLE_VAR_I32,  SL_MIN_VERSION,  SLV_31),
-	 SLE_CONDVAR(Engine, intro_date,          SLE_INT32,                  SLV_31, SL_MAX_VERSION),
-	 SLE_CONDVAR(Engine, age,                 SLE_FILE_U16 | SLE_VAR_I32,  SL_MIN_VERSION,  SLV_31),
-	 SLE_CONDVAR(Engine, age,                 SLE_INT32,                  SLV_31, SL_MAX_VERSION),
+	 SLE_CONDVAR(Engine, intro_date,          SLE_FILE_U16 | SLE_VAR_I32,  SL_MIN_VERSION,  SLV_BIG_DATES),
+	 SLE_CONDVAR(Engine, intro_date,          SLE_INT32,                  SLV_BIG_DATES, SL_MAX_VERSION),
+	 SLE_CONDVAR(Engine, age,                 SLE_FILE_U16 | SLE_VAR_I32,  SL_MIN_VERSION,  SLV_BIG_DATES),
+	 SLE_CONDVAR(Engine, age,                 SLE_INT32,                  SLV_BIG_DATES, SL_MAX_VERSION),
 	     SLE_VAR(Engine, reliability,         SLE_UINT16),
 	     SLE_VAR(Engine, reliability_spd_dec, SLE_UINT16),
 	     SLE_VAR(Engine, reliability_start,   SLE_UINT16),
@@ -38,7 +38,7 @@ static const SaveLoad _engine_desc[] = {
 	 SLE_CONDVAR(Engine, company_avail,       SLE_FILE_U8  | SLE_VAR_U16,  SL_MIN_VERSION, SLV_104),
 	 SLE_CONDVAR(Engine, company_avail,       SLE_UINT16,                SLV_104, SL_MAX_VERSION),
 	 SLE_CONDVAR(Engine, company_hidden,      SLE_UINT16,                SLV_193, SL_MAX_VERSION),
-	SLE_CONDSSTR(Engine, name,                SLE_STR,                    SLV_84, SL_MAX_VERSION),
+	SLE_CONDSSTR(Engine, name,                SLE_STR,                    SLV_REPLACE_CUSTOM_NAME_ARRAY, SL_MAX_VERSION),
 };
 
 static TypedIndexContainer<std::vector<Engine>, EngineID> _temp_engine;

@@ -316,7 +316,7 @@ uint16_t Train::GetCurveSpeedLimit() const
 	static const int absolute_max_speed = UINT16_MAX;
 	int max_speed = absolute_max_speed;
 
-	if (_settings_game.vehicle.train_acceleration_model == AM_ORIGINAL) return max_speed;
+	if (_settings_game.vehicle.train_acceleration_model == AccelerationModel::Original) return max_speed;
 
 	int curvecount[2] = {0, 0};
 
@@ -387,11 +387,11 @@ uint16_t Train::GetCurveSpeedLimit() const
 int Train::GetCurrentMaxSpeed() const
 {
 	const Train *moving_front = this->GetMovingFront();
-	int max_speed = _settings_game.vehicle.train_acceleration_model == AM_ORIGINAL ?
+	int max_speed = _settings_game.vehicle.train_acceleration_model == AccelerationModel::Original ?
 			this->gcache.cached_max_track_speed :
 			this->tcache.cached_max_curve_speed;
 
-	if (_settings_game.vehicle.train_acceleration_model == AM_REALISTIC && IsRailStationTile(moving_front->tile)) {
+	if (_settings_game.vehicle.train_acceleration_model == AccelerationModel::Realistic && IsRailStationTile(moving_front->tile)) {
 		StationID sid = GetStationIndex(moving_front->tile);
 		if (this->current_order.ShouldStopAtStation(this, sid)) {
 			int station_ahead;
@@ -417,7 +417,7 @@ int Train::GetCurrentMaxSpeed() const
 	}
 
 	for (const Train *u = this; u != nullptr; u = u->Next()) {
-		if (_settings_game.vehicle.train_acceleration_model == AM_REALISTIC && u->track == Track::Depot) {
+		if (_settings_game.vehicle.train_acceleration_model == AccelerationModel::Realistic && u->track == Track::Depot) {
 			constexpr int DEPOT_SPEED_LIMIT = 61;
 			max_speed = std::min(max_speed, DEPOT_SPEED_LIMIT);
 			break;
@@ -1613,32 +1613,20 @@ static void MarkTrainAsStuck(Train *consist)
 /**
  * Swap the two up/down flags in two ways:
  * - Swap values of \a swap_flag1 and \a swap_flag2, and
- * - If going up previously (#GVF_GOINGUP_BIT set), the #GVF_GOINGDOWN_BIT is set, and vice versa.
+ * - If going up previously (#GroundVehicleFlag::GoingUp set), the #GroundVehicleFlag::GoingDown is set, and vice versa.
  * @param[in,out] swap_flag1 First train flag.
  * @param[in,out] swap_flag2 Second train flag.
  */
-static void SwapTrainFlags(uint16_t *swap_flag1, uint16_t *swap_flag2)
+static void SwapTrainFlags(GroundVehicleFlags *swap_flag1, GroundVehicleFlags *swap_flag2)
 {
-	uint16_t flag1 = *swap_flag1;
-	uint16_t flag2 = *swap_flag2;
-
-	/* Clear the flags */
-	ClrBit(*swap_flag1, GVF_GOINGUP_BIT);
-	ClrBit(*swap_flag1, GVF_GOINGDOWN_BIT);
-	ClrBit(*swap_flag2, GVF_GOINGUP_BIT);
-	ClrBit(*swap_flag2, GVF_GOINGDOWN_BIT);
+	GroundVehicleFlags flag1 = *swap_flag1;
+	GroundVehicleFlags flag2 = *swap_flag2;
 
 	/* Reverse the rail-flags (if needed) */
-	if (HasBit(flag1, GVF_GOINGUP_BIT)) {
-		SetBit(*swap_flag2, GVF_GOINGDOWN_BIT);
-	} else if (HasBit(flag1, GVF_GOINGDOWN_BIT)) {
-		SetBit(*swap_flag2, GVF_GOINGUP_BIT);
-	}
-	if (HasBit(flag2, GVF_GOINGUP_BIT)) {
-		SetBit(*swap_flag1, GVF_GOINGDOWN_BIT);
-	} else if (HasBit(flag2, GVF_GOINGDOWN_BIT)) {
-		SetBit(*swap_flag1, GVF_GOINGUP_BIT);
-	}
+	swap_flag2->Set(GroundVehicleFlag::GoingDown, flag1.Test(GroundVehicleFlag::GoingUp));
+	swap_flag2->Set(GroundVehicleFlag::GoingUp, flag1.Test(GroundVehicleFlag::GoingDown));
+	swap_flag1->Set(GroundVehicleFlag::GoingDown, flag2.Test(GroundVehicleFlag::GoingUp));
+	swap_flag1->Set(GroundVehicleFlag::GoingUp, flag2.Test(GroundVehicleFlag::GoingDown));
 }
 
 /**
@@ -1710,7 +1698,7 @@ static void ReverseTrainSwapVeh(Train *v, int l, int r)
 
 		SwapTrainFlags(&a->gv_flags, &b->gv_flags);
 	} else {
-		/* Swap GVF_GOINGUP_BIT/GVF_GOINGDOWN_BIT.
+		/* Swap GroundVehicleFlag::GoingUp/GroundVehicleFlag::GoingDown.
 		 * This is a little bit redundant way, a->gv_flags will
 		 * be (re)set twice, but it reduces code duplication */
 		SwapTrainFlags(&a->gv_flags, &a->gv_flags);
@@ -2051,9 +2039,8 @@ static void ReverseTrainDirection(Train *consist)
 
 		for (Train *u = consist; u != nullptr; u = u->Next()) {
 			/* Invert going up/down */
-			if (HasBit(u->gv_flags, GVF_GOINGUP_BIT) || HasBit(u->gv_flags, GVF_GOINGDOWN_BIT)) {
-				ToggleBit(u->gv_flags, GVF_GOINGDOWN_BIT);
-				ToggleBit(u->gv_flags, GVF_GOINGUP_BIT);
+			if (u->gv_flags.Any({GroundVehicleFlag::GoingUp, GroundVehicleFlag::GoingDown})) {
+				u->gv_flags.Flip({GroundVehicleFlag::GoingUp, GroundVehicleFlag::GoingDown});
 			}
 			UpdateStatusAfterSwap(u, false);
 		}
@@ -2182,7 +2169,7 @@ CommandCost CmdReverseTrainDirection(DoCommandFlags flags, VehicleID veh_id, boo
 			v->force_proceed = TFP_NONE;
 			InvalidateWindowData(WindowClass::VehicleView, v->index);
 
-			if (_settings_game.vehicle.train_acceleration_model != AM_ORIGINAL && v->cur_speed != 0) {
+			if (_settings_game.vehicle.train_acceleration_model != AccelerationModel::Original && v->cur_speed != 0) {
 				v->flags.Flip(VehicleRailFlag::Reversing);
 			} else {
 				v->cur_speed = 0;
@@ -2698,7 +2685,7 @@ public:
 		old_dest_tile(_v->dest_tile),
 		old_last_station_visited(_v->last_station_visited),
 		index(_v->cur_real_order_index),
-		suppress_implicit_orders(HasBit(_v->gv_flags, GVF_SUPPRESS_IMPLICIT_ORDERS)),
+		suppress_implicit_orders(_v->gv_flags.Test(GroundVehicleFlag::SuppressImplicitOrders)),
 		restored(false)
 	{
 	}
@@ -2711,7 +2698,7 @@ public:
 		this->v->current_order = this->old_order;
 		this->v->dest_tile = this->old_dest_tile;
 		this->v->last_station_visited = this->old_last_station_visited;
-		AssignBit(this->v->gv_flags, GVF_SUPPRESS_IMPLICIT_ORDERS, suppress_implicit_orders);
+		this->v->gv_flags.Set(GroundVehicleFlag::SuppressImplicitOrders, suppress_implicit_orders);
 		this->restored = true;
 	}
 
@@ -2895,7 +2882,7 @@ static Track ChooseTrainTrack(Train *consist, TileIndex tile, DiagDirection ente
 		/* Extend reservation until we have found a safe position. */
 		DiagDirection exitdir = TrackdirToExitdir(res_dest.trackdir);
 		TileIndex next_tile = TileAddByDiagDir(res_dest.tile, exitdir);
-		TrackBits reachable = TrackdirBitsToTrackBits(GetTileTrackStatus(next_tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs) & DiagdirReachesTracks(exitdir);
+		TrackBits reachable = TrackdirBitsToTrackBits(GetTileTrackStatus(next_tile, TransportType::Rail, RoadTramType::Invalid).trackdirs) & DiagdirReachesTracks(exitdir);
 		if (Rail90DegTurnDisallowed(GetTileRailType(res_dest.tile), GetTileRailType(next_tile))) {
 			reachable.Reset(TrackCrossesTracks(TrackdirToTrack(res_dest.trackdir)));
 		}
@@ -2997,7 +2984,7 @@ bool TryPathReserve(Train *consist, bool mark_as_stuck, bool first_tile_okay)
 
 	DiagDirection exitdir = TrackdirToExitdir(origin.trackdir);
 	TileIndex new_tile = TileAddByDiagDir(origin.tile, exitdir);
-	TrackBits reachable = TrackdirBitsToTrackBits(GetTileTrackStatus(new_tile, TRANSPORT_RAIL, RoadTramType::Invalid).trackdirs & DiagdirReachesTrackdirs(exitdir));
+	TrackBits reachable = TrackdirBitsToTrackBits(GetTileTrackStatus(new_tile, TransportType::Rail, RoadTramType::Invalid).trackdirs & DiagdirReachesTrackdirs(exitdir));
 
 	if (Rail90DegTurnDisallowed(GetTileRailType(origin.tile), GetTileRailType(new_tile))) reachable.Reset(TrackCrossesTracks(TrackdirToTrack(origin.trackdir)));
 
@@ -3081,10 +3068,10 @@ int Train::UpdateSpeed()
 {
 	switch (_settings_game.vehicle.train_acceleration_model) {
 		default: NOT_REACHED();
-		case AM_ORIGINAL:
+		case AccelerationModel::Original:
 			return this->DoUpdateSpeed(this->acceleration * (this->GetAccelerationStatus() == AS_BRAKE ? -4 : 2), 0, this->GetCurrentMaxSpeed());
 
-		case AM_REALISTIC:
+		case AccelerationModel::Realistic:
 			return this->DoUpdateSpeed(this->GetAcceleration(), this->GetAccelerationStatus() == AS_BRAKE ? 0 : 2, this->GetCurrentMaxSpeed());
 	}
 }
@@ -3158,7 +3145,7 @@ static const AccelerationSlowdownParams _accel_slowdown[] = {
  */
 static inline void AffectSpeedByZChange(Train *consist, int z_diff)
 {
-	if (z_diff == 0 || _settings_game.vehicle.train_acceleration_model != AM_ORIGINAL) return;
+	if (z_diff == 0 || _settings_game.vehicle.train_acceleration_model != AccelerationModel::Original) return;
 
 	const AccelerationSlowdownParams *asp = &_accel_slowdown[static_cast<int>(consist->GetAccelerationType())];
 
@@ -3400,7 +3387,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 
 				/* Get the status of the tracks in the new tile and mask
 				 * away the bits that aren't reachable. */
-				TrackStatus ts = GetTileTrackStatus(gp.new_tile, TRANSPORT_RAIL, RoadTramType::Invalid, ReverseDiagDir(enterdir));
+				TrackStatus ts = GetTileTrackStatus(gp.new_tile, TransportType::Rail, RoadTramType::Invalid, ReverseDiagDir(enterdir));
 				TrackdirBits reachable_trackdirs = DiagdirReachesTrackdirs(enterdir);
 
 				TrackdirBits trackdirbits = ts.trackdirs & reachable_trackdirs;
@@ -3561,7 +3548,7 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 				update_signals_crossing = true;
 
 				if (chosen_dir != v->GetMovingDirection()) {
-					if (prev == nullptr && _settings_game.vehicle.train_acceleration_model == AM_ORIGINAL) {
+					if (prev == nullptr && _settings_game.vehicle.train_acceleration_model == AccelerationModel::Original) {
 						const AccelerationSlowdownParams *asp = &_accel_slowdown[static_cast<int>(v->GetAccelerationType())];
 						DirDiff diff = DirDifference(v->direction, chosen_dir);
 						v->cur_speed -= (diff == DirDiff::Right45 || diff == DirDiff::Left45 ? asp->small_turn : asp->large_turn) * v->cur_speed >> 8;
@@ -3979,7 +3966,7 @@ static bool TrainCheckIfLineEnds(Train *moving_front, bool reverse)
 	TileIndex tile = moving_front->tile + TileOffsByDiagDir(dir);
 
 	/* Determine the track status on the next tile */
-	TrackStatus ts = GetTileTrackStatus(tile, TRANSPORT_RAIL, RoadTramType::Invalid, ReverseDiagDir(dir));
+	TrackStatus ts = GetTileTrackStatus(tile, TransportType::Rail, RoadTramType::Invalid, ReverseDiagDir(dir));
 	TrackdirBits reachable_trackdirs = DiagdirReachesTrackdirs(dir);
 
 	TrackdirBits trackdirbits = ts.trackdirs & reachable_trackdirs;
@@ -4245,7 +4232,7 @@ static void CheckIfTrainNeedsService(Train *v)
 		return;
 	}
 
-	SetBit(v->gv_flags, GVF_SUPPRESS_IMPLICIT_ORDERS);
+	v->gv_flags.Set(GroundVehicleFlag::SuppressImplicitOrders);
 	v->current_order.MakeGoToDepot(depot, OrderDepotTypeFlag::Service, OrderNonStopFlag::NonStop, OrderDepotActionFlag::NearestDepot);
 	v->dest_tile = tfdd.tile;
 	SetWindowWidgetDirty(WindowClass::VehicleView, v->index, WID_VV_START_STOP);

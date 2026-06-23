@@ -585,11 +585,11 @@ static uint8_t GetSavegameFileType(const SaveLoad &sld)
 			return GetVarFileType(sld.conv) | SLE_FILE_HAS_LENGTH_FIELD; break;
 
 		case SL_REF:
-			return IsSavegameVersionBefore(SLV_69) ? SLE_FILE_U16 : SLE_FILE_U32;
+			return IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SLE_FILE_U16 : SLE_FILE_U32;
 
 		case SL_REFLIST:
 		case SL_REFVECTOR:
-			return (IsSavegameVersionBefore(SLV_69) ? SLE_FILE_U16 : SLE_FILE_U32) | SLE_FILE_HAS_LENGTH_FIELD;
+			return (IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SLE_FILE_U16 : SLE_FILE_U32) | SLE_FILE_HAS_LENGTH_FIELD;
 
 		case SL_SAVEBYTE:
 			return SLE_FILE_U8;
@@ -667,7 +667,7 @@ static inline uint8_t SlCalcConvFileLen(VarType conv)
  */
 static inline size_t SlCalcRefLen()
 {
-	return IsSavegameVersionBefore(SLV_69) ? 2 : 4;
+	return IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? 2 : 4;
 }
 
 void SlSetArrayIndex(uint index)
@@ -1298,7 +1298,7 @@ static void *IntToReference(size_t index, SLRefType rt)
 
 	/* After version 4.3 REF_VEHICLE_OLD is saved as REF_VEHICLE,
 	 * and should be loaded like that */
-	if (rt == REF_VEHICLE_OLD && !IsSavegameVersionBefore(SLV_4, 4)) {
+	if (rt == REF_VEHICLE_OLD && !IsSavegameVersionBefore(SLV_TOWN_TOLERANCE_PAUSE_MODE, 4)) {
 		rt = REF_VEHICLE;
 	}
 
@@ -1368,7 +1368,7 @@ void SlSaveLoadRef(void *ptr, VarType conv)
 			break;
 		case SLA_LOAD_CHECK:
 		case SLA_LOAD:
-			*static_cast<size_t *>(ptr) = IsSavegameVersionBefore(SLV_69) ? SlReadUint16() : SlReadUint32();
+			*static_cast<size_t *>(ptr) = IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SlReadUint16() : SlReadUint32();
 			break;
 		case SLA_PTRS:
 			*static_cast<void **>(ptr) = IntToReference(*static_cast<size_t *>(ptr), static_cast<SLRefType>(conv));
@@ -1442,7 +1442,7 @@ public:
 				size_t length;
 				switch (cmd) {
 					case SL_VAR: length = IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? SlReadUint32() : SlReadArrayLength(); break;
-					case SL_REF: length = IsSavegameVersionBefore(SLV_69) ? SlReadUint16() : IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? SlReadUint32() : SlReadArrayLength(); break;
+					case SL_REF: length = IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SlReadUint16() : IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? SlReadUint32() : SlReadArrayLength(); break;
 					case SL_STDSTR: length = SlReadArrayLength(); break;
 					default: NOT_REACHED();
 				}
@@ -3163,7 +3163,7 @@ static SaveLoadResult DoLoad(std::shared_ptr<LoadFilter> reader, bool load_check
 
 		_gamelog.Reset();
 
-		if (IsSavegameVersionBefore(SLV_4)) {
+		if (IsSavegameVersionBefore(SLV_TOWN_TOLERANCE_PAUSE_MODE)) {
 			/*
 			 * NewGRFs were introduced between 0.3,4 and 0.3.5, which both
 			 * shared savegame version 4. Anything before that 'obviously'
@@ -3207,7 +3207,7 @@ static SaveLoadResult DoLoad(std::shared_ptr<LoadFilter> reader, bool load_check
 		/* The only part from AfterLoadGame() we need */
 		_load_check_data.grf_compatibility = IsGoodGRFConfigList(_load_check_data.grfconfig);
 	} else {
-		_gamelog.StartAction(GLAT_LOAD);
+		_gamelog.StartAction(GamelogActionType::Load);
 
 		/* After loading fix up savegame for any internal changes that
 		 * might have occurred since then. If it fails, load back the old game. */
@@ -3274,7 +3274,7 @@ SaveLoadResult SaveOrLoad(std::string_view filename, SaveLoadOperation fop, Deta
 			if (!LoadOldSaveGame(filename)) return SaveLoadResult::ReInit;
 			_sl_version = SL_MIN_VERSION;
 			_sl_minor_version = 0;
-			_gamelog.StartAction(GLAT_LOAD);
+			_gamelog.StartAction(GamelogActionType::Load);
 			if (!AfterLoadGame()) {
 				_gamelog.StopAction();
 				return SaveLoadResult::ReInit;

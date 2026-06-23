@@ -30,123 +30,124 @@
 enum SaveLoadVersion : uint16_t {
 	SL_MIN_VERSION,                         ///< First savegame version
 
-	SLV_1,                                  ///<   1.0         0.1.x, 0.2.x
-	SLV_2,                                  /**<   2.0         0.3.0
-	                                         *     2.1         0.3.1, 0.3.2 */
-	SLV_3,                                  ///<   3.x         lost
-	SLV_4,                                  /**<   4.0     1
-	                                         *     4.1   122   0.3.3, 0.3.4
-	                                         *     4.2  1222   0.3.5
-	                                         *     4.3  1417
-	                                         *     4.4  1426 */
+	SLV_BIG_CURRENCY,                       ///<   1.0         0.1.x, 0.2.x Change currency from 32 to 64 bits
+	SLV_VEHICLE_CURRENCY_STATION_CHANGES,   /**<   2.0         0.3.0        Adding vehicle state, larger currency size for statistics, station size revamped.
+	                                         *     2.1         0.3.1, 0.3.2 Unify way of storing town owner
+	                                         *     2.2         lost         New airports */
+	SLV_BIGGER_STATION_VARIABLES,           ///<   3.x         lost         Increase size of airport blocks/station build date
+	SLV_TOWN_TOLERANCE_PAUSE_MODE,          /**<   4.0     1                Town council tolerance and pause mode
+	                                         *     4.1   122   0.3.3, 0.3.4 Store exclusive rights in towns
+	                                         *     4.2  1222   0.3.5        Currencies are reordered
+	                                         *     4.3  1417                Make water owned by OWNER_NONE
+	                                         *     4.4  1426                Make vehicle references same as other references */
 
-	SLV_5,                                  /**<   5.0  1429
-	                                         *     5.1  1440
-	                                         *     5.2  1525   0.3.6 */
-	SLV_6,                                  /**<   6.0  1721
-	                                         *     6.1  1768 */
-	SLV_7,                                  ///<   7.0  1770
-	SLV_8,                                  ///<   8.0  1786
-	SLV_9,                                  ///<   9.0  1909
+	SLV_BIG_MAP,                            /**<   5.0  1429 Making maps a different size than 256x256
+	                                         *     5.1  1440 Flexible airport layouts
+	                                         *     5.2  1525   0.3.6 Dynamic order array */
+	SLV_MULTIPLE_ROAD_STOPS,                /**<   6.0  1721 Multi tile road stops, and some map size related fixes
+	                                         *     6.1  1768 Town index in m2 */
+	SLV_LARGER_CARGO_SOURCE,                ///<   7.0  1770 With more stations, the size of the cargo source needed to be increased
+	SLV_LARGER_UNIT_NUMBER,                 ///<   8.0  1786 Increase size of (vehicle) unit numbers
+	SLV_LARGER_TOWN_CARGO_STATISTICS,       ///<   9.0  1909 Increase size of passenger/mail production of this and previous months
 
-	SLV_10,                                 ///<  10.0  2030
-	SLV_11,                                 /**<  11.0  2033
-	                                         *    11.1  2041 */
-	SLV_12,                                 ///<  12.1  2046
-	SLV_13,                                 ///<  13.1  2080   0.4.0, 0.4.0.1
-	SLV_14,                                 ///<  14.0  2441
+	SLV_LARGER_TOWN_COUNTER,                ///<  10.0  2030 Increase size of the town counter
+	SLV_LARGER_TOWN_ITERATOR,               /**<  11.0  2033 Increase size of the town iterator
+	                                         *    11.1  2041 Fix vehicle counters */
+	SLV_LINK_WAYPOINT_TO_TOWN,              ///<  12.1  2046 Link waypoints to towns and remove some bit stuffing
+	SLV_LARGER_AI_STATE_COUNTER,            ///<  13.1  2080   0.4.0, 0.4.0.1 AI state counter increased due it storing tile indices
+	SLV_TRANSFER_ORDER,                     ///<  14.0  2441 Transfer orders for feeder systems
 
-	SLV_15,                                 ///<  15.0  2499
-	SLV_16,                                 /**<  16.0  2817
-	                                         *    16.1  3155 */
-	SLV_17,                                 /**<  17.0  3212
-	                                         *    17.1  3218 */
-	SLV_18,                                 ///<  18    3227
-	SLV_19,                                 ///<  19    3396
+	SLV_MOVE_SEMAPHORE_BITS,                ///<  15.0  2499 Move rail signal bit for semaphores
+	SLV_ENGINE_RENEW,                       /**<  16.0  2817 Automatic replacing/renewing of vehicles
+	                                         *    16.1  3155 Keep vehicle length during autoreplace */
+	SLV_STORE_WAYPOINT_ID_IN_MAP,           /**<  17.0  3212 Store the ID of waypoints in m2 of the map
+	                                         *    17.1  3218 Make train subtype a bitmask */
+	SLV_REMOVE_MINOR_VERSION,               ///<  18    3227 Remove the minor versions from savegames
+	SLV_ENGINE_RENEW_POOL,                  ///<  19    3396 Engine renews are now stored in a pool
 
-	SLV_20,                                 ///<  20    3403
-	SLV_21,                                 ///<  21    3472   0.4.x
-	SLV_22,                                 ///<  22    3726
-	SLV_23,                                 ///<  23    3915
-	SLV_24,                                 ///<  24    4150
+	SLV_NO_MULTIHEAD_REFERENCE,             ///<  20    3403 Remove reference from one multihead to the other one
+	SLV_REMOVE_OLD_PBS,                     ///<  21    3472   0.4.x Remove old implementation of path based signals
+	SLV_SAVE_PATCHES,                       ///<  22    3726 Save state of patches (precursor of settings) in the savegame
+	SLV_REMOVE_AUTOSAVE_INTERVAL,           ///<  23    3915 Store autosave interval locally, instead of in savegame
+	SLV_ELRAIL,                             ///<  24    4150 Electrified railways
 
-	SLV_25,                                 ///<  25    4259
-	SLV_26,                                 ///<  26    4466
-	SLV_27,                                 ///<  27    4757
-	SLV_28,                                 ///<  28    4987
-	SLV_29,                                 ///<  29    5070
+	SLV_IMPROVE_MULTISTOP,                  ///<  25    4259 Improve the behaviour of RVs going to road stops
+	SLV_LAST_VEHICLE_TYPE,                  ///<  26    4466 Store the last vehicle type at stations instead of the vehicle ID
+	SLV_NEWGRF_STATIONS,                    ///<  27    4757 NewGRF graphics for stations
+	SLV_YAPF,                               ///<  28    4987 Yet another path finder
+	SLV_MORE_UNDER_BRIDGES,                 ///<  29    5070 Support crossings, fields and bridge/tunnel heads under bridges
 
-	SLV_30,                                 ///<  30    5946
-	SLV_31,                                 ///<  31    5999
-	SLV_32,                                 ///<  32    6001
-	SLV_33,                                 ///<  33    6440
-	SLV_34,                                 ///<  34    6455
+	SLV_TGP,                                ///<  30    5946 TerraGenesis Perlin
+	SLV_BIG_DATES,                          ///<  31    5999 Change date from 1920 - 2090 to 0 - 5 000 000
+	SLV_LINK_FARM_FIELD_TO_INDUSTRY,        ///<  32    6001 Link farm fields to the industry, so it gets removed when the industry goes away
+	SLV_SAVE_YAPF_SETTINGS,                 ///<  33    6440 Some YAPF settings were not saved properly
+	SLV_LIVERIES,                           ///<  34    6455 Liveries and two company colours (2cc)
 
-	SLV_35,                                 ///<  35    6602
-	SLV_36,                                 ///<  36    6624
-	SLV_37,                                 ///<  37    7182
-	SLV_38,                                 ///<  38    7195
-	SLV_39,                                 ///<  39    7269
+	SLV_LIVERY_REFIT,                       ///<  35    6602 NewGRF livery refits
+	SLV_REFIT_ORDERS,                       ///<  36    6624 Vehicles can be refitted as part of an order
+	SLV_UTF8,                               ///<  37    7182 UTF-8 strings
+	SLV_DISABLE_ELRAIL_SETTING,             ///<  38    7195 Add setting to disable electrified rails
+	SLV_FREIGHT_WEIGHT,                     ///<  39    7269 Setting to increase the weight of cargo on freight trains
 
-	SLV_40,                                 ///<  40    7326
-	SLV_41,                                 ///<  41    7348   0.5.x
-	SLV_42,                                 ///<  42    7573
-	SLV_43,                                 ///<  43    7642
-	SLV_44,                                 ///<  44    8144
+	SLV_GRADUAL_LOADING,                    ///<  40    7326 Gradual (un)loading of cargo
+	SLV_NEWGRF_SETTINGS,                    ///<  41    7348   0.5.x Save what NewGRFs are used in the game and their settings
+	SLV_BRIDGE_WORMHOLE,                    ///<  42    7573 Bridges become wormholes, so more things can be built under them (e.g. signals)
+	SLV_UNIFY_ANIMATION_STATE,              ///<  43    7642 Put all animation state information in same map bits
+	SLV_CARGO_SOURCE_TILE,                  ///<  44    8144 Store the source tile of the cargo, so accurate payment can happen when the source station is removed
 
-	SLV_45,                                 ///<  45    8501
-	SLV_46,                                 ///<  46    8705
-	SLV_47,                                 ///<  47    8735
-	SLV_48,                                 ///<  48    8935
-	SLV_49,                                 ///<  49    8969
+	SLV_COUNT_PAID_FOR_CARGO,               ///<  45    8501 Count the amount of cargo that was paid for
+	SLV_MORE_AIRPORT_BLOCKS,                ///<  46    8705 Increase number of blocks an airport can have
+	SLV_DRIVE_THROUGH_ROAD_STOPS,           ///<  47    8735 Drive through road stops
+	SLV_RAIL_TRACK_TYPE_UNIFICATION,        ///<  48    8935 Put all the rail track type information in same map bits
+	SLV_SIMPLIFY_PLAYER_FACE,               ///<  49    8969 Simplify the storage of player face information
 
-	SLV_50,                                 ///<  50    8973
-	SLV_51,                                 ///<  51    8978
-	SLV_52,                                 ///<  52    9066
-	SLV_53,                                 ///<  53    9316
-	SLV_54,                                 ///<  54    9613
+	SLV_AIRCRAFT_SPEED_HOLDING,             ///<  50    8973 Aircraft speed in km-ish/h and reduced speed in holding patterns
+	SLV_FEEDER_SHARE,                       ///<  51    8978 Rewrite of transfers to retain knowledge about the already paid amount for transfered cargo
+	SLV_STATUE_OWNER,                       ///<  52    9066 Store the owner of the statue, so the town can be informed of their removal
+	SLV_NEWGRF_HOUSES,                      ///<  53    9316 NewGRF controlled houses
+	SLV_TOWN_GROWTH_CONTROL,                ///<  54    9613 Give the player control over the town growth
 
-	SLV_55,                                 ///<  55    9638
-	SLV_56,                                 ///<  56    9667
-	SLV_57,                                 ///<  57    9691
-	SLV_58,                                 ///<  58    9762
-	SLV_59,                                 ///<  59    9779
+	SLV_NEWGRF_CARGO,                       ///<  55    9638 Increase number of cargos and NewGRF control of cargos
+	SLV_CITIES,                             ///<  56    9667 Cities that start bigger and grow faster
+	SLV_FIFO_LOADING,                       ///<  57    9691 First-in-first-out loading of vehicles
+	SLV_VERY_LOW_TOWN_INDUSTRY_NUMBER,      ///<  58    9762 Difficulty settings for very low number of industries and towns
+	SLV_TOWN_LAYOUT,                        ///<  59    9779 More layout options for towns
 
-	SLV_60,                                 ///<  60    9874
-	SLV_61,                                 ///<  61    9892
-	SLV_62,                                 ///<  62    9905
-	SLV_63,                                 ///<  63    9956
-	SLV_64,                                 ///<  64   10006
+	SLV_VEHICLE_GROUPS,                     ///<  60    9874 Arbitrary grouping, by the player, of vehicles
+	SLV_MULTIPLE_ROAD_TYPES,                ///<  61    9892 Multiple road types for the same tile
+	SLV_ADJACENT_STATIONS,                  ///<  62    9905 Allow building multiple stations directly next to eachother
+	SLV_TRAM_LIVERY,                        ///<  63    9956 Add separate livery for trams
+	SLV_MULTIPLE_SIGNAL_TYPES,              ///<  64   10006 Multiple different signal types on the same (diagonal) tile, instead of the same for both directions
 
-	SLV_65,                                 ///<  65   10210
-	SLV_66,                                 ///<  66   10211
-	SLV_67,                                 ///<  67   10236
-	SLV_68,                                 ///<  68   10266
-	SLV_69,                                 ///<  69   10319
+	SLV_UNIFY_CURRENCY,                     ///<  65   10210 Make all variables related to currency 64 bits
+	SLV_NEWGRF_TOWN_NAMES,                  ///<  66   10211 NewGRF provided town names
+	SLV_TIMETABLES,                         ///<  67   10236 Introduce timetables for vehicles
+	SLV_CARGO_PACKETS,                      ///<  68   10266 Account for individual units of cargo, i.e. there can be cargo from multiple sources/ages in one vehicle
+	SLV_MORE_CARGO_PACKETS,                 ///<  69   10319 Allow more than ~65k cargo packets
 
-	SLV_70,                                 ///<  70   10541
-	SLV_71,                                 ///<  71   10567
-	SLV_72,                                 ///<  72   10601
-	SLV_73,                                 ///<  73   10903
-	SLV_74,                                 ///<  74   11030
+	SLV_CARGO_PAYMENT_OVERFLOW,             ///<  70   10541 Fix overflow of cargo payment rates, plus preparation for player founded industries
+	SLV_UNGROUPED_VEHICLES,                 ///<  71   10567 Add a group with vehicles that aren't in any other group
+	SLV_SPLIT_STATION_TYPE_FROM_GFXID,      ///<  72   10601 Splits the encoding of station type from the graphics identifer
+	SLV_NEWGRF_INDUSTRY_LAYOUT,             ///<  73   10903 NewGRF provided layouts for industries
+	SLV_FIX_STATION_PICKUP_ACCOUNTING,      ///<  74   11030 Accounting of which cargos a station would pick up was done incorrectly
 
-	SLV_75,                                 ///<  75   11107
-	SLV_76,                                 ///<  76   11139
-	SLV_77,                                 ///<  77   11172
-	SLV_78,                                 ///<  78   11176
-	SLV_79,                                 ///<  79   11188
+	SLV_AUTOSLOPE,                          ///<  75   11107 Terraforming under buildings/track/anything that supports foundations
+	SLV_NEWGRF_PERSISTENT_STORAGE,          ///<  76   11139 Persistently store some state of NewGRF objects/entities
+	SLV_CLEANUP_UNCONNECTED_ROADS,          ///<  77   11172 Option to remove unconnected roads during a town's road reconstruction
+	SLV_STORE_INDUSTRY_CARGO,               ///<  78   11176 Store an industry's cargo, so it can be customised upon building
+	SLV_FAIR_PLAY_SETTINGS,                 ///<  79   11188 Add setting to disable exclusive rights in a town and giving money
 
-	SLV_80,                                 ///<  80   11228
-	SLV_81,                                 ///<  81   11244
-	SLV_82,                                 ///<  82   11410
-	SLV_83,                                 ///<  83   11589
-	SLV_84,                                 ///<  84   11822
+	SLV_NEWGRF_MORE_ANIMATION,              ///<  80   11228 Support more types of animation for NewGRF industries
+	SLV_FIX_TREE_GROUND,                    ///<  81   11244 Various fixes to improve the visuals of the ground under trees
+	SLV_NEWGRF_INDUSTRY_RANDOM_TRIGGERS,    ///<  82   11410 NewGRF random triggers for industries
+	SLV_DEPOT_WATER_OWNERS,                 ///<  83   11589 Store the owner of the water under depots, so removing of the depot doesn't disown the original owner
+	SLV_REPLACE_CUSTOM_NAME_ARRAY,          ///<  84   11822 Replace single fixed size array of custom names, by moving the name into the appropriate objects
 
-	SLV_85,                                 ///<  85   11874
-	SLV_86,                                 ///<  86   12042
-	SLV_87,                                 ///<  87   12129
-	SLV_88,                                 ///<  88   12134
-	SLV_89,                                 ///<  89   12160
+	SLV_MAGLEV_MONORAIL_PAX_WAGON_LIVERY,   ///<  85   11874 Add livery for maglev/monorail passenger wagons
+	SLV_WATER_CLASS,                        ///<  86   12042 Store the type of water (sea/ocean, canal, river) for buoys, docks, locks and depots
+	SLV_SIMPLIFY_PATHFINDER_SETTINGS,       ///<  87   12129 Make it easier to select the pathfinder to use
+	SLV_FRACTION_PROFIT_RUNNING_TICKS,      ///<  88   12134 Store vehicle profits as a (fixed point) fraction, and store the number of ticks a vehicle ran in a day
+	SLV_MORE_WAYPOINTS_PER_TOWN,            ///<  89   12160 Support more than 64 waypoints per town
 
 	SLV_90,                                 ///<  90   12293
 	SLV_91,                                 ///<  91   12347
