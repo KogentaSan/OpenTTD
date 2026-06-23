@@ -476,24 +476,24 @@ struct GameOptionsWindow : Window {
 		DropDownList list;
 		switch (widget) {
 			case WID_GO_CURRENCY_DROPDOWN: { // Setup currencies dropdown
-				*selected_index = this->opt->locale.currency;
-				uint64_t disabled = _game_mode == GameMode::Menu ? 0LL : ~GetMaskOfAllowedCurrencies();
+				*selected_index = to_underlying(this->opt->locale.currency);
+				Currencies disabled = _game_mode == GameMode::Menu ? Currencies{} : GetMaskOfAllowedCurrencies().Flip();
 
 				/* Add non-custom currencies; sorted naturally */
-				for (const CurrencySpec &currency : _currency_specs) {
-					int i = &currency - _currency_specs.data();
-					if (i == CURRENCY_CUSTOM) continue;
+				for (Currency i : EnumRange(Currency::End)) {
+					if (i == Currency::Custom) continue;
+					CurrencySpec &currency = _currency_specs[i];
 					if (currency.code.empty()) {
-						list.push_back(MakeDropDownListStringItem(currency.name, i, HasBit(disabled, i)));
+						list.push_back(MakeDropDownListStringItem(currency.name, i, disabled.Test(i)));
 					} else {
-						list.push_back(MakeDropDownListStringItem(GetString(STR_GAME_OPTIONS_CURRENCY_CODE, currency.name, currency.code), i, HasBit(disabled, i)));
+						list.push_back(MakeDropDownListStringItem(GetString(STR_GAME_OPTIONS_CURRENCY_CODE, currency.name, currency.code), i, disabled.Test(i)));
 					}
 				}
 				std::sort(list.begin(), list.end(), DropDownListStringItem::NatSortFunc);
 
 				/* Append custom currency at the end */
 				list.push_back(MakeDropDownListDividerItem()); // separator line
-				list.push_back(MakeDropDownListStringItem(STR_GAME_OPTIONS_CURRENCY_CUSTOM, CURRENCY_CUSTOM, HasBit(disabled, CURRENCY_CUSTOM)));
+				list.push_back(MakeDropDownListStringItem(STR_GAME_OPTIONS_CURRENCY_CUSTOM, Currency::Custom, disabled.Test(Currency::Custom)));
 				break;
 			}
 
@@ -1423,11 +1423,13 @@ struct GameOptionsWindow : Window {
 	void OnDropdownSelect(WidgetID widget, int index, int) override
 	{
 		switch (widget) {
-			case WID_GO_CURRENCY_DROPDOWN: // Currency
-				if (index == CURRENCY_CUSTOM) ShowCustCurrency();
-				this->opt->locale.currency = index;
+			case WID_GO_CURRENCY_DROPDOWN: { // Currency
+				Currency currency = static_cast<Currency>(index);
+				if (currency == Currency::Custom) ShowCustCurrency();
+				this->opt->locale.currency = currency;
 				ReInitAllWindows(false);
 				break;
+			}
 
 			case WID_GO_AUTOSAVE_DROPDOWN: // Autosave options
 				_settings_client.gui.autosave_interval = _autosave_dropdown_to_minutes[index];

@@ -18,6 +18,7 @@
 #include "network/network_type.h"
 #include "company_type.h"
 #include "cargotype.h"
+#include "currency_type.h"
 #include "linkgraph/linkgraph_type.h"
 #include "zoom_type.h"
 #include "openttd.h"
@@ -344,9 +345,21 @@ struct SoundSettings {
 	bool ambient; ///< Play ambient, industry and town sounds.
 };
 
+/** Playlists */
+enum class PlaylistChoice : uint8_t {
+	All, ///< Play all music (except theme).
+	OldStyle, ///< Play "old style" music.
+	NewStyle, ///< Play "new style" music.
+	EzyStreet, ///< Play "Ezy Street" music.
+	Custom1, ///< Play the first custom playlist.
+	Custom2, ///< Play the second custom playlist.
+	ThemeOnly, ///< Play only the theme music.
+	End, ///< End marker.
+};
+
 /** Settings related to music. */
 struct MusicSettings {
-	uint8_t playlist; ///< The playlist (number) to play
+	PlaylistChoice playlist; ///< The playlist (number) to play
 	uint8_t music_vol; ///< The requested music volume
 	uint8_t effect_vol; ///< The requested effects volume
 	uint8_t custom_1[33]; ///< The order of the first custom playlist
@@ -357,7 +370,7 @@ struct MusicSettings {
 
 /** Settings related to currency/unit systems. */
 struct LocaleSettings {
-	uint8_t currency; ///< currency we currently use
+	Currency currency; ///< Currency we currently use
 	uint8_t units_velocity; ///< unit system for velocity of trains and road vehicles
 	uint8_t units_velocity_nautical; ///< unit system for velocity of ships and aircraft
 	uint8_t units_power; ///< unit system for power
@@ -596,8 +609,8 @@ enum class RoadVehicleDrivingSide : uint8_t {
 struct VehicleSettings {
 	uint8_t max_train_length; ///< maximum length for trains
 	uint8_t smoke_amount; ///< amount of smoke/sparks locomotives produce
-	uint8_t train_acceleration_model; ///< realistic acceleration for trains
-	uint8_t roadveh_acceleration_model; ///< realistic acceleration for road vehicles
+	AccelerationModel train_acceleration_model; ///< realistic acceleration for trains
+	AccelerationModel roadveh_acceleration_model; ///< realistic acceleration for road vehicles
 	uint8_t train_slope_steepness; ///< Steepness of hills for trains when using realistic acceleration
 	uint8_t roadveh_slope_steepness; ///< Steepness of hills for road vehicles when using realistic acceleration
 	bool wagon_speed_limits; ///< enable wagon speed limits
