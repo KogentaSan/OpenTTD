@@ -1237,10 +1237,10 @@ STR_TERRAIN_TYPE_CUSTOM                                         :自訂高度
 STR_TERRAIN_TYPE_CUSTOM_VALUE                                   :自訂高度（{NUM}）
 
 ###length 4
-STR_CITY_APPROVAL_LENIENT                                       :寬鬆
-STR_CITY_APPROVAL_TOLERANT                                      :容忍
-STR_CITY_APPROVAL_HOSTILE                                       :敵視
-STR_CITY_APPROVAL_PERMISSIVE                                    :放縱（全部操作都唔受影響）
+STR_CITY_APPROVAL_LENIENT                                       :手鬆
+STR_CITY_APPROVAL_TOLERANT                                      :包容
+STR_CITY_APPROVAL_HOSTILE                                       :敵意
+STR_CITY_APPROVAL_PERMISSIVE                                    :縱容（全部操作都唔受影響）
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}無適合嘅 AI 可供使用……{}{}你可以使用「網上擴充內容」功能下載更多嘅 AI
 
