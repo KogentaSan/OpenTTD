@@ -1,4 +1,4 @@
-name: Build Windows x64 Zip
+name: 16.0-beta1 Windows x64 Build
 
 on:
   workflow_dispatch:   # 只手動觸發
@@ -6,7 +6,7 @@ on:
 jobs:
   build-windows-x64:
     runs-on: windows-latest
-    name: 16.0-beta1 Windows x64 Build
+    name: Windows x64 Build
 
     steps:
       - name: Checkout repository
