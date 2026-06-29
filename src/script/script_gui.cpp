@@ -897,7 +897,7 @@ struct ScriptDebugWindow : public Window {
 				if (colour == TextColour::Black) colour = TextColour::White; // Make black text readable by inverting it to white.
 			}
 
-			DrawString(fr, line.text, colour, SA_LEFT | SA_FORCE);
+			DrawString(fr, line.text, colour, AlignmentH::ForceLeft);
 			fr.top += this->resize.step_height;
 		}
 	}
@@ -1017,8 +1017,8 @@ struct ScriptDebugWindow : public Window {
 			case WID_SCRD_RELOAD_TOGGLE:
 				if (this->filter.script_debug_company == OWNER_DEITY) break;
 				/* First kill the company of the AI, then start a new one. This should start the current AI again */
-				Command<Commands::CompanyControl>::Post(CompanyCtrlAction::Delete, this->filter.script_debug_company, CompanyRemoveReason::Manual, INVALID_CLIENT_ID);
-				Command<Commands::CompanyControl>::Post(CompanyCtrlAction::NewAI, this->filter.script_debug_company, CompanyRemoveReason::None, INVALID_CLIENT_ID);
+				Command<Commands::CompanyControl>::Post(CompanyCtrlAction::Delete, this->filter.script_debug_company, CompanyRemoveReason::Manual, ClientID::Invalid);
+				Command<Commands::CompanyControl>::Post(CompanyCtrlAction::NewAI, this->filter.script_debug_company, CompanyRemoveReason::None, ClientID::Invalid);
 				break;
 
 			case WID_SCRD_SETTINGS:

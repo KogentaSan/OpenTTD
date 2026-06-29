@@ -72,7 +72,7 @@
 
 #include "../safeguards.h"
 
-extern const SaveLoadVersion SAVEGAME_VERSION = (SaveLoadVersion)(SL_MAX_VERSION - 1); ///< Current savegame version of OpenTTD.
+extern const SaveLoadVersion SAVEGAME_VERSION{to_underlying(SaveLoadVersion::MaxVersion) - 1}; ///< Current savegame version of OpenTTD.
 
 SavegameType _savegame_type; ///< type of savegame we are loading
 FileToSaveLoad _file_to_saveload; ///< File to save or load in the openttd loop.
@@ -84,18 +84,18 @@ std::string _savegame_format; ///< how to compress savegames
 bool _do_autosave;            ///< are we doing an autosave at the moment?
 
 /** What are we currently doing? */
-enum SaveLoadAction : uint8_t {
-	SLA_LOAD,        ///< loading
-	SLA_SAVE,        ///< saving
-	SLA_PTRS,        ///< fixing pointers
-	SLA_NULL,        ///< null all pointers (on loading error)
-	SLA_LOAD_CHECK,  ///< partial loading into #_load_check_data
+enum class SaveLoadAction : uint8_t {
+	Load, ///< loading
+	Save, ///< saving
+	Ptrs, ///< fixing pointers
+	Null, ///< null all pointers (on loading error)
+	LoadCheck, ///< partial loading into #_load_check_data
 };
 
-enum NeedLength : uint8_t {
-	NL_NONE = 0,       ///< not working in NeedLength mode
-	NL_WANTLENGTH = 1, ///< writing length and data
-	NL_CALCLENGTH = 2, ///< need to calculate the length
+enum class NeedLength : uint8_t {
+	None, ///< not working in NeedLength mode
+	WantLength, ///< writing length and data
+	CalcLength, ///< need to calculate the length
 };
 
 /** Save in chunks of 128 KiB. */
@@ -196,7 +196,7 @@ struct MemoryDumper {
 struct SaveLoadParams {
 	SaveLoadAction action;               ///< are we doing a save or a load atm.
 	NeedLength need_length;              ///< working in NeedLength (Autolength) mode?
-	uint8_t block_mode;                     ///< ???
+	ChunkType chunk_type; ///< The type of chunk we are reading or writing.
 	bool error;                          ///< did an error occur or not
 
 	size_t obj_len;                      ///< the length of the current object we are busy with
@@ -313,7 +313,7 @@ static const std::vector<ChunkHandlerRef> &ChunkHandlers()
 /** Null all pointers (convert index -> nullptr) */
 static void SlNullPointers()
 {
-	_sl.action = SLA_NULL;
+	_sl.action = SaveLoadAction::Null;
 
 	/* We don't want any savegame conversion code to run
 	 * during NULLing; especially those that try to get
@@ -325,7 +325,7 @@ static void SlNullPointers()
 		ch.FixPointers();
 	}
 
-	assert(_sl.action == SLA_NULL);
+	assert(_sl.action == SaveLoadAction::Null);
 }
 
 /**
@@ -339,7 +339,7 @@ static void SlNullPointers()
 [[noreturn]] void SlError(StringID string, const std::string &extra_msg)
 {
 	/* Distinguish between loading into _load_check_data vs. normal save/load. */
-	if (_sl.action == SLA_LOAD_CHECK) {
+	if (_sl.action == SaveLoadAction::LoadCheck) {
 		_load_check_data.error = string;
 		_load_check_data.error_msg = extra_msg;
 	} else {
@@ -351,7 +351,7 @@ static void SlNullPointers()
 	 * the pointers are actually filled with indices, which means that
 	 * when we access them during cleaning the pool dereferences of
 	 * those indices will be made with segmentation faults as result. */
-	if (_sl.action == SLA_LOAD || _sl.action == SLA_PTRS) SlNullPointers();
+	if (_sl.action == SaveLoadAction::Load || _sl.action == SaveLoadAction::Ptrs) SlNullPointers();
 
 	/* Logging could be active. */
 	_gamelog.StopAnyAction();
@@ -576,26 +576,26 @@ static inline uint SlGetArrayLength(size_t length)
 static uint8_t GetSavegameFileType(const SaveLoad &sld)
 {
 	switch (sld.cmd) {
-		case SL_VAR:
+		case SaveLoadType::Variable:
 			return GetVarFileType(sld.conv); break;
 
-		case SL_STDSTR:
-		case SL_ARR:
-		case SL_VECTOR:
+		case SaveLoadType::String:
+		case SaveLoadType::Array:
+		case SaveLoadType::Vector:
 			return GetVarFileType(sld.conv) | SLE_FILE_HAS_LENGTH_FIELD; break;
 
-		case SL_REF:
-			return IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SLE_FILE_U16 : SLE_FILE_U32;
+		case SaveLoadType::Reference:
+			return IsSavegameVersionBefore(SaveLoadVersion::MoreCargoPackets) ? SLE_FILE_U16 : SLE_FILE_U32;
 
-		case SL_REFLIST:
-		case SL_REFVECTOR:
-			return (IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SLE_FILE_U16 : SLE_FILE_U32) | SLE_FILE_HAS_LENGTH_FIELD;
+		case SaveLoadType::ReferenceList:
+		case SaveLoadType::ReferenceVector:
+			return (IsSavegameVersionBefore(SaveLoadVersion::MoreCargoPackets) ? SLE_FILE_U16 : SLE_FILE_U32) | SLE_FILE_HAS_LENGTH_FIELD;
 
-		case SL_SAVEBYTE:
+		case SaveLoadType::SaveByte:
 			return SLE_FILE_U8;
 
-		case SL_STRUCT:
-		case SL_STRUCTLIST:
+		case SaveLoadType::Struct:
+		case SaveLoadType::StructList:
 			return SLE_FILE_STRUCT | SLE_FILE_HAS_LENGTH_FIELD;
 
 		default: NOT_REACHED();
@@ -667,12 +667,12 @@ static inline uint8_t SlCalcConvFileLen(VarType conv)
  */
 static inline size_t SlCalcRefLen()
 {
-	return IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? 2 : 4;
+	return IsSavegameVersionBefore(SaveLoadVersion::MoreCargoPackets) ? 2 : 4;
 }
 
 void SlSetArrayIndex(uint index)
 {
-	_sl.need_length = NL_WANTLENGTH;
+	_sl.need_length = NeedLength::WantLength;
 	_sl.array_index = index;
 }
 
@@ -707,11 +707,11 @@ int SlIterateArray()
 		}
 
 		int index;
-		switch (_sl.block_mode) {
-			case CH_SPARSE_TABLE:
-			case CH_SPARSE_ARRAY: index = static_cast<int>(SlReadSparseIndex()); break;
-			case CH_TABLE:
-			case CH_ARRAY:        index = _sl.array_index++; break;
+		switch (_sl.chunk_type) {
+			case ChunkType::SparseTable:
+			case ChunkType::SparseArray: index = static_cast<int>(SlReadSparseIndex()); break;
+			case ChunkType::Table:
+			case ChunkType::Array: index = _sl.array_index++; break;
 			default:
 				Debug(sl, 0, "SlIterateArray error");
 				return -1; // error
@@ -738,35 +738,35 @@ void SlSkipArray()
  */
 void SlSetLength(size_t length)
 {
-	assert(_sl.action == SLA_SAVE);
+	assert(_sl.action == SaveLoadAction::Save);
 
 	switch (_sl.need_length) {
-		case NL_WANTLENGTH:
-			_sl.need_length = NL_NONE;
-			if ((_sl.block_mode == CH_TABLE || _sl.block_mode == CH_SPARSE_TABLE) && _sl.expect_table_header) {
+		case NeedLength::WantLength:
+			_sl.need_length = NeedLength::None;
+			if ((_sl.chunk_type == ChunkType::Table || _sl.chunk_type == ChunkType::SparseTable) && _sl.expect_table_header) {
 				_sl.expect_table_header = false;
 				SlWriteArrayLength(length + 1);
 				break;
 			}
 
-			switch (_sl.block_mode) {
-				case CH_RIFF:
+			switch (_sl.chunk_type) {
+				case ChunkType::Riff:
 					/* Ugly encoding of >16M RIFF chunks
 					 * The lower 24 bits are normal
 					 * The uppermost 4 bits are bits 24:27 */
 					assert(length < (1 << 28));
 					SlWriteUint32((uint32_t)((length & 0xFFFFFF) | ((length >> 24) << 28)));
 					break;
-				case CH_TABLE:
-				case CH_ARRAY:
+				case ChunkType::Table:
+				case ChunkType::Array:
 					assert(_sl.last_array_index <= _sl.array_index);
 					while (++_sl.last_array_index <= _sl.array_index) {
 						SlWriteArrayLength(1);
 					}
 					SlWriteArrayLength(length + 1);
 					break;
-				case CH_SPARSE_TABLE:
-				case CH_SPARSE_ARRAY:
+				case ChunkType::SparseTable:
+				case ChunkType::SparseArray:
 					SlWriteArrayLength(length + 1 + SlGetArrayLength(_sl.array_index)); // Also include length of sparse index.
 					SlWriteSparseIndex(_sl.array_index);
 					break;
@@ -774,7 +774,7 @@ void SlSetLength(size_t length)
 			}
 			break;
 
-		case NL_CALCLENGTH:
+		case NeedLength::CalcLength:
 			_sl.obj_len += static_cast<int>(length);
 			break;
 
@@ -793,11 +793,11 @@ static void SlCopyBytes(void *ptr, size_t length)
 	uint8_t *p = static_cast<uint8_t *>(ptr);
 
 	switch (_sl.action) {
-		case SLA_LOAD_CHECK:
-		case SLA_LOAD:
+		case SaveLoadAction::LoadCheck:
+		case SaveLoadAction::Load:
 			for (; length != 0; length--) *p++ = SlReadByte();
 			break;
-		case SLA_SAVE:
+		case SaveLoadAction::Save:
 			for (; length != 0; length--) SlWriteByte(*p++);
 			break;
 		default: NOT_REACHED();
@@ -873,7 +873,7 @@ void WriteValue(void *ptr, VarType conv, int64_t val)
 static void SlSaveLoadConv(void *ptr, VarType conv)
 {
 	switch (_sl.action) {
-		case SLA_SAVE: {
+		case SaveLoadAction::Save: {
 			int64_t x = ReadValue(ptr, conv);
 
 			/* Write the value to the file and check if its value is in the desired range */
@@ -913,8 +913,8 @@ static void SlSaveLoadConv(void *ptr, VarType conv)
 			}
 			break;
 		}
-		case SLA_LOAD_CHECK:
-		case SLA_LOAD: {
+		case SaveLoadAction::LoadCheck:
+		case SaveLoadAction::Load: {
 			int64_t x;
 			/* Read a value from the file */
 			switch (GetVarFileType(conv)) {
@@ -934,8 +934,8 @@ static void SlSaveLoadConv(void *ptr, VarType conv)
 			WriteValue(ptr, conv, x);
 			break;
 		}
-		case SLA_PTRS: break;
-		case SLA_NULL: break;
+		case SaveLoadAction::Ptrs: break;
+		case SaveLoadAction::Null: break;
 		default: NOT_REACHED();
 	}
 }
@@ -1086,15 +1086,15 @@ static void SlStdString(void *ptr, VarType conv)
 	std::string *str = reinterpret_cast<std::string *>(ptr);
 
 	switch (_sl.action) {
-		case SLA_SAVE: {
+		case SaveLoadAction::Save: {
 			size_t len = str->length();
 			SlWriteArrayLength(len);
 			SlCopyBytes(const_cast<void *>(static_cast<const void *>(str->data())), len);
 			break;
 		}
 
-		case SLA_LOAD_CHECK:
-		case SLA_LOAD: {
+		case SaveLoadAction::LoadCheck:
+		case SaveLoadAction::Load: {
 			size_t len = SlReadArrayLength();
 			if (GetVarMemType(conv) == SLE_VAR_NULL) {
 				SlSkipBytes(len);
@@ -1106,8 +1106,8 @@ static void SlStdString(void *ptr, VarType conv)
 			StringValidationSettings settings = StringValidationSetting::ReplaceWithQuestionMark;
 			if ((conv & SLF_ALLOW_CONTROL) != 0) {
 				settings.Set(StringValidationSetting::AllowControlCode);
-				if (IsSavegameVersionBefore(SLV_ENCODED_STRING_FORMAT)) FixSCCEncoded(*str, IsSavegameVersionBefore(SLV_MOVE_SCC_ENCODED));
-				if (IsSavegameVersionBefore(SLV_FIX_SCC_ENCODED_NEGATIVE)) FixSCCEncodedNegative(*str);
+				if (IsSavegameVersionBefore(SaveLoadVersion::EncodedStringFormat)) FixSCCEncoded(*str, IsSavegameVersionBefore(SaveLoadVersion::MoveSccEncoded));
+				if (IsSavegameVersionBefore(SaveLoadVersion::FixSccEncodedNegative)) FixSCCEncodedNegative(*str);
 			}
 			if ((conv & SLF_ALLOW_NEWLINE) != 0) {
 				settings.Set(StringValidationSetting::AllowNewline);
@@ -1118,14 +1118,14 @@ static void SlStdString(void *ptr, VarType conv)
 			StrMakeValidInPlace(*str, settings);
 		}
 
-		case SLA_PTRS: break;
-		case SLA_NULL: break;
+		case SaveLoadAction::Ptrs: break;
+		case SaveLoadAction::Null: break;
 		default: NOT_REACHED();
 	}
 }
 
 /**
- * Internal function to save/Load a list of SL_VARs.
+ * Internal function to save/Load a list of SaveLoadType::Variables.
  * SlCopy() and SlArray() are very similar, with the exception of the header.
  * This function represents the common part.
  * @param object The object being manipulated.
@@ -1135,14 +1135,14 @@ static void SlStdString(void *ptr, VarType conv)
 static void SlCopyInternal(void *object, size_t length, VarType conv)
 {
 	if (GetVarMemType(conv) == SLE_VAR_NULL) {
-		assert(_sl.action != SLA_SAVE); // Use SL_NULL if you want to write null-bytes
+		assert(_sl.action != SaveLoadAction::Save); // Use SaveLoadType::Null if you want to write null-bytes
 		SlSkipBytes(length * SlCalcConvFileLen(conv));
 		return;
 	}
 
 	/* NOTICE - handle some buggy stuff, in really old versions everything was saved
 	 * as a byte-type. So detect this, and adjust object size accordingly */
-	if (_sl.action != SLA_SAVE && _sl_version == 0) {
+	if (_sl.action != SaveLoadAction::Save && _sl_version == SaveLoadVersion::MinVersion) {
 		/* all objects except difficulty settings */
 		if (conv == SLE_INT16 || conv == SLE_UINT16 || conv == SLE_STRINGID ||
 				conv == SLE_INT32 || conv == SLE_UINT32) {
@@ -1174,7 +1174,7 @@ static void SlCopyInternal(void *object, size_t length, VarType conv)
 }
 
 /**
- * Copy a list of SL_VARs to/from a savegame.
+ * Copy a list of SaveLoadType::Variables to/from a savegame.
  * These entries are copied as-is, and you as caller have to make sure things
  * like length-fields are calculated correctly.
  * @param object The object being manipulated.
@@ -1183,13 +1183,13 @@ static void SlCopyInternal(void *object, size_t length, VarType conv)
  */
 void SlCopy(void *object, size_t length, VarType conv)
 {
-	if (_sl.action == SLA_PTRS || _sl.action == SLA_NULL) return;
+	if (_sl.action == SaveLoadAction::Ptrs || _sl.action == SaveLoadAction::Null) return;
 
 	/* Automatically calculate the length? */
-	if (_sl.need_length != NL_NONE) {
+	if (_sl.need_length != NeedLength::None) {
 		SlSetLength(length * SlCalcConvFileLen(conv));
 		/* Determine length only? */
-		if (_sl.need_length == NL_CALCLENGTH) return;
+		if (_sl.need_length == NeedLength::CalcLength) return;
 	}
 
 	SlCopyInternal(object, length, conv);
@@ -1207,7 +1207,7 @@ static inline size_t SlCalcArrayLen(size_t length, VarType conv)
 }
 
 /**
- * Save/Load the length of the array followed by the array of SL_VAR elements.
+ * Save/Load the length of the array followed by the array of SaveLoadType::Variable elements.
  * @param array The array being manipulated
  * @param length The length of the array in elements
  * @param conv VarType type of the atomic array (int, uint8_t, uint64_t, etc.)
@@ -1215,14 +1215,14 @@ static inline size_t SlCalcArrayLen(size_t length, VarType conv)
 static void SlArray(void *array, size_t length, VarType conv)
 {
 	switch (_sl.action) {
-		case SLA_SAVE:
+		case SaveLoadAction::Save:
 			SlWriteArrayLength(length);
 			SlCopyInternal(array, length, conv);
 			return;
 
-		case SLA_LOAD_CHECK:
-		case SLA_LOAD: {
-			if (!IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH)) {
+		case SaveLoadAction::LoadCheck:
+		case SaveLoadAction::Load: {
+			if (!IsSavegameVersionBefore(SaveLoadVersion::SaveloadListLength)) {
 				size_t sv_length = SlReadArrayLength();
 				if (GetVarMemType(conv) == SLE_VAR_NULL) {
 					/* We don't know this field, so we assume the length in the savegame is correct. */
@@ -1239,8 +1239,8 @@ static void SlArray(void *array, size_t length, VarType conv)
 			return;
 		}
 
-		case SLA_PTRS:
-		case SLA_NULL:
+		case SaveLoadAction::Ptrs:
+		case SaveLoadAction::Null:
 			return;
 
 		default:
@@ -1260,7 +1260,7 @@ static void SlArray(void *array, size_t length, VarType conv)
  */
 static uint32_t ReferenceToInt(const void *obj, SLRefType rt)
 {
-	assert(_sl.action == SLA_SAVE);
+	assert(_sl.action == SaveLoadAction::Save);
 
 	if (obj == nullptr) return 0;
 
@@ -1294,11 +1294,11 @@ static void *IntToReference(size_t index, SLRefType rt)
 {
 	static_assert(sizeof(size_t) <= sizeof(void *));
 
-	assert(_sl.action == SLA_PTRS);
+	assert(_sl.action == SaveLoadAction::Ptrs);
 
 	/* After version 4.3 REF_VEHICLE_OLD is saved as REF_VEHICLE,
 	 * and should be loaded like that */
-	if (rt == REF_VEHICLE_OLD && !IsSavegameVersionBefore(SLV_TOWN_TOLERANCE_PAUSE_MODE, 4)) {
+	if (rt == REF_VEHICLE_OLD && !IsSavegameVersionBefore(SaveLoadVersion::TownTolerancePauseMode, 4)) {
 		rt = REF_VEHICLE;
 	}
 
@@ -1363,17 +1363,17 @@ static void *IntToReference(size_t index, SLRefType rt)
 void SlSaveLoadRef(void *ptr, VarType conv)
 {
 	switch (_sl.action) {
-		case SLA_SAVE:
+		case SaveLoadAction::Save:
 			SlWriteUint32(ReferenceToInt(*static_cast<void **>(ptr), static_cast<SLRefType>(conv)));
 			break;
-		case SLA_LOAD_CHECK:
-		case SLA_LOAD:
-			*static_cast<size_t *>(ptr) = IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SlReadUint16() : SlReadUint32();
+		case SaveLoadAction::LoadCheck:
+		case SaveLoadAction::Load:
+			*static_cast<size_t *>(ptr) = IsSavegameVersionBefore(SaveLoadVersion::MoreCargoPackets) ? SlReadUint16() : SlReadUint32();
 			break;
-		case SLA_PTRS:
+		case SaveLoadAction::Ptrs:
 			*static_cast<void **>(ptr) = IntToReference(*static_cast<size_t *>(ptr), static_cast<SLRefType>(conv));
 			break;
-		case SLA_NULL:
+		case SaveLoadAction::Null:
 			*static_cast<void **>(ptr) = nullptr;
 			break;
 		default: NOT_REACHED();
@@ -1394,23 +1394,23 @@ public:
 	 * @param cmd The SaveLoadType ware are saving/loading.
 	 * @return The size of this type in bytes.
 	 */
-	static size_t SlCalcLen(const void *storage, VarType conv, SaveLoadType cmd = SL_VAR)
+	static size_t SlCalcLen(const void *storage, VarType conv, SaveLoadType cmd = SaveLoadType::Variable)
 	{
-		assert(cmd == SL_VAR || cmd == SL_REF);
+		assert(cmd == SaveLoadType::Variable || cmd == SaveLoadType::Reference);
 
 		const SlStorageT *list = static_cast<const SlStorageT *>(storage);
 
 		int type_size = SlGetArrayLength(list->size());
-		int item_size = SlCalcConvFileLen(cmd == SL_VAR ? conv : static_cast<VarType>(SLE_FILE_U32));
+		int item_size = SlCalcConvFileLen(cmd == SaveLoadType::Variable ? conv : static_cast<VarType>(SLE_FILE_U32));
 		return list->size() * item_size + type_size;
 	}
 
 	static void SlSaveLoadMember(SaveLoadType cmd, Tvar *item, VarType conv)
 	{
 		switch (cmd) {
-			case SL_VAR: SlSaveLoadConv(item, conv); break;
-			case SL_REF: SlSaveLoadRef(item, conv); break;
-			case SL_STDSTR: SlStdString(item, conv); break;
+			case SaveLoadType::Variable: SlSaveLoadConv(item, conv); break;
+			case SaveLoadType::Reference: SlSaveLoadRef(item, conv); break;
+			case SaveLoadType::String: SlStdString(item, conv); break;
 			default:
 				NOT_REACHED();
 		}
@@ -1422,14 +1422,14 @@ public:
 	 * @param conv VarType type of variable that is used for calculating the size.
 	 * @param cmd The SaveLoadType ware are saving/loading.
 	 */
-	static void SlSaveLoad(void *storage, VarType conv, SaveLoadType cmd = SL_VAR)
+	static void SlSaveLoad(void *storage, VarType conv, SaveLoadType cmd = SaveLoadType::Variable)
 	{
-		assert(cmd == SL_VAR || cmd == SL_REF || cmd == SL_STDSTR);
+		assert(cmd == SaveLoadType::Variable || cmd == SaveLoadType::Reference || cmd == SaveLoadType::String);
 
 		SlStorageT *list = static_cast<SlStorageT *>(storage);
 
 		switch (_sl.action) {
-			case SLA_SAVE:
+			case SaveLoadAction::Save:
 				SlWriteArrayLength(list->size());
 
 				for (auto &item : *list) {
@@ -1437,13 +1437,13 @@ public:
 				}
 				break;
 
-			case SLA_LOAD_CHECK:
-			case SLA_LOAD: {
+			case SaveLoadAction::LoadCheck:
+			case SaveLoadAction::Load: {
 				size_t length;
 				switch (cmd) {
-					case SL_VAR: length = IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? SlReadUint32() : SlReadArrayLength(); break;
-					case SL_REF: length = IsSavegameVersionBefore(SLV_MORE_CARGO_PACKETS) ? SlReadUint16() : IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? SlReadUint32() : SlReadArrayLength(); break;
-					case SL_STDSTR: length = SlReadArrayLength(); break;
+					case SaveLoadType::Variable: length = IsSavegameVersionBefore(SaveLoadVersion::SaveloadListLength) ? SlReadUint32() : SlReadArrayLength(); break;
+					case SaveLoadType::Reference: length = IsSavegameVersionBefore(SaveLoadVersion::MoreCargoPackets) ? SlReadUint16() : IsSavegameVersionBefore(SaveLoadVersion::SaveloadListLength) ? SlReadUint32() : SlReadArrayLength(); break;
+					case SaveLoadType::String: length = SlReadArrayLength(); break;
 					default: NOT_REACHED();
 				}
 
@@ -1460,13 +1460,13 @@ public:
 				break;
 			}
 
-			case SLA_PTRS:
+			case SaveLoadAction::Ptrs:
 				for (auto &item : *list) {
 					SlSaveLoadMember(cmd, &item, conv);
 				}
 				break;
 
-			case SLA_NULL:
+			case SaveLoadAction::Null:
 				list->clear();
 				break;
 
@@ -1483,7 +1483,7 @@ public:
  */
 static inline size_t SlCalcRefListLen(const void *list, VarType conv)
 {
-	return SlStorageHelper<std::list, void *>::SlCalcLen(list, conv, SL_REF);
+	return SlStorageHelper<std::list, void *>::SlCalcLen(list, conv, SaveLoadType::Reference);
 }
 
 /**
@@ -1494,13 +1494,13 @@ static inline size_t SlCalcRefListLen(const void *list, VarType conv)
 static void SlRefList(void *list, VarType conv)
 {
 	/* Automatically calculate the length? */
-	if (_sl.need_length != NL_NONE) {
+	if (_sl.need_length != NeedLength::None) {
 		SlSetLength(SlCalcRefListLen(list, conv));
 		/* Determine length only? */
-		if (_sl.need_length == NL_CALCLENGTH) return;
+		if (_sl.need_length == NeedLength::CalcLength) return;
 	}
 
-	SlStorageHelper<std::list, void *>::SlSaveLoad(list, conv, SL_REF);
+	SlStorageHelper<std::list, void *>::SlSaveLoad(list, conv, SaveLoadType::Reference);
 }
 
 /**
@@ -1511,7 +1511,7 @@ static void SlRefList(void *list, VarType conv)
  */
 static size_t SlCalcRefVectorLen(const void *vector, VarType conv)
 {
-	return SlStorageHelper<std::vector, void *>::SlCalcLen(vector, conv, SL_REF);
+	return SlStorageHelper<std::vector, void *>::SlCalcLen(vector, conv, SaveLoadType::Reference);
 }
 
 /**
@@ -1522,13 +1522,13 @@ static size_t SlCalcRefVectorLen(const void *vector, VarType conv)
 static void SlRefVector(void *vector, VarType conv)
 {
 	/* Automatically calculate the length? */
-	if (_sl.need_length != NL_NONE) {
+	if (_sl.need_length != NeedLength::None) {
 		SlSetLength(SlCalcRefVectorLen(vector, conv));
 		/* Determine length only? */
-		if (_sl.need_length == NL_CALCLENGTH) return;
+		if (_sl.need_length == NeedLength::CalcLength) return;
 	}
 
-	SlStorageHelper<std::vector, void *>::SlSaveLoad(vector, conv, SL_REF);
+	SlStorageHelper<std::vector, void *>::SlSaveLoad(vector, conv, SaveLoadType::Reference);
 }
 
 /**
@@ -1581,9 +1581,9 @@ static void SlVector(void *vector, VarType conv)
 			/* Strings are a length-prefixed field type in the savegame table format,
 			 * these may not be directly stored in another length-prefixed container type.
 			 * This is permitted for load-related actions, because invalid fields of this type are present
-			 * from SLV_COMPANY_ALLOW_LIST up to SLV_COMPANY_ALLOW_LIST_V2. */
-			assert(_sl.action != SLA_SAVE);
-			SlStorageHelper<std::vector, std::string>::SlSaveLoad(vector, conv, SL_STDSTR);
+			 * from SaveLoadVersion::CompanyAllowList up to SaveLoadVersion::CompanyAllowListV2. */
+			assert(_sl.action != SaveLoadAction::Save);
+			SlStorageHelper<std::vector, std::string>::SlSaveLoad(vector, conv, SaveLoadType::String);
 			break;
 
 		default: NOT_REACHED();
@@ -1620,7 +1620,7 @@ static size_t SlCalcTableHeader(const SaveLoadTable &slt)
 
 	for (auto &sld : slt) {
 		if (!SlIsObjectValidInSavegame(sld)) continue;
-		if (sld.cmd == SL_STRUCTLIST || sld.cmd == SL_STRUCT) {
+		if (sld.cmd == SaveLoadType::StructList || sld.cmd == SaveLoadType::Struct) {
 			length += SlCalcTableHeader(sld.handler->GetDescription());
 		}
 	}
@@ -1647,27 +1647,27 @@ size_t SlCalcObjLength(const void *object, const SaveLoadTable &slt)
 
 size_t SlCalcObjMemberLength(const void *object, const SaveLoad &sld)
 {
-	assert(_sl.action == SLA_SAVE);
+	assert(_sl.action == SaveLoadAction::Save);
 
 	if (!SlIsObjectValidInSavegame(sld)) return 0;
 
 	switch (sld.cmd) {
-		case SL_VAR: return SlCalcConvFileLen(sld.conv);
-		case SL_REF: return SlCalcRefLen();
-		case SL_ARR: return SlCalcArrayLen(sld.length, sld.conv);
-		case SL_REFLIST: return SlCalcRefListLen(GetVariableAddress(object, sld), sld.conv);
-		case SL_REFVECTOR: return SlCalcRefVectorLen(GetVariableAddress(object, sld), sld.conv);
-		case SL_VECTOR: return SlCalcVectorLen(GetVariableAddress(object, sld), sld.conv);
-		case SL_STDSTR: return SlCalcStdStringLen(GetVariableAddress(object, sld));
-		case SL_SAVEBYTE: return 1; // a byte is logically of size 1
-		case SL_NULL: return SlCalcConvFileLen(sld.conv) * sld.length;
+		case SaveLoadType::Variable: return SlCalcConvFileLen(sld.conv);
+		case SaveLoadType::Reference: return SlCalcRefLen();
+		case SaveLoadType::Array: return SlCalcArrayLen(sld.length, sld.conv);
+		case SaveLoadType::ReferenceList: return SlCalcRefListLen(GetVariableAddress(object, sld), sld.conv);
+		case SaveLoadType::ReferenceVector: return SlCalcRefVectorLen(GetVariableAddress(object, sld), sld.conv);
+		case SaveLoadType::Vector: return SlCalcVectorLen(GetVariableAddress(object, sld), sld.conv);
+		case SaveLoadType::String: return SlCalcStdStringLen(GetVariableAddress(object, sld));
+		case SaveLoadType::SaveByte: return 1; // a byte is logically of size 1
+		case SaveLoadType::Null: return SlCalcConvFileLen(sld.conv) * sld.length;
 
-		case SL_STRUCT:
-		case SL_STRUCTLIST: {
+		case SaveLoadType::Struct:
+		case SaveLoadType::StructList: {
 			NeedLength old_need_length = _sl.need_length;
 			size_t old_obj_len = _sl.obj_len;
 
-			_sl.need_length = NL_CALCLENGTH;
+			_sl.need_length = NeedLength::CalcLength;
 			_sl.obj_len = 0;
 
 			/* Pretend that we are saving to collect the object size. Other
@@ -1679,7 +1679,7 @@ size_t SlCalcObjMemberLength(const void *object, const SaveLoad &sld)
 			_sl.obj_len = old_obj_len;
 			_sl.need_length = old_need_length;
 
-			if (sld.cmd == SL_STRUCT) {
+			if (sld.cmd == SaveLoadType::Struct) {
 				length += SlGetArrayLength(1);
 			}
 
@@ -1697,64 +1697,64 @@ static bool SlObjectMember(void *object, const SaveLoad &sld)
 
 	VarType conv = GB(sld.conv, 0, 8);
 	switch (sld.cmd) {
-		case SL_VAR:
-		case SL_REF:
-		case SL_ARR:
-		case SL_REFLIST:
-		case SL_REFVECTOR:
-		case SL_VECTOR:
-		case SL_STDSTR: {
+		case SaveLoadType::Variable:
+		case SaveLoadType::Reference:
+		case SaveLoadType::Array:
+		case SaveLoadType::ReferenceList:
+		case SaveLoadType::ReferenceVector:
+		case SaveLoadType::Vector:
+		case SaveLoadType::String: {
 			void *ptr = GetVariableAddress(object, sld);
 
 			switch (sld.cmd) {
-				case SL_VAR: SlSaveLoadConv(ptr, conv); break;
-				case SL_REF: SlSaveLoadRef(ptr, conv); break;
-				case SL_ARR: SlArray(ptr, sld.length, conv); break;
-				case SL_REFLIST: SlRefList(ptr, conv); break;
-				case SL_REFVECTOR: SlRefVector(ptr, conv); break;
-				case SL_VECTOR: SlVector(ptr, conv); break;
-				case SL_STDSTR: SlStdString(ptr, sld.conv); break;
+				case SaveLoadType::Variable: SlSaveLoadConv(ptr, conv); break;
+				case SaveLoadType::Reference: SlSaveLoadRef(ptr, conv); break;
+				case SaveLoadType::Array: SlArray(ptr, sld.length, conv); break;
+				case SaveLoadType::ReferenceList: SlRefList(ptr, conv); break;
+				case SaveLoadType::ReferenceVector: SlRefVector(ptr, conv); break;
+				case SaveLoadType::Vector: SlVector(ptr, conv); break;
+				case SaveLoadType::String: SlStdString(ptr, sld.conv); break;
 				default: NOT_REACHED();
 			}
 			break;
 		}
 
-		/* SL_SAVEBYTE writes a value to the savegame to identify the type of an object.
+		/* SaveLoadType::SaveByte writes a value to the savegame to identify the type of an object.
 		 * When loading, the value is read explicitly with SlReadByte() to determine which
 		 * object description to use. */
-		case SL_SAVEBYTE: {
+		case SaveLoadType::SaveByte: {
 			void *ptr = GetVariableAddress(object, sld);
 
 			switch (_sl.action) {
-				case SLA_SAVE: SlWriteByte(*static_cast<uint8_t *>(ptr)); break;
-				case SLA_LOAD_CHECK:
-				case SLA_LOAD:
-				case SLA_PTRS:
-				case SLA_NULL: break;
+				case SaveLoadAction::Save: SlWriteByte(*static_cast<uint8_t *>(ptr)); break;
+				case SaveLoadAction::LoadCheck:
+				case SaveLoadAction::Load:
+				case SaveLoadAction::Ptrs:
+				case SaveLoadAction::Null: break;
 				default: NOT_REACHED();
 			}
 			break;
 		}
 
-		case SL_NULL: {
+		case SaveLoadType::Null: {
 			assert(GetVarMemType(sld.conv) == SLE_VAR_NULL);
 
 			switch (_sl.action) {
-				case SLA_LOAD_CHECK:
-				case SLA_LOAD: SlSkipBytes(SlCalcConvFileLen(sld.conv) * sld.length); break;
-				case SLA_SAVE: for (int i = 0; i < SlCalcConvFileLen(sld.conv) * sld.length; i++) SlWriteByte(0); break;
-				case SLA_PTRS:
-				case SLA_NULL: break;
+				case SaveLoadAction::LoadCheck:
+				case SaveLoadAction::Load: SlSkipBytes(SlCalcConvFileLen(sld.conv) * sld.length); break;
+				case SaveLoadAction::Save: for (int i = 0; i < SlCalcConvFileLen(sld.conv) * sld.length; i++) SlWriteByte(0); break;
+				case SaveLoadAction::Ptrs:
+				case SaveLoadAction::Null: break;
 				default: NOT_REACHED();
 			}
 			break;
 		}
 
-		case SL_STRUCT:
-		case SL_STRUCTLIST:
+		case SaveLoadType::Struct:
+		case SaveLoadType::StructList:
 			switch (_sl.action) {
-				case SLA_SAVE: {
-					if (sld.cmd == SL_STRUCT) {
+				case SaveLoadAction::Save: {
+					if (sld.cmd == SaveLoadType::Struct) {
 						/* Store in the savegame if this struct was written or not. */
 						SlSetStructListLength(SlCalcObjMemberLength(object, sld) > SlGetArrayLength(1) ? 1 : 0);
 					}
@@ -1762,27 +1762,27 @@ static bool SlObjectMember(void *object, const SaveLoad &sld)
 					break;
 				}
 
-				case SLA_LOAD_CHECK: {
-					if (sld.cmd == SL_STRUCT && !IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH)) {
+				case SaveLoadAction::LoadCheck: {
+					if (sld.cmd == SaveLoadType::Struct && !IsSavegameVersionBefore(SaveLoadVersion::SaveloadListLength)) {
 						SlGetStructListLength(1);
 					}
 					sld.handler->LoadCheck(object);
 					break;
 				}
 
-				case SLA_LOAD: {
-					if (sld.cmd == SL_STRUCT && !IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH)) {
+				case SaveLoadAction::Load: {
+					if (sld.cmd == SaveLoadType::Struct && !IsSavegameVersionBefore(SaveLoadVersion::SaveloadListLength)) {
 						SlGetStructListLength(1);
 					}
 					sld.handler->Load(object);
 					break;
 				}
 
-				case SLA_PTRS:
+				case SaveLoadAction::Ptrs:
 					sld.handler->FixPointers(object);
 					break;
 
-				case SLA_NULL: break;
+				case SaveLoadAction::Null: break;
 				default: NOT_REACHED();
 			}
 			break;
@@ -1799,9 +1799,9 @@ static bool SlObjectMember(void *object, const SaveLoad &sld)
 void SlSetStructListLength(size_t length)
 {
 	/* Automatically calculate the length? */
-	if (_sl.need_length != NL_NONE) {
+	if (_sl.need_length != NeedLength::None) {
 		SlSetLength(SlGetArrayLength(length));
-		if (_sl.need_length == NL_CALCLENGTH) return;
+		if (_sl.need_length == NeedLength::CalcLength) return;
 	}
 
 	SlWriteArrayLength(length);
@@ -1828,9 +1828,9 @@ size_t SlGetStructListLength(size_t limit)
 void SlObject(void *object, const SaveLoadTable &slt)
 {
 	/* Automatically calculate the length? */
-	if (_sl.need_length != NL_NONE) {
+	if (_sl.need_length != NeedLength::None) {
 		SlSetLength(SlCalcObjLength(object, slt));
-		if (_sl.need_length == NL_CALCLENGTH) return;
+		if (_sl.need_length == NeedLength::CalcLength) return;
 	}
 
 	for (auto &sld : slt) {
@@ -1880,12 +1880,12 @@ class SlSkipHandler : public SaveLoadHandler {
  */
 std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
 {
-	/* You can only use SlTableHeader if you are a CH_TABLE. */
-	assert(_sl.block_mode == CH_TABLE || _sl.block_mode == CH_SPARSE_TABLE);
+	/* You can only use SlTableHeader if you are a ChunkType::Table or ChunkType::SparseTable. */
+	assert(_sl.chunk_type == ChunkType::Table || _sl.chunk_type == ChunkType::SparseTable);
 
 	switch (_sl.action) {
-		case SLA_LOAD_CHECK:
-		case SLA_LOAD: {
+		case SaveLoadAction::LoadCheck:
+		case SaveLoadAction::Load: {
 			std::vector<SaveLoad> saveloads;
 
 			/* Build a key lookup mapping based on the available fields. */
@@ -1909,29 +1909,29 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
 				auto sld_it = key_lookup.find(key);
 				if (sld_it == key_lookup.end()) {
 					/* SLA_LOADCHECK triggers this debug statement a lot and is perfectly normal. */
-					Debug(sl, _sl.action == SLA_LOAD ? 2 : 6, "Field '{}' of type 0x{:02x} not found, skipping", key, type);
+					Debug(sl, _sl.action == SaveLoadAction::Load ? 2 : 6, "Field '{}' of type 0x{:02x} not found, skipping", key, type);
 
 					std::shared_ptr<SaveLoadHandler> handler = nullptr;
 					SaveLoadType saveload_type;
 					switch (type & SLE_FILE_TYPE_MASK) {
 						case SLE_FILE_STRING:
 							/* Strings are always marked with SLE_FILE_HAS_LENGTH_FIELD, as they are a list of chars. */
-							saveload_type = SL_STDSTR;
+							saveload_type = SaveLoadType::String;
 							break;
 
 						case SLE_FILE_STRUCT:
-							/* Structs are always marked with SLE_FILE_HAS_LENGTH_FIELD as SL_STRUCT is seen as a list of 0/1 in length. */
-							saveload_type = SL_STRUCTLIST;
+							/* Structs are always marked with SLE_FILE_HAS_LENGTH_FIELD as SaveLoadType::Struct is seen as a list of 0/1 in length. */
+							saveload_type = SaveLoadType::StructList;
 							handler = std::make_shared<SlSkipHandler>();
 							break;
 
 						default:
-							saveload_type = (type & SLE_FILE_HAS_LENGTH_FIELD) ? SL_ARR : SL_VAR;
+							saveload_type = (type & SLE_FILE_HAS_LENGTH_FIELD) ? SaveLoadType::Array : SaveLoadType::Variable;
 							break;
 					}
 
 					/* We don't know this field, so read to nothing. */
-					saveloads.emplace_back(std::move(key), saveload_type, (static_cast<VarType>(type) & SLE_FILE_TYPE_MASK) | SLE_VAR_NULL, 1, SL_MIN_VERSION, SL_MAX_VERSION, nullptr, 0, std::move(handler));
+					saveloads.emplace_back(std::move(key), saveload_type, (static_cast<VarType>(type) & SLE_FILE_TYPE_MASK) | SLE_VAR_NULL, 1, SaveLoadVersion::MinVersion, SaveLoadVersion::MaxVersion, nullptr, 0, std::move(handler));
 					continue;
 				}
 
@@ -1949,7 +1949,7 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
 			}
 
 			for (auto &sld : saveloads) {
-				if (sld.cmd == SL_STRUCTLIST || sld.cmd == SL_STRUCT) {
+				if (sld.cmd == SaveLoadType::StructList || sld.cmd == SaveLoadType::Struct) {
 					sld.handler->load_description = SlTableHeader(sld.handler->GetDescription());
 				}
 			}
@@ -1957,11 +1957,11 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
 			return saveloads;
 		}
 
-		case SLA_SAVE: {
+		case SaveLoadAction::Save: {
 			/* Automatically calculate the length? */
-			if (_sl.need_length != NL_NONE) {
+			if (_sl.need_length != NeedLength::None) {
 				SlSetLength(SlCalcTableHeader(slt));
-				if (_sl.need_length == NL_CALCLENGTH) break;
+				if (_sl.need_length == NeedLength::CalcLength) break;
 			}
 
 			for (auto &sld : slt) {
@@ -1983,10 +1983,10 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
 			/* After the table, write down any sub-tables we might have. */
 			for (auto &sld : slt) {
 				if (!SlIsObjectValidInSavegame(sld)) continue;
-				if (sld.cmd == SL_STRUCTLIST || sld.cmd == SL_STRUCT) {
+				if (sld.cmd == SaveLoadType::StructList || sld.cmd == SaveLoadType::Struct) {
 					/* SlCalcTableHeader already looks in sub-lists, so avoid the length being added twice. */
 					NeedLength old_need_length = _sl.need_length;
-					_sl.need_length = NL_NONE;
+					_sl.need_length = NeedLength::None;
 
 					SlTableHeader(sld.handler->GetDescription());
 
@@ -2018,14 +2018,14 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
  */
 std::vector<SaveLoad> SlCompatTableHeader(const SaveLoadTable &slt, const SaveLoadCompatTable &slct)
 {
-	assert(_sl.action == SLA_LOAD || _sl.action == SLA_LOAD_CHECK);
-	/* CH_TABLE / CH_SPARSE_TABLE always have a header. */
-	if (_sl.block_mode == CH_TABLE || _sl.block_mode == CH_SPARSE_TABLE) return SlTableHeader(slt);
+	assert(_sl.action == SaveLoadAction::Load || _sl.action == SaveLoadAction::LoadCheck);
+	/* ChunkType::Table / ChunkType::SparseTable always have a header. */
+	if (_sl.chunk_type == ChunkType::Table || _sl.chunk_type == ChunkType::SparseTable) return SlTableHeader(slt);
 
 	std::vector<SaveLoad> saveloads;
 
 	/* Build a key lookup mapping based on the available fields. */
-	std::map<std::string, std::vector<const SaveLoad *>> key_lookup;
+	std::map<std::string_view, std::vector<const SaveLoad *>> key_lookup;
 	for (auto &sld : slt) {
 		/* All entries should have a name; otherwise the entry should just be removed. */
 		assert(!sld.name.empty());
@@ -2038,7 +2038,7 @@ std::vector<SaveLoad> SlCompatTableHeader(const SaveLoadTable &slt, const SaveLo
 			/* In old savegames there can be data we no longer care for. We
 			 * skip this by simply reading the amount of bytes indicated and
 			 * send those to /dev/null. */
-			saveloads.emplace_back("", SL_NULL, GetVarFileType(slc.null_type) | SLE_VAR_NULL, slc.null_length, slc.version_from, slc.version_to, nullptr, 0, nullptr);
+			saveloads.emplace_back("", SaveLoadType::Null, SLE_FILE_U8 | SLE_VAR_NULL, slc.null_length, slc.version_from, slc.version_to, nullptr, 0, nullptr);
 		} else {
 			auto sld_it = key_lookup.find(slc.name);
 			/* If this branch triggers, it means that an entry in the
@@ -2058,7 +2058,7 @@ std::vector<SaveLoad> SlCompatTableHeader(const SaveLoadTable &slt, const SaveLo
 
 	for (auto &sld : saveloads) {
 		if (!SlIsObjectValidInSavegame(sld)) continue;
-		if (sld.cmd == SL_STRUCTLIST || sld.cmd == SL_STRUCT) {
+		if (sld.cmd == SaveLoadType::StructList || sld.cmd == SaveLoadType::Struct) {
 			sld.handler->load_description = SlCompatTableHeader(sld.handler->GetDescription(), sld.handler->GetCompatDescription());
 		}
 	}
@@ -2082,15 +2082,15 @@ void SlGlobList(const SaveLoadTable &slt)
  */
 void SlAutolength(AutolengthProc *proc, int arg)
 {
-	assert(_sl.action == SLA_SAVE);
+	assert(_sl.action == SaveLoadAction::Save);
 
 	/* Tell it to calculate the length */
-	_sl.need_length = NL_CALCLENGTH;
+	_sl.need_length = NeedLength::CalcLength;
 	_sl.obj_len = 0;
 	proc(arg);
 
 	/* Setup length */
-	_sl.need_length = NL_WANTLENGTH;
+	_sl.need_length = NeedLength::WantLength;
 	SlSetLength(_sl.obj_len);
 
 	size_t start_pos = _sl.dumper->GetSize();
@@ -2106,16 +2106,16 @@ void SlAutolength(AutolengthProc *proc, int arg)
 
 void ChunkHandler::LoadCheck(size_t len) const
 {
-	switch (_sl.block_mode) {
-		case CH_TABLE:
-		case CH_SPARSE_TABLE:
+	switch (_sl.chunk_type) {
+		case ChunkType::Table:
+		case ChunkType::SparseTable:
 			SlTableHeader({});
 			[[fallthrough]];
-		case CH_ARRAY:
-		case CH_SPARSE_ARRAY:
+		case ChunkType::Array:
+		case ChunkType::SparseArray:
 			SlSkipArray();
 			break;
-		case CH_RIFF:
+		case ChunkType::Riff:
 			SlSkipBytes(len);
 			break;
 		default:
@@ -2131,9 +2131,9 @@ static void SlLoadChunk(const ChunkHandler &ch)
 {
 	uint8_t m = SlReadByte();
 
-	_sl.block_mode = m & CH_TYPE_MASK;
+	_sl.chunk_type = static_cast<ChunkType>(m & to_underlying(ChunkType::FileTypeMask));
 	_sl.obj_len = 0;
-	_sl.expect_table_header = (_sl.block_mode == CH_TABLE || _sl.block_mode == CH_SPARSE_TABLE);
+	_sl.expect_table_header = (_sl.chunk_type == ChunkType::Table || _sl.chunk_type == ChunkType::SparseTable);
 
 	/* The header should always be at the start. Read the length; the
 	 * Load() should as first action process the header. */
@@ -2141,19 +2141,19 @@ static void SlLoadChunk(const ChunkHandler &ch)
 		if (SlIterateArray() != INT32_MAX) SlErrorCorrupt("Table chunk without header");
 	}
 
-	switch (_sl.block_mode) {
-		case CH_TABLE:
-		case CH_ARRAY:
+	switch (_sl.chunk_type) {
+		case ChunkType::Table:
+		case ChunkType::Array:
 			_sl.array_index = 0;
 			ch.Load();
 			if (_next_offs != 0) SlErrorCorrupt("Invalid array length");
 			break;
-		case CH_SPARSE_TABLE:
-		case CH_SPARSE_ARRAY:
+		case ChunkType::SparseTable:
+		case ChunkType::SparseArray:
 			ch.Load();
 			if (_next_offs != 0) SlErrorCorrupt("Invalid array length");
 			break;
-		case CH_RIFF: {
+		case ChunkType::Riff: {
 			/* Read length */
 			size_t len = (SlReadByte() << 16) | ((m >> 4) << 24);
 			len += SlReadUint16();
@@ -2184,9 +2184,9 @@ static void SlLoadCheckChunk(const ChunkHandler &ch)
 {
 	uint8_t m = SlReadByte();
 
-	_sl.block_mode = m & CH_TYPE_MASK;
+	_sl.chunk_type = static_cast<ChunkType>(m & to_underlying(ChunkType::FileTypeMask));
 	_sl.obj_len = 0;
-	_sl.expect_table_header = (_sl.block_mode == CH_TABLE || _sl.block_mode == CH_SPARSE_TABLE);
+	_sl.expect_table_header = (_sl.chunk_type == ChunkType::Table || _sl.chunk_type == ChunkType::SparseTable);
 
 	/* The header should always be at the start. Read the length; the
 	 * LoadCheck() should as first action process the header. */
@@ -2194,17 +2194,17 @@ static void SlLoadCheckChunk(const ChunkHandler &ch)
 		if (SlIterateArray() != INT32_MAX) SlErrorCorrupt("Table chunk without header");
 	}
 
-	switch (_sl.block_mode) {
-		case CH_TABLE:
-		case CH_ARRAY:
+	switch (_sl.chunk_type) {
+		case ChunkType::Table:
+		case ChunkType::Array:
 			_sl.array_index = 0;
 			ch.LoadCheck();
 			break;
-		case CH_SPARSE_TABLE:
-		case CH_SPARSE_ARRAY:
+		case ChunkType::SparseTable:
+		case ChunkType::SparseArray:
 			ch.LoadCheck();
 			break;
-		case CH_RIFF: {
+		case ChunkType::Riff: {
 			/* Read length */
 			size_t len = (SlReadByte() << 16) | ((m >> 4) << 24);
 			len += SlReadUint16();
@@ -2233,30 +2233,30 @@ static void SlLoadCheckChunk(const ChunkHandler &ch)
  */
 static void SlSaveChunk(const ChunkHandler &ch)
 {
-	if (ch.type == CH_READONLY) return;
+	if (ch.type == ChunkType::ReadOnly) return;
 
 	SlWriteUint32(ch.id);
 	Debug(sl, 2, "Saving chunk {}", ch.GetName());
 
-	_sl.block_mode = ch.type;
-	_sl.expect_table_header = (_sl.block_mode == CH_TABLE || _sl.block_mode == CH_SPARSE_TABLE);
+	_sl.chunk_type = ch.type;
+	_sl.expect_table_header = (_sl.chunk_type == ChunkType::Table || _sl.chunk_type == ChunkType::SparseTable);
 
-	_sl.need_length = (_sl.expect_table_header || _sl.block_mode == CH_RIFF) ? NL_WANTLENGTH : NL_NONE;
+	_sl.need_length = (_sl.expect_table_header || _sl.chunk_type == ChunkType::Riff) ? NeedLength::WantLength : NeedLength::None;
 
-	switch (_sl.block_mode) {
-		case CH_RIFF:
+	switch (_sl.chunk_type) {
+		case ChunkType::Riff:
 			ch.Save();
 			break;
-		case CH_TABLE:
-		case CH_ARRAY:
+		case ChunkType::Table:
+		case ChunkType::Array:
 			_sl.last_array_index = 0;
-			SlWriteByte(_sl.block_mode);
+			SlWriteByte(to_underlying(_sl.chunk_type));
 			ch.Save();
 			SlWriteArrayLength(0); // Terminate arrays
 			break;
-		case CH_SPARSE_TABLE:
-		case CH_SPARSE_ARRAY:
-			SlWriteByte(_sl.block_mode);
+		case ChunkType::SparseTable:
+		case ChunkType::SparseArray:
+			SlWriteByte(to_underlying(_sl.chunk_type));
 			ch.Save();
 			SlWriteArrayLength(0); // Terminate arrays
 			break;
@@ -2322,14 +2322,14 @@ static void SlLoadCheckChunks()
 /** Fix all pointers (convert index -> pointer) */
 static void SlFixPointers()
 {
-	_sl.action = SLA_PTRS;
+	_sl.action = SaveLoadAction::Ptrs;
 
 	for (const ChunkHandler &ch : ChunkHandlers()) {
 		Debug(sl, 3, "Fixing pointers for {}", ch.GetName());
 		ch.FixPointers();
 	}
 
-	assert(_sl.action == SLA_PTRS);
+	assert(_sl.action == SaveLoadAction::Ptrs);
 }
 
 
@@ -2442,7 +2442,7 @@ struct LZOLoadFilter : LoadFilter {
 		/* Check if size is bad */
 		((uint32_t*)out)[0] = size = tmp[1];
 
-		if (_sl_version != SL_MIN_VERSION) {
+		if (_sl_version != SaveLoadVersion::MinVersion) {
 			tmp[0] = TO_BE32(tmp[0]);
 			size = TO_BE32(size);
 		}
@@ -2954,7 +2954,7 @@ void SetSaveLoadError(StringID str)
  */
 EncodedString GetSaveLoadErrorType()
 {
-	return GetEncodedString(_sl.action == SLA_SAVE ? STR_ERROR_GAME_SAVE_FAILED : STR_ERROR_GAME_LOAD_FAILED);
+	return GetEncodedString(_sl.action == SaveLoadAction::Save ? STR_ERROR_GAME_SAVE_FAILED : STR_ERROR_GAME_LOAD_FAILED);
 }
 
 /**
@@ -2985,7 +2985,7 @@ static SaveLoadResult SaveFileToDisk(bool threaded)
 		auto [fmt, compression] = GetSavegameFormat(_savegame_format);
 
 		/* We have written our stuff to memory, now write it to file! */
-		uint32_t hdr[2] = { fmt.tag, TO_BE32(SAVEGAME_VERSION << 16) };
+		uint32_t hdr[2] = { fmt.tag, TO_BE32(to_underlying(SAVEGAME_VERSION) << 16) };
 		_sl.sf->Write((uint8_t*)hdr, sizeof(hdr));
 
 		_sl.sf = fmt.init_write(_sl.sf, compression);
@@ -3070,7 +3070,7 @@ static SaveLoadResult DoSave(std::shared_ptr<SaveFilter> writer, bool threaded)
 SaveLoadResult SaveWithFilter(std::shared_ptr<SaveFilter> writer, bool threaded)
 {
 	try {
-		_sl.action = SLA_SAVE;
+		_sl.action = SaveLoadAction::Save;
 		return DoSave(std::move(writer), threaded);
 	} catch (...) {
 		ClearSaveLoadState();
@@ -3101,13 +3101,13 @@ static const SaveLoadFormat *DetermineSaveLoadFormat(uint32_t tag, uint32_t raw_
 
 		/* Is the version higher than the current? */
 		if (_sl_version > SAVEGAME_VERSION) SlError(STR_GAME_SAVELOAD_ERROR_TOO_NEW_SAVEGAME);
-		if (_sl_version >= SLV_START_PATCHPACKS && _sl_version <= SLV_END_PATCHPACKS) SlError(STR_GAME_SAVELOAD_ERROR_PATCHPACK);
+		if (_sl_version >= SaveLoadVersion::StartPatchpacks && _sl_version <= SaveLoadVersion::EndPatchpacks) SlError(STR_GAME_SAVELOAD_ERROR_PATCHPACK);
 		return fmt;
 	}
 
 	Debug(sl, 0, "Unknown savegame type, trying to load it as the buggy format");
 	_sl.lf->Reset();
-	_sl_version = SL_MIN_VERSION;
+	_sl_version = SaveLoadVersion::MinVersion;
 	_sl_minor_version = 0;
 
 	/* Try to find the LZO savegame format; it uses 'OTTD' as tag. */
@@ -3163,7 +3163,7 @@ static SaveLoadResult DoLoad(std::shared_ptr<LoadFilter> reader, bool load_check
 
 		_gamelog.Reset();
 
-		if (IsSavegameVersionBefore(SLV_TOWN_TOLERANCE_PAUSE_MODE)) {
+		if (IsSavegameVersionBefore(SaveLoadVersion::TownTolerancePauseMode)) {
 			/*
 			 * NewGRFs were introduced between 0.3,4 and 0.3.5, which both
 			 * shared savegame version 4. Anything before that 'obviously'
@@ -3201,7 +3201,7 @@ static SaveLoadResult DoLoad(std::shared_ptr<LoadFilter> reader, bool load_check
 
 	ClearSaveLoadState();
 
-	_savegame_type = SGT_OTTD;
+	_savegame_type = SavegameType::OTTD;
 
 	if (load_check) {
 		/* The only part from AfterLoadGame() we need */
@@ -3230,7 +3230,7 @@ static SaveLoadResult DoLoad(std::shared_ptr<LoadFilter> reader, bool load_check
 SaveLoadResult LoadWithFilter(std::shared_ptr<LoadFilter> reader)
 {
 	try {
-		_sl.action = SLA_LOAD;
+		_sl.action = SaveLoadAction::Load;
 		return DoLoad(std::move(reader), false);
 	} catch (...) {
 		ClearSaveLoadState();
@@ -3272,7 +3272,7 @@ SaveLoadResult SaveOrLoad(std::string_view filename, SaveLoadOperation fop, Deta
 			ClearGRFConfigList(_grfconfig);
 			_gamelog.Reset();
 			if (!LoadOldSaveGame(filename)) return SaveLoadResult::ReInit;
-			_sl_version = SL_MIN_VERSION;
+			_sl_version = SaveLoadVersion::MinVersion;
 			_sl_minor_version = 0;
 			_gamelog.StartAction(GamelogActionType::Load);
 			if (!AfterLoadGame()) {
@@ -3286,15 +3286,15 @@ SaveLoadResult SaveOrLoad(std::string_view filename, SaveLoadOperation fop, Deta
 		assert(dft == DetailedFileType::GameFile);
 		switch (fop) {
 			case SaveLoadOperation::Check:
-				_sl.action = SLA_LOAD_CHECK;
+				_sl.action = SaveLoadAction::LoadCheck;
 				break;
 
 			case SaveLoadOperation::Load:
-				_sl.action = SLA_LOAD;
+				_sl.action = SaveLoadAction::Load;
 				break;
 
 			case SaveLoadOperation::Save:
-				_sl.action = SLA_SAVE;
+				_sl.action = SaveLoadAction::Save;
 				break;
 
 			default: NOT_REACHED();

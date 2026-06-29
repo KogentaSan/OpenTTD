@@ -52,7 +52,7 @@ static void SaveReal_GSDT(int)
 }
 
 struct GSDTChunkHandler : ChunkHandler {
-	GSDTChunkHandler() : ChunkHandler('GSDT', CH_TABLE) {}
+	GSDTChunkHandler() : ChunkHandler('GSDT', ChunkType::Table) {}
 
 	void Load() const override
 	{
@@ -137,7 +137,7 @@ public:
 
 	void Load(LanguageStrings *ls) const override
 	{
-		uint32_t length = IsSavegameVersionBefore(SLV_SAVELOAD_LIST_LENGTH) ? _game_saveload_strings : (uint32_t)SlGetStructListLength(UINT32_MAX);
+		uint32_t length = IsSavegameVersionBefore(SaveLoadVersion::SaveloadListLength) ? _game_saveload_strings : (uint32_t)SlGetStructListLength(UINT32_MAX);
 
 		for (uint32_t i = 0; i < length; i++) {
 			SlObject(nullptr, this->GetLoadDescription());
@@ -148,12 +148,12 @@ public:
 
 static const SaveLoad _game_language_desc[] = {
 	SLE_SSTR(LanguageStrings, language, SLE_STR),
-	SLEG_CONDVAR("count", _game_saveload_strings, SLE_UINT32, SL_MIN_VERSION, SLV_SAVELOAD_LIST_LENGTH),
+	SLEG_CONDVAR("count", _game_saveload_strings, SLE_UINT32, SaveLoadVersion::MinVersion, SaveLoadVersion::SaveloadListLength),
 	SLEG_STRUCTLIST("strings", SlGameLanguageString),
 };
 
 struct GSTRChunkHandler : ChunkHandler {
-	GSTRChunkHandler() : ChunkHandler('GSTR', CH_TABLE) {}
+	GSTRChunkHandler() : ChunkHandler('GSTR', ChunkType::Table) {}
 
 	void Load() const override
 	{
