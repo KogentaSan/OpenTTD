@@ -22,12 +22,12 @@ static uint32_t _map_dim_x;
 static uint32_t _map_dim_y;
 
 static const SaveLoad _map_desc[] = {
-	SLEG_CONDVAR("dim_x", _map_dim_x, SLE_UINT32, SLV_MULTIPLE_ROAD_STOPS, SL_MAX_VERSION),
-	SLEG_CONDVAR("dim_y", _map_dim_y, SLE_UINT32, SLV_MULTIPLE_ROAD_STOPS, SL_MAX_VERSION),
+	SLEG_CONDVAR("dim_x", _map_dim_x, SLE_UINT32, SaveLoadVersion::MultipleRoadStops, SaveLoadVersion::MaxVersion),
+	SLEG_CONDVAR("dim_y", _map_dim_y, SLE_UINT32, SaveLoadVersion::MultipleRoadStops, SaveLoadVersion::MaxVersion),
 };
 
 struct MAPSChunkHandler : ChunkHandler {
-	MAPSChunkHandler() : ChunkHandler('MAPS', CH_TABLE) {}
+	MAPSChunkHandler() : ChunkHandler('MAPS', ChunkType::Table) {}
 
 	void Save() const override
 	{
@@ -44,9 +44,9 @@ struct MAPSChunkHandler : ChunkHandler {
 	{
 		const std::vector<SaveLoad> slt = SlCompatTableHeader(_map_desc, _map_sl_compat);
 
-		if (!IsSavegameVersionBefore(SLV_RIFF_TO_ARRAY) && SlIterateArray() == -1) return;
+		if (!IsSavegameVersionBefore(SaveLoadVersion::RiffToArray) && SlIterateArray() == -1) return;
 		SlGlobList(slt);
-		if (!IsSavegameVersionBefore(SLV_RIFF_TO_ARRAY) && SlIterateArray() != -1) SlErrorCorrupt("Too many MAPS entries");
+		if (!IsSavegameVersionBefore(SaveLoadVersion::RiffToArray) && SlIterateArray() != -1) SlErrorCorrupt("Too many MAPS entries");
 
 		Map::Allocate(_map_dim_x, _map_dim_y);
 	}
@@ -55,9 +55,9 @@ struct MAPSChunkHandler : ChunkHandler {
 	{
 		const std::vector<SaveLoad> slt = SlCompatTableHeader(_map_desc, _map_sl_compat);
 
-		if (!IsSavegameVersionBefore(SLV_RIFF_TO_ARRAY) && SlIterateArray() == -1) return;
+		if (!IsSavegameVersionBefore(SaveLoadVersion::RiffToArray) && SlIterateArray() == -1) return;
 		SlGlobList(slt);
-		if (!IsSavegameVersionBefore(SLV_RIFF_TO_ARRAY) && SlIterateArray() != -1) SlErrorCorrupt("Too many MAPS entries");
+		if (!IsSavegameVersionBefore(SaveLoadVersion::RiffToArray) && SlIterateArray() != -1) SlErrorCorrupt("Too many MAPS entries");
 
 		_load_check_data.map_size_x = _map_dim_x;
 		_load_check_data.map_size_y = _map_dim_y;
@@ -67,7 +67,7 @@ struct MAPSChunkHandler : ChunkHandler {
 static const uint MAP_SL_BUF_SIZE = 4096;
 
 struct MAPTChunkHandler : ChunkHandler {
-	MAPTChunkHandler() : ChunkHandler('MAPT', CH_RIFF) {}
+	MAPTChunkHandler() : ChunkHandler('MAPT', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -94,7 +94,7 @@ struct MAPTChunkHandler : ChunkHandler {
 };
 
 struct MAPHChunkHandler : ChunkHandler {
-	MAPHChunkHandler() : ChunkHandler('MAPH', CH_RIFF) {}
+	MAPHChunkHandler() : ChunkHandler('MAPH', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -121,7 +121,7 @@ struct MAPHChunkHandler : ChunkHandler {
 };
 
 struct MAPOChunkHandler : ChunkHandler {
-	MAPOChunkHandler() : ChunkHandler('MAPO', CH_RIFF) {}
+	MAPOChunkHandler() : ChunkHandler('MAPO', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -148,7 +148,7 @@ struct MAPOChunkHandler : ChunkHandler {
 };
 
 struct MAP2ChunkHandler : ChunkHandler {
-	MAP2ChunkHandler() : ChunkHandler('MAP2', CH_RIFF) {}
+	MAP2ChunkHandler() : ChunkHandler('MAP2', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -158,7 +158,7 @@ struct MAP2ChunkHandler : ChunkHandler {
 		for (TileIndex i{}; i != size;) {
 			SlCopy(buf.data(), MAP_SL_BUF_SIZE,
 				/* In those versions the m2 was 8 bits */
-				IsSavegameVersionBefore(SLV_BIG_MAP) ? SLE_FILE_U8 | SLE_VAR_U16 : SLE_UINT16
+				IsSavegameVersionBefore(SaveLoadVersion::BigMap) ? SLE_FILE_U8 | SLE_VAR_U16 : SLE_UINT16
 			);
 			for (uint j = 0; j != MAP_SL_BUF_SIZE; j++) Tile(i++).m2() = buf[j];
 		}
@@ -178,7 +178,7 @@ struct MAP2ChunkHandler : ChunkHandler {
 };
 
 struct M3LOChunkHandler : ChunkHandler {
-	M3LOChunkHandler() : ChunkHandler('M3LO', CH_RIFF) {}
+	M3LOChunkHandler() : ChunkHandler('M3LO', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -205,7 +205,7 @@ struct M3LOChunkHandler : ChunkHandler {
 };
 
 struct M3HIChunkHandler : ChunkHandler {
-	M3HIChunkHandler() : ChunkHandler('M3HI', CH_RIFF) {}
+	M3HIChunkHandler() : ChunkHandler('M3HI', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -232,7 +232,7 @@ struct M3HIChunkHandler : ChunkHandler {
 };
 
 struct MAP5ChunkHandler : ChunkHandler {
-	MAP5ChunkHandler() : ChunkHandler('MAP5', CH_RIFF) {}
+	MAP5ChunkHandler() : ChunkHandler('MAP5', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -259,14 +259,14 @@ struct MAP5ChunkHandler : ChunkHandler {
 };
 
 struct MAPEChunkHandler : ChunkHandler {
-	MAPEChunkHandler() : ChunkHandler('MAPE', CH_RIFF) {}
+	MAPEChunkHandler() : ChunkHandler('MAPE', ChunkType::Riff) {}
 
 	void Load() const override
 	{
 		std::array<uint8_t, MAP_SL_BUF_SIZE> buf;
 		uint size = Map::Size();
 
-		if (IsSavegameVersionBefore(SLV_BRIDGE_WORMHOLE)) {
+		if (IsSavegameVersionBefore(SaveLoadVersion::BridgeWormhole)) {
 			for (TileIndex i{}; i != size;) {
 				/* 1024, otherwise we overflow on 64x64 maps! */
 				SlCopy(buf.data(), 1024, SLE_UINT8);
@@ -299,7 +299,7 @@ struct MAPEChunkHandler : ChunkHandler {
 };
 
 struct MAP7ChunkHandler : ChunkHandler {
-	MAP7ChunkHandler() : ChunkHandler('MAP7', CH_RIFF) {}
+	MAP7ChunkHandler() : ChunkHandler('MAP7', ChunkType::Riff) {}
 
 	void Load() const override
 	{
@@ -326,7 +326,7 @@ struct MAP7ChunkHandler : ChunkHandler {
 };
 
 struct MAP8ChunkHandler : ChunkHandler {
-	MAP8ChunkHandler() : ChunkHandler('MAP8', CH_RIFF) {}
+	MAP8ChunkHandler() : ChunkHandler('MAP8', ChunkType::Riff) {}
 
 	void Load() const override
 	{

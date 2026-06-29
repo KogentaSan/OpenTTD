@@ -272,7 +272,7 @@ struct MainWindow : Window
 			}
 
 			int text_y = this->height - GetCharacterHeight(FontSize::Normal) * 2;
-			DrawString(0, this->width - 1, text_y, STR_INTRO_VERSION, TextColour::White, SA_CENTER);
+			DrawString(0, this->width - 1, text_y, STR_INTRO_VERSION, TextColour::White, {AlignmentH::Centre, AlignmentV::Middle});
 		}
 	}
 
@@ -410,7 +410,7 @@ struct MainWindow : Window
 
 			case GHK_CHAT_SERVER: // send text to the server
 				if (_networking && !_network_server) {
-					ShowNetworkChatQueryWindow(NetworkChatDestinationType::Client, CLIENT_ID_SERVER);
+					ShowNetworkChatQueryWindow(NetworkChatDestinationType::Client, to_underlying(ClientID::Server));
 				}
 				break;
 

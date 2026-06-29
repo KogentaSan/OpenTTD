@@ -405,7 +405,7 @@ static const SaveLoad _script_byte[] = {
 			if (!test) {
 				_script_sl_byte = (uint8_t)len;
 				SlObject(nullptr, _script_byte);
-				SlCopy(const_cast<char *>(view.data()), len, SLE_CHAR);
+				SlCopy(const_cast<char *>(view.data()), len, SLE_INT8);
 			}
 			return true;
 		}
@@ -604,7 +604,7 @@ bool ScriptInstance::IsPaused()
 	switch (_script_sl_byte) {
 		case SQSL_INT: {
 			int64_t value;
-			SlCopy(&value, 1, IsSavegameVersionBefore(SLV_SCRIPT_INT64) ? SLE_FILE_I32 | SLE_VAR_I64 : SLE_INT64);
+			SlCopy(&value, 1, IsSavegameVersionBefore(SaveLoadVersion::ScriptInt64) ? SLE_FILE_I32 | SLE_VAR_I64 : SLE_INT64);
 			if (data != nullptr) data->push_back(static_cast<SQInteger>(value));
 			return true;
 		}
@@ -612,7 +612,7 @@ bool ScriptInstance::IsPaused()
 		case SQSL_STRING: {
 			SlObject(nullptr, _script_byte);
 			static char buf[std::numeric_limits<decltype(_script_sl_byte)>::max()];
-			SlCopy(buf, _script_sl_byte, SLE_CHAR);
+			SlCopy(buf, _script_sl_byte, SLE_INT8);
 			if (data != nullptr) data->push_back(StrMakeValid(std::string_view(buf, _script_sl_byte)));
 			return true;
 		}
