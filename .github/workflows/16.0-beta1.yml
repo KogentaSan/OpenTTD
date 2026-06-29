@@ -6,7 +6,7 @@ on:
 jobs:
   build-windows-x64:
     runs-on: windows-latest
-    name: Windows x64 Build
+    name: 16.0-beta1 Windows x64 Build
 
     steps:
       - name: Checkout repository
