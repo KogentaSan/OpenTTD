@@ -127,14 +127,16 @@ using SettingDescProcList = void(IniFile &ini, std::string_view grpname, StringL
 
 static bool IsSignedVarMemType(VarType vt)
 {
-	switch (GetVarMemType(vt)) {
-		case SLE_VAR_I8:
-		case SLE_VAR_I16:
-		case SLE_VAR_I32:
-		case SLE_VAR_I64:
+	switch (vt.mem) {
+		case VarMemType::I8:
+		case VarMemType::I16:
+		case VarMemType::I32:
+		case VarMemType::I64:
 			return true;
+
+		default:
+			return false;
 	}
-	return false;
 }
 
 /**
@@ -305,7 +307,7 @@ static std::optional<std::vector<uint32_t>> ParseIntList(std::string_view str)
  * @param type the type of elements the array holds (eg INT8, UINT16, etc.)
  * @return return true on success and false on error
  */
-static bool LoadIntList(std::optional<std::string_view> str, void *array, int nelems, VarType type)
+static bool LoadIntList(std::optional<std::string_view> str, void *array, int nelems, VarMemType type)
 {
 	size_t elem_size = SlVarSize(type);
 	std::byte *p = static_cast<std::byte *>(array);
@@ -337,14 +339,14 @@ std::string ListSettingDesc::FormatValue(const void *object) const
 	std::string result;
 	for (size_t i = 0; i != this->save.length; i++) {
 		int64_t v;
-		switch (GetVarMemType(this->save.conv)) {
-			case SLE_VAR_BL:
-			case SLE_VAR_I8:  v = *(const   int8_t *)p; p += 1; break;
-			case SLE_VAR_U8:  v = *(const  uint8_t *)p; p += 1; break;
-			case SLE_VAR_I16: v = *(const  int16_t *)p; p += 2; break;
-			case SLE_VAR_U16: v = *(const uint16_t *)p; p += 2; break;
-			case SLE_VAR_I32: v = *(const  int32_t *)p; p += 4; break;
-			case SLE_VAR_U32: v = *(const uint32_t *)p; p += 4; break;
+		switch (this->save.conv.mem) {
+			case VarMemType::Bool:
+			case VarMemType::I8:  v = *(const   int8_t *)p; p += 1; break;
+			case VarMemType::U8:  v = *(const  uint8_t *)p; p += 1; break;
+			case VarMemType::I16: v = *(const  int16_t *)p; p += 2; break;
+			case VarMemType::U16: v = *(const uint16_t *)p; p += 2; break;
+			case VarMemType::I32: v = *(const  int32_t *)p; p += 4; break;
+			case VarMemType::U32: v = *(const uint32_t *)p; p += 4; break;
 			default: NOT_REACHED();
 		}
 		if (i != 0) result += ',';
@@ -531,14 +533,14 @@ void IntSettingDesc::MakeValueValid(int32_t &val) const
 	 * supported. Unsigned 8 and 16-bit variables are safe since they fit into a signed
 	 * 32-bit variable
 	 * TODO: Support 64-bit settings/variables; requires 64 bit over command protocol! */
-	switch (GetVarMemType(this->save.conv)) {
-		case SLE_VAR_NULL: return;
-		case SLE_VAR_BL:
-		case SLE_VAR_I8:
-		case SLE_VAR_U8:
-		case SLE_VAR_I16:
-		case SLE_VAR_U16:
-		case SLE_VAR_I32: {
+	switch (this->save.conv.mem) {
+		case VarMemType::Null: return;
+		case VarMemType::Bool:
+		case VarMemType::I8:
+		case VarMemType::U8:
+		case VarMemType::I16:
+		case VarMemType::U16:
+		case VarMemType::I32: {
 			/* Override the minimum value. No value below this->min, except special value 0 */
 			if (!this->flags.Test(SettingFlag::GuiZeroIsSpecial) || val != 0) {
 				if (!this->flags.Test(SettingFlag::GuiDropdown)) {
@@ -551,7 +553,7 @@ void IntSettingDesc::MakeValueValid(int32_t &val) const
 			}
 			break;
 		}
-		case SLE_VAR_U32: {
+		case VarMemType::U32: {
 			/* Override the minimum value. No value below this->min, except special value 0 */
 			uint32_t uval = static_cast<uint32_t>(val);
 			if (!this->flags.Test(SettingFlag::GuiZeroIsSpecial) || uval != 0) {
@@ -566,8 +568,8 @@ void IntSettingDesc::MakeValueValid(int32_t &val) const
 			val = static_cast<int32_t>(uval);
 			return;
 		}
-		case SLE_VAR_I64:
-		case SLE_VAR_U64:
+		case VarMemType::I64:
+		case VarMemType::U64:
 		default: NOT_REACHED();
 	}
 }
@@ -580,7 +582,7 @@ void IntSettingDesc::MakeValueValid(int32_t &val) const
 void IntSettingDesc::Write(const void *object, int32_t val) const
 {
 	void *ptr = GetVariableAddress(object, this->save);
-	WriteValue(ptr, this->save.conv, (int64_t)val);
+	WriteValue(ptr, this->save.conv.mem, static_cast<int64_t>(val));
 }
 
 /**
@@ -591,7 +593,7 @@ void IntSettingDesc::Write(const void *object, int32_t val) const
 int32_t IntSettingDesc::Read(const void *object) const
 {
 	void *ptr = GetVariableAddress(object, this->save);
-	return (int32_t)ReadValue(ptr, this->save.conv);
+	return static_cast<int32_t>(ReadValue(ptr, this->save.conv.mem));
 }
 
 /**
@@ -704,13 +706,13 @@ void ListSettingDesc::ParseValue(const IniItem *item, void *object) const
 		str = this->def;
 	}
 	void *ptr = GetVariableAddress(object, this->save);
-	if (!LoadIntList(str, ptr, this->save.length, GetVarMemType(this->save.conv))) {
+	if (!LoadIntList(str, ptr, this->save.length, this->save.conv.mem)) {
 		_settings_error_list.emplace_back(
 			GetEncodedString(STR_CONFIG_ERROR),
 			GetEncodedString(STR_CONFIG_ERROR_ARRAY, this->GetName()));
 
 		/* Use default */
-		LoadIntList(this->def, ptr, this->save.length, GetVarMemType(this->save.conv));
+		LoadIntList(this->def, ptr, this->save.length, this->save.conv.mem);
 	}
 }
 
@@ -795,10 +797,10 @@ void IntSettingDesc::ResetToDefault(void *object) const
 std::string StringSettingDesc::FormatValue(const void *object) const
 {
 	const std::string &str = this->Read(object);
-	switch (GetVarMemType(this->save.conv)) {
-		case SLE_VAR_STR: return str;
+	switch (this->save.conv.mem) {
+		case VarMemType::Str: return str;
 
-		case SLE_VAR_STRQ:
+		case VarMemType::StrQ:
 			if (str.empty()) {
 				return str;
 			}
@@ -812,7 +814,7 @@ bool StringSettingDesc::IsSameValue(const IniItem *item, void *object) const
 {
 	/* The ini parsing removes the quotes, which are needed to retain the spaces in STRQs,
 	 * so those values are always different in the parsed ini item than they should be. */
-	if (GetVarMemType(this->save.conv) == SLE_VAR_STRQ) return false;
+	if (this->save.conv.mem == VarMemType::StrQ) return false;
 
 	const std::string &str = this->Read(object);
 	return item->value->compare(str) == 0;
@@ -1930,7 +1932,7 @@ bool SetSettingValue(const StringSettingDesc *sd, std::string_view value, bool f
 {
 	assert(sd->flags.Test(SettingFlag::NoNetworkSync));
 
-	if (GetVarMemType(sd->save.conv) == SLE_VAR_STRQ && value == "(null)") {
+	if (sd->save.conv.mem == VarMemType::StrQ && value == "(null)") {
 		value = {};
 	}
 
