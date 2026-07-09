@@ -5,14 +5,15 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <https://www.gnu.org/licenses/old-licenses/gpl-2.0>.
  */
 
-/** @file clear_func.h Functions related to clear (TileType::Clear) land. */
+/** @file newgrf_type.h Commonly used types for the NewGRF implementation. */
 
-#ifndef CLEAR_FUNC_H
-#define CLEAR_FUNC_H
+#ifndef NEWGRF_TYPE_H
+#define NEWGRF_TYPE_H
 
-#include "tile_cmd.h"
+struct GRFConfig;
 
-void DrawRoughLandTile(const TileInfo *ti);
-void DrawClearLandTile(const TileInfo *ti, uint8_t set);
+using GrfID = uint32_t; ///< The unique identifier of a NewGRF.
 
-#endif /* CLEAR_FUNC_H */
+static const GrfID INVALID_GRFID = 0xFFFFFFFF; ///< An invalid NewGRF.
+
+#endif /* NEWGRF_TYPE_H */
