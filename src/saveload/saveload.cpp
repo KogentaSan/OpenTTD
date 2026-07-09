@@ -1187,8 +1187,8 @@ static void SlCopyInternal(void *object, size_t length, VarType conv)
 	 * as a byte-type. So detect this, and adjust object size accordingly */
 	if (_sl.action != SaveLoadAction::Save && _sl_version == SaveLoadVersion::MinVersion) {
 		/* all objects except difficulty settings */
-		if (conv == SLE_INT16 || conv == SLE_UINT16 || conv == SLE_STRINGID ||
-				conv == SLE_INT32 || conv == SLE_UINT32) {
+		if (conv == VarTypes::I16 || conv == VarTypes::U16 || conv == VarTypes::STRINGID ||
+				conv == VarTypes::I32 || conv == VarTypes::U32) {
 			SlCopyBytes(object, length * SlCalcConvFileLen(conv));
 			return;
 		}
@@ -1203,7 +1203,7 @@ static void SlCopyInternal(void *object, size_t length, VarType conv)
 
 	/* If the size of elements is 1 byte both in file and memory, no special
 	 * conversion is needed, use specialized copy-copy function to speed up things */
-	if (conv == SLE_INT8 || conv == SLE_UINT8) {
+	if (conv == VarTypes::I8 || conv == VarTypes::U8) {
 		SlCopyBytes(object, length);
 	} else {
 		uint8_t *a = static_cast<uint8_t *>(object);
@@ -1655,11 +1655,11 @@ static size_t SlCalcTableHeader(const SaveLoadTable &slt)
 	for (auto &sld : slt) {
 		if (!SlIsObjectValidInSavegame(sld)) continue;
 
-		length += SlCalcConvFileLen(SLE_UINT8);
+		length += SlCalcConvFileLen(VarTypes::U8);
 		length += SlCalcStdStringLen(&sld.name);
 	}
 
-	length += SlCalcConvFileLen(SLE_UINT8); // End-of-list entry.
+	length += SlCalcConvFileLen(VarTypes::U8); // End-of-list entry.
 
 	for (auto &sld : slt) {
 		if (!SlIsObjectValidInSavegame(sld)) continue;
@@ -1942,11 +1942,11 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
 
 			while (true) {
 				SavegameFileType type{};
-				SlSaveLoadConv(&type.storage, SLE_UINT8);
+				SlSaveLoadConv(&type.storage, VarTypes::U8);
 				if (type.IsEnd()) break;
 
 				std::string key;
-				SlStdString(&key, SLE_STR);
+				SlStdString(&key, VarTypes::STR);
 
 				auto sld_it = key_lookup.find(key);
 				if (sld_it == key_lookup.end()) {
@@ -2012,13 +2012,13 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt)
 				SavegameFileType type = GetSavegameFileType(sld);
 				assert(!type.IsEnd());
 
-				SlSaveLoadConv(&type.storage, SLE_UINT8);
-				SlStdString(const_cast<std::string *>(&sld.name), SLE_STR);
+				SlSaveLoadConv(&type.storage, VarTypes::U8);
+				SlStdString(const_cast<std::string *>(&sld.name), VarTypes::STR);
 			}
 
 			/* Add an end-of-header marker. */
 			SavegameFileType type{};
-			SlSaveLoadConv(&type.storage, SLE_UINT8);
+			SlSaveLoadConv(&type.storage, VarTypes::U8);
 
 			/* After the table, write down any sub-tables we might have. */
 			for (auto &sld : slt) {
@@ -2429,7 +2429,7 @@ struct FileWriter : SaveFilter {
 		this->Finish();
 	}
 
-	void Write(uint8_t *buf, size_t size) override
+	void Write(const uint8_t *buf, size_t size) override
 	{
 		/* We're in the process of shutting down, i.e. in "failure" mode. */
 		if (!this->file.has_value()) return;
@@ -2513,7 +2513,7 @@ struct LZOSaveFilter : SaveFilter {
 		if (lzo_init() != LZO_E_OK) SlError(STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR, "cannot initialize compressor");
 	}
 
-	void Write(uint8_t *buf, size_t size) override
+	void Write(const uint8_t *buf, size_t size) override
 	{
 		const lzo_bytep in = buf;
 		/* Buffer size is from the LZO docs plus the chunk header size. */
@@ -2568,7 +2568,7 @@ struct NoCompSaveFilter : SaveFilter {
 	{
 	}
 
-	void Write(uint8_t *buf, size_t size) override
+	void Write(const uint8_t *buf, size_t size) override
 	{
 		this->chain->Write(buf, size);
 	}
@@ -2650,10 +2650,10 @@ struct ZlibSaveFilter : SaveFilter {
 	 * @param len  Amount of bytes to write.
 	 * @param mode Mode for deflate.
 	 */
-	void WriteLoop(uint8_t *p, size_t len, int mode)
+	void WriteLoop(const uint8_t *p, size_t len, int mode)
 	{
 		uint n;
-		this->z.next_in = p;
+		this->z.next_in = const_cast<uint8_t *>(p); // zlib does not modify the data, but is non-const for legacy reasons
 		this->z.avail_in = static_cast<uInt>(len);
 		do {
 			this->z.next_out = this->fwrite_buf;
@@ -2678,7 +2678,7 @@ struct ZlibSaveFilter : SaveFilter {
 		} while (this->z.avail_in || !this->z.avail_out);
 	}
 
-	void Write(uint8_t *buf, size_t size) override
+	void Write(const uint8_t *buf, size_t size) override
 	{
 		this->WriteLoop(buf, size, 0);
 	}
@@ -2776,7 +2776,7 @@ struct LZMASaveFilter : SaveFilter {
 	 * @param len    Amount of bytes to write.
 	 * @param action Action for lzma_code.
 	 */
-	void WriteLoop(uint8_t *p, size_t len, lzma_action action)
+	void WriteLoop(const uint8_t *p, size_t len, lzma_action action)
 	{
 		size_t n;
 		this->lzma.next_in = p;
@@ -2796,7 +2796,7 @@ struct LZMASaveFilter : SaveFilter {
 		} while (this->lzma.avail_in || !this->lzma.avail_out);
 	}
 
-	void Write(uint8_t *buf, size_t size) override
+	void Write(const uint8_t *buf, size_t size) override
 	{
 		this->WriteLoop(buf, size, LZMA_RUN);
 	}
