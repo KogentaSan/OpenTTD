@@ -117,7 +117,7 @@ void InitRoadTypes()
 		ResolveRoadTypeGUISprites(&rti);
 		_roadtypes_hidden_mask.Set(rt, rti.flags.Test(RoadTypeFlag::Hidden));
 
-		if (rti.label == 0) continue;
+		if (rti.label.Empty()) continue;
 		_sorted_roadtypes.push_back(rt);
 	}
 	std::sort(_sorted_roadtypes.begin(), _sorted_roadtypes.end(), CompareRoadTypes);
@@ -131,7 +131,7 @@ void InitRoadTypes()
  */
 RoadType AllocateRoadType(RoadTypeLabel label, RoadTramType rtt)
 {
-	auto it = std::ranges::find(_roadtypes, 0, &RoadTypeInfo::label);
+	auto it = std::ranges::find(_roadtypes, RoadTypeLabel{}, &RoadTypeInfo::label);
 	if (it == std::end(_roadtypes)) return INVALID_ROADTYPE;
 
 	RoadTypeInfo &rti = *it;
@@ -1579,7 +1579,7 @@ static SpriteID GetRoadGroundSprite(const TileInfo *ti, Roadside roadside, const
 	/* Draw original road base sprite */
 	SpriteID image = SPR_ROAD_Y + offset;
 	if (DrawRoadAsSnowOrDesert(snow_or_desert, roadside)) {
-		image += 19;
+		image += NUM_SLOPES;
 	} else {
 		switch (roadside) {
 			case Roadside::Barren:
@@ -1591,7 +1591,7 @@ static SpriteID GetRoadGroundSprite(const TileInfo *ti, Roadside roadside, const
 				break;
 
 			default:
-				image -= 19;
+				image -= NUM_SLOPES;
 				break; // Paved
 		}
 	}
@@ -1744,7 +1744,7 @@ static void DrawTile_Road(TileInfo *ti)
 
 				Roadside roadside = GetRoadside(ti->tile);
 				if (DrawRoadAsSnowOrDesert(IsOnSnowOrDesert(ti->tile), roadside)) {
-					image += 19;
+					image += NUM_SLOPES;
 				} else {
 					switch (roadside) {
 						case Roadside::Barren:
@@ -1755,7 +1755,7 @@ static void DrawTile_Road(TileInfo *ti)
 							break;
 
 						default:
-							image -= 19;
+							image -= NUM_SLOPES;
 							break; // Paved
 					}
 				}
