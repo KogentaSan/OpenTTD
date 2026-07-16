@@ -5367,6 +5367,10 @@ STR_ERROR_BRIDGE_TOO_LOW_FOR_BUOY                               :橋太矮，淨
 STR_ERROR_BRIDGE_TOO_LOW_FOR_RAIL_WAYPOINT                      :橋太矮，淨高得 {HEIGHT}，唔夠位整分站
 STR_ERROR_BRIDGE_TOO_LOW_FOR_ROAD_WAYPOINT                      :橋太矮，淨高得 {HEIGHT}，唔夠位整分站
 STR_ERROR_BRIDGE_TOO_LOW_FOR_LOCK                               :橋太矮，淨高得 {HEIGHT}，唔夠位整水閘
+STR_ERROR_BRIDGE_TOO_LOW_FOR_TRAIN_DEPOT                        :橋太矮，淨高得 {HEIGHT}，唔夠位整車廠
+STR_ERROR_BRIDGE_TOO_LOW_FOR_ROADVEH_DEPOT                      :橋太矮，淨高得 {HEIGHT}，唔夠位整車廠
+STR_ERROR_BRIDGE_TOO_LOW_FOR_SHIP_DEPOT                         :橋太矮，淨高得 {HEIGHT}，唔夠位整船塢
+STR_ERROR_BRIDGE_TOO_LOW_FOR_OBJECT                             :橋太矮，淨高得 {HEIGHT}，唔夠位擺物件
 
 # Tunnel related errors
 STR_ERROR_CAN_T_BUILD_TUNNEL_HERE                               :無法在此挖掘隧道……
