@@ -1,4 +1,4 @@
-name: 16.0-beta1 Windows x64 Build
+name: 16.0-beta2 Windows x64 Build
 
 on:
   workflow_dispatch:   # 只手動觸發
@@ -6,7 +6,7 @@ on:
 jobs:
   build-windows-x64:
     runs-on: windows-latest
-    name: Windows x64 Build
+    name: 16.0-beta2 Windows x64 Build
 
     steps:
       - name: Checkout repository
@@ -59,7 +59,7 @@ jobs:
         run: |
           $timestamp = Get-Date -Format "yyyyMMddHHmmss"
           $commit = "${{ github.sha }}".Substring(0,7)
-          $filename = "16.0-beta1.zip"
+          $filename = "16.0-beta2.zip"
           Compress-Archive -Path install/* -DestinationPath $filename
           echo "ZIP_FILE=$filename" | Out-File -FilePath $env:GITHUB_ENV -Append
 
