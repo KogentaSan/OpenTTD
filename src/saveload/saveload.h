@@ -10,7 +10,9 @@
 #ifndef SAVELOAD_H
 #define SAVELOAD_H
 
+#include "saveload_type.h"
 #include "saveload_error.hpp"
+#include "saveload_func.h"
 #include "../core/label_type.hpp"
 #include "../fileio_type.h"
 #include "../fios.h"
@@ -422,24 +424,6 @@ enum class SaveLoadVersion : uint16_t {
 	MaxVersion, ///< Highest possible saveload version.
 };
 
-/** Save or load result codes. */
-enum class SaveLoadResult : uint8_t {
-	Ok, ///< completed successfully
-	Error, ///< error that was caught before internal structures were modified
-	ReInit, ///< error that was caught in the middle of updating game state, need to clear it. (can only happen during load)
-};
-
-/** Deals with the type of the savegame, independent of extension */
-struct FileToSaveLoad {
-	SaveLoadOperation file_op;       ///< File operation to perform.
-	FiosType ftype;                  ///< File type.
-	std::string name;                ///< Name of the file.
-	EncodedString title;             ///< Internal name of the game.
-
-	void SetMode(const FiosType &ft, SaveLoadOperation fop = SaveLoadOperation::Load);
-	void Set(const FiosItem &item);
-};
-
 /** Types of save games. */
 enum SavegameType : uint8_t {
 	TTD, ///< TTD savegame (can be detected incorrectly)
@@ -449,22 +433,7 @@ enum SavegameType : uint8_t {
 	TTO, ///< TTO savegame
 	Invalid = 0xFF, ///< broken savegame (used internally)
 };
-
-extern FileToSaveLoad _file_to_saveload;
-
-std::string GenerateDefaultSaveName();
 void SetSaveLoadError(StringID str);
-EncodedString GetSaveLoadErrorType();
-EncodedString GetSaveLoadErrorMessage();
-SaveLoadResult SaveOrLoad(std::string_view filename, SaveLoadOperation fop, DetailedFileType dft, Subdirectory sb, bool threaded = true);
-void WaitTillSaved();
-void ProcessAsyncSaveFinish();
-void DoExitSave();
-
-void DoAutoOrNetsave(FiosNumberedSaveName &counter);
-
-SaveLoadResult SaveWithFilter(std::shared_ptr<struct SaveFilter> writer, bool threaded);
-SaveLoadResult LoadWithFilter(std::shared_ptr<struct LoadFilter> reader);
 
 typedef void AutolengthProc(int);
 
@@ -540,9 +509,6 @@ using ChunkHandlerRef = std::reference_wrapper<const ChunkHandler>;
 
 /** A table of ChunkHandler entries. */
 using ChunkHandlerTable = std::span<const ChunkHandlerRef>;
-
-/** A table of SaveLoad entries. */
-using SaveLoadTable = std::span<const struct SaveLoad>;
 
 /** A table of SaveLoadCompat entries. */
 using SaveLoadCompatTable = std::span<const struct SaveLoadCompat>;
@@ -683,7 +649,6 @@ enum class VarFileType : uint8_t {
 
 /** The types/structures of data we have in memory. */
 enum class VarMemType : uint8_t {
-	/* 4 bits allocated a maximum of 16 types for NumberType */
 	Bool = 0, ///< A boolean value.
 	I8 = 1, ///< A 8 bit signed int.
 	U8 = 2, ///< A 8 bit unsigned int.
@@ -697,7 +662,7 @@ enum class VarMemType : uint8_t {
 	Str = 12, ///< string pointer
 	StrQ = 13, ///< string pointer enclosed in quotes
 	Name = 14, ///< old custom name to be converted to a string pointer
-	/* 1 more possible memory-primitives */
+	Label = 15, ///< A 4 character \c Label.
 };
 
 /** Container of a variable's characteristics about a variable's storage. */
@@ -769,6 +734,7 @@ struct VarTypes {
 	static constexpr VarType STR{ VarFileType::String, VarMemType::Str }; ///< Store string.
 	static constexpr VarType STRQ{ VarFileType::String, VarMemType::StrQ }; ///< Store a string with quotes.
 	static constexpr VarType NAME{ VarFileType::StringID, VarMemType::Name }; ///< A string stored in the custom string array.
+	static constexpr VarType LABEL{ VarFileType::U32, VarMemType::Label }; ///< Store a \c Label.
 };
 
 /** Type of data saved. */
@@ -841,6 +807,7 @@ inline constexpr size_t SlVarSize(VarMemType type)
 		case VarMemType::Str: return sizeof(std::string);
 		case VarMemType::StrQ: return sizeof(std::string);
 		case VarMemType::Name: return sizeof(std::string);
+		case VarMemType::Label: return sizeof(BaseLabel);
 		default: NOT_REACHED();
 	}
 }
@@ -884,6 +851,7 @@ inline constexpr bool SlCheckVarSize(SaveLoadType cmd, VarType type, size_t leng
 #define SLE_GENERAL_NAME(cmd, name, base, variable, type, length, from, to, extra) \
 	SaveLoad {name, cmd, type, length, from, to, [] (void *b, size_t) -> void * { \
 		static_assert(SlCheckVarSize(cmd, type, length, sizeof(static_cast<base *>(b)->variable))); \
+		static_assert(VarType{type}.mem != VarMemType::Label || std::is_base_of_v<BaseLabel, decltype(base::variable)>); \
 		assert(b != nullptr); \
 		return const_cast<void *>(static_cast<const void *>(std::addressof(static_cast<base *>(b)->variable))); \
 	}, extra, nullptr}
@@ -1364,8 +1332,6 @@ std::vector<SaveLoad> SlTableHeader(const SaveLoadTable &slt);
 std::vector<SaveLoad> SlCompatTableHeader(const SaveLoadTable &slt, const SaveLoadCompatTable &slct);
 void SlObject(void *object, const SaveLoadTable &slt);
 
-bool SaveloadCrashWithMissingNewGRFs();
-
 /**
  * Read in bytes from the file/data structure but don't do
  * anything with them, discarding them in effect
@@ -1375,9 +1341,6 @@ inline void SlSkipBytes(size_t length)
 {
 	for (; length != 0; length--) SlReadByte();
 }
-
-extern std::string _savegame_format;
-extern bool _do_autosave;
 
 /**
  * Default handler for saving/loading a vector to/from disk.
