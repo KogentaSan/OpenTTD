@@ -9,7 +9,7 @@
 
 #include "../stdafx.h"
 #include "network_gui.h"
-#include "../saveload/saveload.h"
+#include "../saveload/saveload_func.h"
 #include "../saveload/saveload_filter.h"
 #include "../command_func.h"
 #include "../console_func.h"
@@ -692,7 +692,7 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::ReceiveServerCheckNewGRFs(Pack
 		const GRFConfig *f = FindGRFConfig(c.grfid, FindGRFConfigMode::Exact, &c.md5sum);
 		if (f == nullptr) {
 			/* We do not know this GRF, bail out of initialization */
-			Debug(grf, 0, "NewGRF {:08X} not found; checksum {}", std::byteswap(c.grfid), FormatArrayAsHex(c.md5sum));
+			Debug(grf, 0, "NewGRF {} not found; checksum {}", FormatArrayAsHex(c.grfid), FormatArrayAsHex(c.md5sum));
 			ret = NetworkRecvStatus::NewGRFMismatch;
 		}
 	}
