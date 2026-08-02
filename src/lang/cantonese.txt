@@ -3842,6 +3842,7 @@ STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}點擊目標可將有關工業或市鎮又或是方格置於畫面正中央。按下「Ctrl」掣點擊目標可於有關工業或市鎮又或是方格位置開啟新檢視視窗
 
 # Goal question window
+###length 4
 STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}問題
 STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}資訊
 STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}警告
@@ -4723,9 +4724,9 @@ STR_ORDER_DROP_FULL_LOAD_ANY                                    :載滿任一種
 STR_ORDER_DROP_NO_LOADING                                       :不裝載
 STR_ORDER_TOOLTIP_FULL_LOAD                                     :{BLACK}修改選取柯打嘅裝載行為
 
-STR_ORDER_TOGGLE_UNLOAD                                         :{BLACK}全部卸載
+STR_ORDER_TOGGLE_UNLOAD                                         :{BLACK}強制全部卸載
 STR_ORDER_DROP_UNLOAD_IF_ACCEPTED                               :若需要則卸客貨
-STR_ORDER_DROP_UNLOAD                                           :全部卸載
+STR_ORDER_DROP_UNLOAD                                           :強制卸載即使不需要
 STR_ORDER_DROP_TRANSFER                                         :轉運
 STR_ORDER_DROP_NO_UNLOADING                                     :不卸載
 STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}修改選取柯打嘅卸載行為
@@ -4762,7 +4763,7 @@ STR_ORDER_CONDITIONAL_REQUIRES_SERVICE                          :需要維護
 STR_ORDER_CONDITIONAL_UNCONDITIONALLY                           :總是
 STR_ORDER_CONDITIONAL_REMAINING_LIFETIME                        :剩餘年限（年）
 STR_ORDER_CONDITIONAL_MAX_RELIABILITY                           :最大可靠度
-STR_ORDER_CONDITIONAL_DRIVING_BACKWARDS                         :後車
+STR_ORDER_CONDITIONAL_DRIVING_BACKWARDS                         :慢速後車
 ###next-name-looks-similar
 
 STR_ORDER_CONDITIONAL_COMPARATOR_TOOLTIP                        :{BLACK}車輛相關數字與指定數值比對嘅條件
@@ -4825,34 +4826,34 @@ STR_ORDER_GO_TO_STATION_CAN_T_USE_STATION                       :{PUSH_COLOUR}{R
 
 STR_ORDER_IMPLICIT                                              :（自動）
 
-STR_ORDER_FULL_LOAD                                             :（等載滿）
+STR_ORDER_FULL_LOAD                                             :（等待載滿）
 STR_ORDER_FULL_LOAD_ANY                                         :（載滿任一種類客貨）
 STR_ORDER_NO_LOAD                                               :（不裝載）
-STR_ORDER_UNLOAD                                                :（卸載後裝載客貨）
-STR_ORDER_UNLOAD_FULL_LOAD                                      :（卸載後等載滿）
-STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :（卸載後等任一種類載滿）
-STR_ORDER_UNLOAD_NO_LOAD                                        :（卸載後空車離開）
+STR_ORDER_UNLOAD                                                :（強制卸載後裝載客貨）
+STR_ORDER_UNLOAD_FULL_LOAD                                      :（強制卸載後等待載滿）
+STR_ORDER_UNLOAD_FULL_LOAD_ANY                                  :（強制卸載後等待任一種類載滿）
+STR_ORDER_UNLOAD_NO_LOAD                                        :（強制卸載後空車離開）
 STR_ORDER_TRANSFER                                              :（轉運且載客貨）
-STR_ORDER_TRANSFER_FULL_LOAD                                    :（轉運且等載滿）
-STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :（轉運且等任一種類載滿）
+STR_ORDER_TRANSFER_FULL_LOAD                                    :（轉運且等待載滿）
+STR_ORDER_TRANSFER_FULL_LOAD_ANY                                :（轉運且等待任一種客貨載滿）
 STR_ORDER_TRANSFER_NO_LOAD                                      :（轉運後空車離開）
 STR_ORDER_NO_UNLOAD                                             :（不卸載且裝載）
-STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :（不卸載且等載滿）
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :（不卸載且等任一種類載滿）
+STR_ORDER_NO_UNLOAD_FULL_LOAD                                   :（不卸載且等待載滿）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY                               :（不卸載且等待任一種客貨載滿）
 STR_ORDER_NO_UNLOAD_NO_LOAD                                     :（不卸載也不裝載）
 
 STR_ORDER_AUTO_REFIT                                            :（自動改裝為運載 {STRING}）
-STR_ORDER_FULL_LOAD_REFIT                                       :（自動改裝為運載 {STRING} 且等載滿）
-STR_ORDER_FULL_LOAD_ANY_REFIT                                   :（自動改裝為運載 {STRING} 且等載滿任一種客貨）
-STR_ORDER_UNLOAD_REFIT                                          :（卸載後改裝為運載 {STRING} 然後裝載客貨）
-STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :（卸載後改裝為運載 {STRING} 然後等載滿）
-STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :（卸載後改裝為運載 {STRING} 然後等載滿任一種客貨）
-STR_ORDER_TRANSFER_REFIT                                        :（轉運後改裝為運載 {STRING} 然後裝載客貨）
-STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :（轉運後改裝為運載 {STRING} 然後等載滿）
-STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :（轉運後改裝為運載 {STRING} 然後等載滿任一種客貨）
-STR_ORDER_NO_UNLOAD_REFIT                                       :（不卸載且改裝為運載 {STRING} 然後裝載客貨）
-STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :（不卸載且改裝為運載 {STRING} 然後等載滿）
-STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :（不卸載且改裝為運載 {STRING} 然後等載滿任一種客貨）
+STR_ORDER_FULL_LOAD_REFIT                                       :（自動改裝為運載 {STRING} 且等待載滿）
+STR_ORDER_FULL_LOAD_ANY_REFIT                                   :（自動改裝為運載 {STRING} 且等待載滿任一種客貨）
+STR_ORDER_UNLOAD_REFIT                                          :（強制卸載後改裝為運載 {STRING} 後裝載客貨）
+STR_ORDER_UNLOAD_FULL_LOAD_REFIT                                :（強制卸載後改裝為運載 {STRING} 後等待載滿）
+STR_ORDER_UNLOAD_FULL_LOAD_ANY_REFIT                            :（強制卸載後改裝為運載 {STRING} 後等待任一種客貨載滿）
+STR_ORDER_TRANSFER_REFIT                                        :（轉運後改裝為運載 {STRING} 後裝載客貨）
+STR_ORDER_TRANSFER_FULL_LOAD_REFIT                              :（轉運後改裝為運載 {STRING} 後等待載滿）
+STR_ORDER_TRANSFER_FULL_LOAD_ANY_REFIT                          :（轉運後改裝為運載 {STRING} 後等待載滿任一種客貨）
+STR_ORDER_NO_UNLOAD_REFIT                                       :（不卸載且改裝為運載 {STRING} 後裝載客貨）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_REFIT                             :（不卸載且改裝為運載 {STRING} 後等待載滿）
+STR_ORDER_NO_UNLOAD_FULL_LOAD_ANY_REFIT                         :（不卸載且改裝為運載 {STRING} 後等待載滿任一種客貨）
 
 STR_ORDER_AUTO_REFIT_ANY                                        :可用貨物
 
