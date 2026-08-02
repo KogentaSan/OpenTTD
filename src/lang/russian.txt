@@ -1366,9 +1366,9 @@ STR_RIVERS_MODERATE                                             :Среднее
 STR_RIVERS_LOT                                                  :Большое
 
 ###length 3
-STR_DISASTER_NONE                                               :нет
-STR_DISASTER_REDUCED                                            :сниженная
-STR_DISASTER_NORMAL                                             :обычная
+STR_BREAKDOWNS_NONE                                             :нет
+STR_BREAKDOWNS_REDUCED                                          :сниженная
+STR_BREAKDOWNS_NORMAL                                           :обычная
 
 ###length 4
 STR_SUBSIDY_X1_5                                                :x1,5
@@ -4017,6 +4017,7 @@ STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Щёлкните по задаче, чтобы показать предприятие/город/место. Ctrl+щелчок показывает в новом окне.
 
 # Goal question window
+###length 4
 STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}Вопрос
 STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}Информация
 STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}Предупреждение
@@ -4912,7 +4913,7 @@ STR_ORDER_TOOLTIP_FULL_LOAD                                     :{BLACK}Изме
 
 STR_ORDER_TOGGLE_UNLOAD                                         :{BLACK}Выгрузить всё
 STR_ORDER_DROP_UNLOAD_IF_ACCEPTED                               :Разгрузиться, если груз принимается
-STR_ORDER_DROP_UNLOAD                                           :Выгрузить всё
+STR_ORDER_DROP_UNLOAD                                           :Принудительно выгрузить всё
 STR_ORDER_DROP_TRANSFER                                         :Передать
 STR_ORDER_DROP_NO_UNLOADING                                     :Не разгружаться
 STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}Изменить способ разгрузки на указанной станции
@@ -4949,7 +4950,7 @@ STR_ORDER_CONDITIONAL_REQUIRES_SERVICE                          :Требует�
 STR_ORDER_CONDITIONAL_UNCONDITIONALLY                           :Всегда
 STR_ORDER_CONDITIONAL_REMAINING_LIFETIME                        :Оставшийся срок службы (лет)
 STR_ORDER_CONDITIONAL_MAX_RELIABILITY                           :Максимальная надёжность
-STR_ORDER_CONDITIONAL_DRIVING_BACKWARDS                         :Движется назад
+STR_ORDER_CONDITIONAL_DRIVING_BACKWARDS                         :Медленно движется назад
 ###next-name-looks-similar
 
 STR_ORDER_CONDITIONAL_COMPARATOR_TOOLTIP                        :{BLACK}Условие перехода

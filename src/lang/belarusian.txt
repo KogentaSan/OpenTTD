@@ -1482,9 +1482,9 @@ STR_RIVERS_MODERATE                                             :Сярэдня�
 STR_RIVERS_LOT                                                  :Вялікая
 
 ###length 3
-STR_DISASTER_NONE                                               :Выключаны
-STR_DISASTER_REDUCED                                            :Зьніжаныя
-STR_DISASTER_NORMAL                                             :Звычайныя
+STR_BREAKDOWNS_NONE                                             :Выключаны
+STR_BREAKDOWNS_REDUCED                                          :Зьніжаныя
+STR_BREAKDOWNS_NORMAL                                           :Звычайныя
 
 ###length 4
 STR_SUBSIDY_X1_5                                                :x1.5
@@ -3960,6 +3960,7 @@ STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Пстрыкніце па задачы, каб паказаць прадпрыемства/горад/клетку. Ctrl+пстрычка паказвае ў новым вакне.
 
 # Goal question window
+###length 4
 STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}Пытаньне
 STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}Інфармацыя
 STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}Папярэджаньне

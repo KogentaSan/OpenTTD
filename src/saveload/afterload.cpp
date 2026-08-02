@@ -677,7 +677,7 @@ bool AfterLoadGame()
 		}
 
 		for (Town *t : Town::Iterate()) {
-			t->name = CopyFromOldName(t->townnametype);
+			t->name = CopyFromOldName(static_cast<StringID>(t->townnametype));
 			if (!t->name.empty()) t->townnametype = SPECSTR_TOWNNAME_START + _settings_game.game_creation.town_name;
 		}
 	}
@@ -1555,16 +1555,6 @@ bool AfterLoadGame()
 				SetHouseType(t, t.m4() | (GB(t.m3(), 6, 1) << 8));
 				t.m4() = 0;
 				ClrBit(t.m3(), 6);
-			}
-		}
-	}
-
-	if (IsSavegameVersionBefore(SaveLoadVersion::ProtectPlacedHouses)) {
-		for (auto t : Map::Iterate()) {
-			if (IsTileType(t, TileType::House)) {
-				/* We now store house protection status in the map. Set this based on the house spec flags. */
-				const HouseSpec *hs = HouseSpec::Get(GetHouseType(t));
-				SetHouseProtected(t, hs->extra_flags.Test(HouseExtraFlag::BuildingIsProtected));
 			}
 		}
 	}

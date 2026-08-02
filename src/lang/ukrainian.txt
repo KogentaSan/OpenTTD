@@ -1345,9 +1345,9 @@ STR_RIVERS_MODERATE                                             :середнь�
 STR_RIVERS_LOT                                                  :багато
 
 ###length 3
-STR_DISASTER_NONE                                               :відкл.
-STR_DISASTER_REDUCED                                            :знижено
-STR_DISASTER_NORMAL                                             :нормально
+STR_BREAKDOWNS_NONE                                             :відкл.
+STR_BREAKDOWNS_REDUCED                                          :знижено
+STR_BREAKDOWNS_NORMAL                                           :нормально
 
 ###length 4
 STR_SUBSIDY_X1_5                                                :x1.5
@@ -3941,6 +3941,7 @@ STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Клац мишею на цілі відобразить по центру головного вікна виробництво/місто/клітинку. Ctrl+клац мишею відкриє нове вікно з видом на підприємство/місто/клітинку
 
 # Goal question window
+###length 4
 STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}Питання
 STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}Інформація
 STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}Попередження

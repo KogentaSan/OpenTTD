@@ -379,14 +379,20 @@ struct AndOr {
 	uint32_t mand;
 };
 
-static inline uint32_t ApplyMask(uint32_t colour, const AndOr *mask)
+/**
+ * Mix colours for a smallmap pixel group.
+ * @param colour The colours to mix
+ * @param mask The mask and base colours to apply.
+ * @return The mixed colours for the pixel group.
+ */
+static inline uint32_t ApplyMask(uint32_t colour, const AndOr &mask)
 {
-	return (colour & mask->mand) | mask->mor;
+	return (colour & mask.mand) | mask.mor;
 }
 
 
 /** Colour masks for "Contour" and "Routes" modes. */
-static const EnumClassIndexContainer<std::array<AndOr, to_underlying(TileType::End) + 1>, TileType> _smallmap_contours_andor = {
+static const EnumIndexArray<AndOr, TileType, TileType::MaxSize> _smallmap_contours_andor = {
 	AndOr(MKCOLOUR_0000, MKCOLOUR_FFFF), // TileType::Clear
 	AndOr(MKCOLOUR_0XX0(PC_GREY), MKCOLOUR_F00F), // TileType::Railway
 	AndOr(MKCOLOUR_0XX0(PC_BLACK), MKCOLOUR_F00F), // TileType::Road
@@ -398,11 +404,10 @@ static const EnumClassIndexContainer<std::array<AndOr, to_underlying(TileType::E
 	AndOr(MKCOLOUR_XXXX(PC_DARK_RED), MKCOLOUR_0000), // TileType::Industry
 	AndOr(MKCOLOUR_0000, MKCOLOUR_FFFF), // TileType::TunnelBridge
 	AndOr(MKCOLOUR_0XX0(PC_DARK_RED), MKCOLOUR_F00F), // TileType::Object
-	AndOr(MKCOLOUR_0XX0(PC_GREY), MKCOLOUR_F00F),
 };
 
 /** Colour masks for "Vehicles", "Industry", and "Vegetation" modes. */
-static const EnumClassIndexContainer<std::array<AndOr, to_underlying(TileType::End) + 1>, TileType> _smallmap_vehicles_andor = {
+static const EnumIndexArray<AndOr, TileType, TileType::MaxSize> _smallmap_vehicles_andor = {
 	AndOr(MKCOLOUR_0000, MKCOLOUR_FFFF), // TileType::Clear
 	AndOr(MKCOLOUR_0XX0(PC_BLACK), MKCOLOUR_F00F), // TileType::Railway
 	AndOr(MKCOLOUR_0XX0(PC_BLACK), MKCOLOUR_F00F), // TileType::Road
@@ -414,11 +419,10 @@ static const EnumClassIndexContainer<std::array<AndOr, to_underlying(TileType::E
 	AndOr(MKCOLOUR_XXXX(PC_DARK_RED), MKCOLOUR_0000), // TileType::Industry
 	AndOr(MKCOLOUR_0000, MKCOLOUR_FFFF), // TileType::TunnelBridge
 	AndOr(MKCOLOUR_0XX0(PC_DARK_RED), MKCOLOUR_F00F), // TileType::Object
-	AndOr(MKCOLOUR_0XX0(PC_BLACK), MKCOLOUR_F00F),
 };
 
 /** Mapping of tile type to importance of the tile (higher number means more interesting to show). */
-static const EnumClassIndexContainer<std::array<uint8_t, to_underlying(TileType::End) + 1>, TileType> _tiletype_importance = {
+static const EnumIndexArray<uint8_t, TileType, TileType::MaxSize> _tiletype_importance = {
 	2, // TileType::Clear
 	8, // TileType::Railway
 	7, // TileType::Road
@@ -430,9 +434,30 @@ static const EnumClassIndexContainer<std::array<uint8_t, to_underlying(TileType:
 	6, // TileType::Industry
 	8, // TileType::TunnelBridge
 	2, // TileType::Object
-	0,
 };
 
+/**
+ * Test if a water tile is a dry coast tile, i.e. no half water.
+ * @param tile The tile.
+ * @return true iff the tile is a dry coast tile.
+ */
+static bool IsDryCoast(TileIndex tile)
+{
+	return IsCoastTile(tile) && !IsSlopeWithOneCornerRaised(GetTileSlope(tile));
+}
+
+/**
+ * Get the mask pixel group for a tile from the given lookup table, taking account of coast tiles.
+ * @param tile The tile.
+ * @param t The tile type.
+ * @param table The tile type colour lookup table.
+ * @return The mask pixel group to use.
+ */
+static const AndOr &GetMaskPixelsForTileType(TileIndex tile, TileType t, const EnumIndexArray<AndOr, TileType, TileType::MaxSize> &table)
+{
+	if (IsDryCoast(tile)) return table[TileType::Clear];
+	return table[t];
+}
 
 /**
  * Return the colour a tile would be displayed with in the small map in mode "Contour".
@@ -443,19 +468,19 @@ static const EnumClassIndexContainer<std::array<uint8_t, to_underlying(TileType:
 static inline uint32_t GetSmallMapContoursPixels(TileIndex tile, TileType t)
 {
 	const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-	return ApplyMask(cs->height_colours[TileHeight(tile)], &_smallmap_contours_andor[t]);
+	return ApplyMask(cs->height_colours[TileHeight(tile)], GetMaskPixelsForTileType(tile, t, _smallmap_contours_andor));
 }
 
 /**
  * Return the colour a tile would be displayed with in the small map in mode "Vehicles".
- *
+ * @param tile The tile of which we would like to get the colour.
  * @param t    Effective tile type of the tile (see #SmallMapWindow::GetTileColours).
  * @return The colour of tile in the small map in mode "Vehicles"
  */
-static inline uint32_t GetSmallMapVehiclesPixels(TileType t)
+static inline uint32_t GetSmallMapVehiclesPixels(TileIndex tile, TileType t)
 {
 	const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-	return ApplyMask(cs->default_colour, &_smallmap_vehicles_andor[t]);
+	return ApplyMask(cs->default_colour, GetMaskPixelsForTileType(tile, t, _smallmap_vehicles_andor));
 }
 
 /**
@@ -468,7 +493,7 @@ static inline uint32_t GetSmallMapVehiclesPixels(TileType t)
 static inline uint32_t GetSmallMapIndustriesPixels(TileIndex tile, TileType t)
 {
 	const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-	return ApplyMask(_smallmap_show_heightmap ? cs->height_colours[TileHeight(tile)] : cs->default_colour, &_smallmap_vehicles_andor[t]);
+	return ApplyMask(_smallmap_show_heightmap ? cs->height_colours[TileHeight(tile)] : cs->default_colour, GetMaskPixelsForTileType(tile, t, _smallmap_vehicles_andor));
 }
 
 /**
@@ -497,8 +522,8 @@ static inline uint32_t GetSmallMapRoutesPixels(TileIndex tile, TileType t)
 				_smallmap_contours_andor[t].mand
 			};
 
-			const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-			return ApplyMask(cs->default_colour, &andor);
+			const SmallMapColourScheme &cs = _heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+			return ApplyMask(cs.default_colour, andor);
 		}
 
 		case TileType::Road: {
@@ -514,16 +539,16 @@ static inline uint32_t GetSmallMapRoutesPixels(TileIndex tile, TileType t)
 					_smallmap_contours_andor[t].mand
 				};
 
-				const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-				return ApplyMask(cs->default_colour, &andor);
+				const SmallMapColourScheme &cs = _heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+				return ApplyMask(cs.default_colour, andor);
 			}
 			[[fallthrough]];
 		}
 
 		default:
 			/* Ground colour */
-			const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
-			return ApplyMask(cs->default_colour, &_smallmap_contours_andor[t]);
+			const SmallMapColourScheme &cs = _heightmap_schemes[_settings_client.gui.smallmap_land_colour];
+			return ApplyMask(cs.default_colour, GetMaskPixelsForTileType(tile, t, _smallmap_contours_andor));
 	}
 }
 
@@ -540,7 +565,7 @@ static inline uint32_t GetSmallMapLinkStatsPixels(TileIndex tile, TileType t)
 }
 
 /** Lookup table of minimap colours to use for each ClearGround type. */
-static constexpr uint32_t _vegetation_clear_bits[to_underlying(ClearGround::MaxSize)] = {
+static constexpr EnumIndexArray<uint32_t, ClearGround, ClearGround::MaxSize> _vegetation_clear_bits = {
 	MKCOLOUR_XXXX(PC_GRASS_LAND), ///< full grass
 	MKCOLOUR_XXXX(PC_ROUGH_LAND), ///< rough land
 	MKCOLOUR_XXXX(PC_GREY),       ///< rocks
@@ -567,7 +592,11 @@ static inline uint32_t GetSmallMapVegetationPixels(TileIndex tile, TileType t)
 				if (GetClearDensity(tile) < 3) return MKCOLOUR_XXXX(PC_BARE_LAND);
 				if (GetTropicZone(tile) == TropicZone::Rainforest) return MKCOLOUR_XXXX(PC_RAINFOREST);
 			}
-			return _vegetation_clear_bits[to_underlying(GetClearGround(tile))];
+			return _vegetation_clear_bits[GetClearGround(tile)];
+
+		case TileType::Water:
+			if (IsDryCoast(tile)) return (GetTropicZone(tile) == TropicZone::Rainforest) ? MKCOLOUR_XXXX(PC_RAINFOREST) : MKCOLOUR_XXXX(PC_GRASS_LAND);
+			return ApplyMask(MKCOLOUR_XXXX(PC_GRASS_LAND), _smallmap_vehicles_andor[t]);
 
 		case TileType::Industry:
 			return IsTileForestIndustry(tile) ? MKCOLOUR_XXXX(PC_GREEN) : MKCOLOUR_XXXX(PC_DARK_RED);
@@ -579,7 +608,7 @@ static inline uint32_t GetSmallMapVegetationPixels(TileIndex tile, TileType t)
 			return (GetTropicZone(tile) == TropicZone::Rainforest) ? MKCOLOUR_XYYX(PC_RAINFOREST, PC_TREES) : MKCOLOUR_XYYX(PC_GRASS_LAND, PC_TREES);
 
 		default:
-			return ApplyMask(MKCOLOUR_XXXX(PC_GRASS_LAND), &_smallmap_vehicles_andor[t]);
+			return ApplyMask(MKCOLOUR_XXXX(PC_GRASS_LAND), GetMaskPixelsForTileType(tile, t, _smallmap_vehicles_andor));
 	}
 }
 
@@ -610,7 +639,7 @@ uint32_t GetSmallMapOwnerPixels(TileIndex tile, TileType t, IncludeHeightmap inc
 	}
 
 	if ((o < MAX_COMPANIES && !_legend_land_owners[_company_to_list_pos[o]].show_on_map) || o == OWNER_NONE || o == OWNER_WATER) {
-		if (t == TileType::Water) return MKCOLOUR_XXXX(PC_WATER);
+		if (t == TileType::Water && !IsDryCoast(tile)) return MKCOLOUR_XXXX(PC_WATER);
 		const SmallMapColourScheme *cs = &_heightmap_schemes[_settings_client.gui.smallmap_land_colour];
 		return ((include_heightmap == IncludeHeightmap::IfEnabled && _smallmap_show_heightmap) || include_heightmap == IncludeHeightmap::Always)
 			? cs->height_colours[TileHeight(tile)] : cs->default_colour;
@@ -1379,7 +1408,7 @@ protected:
 				return GetSmallMapContoursPixels(tile, et);
 
 			case SmallMapType::Vehicles:
-				return GetSmallMapVehiclesPixels(et);
+				return GetSmallMapVehiclesPixels(tile, et);
 
 			case SmallMapType::Industries:
 				return GetSmallMapIndustriesPixels(tile, et);
@@ -1908,6 +1937,121 @@ bool SmallMapWindow::show_ind_names = false;
 int SmallMapWindow::map_height_limit = -1;
 
 /**
+ * Custom container for smallmap buttons.
+ * This container can switch from a 1-column to a 2-column layout depending on the given height.
+ */
+class NWidgetSmallmapButtons : public NWidgetContainer {
+	/** Smallmap button definitions. */
+	static constexpr std::tuple<WidgetID, WidgetType, SpriteID, StringID> buttons[] = {
+		{WID_SM_ZOOM_IN, WWT_PUSHIMGBTN, SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN},
+		{WID_SM_ZOOM_OUT, WWT_PUSHIMGBTN, SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT},
+		{WID_SM_CENTERMAP, WWT_PUSHIMGBTN, SPR_IMG_SMALLMAP, STR_SMALLMAP_CENTER_TOOLTIP},
+		{WID_SM_TOGGLETOWNNAME, WWT_IMGBTN, SPR_IMG_TOWN, STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF},
+		{INVALID_WIDGET, WWT_PANEL, SPR_EMPTY, STR_NULL}, // Resizable spacer between top and bottom halves.
+		{WID_SM_BLANK, WWT_IMGBTN, SPR_EMPTY, STR_NULL}, // Optional spacer in 2-column layout only.
+		{WID_SM_LINKSTATS, WWT_IMGBTN, SPR_IMG_CARGOFLOW, STR_SMALLMAP_TOOLTIP_SHOW_LINK_STATS_ON_MAP},
+		{WID_SM_ROUTES, WWT_IMGBTN, SPR_IMG_SHOW_ROUTES, STR_SMALLMAP_TOOLTIP_SHOW_TRANSPORT_ROUTES_ON},
+		{WID_SM_VEGETATION, WWT_IMGBTN, SPR_IMG_PLANTTREES, STR_SMALLMAP_TOOLTIP_SHOW_VEGETATION_ON_MAP},
+		{WID_SM_OWNERS, WWT_IMGBTN, SPR_IMG_COMPANY_GENERAL, STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP},
+		{WID_SM_CONTOUR, WWT_IMGBTN, SPR_IMG_SHOW_COUNTOURS, STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP},
+		{WID_SM_VEHICLES, WWT_IMGBTN, SPR_IMG_SHOW_VEHICLES, STR_SMALLMAP_TOOLTIP_SHOW_VEHICLES_ON_MAP},
+		{WID_SM_INDUSTRIES, WWT_IMGBTN, SPR_IMG_INDUSTRY, STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRIES_ON_MAP},
+	};
+
+	uint num_buttons; ///< The number of buttons excluding spacers.
+	Dimension button; ///< The size of a button.
+
+public:
+	/**
+	 * Construct a new NWidgetSmallmapButtons object
+	 */
+	NWidgetSmallmapButtons() : NWidgetContainer(NWID_VERTICAL)
+	{
+		for (const auto &[widget, tp, sprite, string] : buttons) {
+			if (widget == INVALID_WIDGET) {
+				auto leaf = std::make_unique<NWidgetBackground>(WWT_PANEL, Colours::Brown, widget);
+				this->Add(std::move(leaf));
+			} else {
+				auto leaf = std::make_unique<NWidgetLeaf>(tp, Colours::Brown, widget, WidgetData{.sprite = sprite}, string);
+				leaf->SetToolbarMinimalSize(1);
+				this->Add(std::move(leaf));
+			}
+		}
+	}
+
+	void SetupSmallestSize(Window *w) override
+	{
+		this->button.width = 0;
+		this->button.height = 0;
+
+		this->num_buttons = 0;
+		for (const auto &child_wid : this->children) {
+			child_wid->SetupSmallestSize(w);
+			this->button.width = std::max(this->button.width, child_wid->smallest_y + child_wid->padding.Vertical());
+			this->button.height = std::max(this->button.height, child_wid->smallest_x + child_wid->padding.Horizontal());
+			WidgetID index = child_wid->GetIndex();
+			if (index != INVALID_WIDGET && index != WID_SM_BLANK) ++this->num_buttons;
+		}
+
+		this->smallest_x = this->button.width * 2;
+		this->smallest_y = this->button.height * CeilDiv(this->num_buttons, 2);
+		this->fill_x = 0;
+		this->fill_y = 1;
+		this->resize_x = 0;
+		this->resize_y = 1;
+	}
+
+	std::pair<uint, uint> GetPreferredSizeForSize(uint given_width, uint given_height) override
+	{
+		if (given_height >= this->num_buttons * this->button.height) return {this->button.width, given_height};
+		return {given_width, given_height};
+	}
+
+	void AssignSizePosition(SizingType sizing, int x, int y, uint given_width, uint given_height, bool rtl) override
+	{
+		assert(given_width >= this->button.width && given_height >= this->smallest_y);
+
+		this->pos_x = x;
+		this->pos_y = y;
+		this->current_x = given_width;
+		this->current_y = given_height;
+
+		uint child_x = 0;
+		uint child_y = 0;
+		uint remaining = CeilDiv(this->num_buttons, this->smallest_x == this->current_x ? 2 : 1);
+
+		for (auto &child : this->children) {
+			if (child->type == WWT_PANEL) {
+				/* Spacer widget needs to fill the remaining space. */
+				uint height = given_height - child_y - (remaining * this->button.height);
+				child->AssignSizePosition(sizing, x, y + child_y, given_width, height, rtl);
+				child_y += height;
+			} else if (given_width == this->button.width && child->GetIndex() == WID_SM_BLANK) {
+				/* Blank button only appears in 2-column layout. */
+				child->AssignSizePosition(sizing, x + child_x, y + child_y, 0, 0, rtl);
+			} else {
+				child->AssignSizePosition(sizing, x + child_x, y + child_y, child->smallest_x, child->smallest_y, rtl);
+				child_x += child->current_x;
+				if (child_x >= given_width) {
+					child_x = 0;
+					child_y += child->current_y;
+					--remaining;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Create NWidgetSMallmapButtons widget.
+	 * @return Pointer to created NWidget.
+	 */
+	static std::unique_ptr<NWidgetBase> Make()
+	{
+		return std::make_unique<NWidgetSmallmapButtons>();
+	}
+};
+
+/**
  * Custom container class for displaying smallmap with a vertically resizing legend panel.
  * The legend panel has a smallest height that depends on its width. Standard containers cannot handle this case.
  *
@@ -1918,7 +2062,7 @@ int SmallMapWindow::map_height_limit = -1;
 class NWidgetSmallmapDisplay : public NWidgetContainer {
 	const SmallMapWindow *smallmap_window = nullptr; ///< Window manager instance.
 public:
-	NWidgetSmallmapDisplay() : NWidgetContainer(NWID_VERTICAL) {}
+	NWidgetSmallmapDisplay() : NWidgetContainer(NWID_CUSTOM) {}
 
 	void SetupSmallestSize(Window *w) override
 	{
@@ -1966,52 +2110,19 @@ public:
 	}
 };
 
-/** Widget parts of the smallmap display. */
+/** Widget parts of the smallmap display and image buttons. */
 static constexpr std::initializer_list<NWidgetPart> _nested_smallmap_display = {
-	NWidget(WWT_PANEL, Colours::Brown, WID_SM_MAP_BORDER),
-		NWidget(WWT_INSET, Colours::Brown, WID_SM_MAP), SetMinimalSize(346, 140), SetResize(1, 1), SetPadding(2, 2, 2, 2), EndContainer(),
+	NWidget(NWID_HORIZONTAL),
+		NWidget(WWT_PANEL, Colours::Brown, WID_SM_MAP_BORDER),
+			NWidget(WWT_INSET, Colours::Brown, WID_SM_MAP), SetFill(1, 1), SetResize(1, 1), SetPadding(2, 2, 2, 2), EndContainer(),
+		EndContainer(),
+		NWidgetFunction(NWidgetSmallmapButtons::Make),
 	EndContainer(),
 };
 
-/** Widget parts of the smallmap legend bar + image buttons. */
+/** Widget parts of the smallmap legend bar. */
 static constexpr std::initializer_list<NWidgetPart> _nested_smallmap_bar = {
-	NWidget(WWT_PANEL, Colours::Brown),
-		NWidget(NWID_HORIZONTAL),
-			NWidget(WWT_EMPTY, Colours::Invalid, WID_SM_LEGEND), SetResize(1, 1),
-			NWidget(NWID_VERTICAL),
-				/* Top button row. */
-				NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
-					NWidget(WWT_PUSHIMGBTN, Colours::Brown, WID_SM_ZOOM_IN),
-							SetSpriteTip(SPR_IMG_ZOOMIN, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_IN), SetFill(1, 1),
-					NWidget(WWT_PUSHIMGBTN, Colours::Brown, WID_SM_CENTERMAP),
-							SetSpriteTip(SPR_IMG_SMALLMAP, STR_SMALLMAP_CENTER_TOOLTIP), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_BLANK),
-							SetSpriteTip(SPR_EMPTY), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_CONTOUR),
-							SetSpriteTip(SPR_IMG_SHOW_COUNTOURS, STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_VEHICLES),
-							SetSpriteTip(SPR_IMG_SHOW_VEHICLES, STR_SMALLMAP_TOOLTIP_SHOW_VEHICLES_ON_MAP), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_INDUSTRIES),
-							SetSpriteTip(SPR_IMG_INDUSTRY, STR_SMALLMAP_TOOLTIP_SHOW_INDUSTRIES_ON_MAP), SetFill(1, 1),
-				EndContainer(),
-				/* Bottom button row. */
-				NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
-					NWidget(WWT_PUSHIMGBTN, Colours::Brown, WID_SM_ZOOM_OUT),
-							SetSpriteTip(SPR_IMG_ZOOMOUT, STR_TOOLBAR_TOOLTIP_ZOOM_THE_VIEW_OUT), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_TOGGLETOWNNAME),
-							SetSpriteTip(SPR_IMG_TOWN, STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_LINKSTATS),
-							SetSpriteTip(SPR_IMG_CARGOFLOW, STR_SMALLMAP_TOOLTIP_SHOW_LINK_STATS_ON_MAP), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_ROUTES),
-							SetSpriteTip(SPR_IMG_SHOW_ROUTES, STR_SMALLMAP_TOOLTIP_SHOW_TRANSPORT_ROUTES_ON), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_VEGETATION),
-							SetSpriteTip(SPR_IMG_PLANTTREES, STR_SMALLMAP_TOOLTIP_SHOW_VEGETATION_ON_MAP), SetFill(1, 1),
-					NWidget(WWT_IMGBTN, Colours::Brown, WID_SM_OWNERS),
-							SetSpriteTip(SPR_IMG_COMPANY_GENERAL, STR_SMALLMAP_TOOLTIP_SHOW_LAND_OWNERS_ON_MAP), SetFill(1, 1),
-				EndContainer(),
-				NWidget(NWID_SPACER), SetResize(0, 1),
-			EndContainer(),
-		EndContainer(),
+	NWidget(WWT_PANEL, Colours::Brown, WID_SM_LEGEND), SetFill(1, 0), SetResize(1, 1),
 	EndContainer(),
 };
 
@@ -2036,7 +2147,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_smallmap_widgets = {
 	/* Bottom button row and resize box. */
 	NWidget(NWID_HORIZONTAL),
 		NWidget(NWID_SELECTION, Colours::Invalid, WID_SM_SELECT_BUTTONS),
-			NWidget(NWID_HORIZONTAL, NWidContainerFlag::EqualSize),
+			NWidget(NWID_HORIZONTAL),
 				NWidget(WWT_PUSHTXTBTN, Colours::Brown, WID_SM_ENABLE_ALL), SetStringTip(STR_SMALLMAP_ENABLE_ALL),
 				NWidget(WWT_PUSHTXTBTN, Colours::Brown, WID_SM_DISABLE_ALL), SetStringTip(STR_SMALLMAP_DISABLE_ALL),
 				NWidget(WWT_TEXTBTN, Colours::Brown, WID_SM_SHOW_HEIGHT), SetStringTip(STR_SMALLMAP_SHOW_HEIGHT, STR_SMALLMAP_TOOLTIP_SHOW_HEIGHT),
@@ -2058,7 +2169,7 @@ static constexpr std::initializer_list<NWidgetPart> _nested_smallmap_widgets = {
 
 /** Window definition for the smallmap window. */
 static WindowDesc _smallmap_desc(
-	WindowPosition::Automatic, "smallmap", 484, 314,
+	WindowPosition::Automatic, "smallmap", 0, 0,
 	WindowClass::SmallMap, WindowClass::None,
 	{},
 	_nested_smallmap_widgets

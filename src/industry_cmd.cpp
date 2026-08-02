@@ -46,6 +46,7 @@
 #include "landscape_cmd.h"
 #include "terraform_cmd.h"
 #include "map_func.h"
+#include "script/api/script_event_types.hpp"
 #include "timer/timer.h"
 #include "timer/timer_game_calendar.h"
 #include "timer/timer_game_economy.h"
@@ -477,7 +478,7 @@ static void GetTileDesc_Industry(TileIndex tile, TileDesc &td)
 	td.owner[0] = i->owner;
 	td.str = is->name;
 	if (!IsIndustryCompleted(tile)) {
-		td.dparam = td.str;
+		td.dparam = td.str.base();
 		td.str = STR_LAI_TOWN_INDUSTRY_DESCRIPTION_UNDER_CONSTRUCTION;
 	}
 
