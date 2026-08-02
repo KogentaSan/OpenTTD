@@ -1218,9 +1218,9 @@ STR_RIVERS_MODERATE                                             :Alguns
 STR_RIVERS_LOT                                                  :Muitos
 
 ###length 3
-STR_DISASTER_NONE                                               :Nenhuma
-STR_DISASTER_REDUCED                                            :Reduzida
-STR_DISASTER_NORMAL                                             :Normal
+STR_BREAKDOWNS_NONE                                             :Nenhuma
+STR_BREAKDOWNS_REDUCED                                          :Reduzida
+STR_BREAKDOWNS_NORMAL                                           :Normal
 
 ###length 4
 STR_SUBSIDY_X1_5                                                :x1.5
@@ -3843,6 +3843,7 @@ STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}Clique no objetivo para centralizar a visualização principal na indústria/localidade/mosaico. Ctrl+Clique para abrir uma nova visualização na localização da indústria/localidade/mosaico
 
 # Goal question window
+###length 4
 STR_GOAL_QUESTION_CAPTION_QUESTION                              :{BLACK}Pergunta
 STR_GOAL_QUESTION_CAPTION_INFORMATION                           :{BLACK}Informação
 STR_GOAL_QUESTION_CAPTION_WARNING                               :{BLACK}Aviso
@@ -4726,7 +4727,7 @@ STR_ORDER_TOOLTIP_FULL_LOAD                                     :{BLACK}Alterar 
 
 STR_ORDER_TOGGLE_UNLOAD                                         :{BLACK}Descarregar tudo
 STR_ORDER_DROP_UNLOAD_IF_ACCEPTED                               :Descarregar se aceitado
-STR_ORDER_DROP_UNLOAD                                           :Descarregar tudo
+STR_ORDER_DROP_UNLOAD                                           :Descarregar mesmo se não for aceito
 STR_ORDER_DROP_TRANSFER                                         :Transferir
 STR_ORDER_DROP_NO_UNLOADING                                     :Não descarregar
 STR_ORDER_TOOLTIP_UNLOAD                                        :{BLACK}Alterar o modo de descarregar da ordem selecionada
@@ -4763,7 +4764,7 @@ STR_ORDER_CONDITIONAL_REQUIRES_SERVICE                          :Precisa de manu
 STR_ORDER_CONDITIONAL_UNCONDITIONALLY                           :Sempre
 STR_ORDER_CONDITIONAL_REMAINING_LIFETIME                        :Tempo de vida útil restante (anos)
 STR_ORDER_CONDITIONAL_MAX_RELIABILITY                           :Confiabilidade máxima
-STR_ORDER_CONDITIONAL_DRIVING_BACKWARDS                         :Dirigindo em marcha à ré
+STR_ORDER_CONDITIONAL_DRIVING_BACKWARDS                         :Dirigir em marcha à ré em velocidade reduzida
 ###next-name-looks-similar
 
 STR_ORDER_CONDITIONAL_COMPARATOR_TOOLTIP                        :{BLACK}Como comparar os dados do veículo com o valor que foi passado

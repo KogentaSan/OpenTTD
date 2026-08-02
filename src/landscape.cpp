@@ -87,9 +87,9 @@ const EnumIndexArray<const TileTypeProcs *, TileType, TileType::MaxSize> _tile_t
 };
 
 /** landscape slope => sprite */
-extern const uint8_t _slope_to_sprite_offset[32] = {
+extern const SlopeIndexArray<uint8_t> _slope_to_sprite_offset = {
 	0, 1, 2, 3, 4, 5, 6,  7, 8, 9, 10, 11, 12, 13, 14, 0,
-	0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18, 0,
+	0, 0, 0, 0, 0, 0, 0, 16, 0, 0,  0, 17,  0, 15, 18,
 };
 
 static const uint TILE_UPDATE_FREQUENCY_LOG = 8;  ///< The logarithm of how many ticks it takes between tile updates (log base 2).
@@ -202,11 +202,11 @@ uint ApplyFoundationToSlope(Foundation f, Slope &s)
 
 	switch (f) {
 		case Foundation::InclinedX:
-			s = (((highest_corner == CORNER_W) || (highest_corner == CORNER_S)) ? SLOPE_SW : SLOPE_NE);
+			s = (((highest_corner == Corner::W) || (highest_corner == Corner::S)) ? SLOPE_SW : SLOPE_NE);
 			break;
 
 		case Foundation::InclinedY:
-			s = (((highest_corner == CORNER_S) || (highest_corner == CORNER_E)) ? SLOPE_SE : SLOPE_NW);
+			s = (((highest_corner == Corner::S) || (highest_corner == Corner::E)) ? SLOPE_SE : SLOPE_NW);
 			break;
 
 		case Foundation::SteepLower:
@@ -241,19 +241,19 @@ uint GetPartialPixelZ(int x, int y, Slope corners)
 		/* A foundation is placed on half the tile at a specific corner. This means that,
 		 * depending on the corner, that one half of the tile is at the maximum height. */
 		switch (GetHalftileSlopeCorner(corners)) {
-			case CORNER_W:
+			case Corner::W:
 				if (x > y) return GetSlopeMaxPixelZ(corners);
 				break;
 
-			case CORNER_S:
+			case Corner::S:
 				if (x + y >= (int)TILE_SIZE) return GetSlopeMaxPixelZ(corners);
 				break;
 
-			case CORNER_E:
+			case Corner::E:
 				if (x <= y) return GetSlopeMaxPixelZ(corners);
 				break;
 
-			case CORNER_N:
+			case Corner::N:
 				if (x + y < (int)TILE_SIZE) return GetSlopeMaxPixelZ(corners);
 				break;
 
@@ -354,14 +354,14 @@ int GetSlopeZInCorner(Slope tileh, Corner corner)
  *
  * @note If a tile has a non-continuous halftile foundation, a corner can have different heights wrt. its edges.
  *
- * @pre z1 and z2 must be initialized (typ. with TileZ). The corner heights just get added.
- *
  * @param tileh The slope of the tile.
  * @param edge The edge of interest.
- * @param z1 Gets incremented by the height of the first corner of the edge. (near corner wrt. the camera)
- * @param z2 Gets incremented by the height of the second corner of the edge. (far corner wrt. the camera)
+ * @param z The z pos of the tile.
+ * @return \a z twice.
+ * First one incremented by the height of the first corner of the edge (near corner wrt. the camera),
+ * and the second one by the height of the second corner of the edge (far corner wrt. the camera).
  */
-void GetSlopePixelZOnEdge(Slope tileh, DiagDirection edge, int &z1, int &z2)
+std::tuple<int, int> GetSlopePixelZOnEdge(Slope tileh, DiagDirection edge, int z)
 {
 	static const DiagDirectionIndexArray<std::array<Slope, 4>> corners{{{
 		/*    corner     |          steep slope
@@ -372,6 +372,9 @@ void GetSlopePixelZOnEdge(Slope tileh, DiagDirection edge, int &z1, int &z2)
 		{SLOPE_W, SLOPE_N, SLOPE_STEEP_W, SLOPE_STEEP_N}, // DiagDirection::NW, z1 = W, z2 = N
 	}}};
 
+	int z1 = z;
+	int z2 = z;
+
 	Slope halftile_test = IsHalftileSlope(tileh) ? SlopeWithOneCornerRaised(GetHalftileSlopeCorner(tileh)) : SLOPE_FLAT;
 	if (halftile_test == corners[edge][0]) z2 += TILE_HEIGHT; // The slope is non-continuous in z2. z2 is on the upper side.
 	if (halftile_test == corners[edge][1]) z1 += TILE_HEIGHT; // The slope is non-continuous in z1. z1 is on the upper side.
@@ -380,6 +383,8 @@ void GetSlopePixelZOnEdge(Slope tileh, DiagDirection edge, int &z1, int &z2)
 	if ((tileh & corners[edge][1]) != 0) z2 += TILE_HEIGHT; // z2 is raised
 	if (RemoveHalftileSlope(tileh) == corners[edge][2]) z1 += TILE_HEIGHT; // z1 is highest corner of a steep slope
 	if (RemoveHalftileSlope(tileh) == corners[edge][3]) z2 += TILE_HEIGHT; // z2 is highest corner of a steep slope
+
+	return {z1, z2};
 }
 
 /**
@@ -397,34 +402,40 @@ std::tuple<Slope, int> GetFoundationSlope(TileIndex tile)
 	return {tileh, z};
 }
 
-
-bool HasFoundationNW(TileIndex tile, Slope slope_here, uint z_here)
+/**
+ * Check if the tile has foundation on given edge.
+ * @param tile The tile to check.
+ * @param slope_here The slope of the \a tile.
+ * @param z_here The z of tile's foundation.
+ * @param edge The edge to check.
+ * @return \c true iff the tile has foundation on given edge.
+ */
+static bool HasFoundation(TileIndex tile, Slope slope_here, uint z_here, DiagDirection edge)
 {
-	int z_W_here = z_here;
-	int z_N_here = z_here;
-	GetSlopePixelZOnEdge(slope_here, DiagDirection::NW, z_W_here, z_N_here);
+	auto [z1_here, z2_here] = GetSlopePixelZOnEdge(slope_here, edge, z_here);
 
-	auto [slope, z] = GetFoundationPixelSlope(TileAddXY(tile, 0, -1));
-	int z_W = z;
-	int z_N = z;
-	GetSlopePixelZOnEdge(slope, DiagDirection::SE, z_W, z_N);
+	auto [slope, z] = GetFoundationPixelSlope(TileAddByDiagDir(tile, edge));
+	auto [z1, z2] = GetSlopePixelZOnEdge(slope, ChangeDiagDir(edge, DiagDirDiff::Reverse), z);
 
-	return (z_N_here > z_N) || (z_W_here > z_W);
+	return (z1_here > z1) || (z2_here > z2);
 }
 
-
-bool HasFoundationNE(TileIndex tile, Slope slope_here, uint z_here)
+/**
+ * Get the sprite block to use for a foundation.
+ * @param tile Tile to draw a foundation on.
+ * @return The needed block of foundations sprites.
+ * Block 0: Walls at NW and NE edge.
+ * Block 1: Wall at NE edge.
+ * Block 2: Wall at NW edge.
+ * Block 3: No walls at NW or NE edge.
+ */
+uint GetFoundationSpriteBlock(TileIndex tile)
 {
-	int z_E_here = z_here;
-	int z_N_here = z_here;
-	GetSlopePixelZOnEdge(slope_here, DiagDirection::NE, z_E_here, z_N_here);
-
-	auto [slope, z] = GetFoundationPixelSlope(TileAddXY(tile, -1, 0));
-	int z_E = z;
-	int z_N = z;
-	GetSlopePixelZOnEdge(slope, DiagDirection::SW, z_E, z_N);
-
-	return (z_N_here > z_N) || (z_E_here > z_E);
+	auto [slope, z] = GetFoundationPixelSlope(tile);
+	uint block = 0;
+	if (!HasFoundation(tile, slope, z, DiagDirection::NW)) block += 1;
+	if (!HasFoundation(tile, slope, z, DiagDirection::NE)) block += 2;
+	return block;
 }
 
 /**
@@ -439,17 +450,7 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 	/* Two part foundations must be drawn separately */
 	assert(f != Foundation::SteepBoth);
 
-	uint sprite_block = 0;
-	auto [slope, z] = GetFoundationPixelSlope(ti->tile);
-
-	/* Select the needed block of foundations sprites
-	 * Block 0: Walls at NW and NE edge
-	 * Block 1: Wall  at        NE edge
-	 * Block 2: Wall  at NW        edge
-	 * Block 3: No walls at NW or NE edge
-	 */
-	if (!HasFoundationNW(ti->tile, slope, z)) sprite_block += 1;
-	if (!HasFoundationNE(ti->tile, slope, z)) sprite_block += 2;
+	uint sprite_block = GetFoundationSpriteBlock(ti->tile);
 
 	/* Use the original slope sprites if NW and NE borders should be visible */
 	SpriteID leveled_base = (sprite_block == 0 ? (int)SPR_FOUNDATION_BASE : (SPR_SLOPES_VIRTUAL_BASE + sprite_block * TRKFOUND_BLOCK_SIZE));
@@ -468,7 +469,7 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 
 		if (IsInclinedFoundation(f)) {
 			/* inclined foundation */
-			uint8_t inclined = highest_corner * 2 + (f == Foundation::InclinedY ? 1 : 0);
+			uint8_t inclined = to_underlying(highest_corner) * 2 + (f == Foundation::InclinedY ? 1 : 0);
 
 			SpriteBounds bounds{{}, {1, 1, TILE_HEIGHT}, {}};
 			if (f == Foundation::InclinedX) bounds.extent.x = TILE_SIZE;
@@ -484,11 +485,11 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 			OffsetGroundSprite(0, -(int)TILE_HEIGHT);
 		} else {
 			/* halftile foundation */
-			int8_t x_bb = (((highest_corner == CORNER_W) || (highest_corner == CORNER_S)) ? TILE_SIZE / 2 : 0);
-			int8_t y_bb = (((highest_corner == CORNER_S) || (highest_corner == CORNER_E)) ? TILE_SIZE / 2 : 0);
+			int8_t x_bb = (((highest_corner == Corner::W) || (highest_corner == Corner::S)) ? TILE_SIZE / 2 : 0);
+			int8_t y_bb = (((highest_corner == Corner::S) || (highest_corner == Corner::E)) ? TILE_SIZE / 2 : 0);
 
 			SpriteBounds bounds{{x_bb, y_bb, TILE_HEIGHT}, {TILE_SIZE / 2, TILE_SIZE / 2, TILE_HEIGHT - 1}, {}};
-			AddSortableSpriteToDraw(halftile_base + highest_corner, PAL_NONE, *ti, bounds);
+			AddSortableSpriteToDraw(halftile_base + to_underlying(highest_corner), PAL_NONE, *ti, bounds);
 			/* Reposition ground sprite back to original position after bounding box change above. This is similar to
 			 * RemapCoords() but without zoom scaling. */
 			Point pt = {(y_bb - x_bb) * 2, y_bb + x_bb};
@@ -503,11 +504,11 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 		} else if (IsNonContinuousFoundation(f)) {
 			/* halftile foundation */
 			Corner halftile_corner = GetHalftileFoundationCorner(f);
-			int8_t x_bb = (((halftile_corner == CORNER_W) || (halftile_corner == CORNER_S)) ? TILE_SIZE / 2 : 0);
-			int8_t y_bb = (((halftile_corner == CORNER_S) || (halftile_corner == CORNER_E)) ? TILE_SIZE / 2 : 0);
+			int8_t x_bb = (((halftile_corner == Corner::W) || (halftile_corner == Corner::S)) ? TILE_SIZE / 2 : 0);
+			int8_t y_bb = (((halftile_corner == Corner::S) || (halftile_corner == Corner::E)) ? TILE_SIZE / 2 : 0);
 
 			SpriteBounds bounds{{x_bb, y_bb, 0}, {TILE_SIZE / 2, TILE_SIZE / 2, TILE_HEIGHT - 1}, {}};
-			AddSortableSpriteToDraw(halftile_base + halftile_corner, PAL_NONE, *ti, bounds);
+			AddSortableSpriteToDraw(halftile_base + to_underlying(halftile_corner), PAL_NONE, *ti, bounds);
 			/* Reposition ground sprite back to original position after bounding box change above. This is similar to
 			 * RemapCoords() but without zoom scaling. */
 			Point pt = {(y_bb - x_bb) * 2, y_bb + x_bb};
@@ -520,14 +521,14 @@ void DrawFoundation(TileInfo *ti, Foundation f)
 				spr = leveled_base + SlopeWithThreeCornersRaised(GetRailFoundationCorner(f));
 			} else {
 				/* tile-slope = sloped along X/Y, foundation-slope = three corners raised */
-				spr = inclined_base + 2 * GetRailFoundationCorner(f) + ((ti->tileh == SLOPE_SW || ti->tileh == SLOPE_NE) ? 1 : 0);
+				spr = inclined_base + 2 * to_underlying(GetRailFoundationCorner(f)) + ((ti->tileh == SLOPE_SW || ti->tileh == SLOPE_NE) ? 1 : 0);
 			}
 			static constexpr SpriteBounds bounds{{}, {TILE_SIZE, TILE_SIZE, TILE_HEIGHT - 1}, {}};
 			AddSortableSpriteToDraw(spr, PAL_NONE, *ti, bounds);
 			OffsetGroundSprite(0, 0);
 		} else {
 			/* inclined foundation */
-			uint8_t inclined = GetHighestSlopeCorner(ti->tileh) * 2 + (f == Foundation::InclinedY ? 1 : 0);
+			uint8_t inclined = to_underlying(GetHighestSlopeCorner(ti->tileh)) * 2 + (f == Foundation::InclinedY ? 1 : 0);
 
 			SpriteBounds bounds{{}, {1, 1, TILE_HEIGHT}, {}};
 			if (f == Foundation::InclinedX) bounds.extent.x = TILE_SIZE;
@@ -1405,7 +1406,8 @@ static std::tuple<bool, bool> FlowRiver(TileIndex spring, TileIndex begin, uint 
 
 		int height_end;
 		if (IsTileFlat(end, &height_end) && (height_end < height_begin || (height_end == height_begin && IsWaterTile(end)))) {
-			if (IsWaterTile(end) && GetWaterClass(end) == WaterClass::Sea) {
+			/* We don't want rivers to flow into tiny bits of sea, so we fill them, unless using the original land generator. */
+			if (_settings_game.game_creation.land_generator != LG_ORIGINAL && IsWaterTile(end) && GetWaterClass(end) == WaterClass::Sea) {
 				/* If we've found the sea, make sure it's large enough. Scale by the map size but set a cap to avoid performance issues on large maps. */
 				const uint MAX_SEA_SIZE_THRESHOLD = 1024;
 				const uint SEA_SIZE_THRESHOLD = std::min(static_cast<uint>(2 * std::sqrt(Map::SizeX() * Map::SizeY())), MAX_SEA_SIZE_THRESHOLD);
@@ -1424,7 +1426,7 @@ static std::tuple<bool, bool> FlowRiver(TileIndex spring, TileIndex begin, uint 
 					}
 				}
 			} else {
-				/* We've found a river. */
+				/* We've found a river, or a sea if using the original land generator. */
 				found = true;
 				break;
 			}

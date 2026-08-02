@@ -634,11 +634,13 @@ enum class VarFileType : uint8_t {
 	 * NOTE: the SLE_FILE_NNN values are stored in the savegame! */
 	/* Value 0 is used to mark end-of-header in tables. Do not use here! */
 	I8 = 1, ///< A 8 bit signed int.
+	Bool = I8, ///< A bool is stored in an 8 bit signed integer field.
 	U8 = 2, ///< A 8 bit unsigned int.
 	I16 = 3, ///< A 16 bit signed int.
 	U16 = 4, ///< A 16 bit unsigned int.
 	I32 = 5, ///< A 32 bit signed int.
 	U32 = 6, ///< A 32 bit unsigned int.
+	Label = U32, ///< A label is stored in an 32 bit unsigned integer field.
 	I64 = 7, ///< A 64 bit signed int.
 	U64 = 8, ///< A 64 bit unsigned int.
 	StringID = 9, ///< StringID offset into strings-array.
@@ -722,7 +724,7 @@ constexpr VarType operator|(VarFileType file, VarMemType mem)
 
 /** Container for holding some default \c VarType instances. */
 struct VarTypes {
-	static constexpr VarType BOOL{ VarFileType::I8, VarMemType::Bool }; ///< Store a boolean (as int8).
+	static constexpr VarType BOOL{ VarFileType::Bool, VarMemType::Bool }; ///< Store a boolean (as int8).
 	static constexpr VarType I8{ VarFileType::I8, VarMemType::I8 }; ///< Store a 8 bits signed int.
 	static constexpr VarType U8{ VarFileType::U8, VarMemType::U8 }; ///< Store a 8 bits unsigned int.
 	static constexpr VarType I16{ VarFileType::I16, VarMemType::I16 }; ///< Store a 16 bits signed int.
@@ -735,8 +737,8 @@ struct VarTypes {
 	static constexpr VarType STR{ VarFileType::String, VarMemType::Str }; ///< Store string.
 	static constexpr VarType STRQ{ VarFileType::String, VarMemType::StrQ }; ///< Store a string with quotes.
 	static constexpr VarType NAME{ VarFileType::StringID, VarMemType::Name }; ///< A string stored in the custom string array.
-	static constexpr VarType LABEL_REVERSE{ VarFileType::U32, VarMemType::LabelReverse }; ///< Store a \c Label in reverse.
-	static constexpr VarType LABEL_FORWARD{ VarFileType::U32, VarMemType::LabelForward }; ///< Store a \c Label as-is.
+	static constexpr VarType LABEL_REVERSE{ VarFileType::Label, VarMemType::LabelReverse }; ///< Store a \c Label in reverse.
+	static constexpr VarType LABEL_FORWARD{ VarFileType::Label, VarMemType::LabelForward }; ///< Store a \c Label as-is.
 };
 
 /** Type of data saved. */
@@ -758,17 +760,25 @@ enum class SaveLoadType : uint8_t {
 	ReferenceVector = 12, ///< Save/load a vector of #SaveLoadType::Reference elements.
 };
 
-typedef void *SaveLoadAddrProc(void *base, size_t extra);
 
 /** SaveLoad type struct. Do NOT use this directly but use the SLE_ macros defined just below! */
 struct SaveLoad {
+	/**
+	 * Function that returns the address of a variable.
+	 * @param base In case the variable comes from an object, this is the pointer to the begin of that object.
+	 *             Will be non-nullptr for objects, can be both non-nullptr and nullptr for global variables.
+	 * @param extra An extra offset to apply. Mostly 0, except for a few LinkGraph settings variables.
+	 * @return The address of the variable.
+	 */
+	using AddressFunction = const void *(*)(const void *base, size_t extra);
+
 	std::string name;    ///< Name of this field (optional, used for tables).
 	SaveLoadType cmd;    ///< The action to take with the saved/loaded type, All types need different action.
 	VarType conv;        ///< Type of the variable to be saved; this field combines both FileVarType and MemVarType.
 	uint16_t length;       ///< (Conditional) length of the variable (eg. arrays) (max array size is 65536 elements).
 	SaveLoadVersion version_from;   ///< Save/load the variable starting from this savegame version.
 	SaveLoadVersion version_to;     ///< Save/load the variable before this savegame version.
-	SaveLoadAddrProc *address_proc; ///< Callback proc the get the actual variable address in memory.
+	AddressFunction address_func; ///< Callback function the get the actual variable address in memory.
 	size_t extra_data;              ///< Extra data for the callback proc.
 	std::shared_ptr<SaveLoadHandler> handler; ///< Custom handler for Save/Load procs.
 };
@@ -852,11 +862,11 @@ inline constexpr bool SlCheckVarSize(SaveLoadType cmd, VarType type, size_t leng
  * @note In general, it is better to use one of the SLE_* macros below.
  */
 #define SLE_GENERAL_NAME(cmd, name, base, variable, type, length, from, to, extra) \
-	SaveLoad {name, cmd, type, length, from, to, [] (void *b, size_t) -> void * { \
-		static_assert(SlCheckVarSize(cmd, type, length, sizeof(static_cast<base *>(b)->variable))); \
+	SaveLoad {name, cmd, type, length, from, to, [] (const void *b, size_t) -> const void * { \
+		static_assert(SlCheckVarSize(cmd, type, length, sizeof(static_cast<const base *>(b)->variable))); \
 		static_assert((VarType{type}.mem != VarMemType::LabelReverse && VarType{type}.mem != VarMemType::LabelForward) || std::is_base_of_v<BaseLabel, decltype(base::variable)>); \
 		assert(b != nullptr); \
-		return const_cast<void *>(static_cast<const void *>(std::addressof(static_cast<base *>(b)->variable))); \
+		return std::addressof(static_cast<const base *>(b)->variable); \
 	}, extra, nullptr}
 
 /**
@@ -1089,9 +1099,9 @@ inline constexpr bool SlCheckVarSize(SaveLoadType cmd, VarType type, size_t leng
  * @note In general, it is better to use one of the SLEG_* macros below.
  */
 #define SLEG_GENERAL(name, cmd, variable, type, length, from, to, extra) \
-	SaveLoad {name, cmd, type, length, from, to, [] (void *, size_t) -> void * { \
+	SaveLoad {name, cmd, type, length, from, to, [] (const void *, size_t) -> const void * { \
 		static_assert(SlCheckVarSize(cmd, type, length, sizeof(variable))); \
-		return static_cast<void *>(std::addressof(variable)); }, extra, nullptr}
+		return std::addressof(variable); }, extra, nullptr}
 
 /**
  * Storage of a global variable in some savegame versions.
@@ -1300,13 +1310,13 @@ inline void *GetVariableAddress(const void *object, const SaveLoad &sld)
 {
 	/* Entry is a null-variable, mostly used to read old savegames etc. */
 	if (sld.conv.mem == VarMemType::Null) {
-		assert(sld.address_proc == nullptr);
+		assert(sld.address_func == nullptr);
 		return nullptr;
 	}
 
 	/* Everything else should be a non-null pointer. */
-	assert(sld.address_proc != nullptr);
-	return sld.address_proc(const_cast<void *>(object), sld.extra_data);
+	assert(sld.address_func != nullptr);
+	return const_cast<void *>(sld.address_func(object, sld.extra_data));
 }
 
 int64_t ReadValue(const void *ptr, VarMemType conv);

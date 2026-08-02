@@ -37,8 +37,11 @@
 #include "network/network_func.h"
 #include "news_func.h"
 #include "sound_func.h"
+#include "script/api/script_event_types.hpp"
 #include "timer/timer.h"
 #include "timer/timer_window.h"
+
+#include "widgets/osk_widget.h"
 
 #include "table/strings.h"
 

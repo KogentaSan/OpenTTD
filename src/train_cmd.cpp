@@ -35,8 +35,11 @@
 #include "framerate_type.h"
 #include "train_cmd.h"
 #include "misc_cmd.h"
+#include "script/api/script_event_types.hpp"
 #include "timer/timer_game_calendar.h"
 #include "timer/timer_game_economy.h"
+
+#include "widgets/vehicle_widget.h"
 
 #include "table/strings.h"
 #include "table/train_sprites.h"

@@ -918,7 +918,7 @@ void WriteValue(void *ptr, VarMemType conv, int64_t val)
 		case VarMemType::U32: *static_cast<uint32_t *>(ptr) = val; break;
 		case VarMemType::I64: *static_cast<int64_t *>(ptr) = val; break;
 		case VarMemType::U64: *static_cast<uint64_t *>(ptr) = val; break;
-		case VarMemType::Name: *reinterpret_cast<std::string *>(ptr) = CopyFromOldName(val); break;
+		case VarMemType::Name: *reinterpret_cast<std::string *>(ptr) = CopyFromOldName(static_cast<StringID>(val)); break;
 		case VarMemType::Null: break;
 		default: NOT_REACHED();
 	}
@@ -1010,7 +1010,7 @@ static void SlSaveLoadConv(void *ptr, VarType conv)
 				case VarFileType::U32: x = static_cast<uint32_t>(SlReadUint32()); break;
 				case VarFileType::I64: x = static_cast<int64_t>(SlReadUint64()); break;
 				case VarFileType::U64: x = static_cast<uint64_t>(SlReadUint64()); break;
-				case VarFileType::StringID: x = RemapOldStringID(static_cast<uint16_t>(SlReadUint16())); break;
+				case VarFileType::StringID: x = RemapOldStringID(static_cast<StringID>(SlReadUint16())).base(); break;
 				default: NOT_REACHED();
 			}
 
@@ -1261,6 +1261,7 @@ static void SlCopyInternal(void *object, size_t length, VarType conv)
  */
 void SlCopy(void *object, size_t length, VarType conv)
 {
+	assert(object != nullptr); // Use SlSkipBytes instead
 	if (_sl.action == SaveLoadAction::Ptrs || _sl.action == SaveLoadAction::Null) return;
 
 	/* Automatically calculate the length? */
@@ -2379,7 +2380,7 @@ static void SlLoadChunks()
 /** Load all chunks for savegame checking */
 static void SlLoadCheckChunks()
 {
-	for (ChunkId id = SlReadChunkId(); id.Empty(); id = SlReadChunkId()) {
+	for (ChunkId id = SlReadChunkId(); !id.Empty(); id = SlReadChunkId()) {
 		Debug(sl, 2, "Loading chunk {}", id.AsString());
 
 		const ChunkHandler *ch = SlFindChunkHandler(id);
