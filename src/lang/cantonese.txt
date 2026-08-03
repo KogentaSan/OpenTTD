@@ -203,7 +203,7 @@ STR_COLOUR_SECONDARY_CREAM                                      :奶黃
 STR_COLOUR_SECONDARY_MAUVE                                      :紫紅
 STR_COLOUR_SECONDARY_PURPLE                                     :紫
 STR_COLOUR_SECONDARY_ORANGE                                     :橙
-STR_COLOUR_SECONDARY_BROWN                                      :棕
+STR_COLOUR_SECONDARY_BROWN                                      :啡
 STR_COLOUR_SECONDARY_GREY                                       :灰
 STR_COLOUR_SECONDARY_WHITE                                      :白
 STR_COLOUR_SECONDARY_SAME_AS_PRIMARY                            :同主色一樣
@@ -221,21 +221,21 @@ STR_UNITS_POWER_IMPERIAL                                        :{DECIMAL}{NBSP}
 STR_UNITS_POWER_METRIC                                          :{DECIMAL}{NBSP}匹
 STR_UNITS_POWER_SI                                              :{DECIMAL}{NBSP}千瓦
 
-STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_IMPERIAL                     :{DECIMAL}{NBSP}匹/短噸
+STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_IMPERIAL                     :{DECIMAL}{NBSP}匹/噸
 STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_METRIC                       :{DECIMAL}{NBSP}匹/公噸
 STR_UNITS_POWER_IMPERIAL_TO_WEIGHT_SI                           :{DECIMAL}{NBSP}匹/千公斤
-STR_UNITS_POWER_METRIC_TO_WEIGHT_IMPERIAL                       :{DECIMAL}{NBSP}匹/短噸
+STR_UNITS_POWER_METRIC_TO_WEIGHT_IMPERIAL                       :{DECIMAL}{NBSP}匹/噸
 STR_UNITS_POWER_METRIC_TO_WEIGHT_METRIC                         :{DECIMAL}{NBSP}匹/公噸
 STR_UNITS_POWER_METRIC_TO_WEIGHT_SI                             :{DECIMAL}{NBSP}匹/千公斤
-STR_UNITS_POWER_SI_TO_WEIGHT_IMPERIAL                           :{DECIMAL}{NBSP}千瓦/短噸
+STR_UNITS_POWER_SI_TO_WEIGHT_IMPERIAL                           :{DECIMAL}{NBSP}千瓦/噸
 STR_UNITS_POWER_SI_TO_WEIGHT_METRIC                             :{DECIMAL}{NBSP}千瓦/公噸
 STR_UNITS_POWER_SI_TO_WEIGHT_SI                                 :{DECIMAL}{NBSP}瓦/公斤
 
-STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}短噸
-STR_UNITS_WEIGHT_SHORT_METRIC                                   :{DECIMAL}{NBSP}噸
+STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{DECIMAL}{NBSP}噸
+STR_UNITS_WEIGHT_SHORT_METRIC                                   :{DECIMAL}{NBSP}公噸
 STR_UNITS_WEIGHT_SHORT_SI                                       :{DECIMAL}{NBSP}公斤
 
-STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}短噸
+STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{DECIMAL}{NBSP}英噸
 STR_UNITS_WEIGHT_LONG_METRIC                                    :{DECIMAL}{NBSP}公噸
 STR_UNITS_WEIGHT_LONG_SI                                        :{DECIMAL}{NBSP}公斤
 
@@ -251,9 +251,9 @@ STR_UNITS_FORCE_IMPERIAL                                        :{DECIMAL}{NBSP}
 STR_UNITS_FORCE_METRIC                                          :{DECIMAL}{NBSP}公斤力
 STR_UNITS_FORCE_SI                                              :{DECIMAL}{NBSP}千牛頓
 
-STR_UNITS_HEIGHT_IMPERIAL                                       :{DECIMAL}{NBSP}英呎
+STR_UNITS_HEIGHT_IMPERIAL                                       :{DECIMAL}{NBSP}呎
 STR_UNITS_HEIGHT_METRIC                                         :{DECIMAL}{NBSP}米
-STR_UNITS_HEIGHT_SI                                             :{DECIMAL}{NBSP}公尺
+STR_UNITS_HEIGHT_SI                                             :{DECIMAL}{NBSP}米
 STR_UNITS_HEIGHT_GAMEUNITS                                      :{DECIMAL}{NBSP}層
 
 # Time units used in string control characters
@@ -290,7 +290,7 @@ STR_TOOLTIP_DEBUG                                               :{BLACK}顯示 N
 STR_TOOLTIP_DEFSIZE                                             :{BLACK}將視窗改回例牌大細。撳實「Ctrl」掣點擊此按鈕可將視窗現時大細設為例牌。撳實「Ctrl」掣雙擊則可重設例牌大細
 STR_TOOLTIP_STICKY                                              :{BLACK}標記此視窗使其不受「關閉全部視窗」掣影響。撳實「Ctrl」鍵點擊此掣嚟將選項定為常態
 STR_TOOLTIP_RESIZE                                              :{BLACK}點擊並拖拉可縮放視窗大細
-STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}切換大／小視窗
+STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}切換視窗大細
 STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}捲軸 - 上下捲動名單
 STR_TOOLTIP_HSCROLL_BAR_SCROLLS_LIST                            :{BLACK}捲軸 - 左右捲動名單
 STR_TOOLTIP_DEMOLISH_BUILDINGS_ETC                              :{BLACK}拆卸位於土地上嘅建築物等。撳實「Ctrl」掣嚟拖拉揀選範圍。撳實「Shift」掣嚟睇下預算成本
@@ -312,7 +312,7 @@ STR_SHOW_HIDDEN_ENGINES_VEHICLE_AIRCRAFT_TOOLTIP                :{BLACK}當生�
 STR_BUTTON_DEFAULT                                              :{BLACK}例牌值
 STR_BUTTON_CANCEL                                               :{BLACK}取消
 STR_BUTTON_OK                                                   :{BLACK}確定
-STR_BUTTON_MOVE                                                 :{BLACK}移動
+STR_BUTTON_MOVE                                                 :{BLACK}搬遷
 
 # On screen keyboard window
 STR_OSK_KEYBOARD_LAYOUT                                         :`1234567890-=\qwertyuiop[]asdfghjkl;'  zxcvbnm,./ .
@@ -327,7 +327,7 @@ STR_MEASURE_AREA_HEIGHTDIFF                                     :{BLACK}範圍�
 
 # These are used in buttons
 STR_SORT_BY_CAPTION_NAME                                        :{BLACK}名稱
-STR_SORT_BY_CAPTION_DATE                                        :{BLACK}日期
+STR_SORT_BY_CAPTION_DATE                                        :{BLACK}日子
 # These are used in dropdowns
 STR_SORT_BY_NAME                                                :名稱
 STR_SORT_BY_PRODUCTION                                          :產量
@@ -346,7 +346,7 @@ STR_SORT_BY_MODEL                                               :型號
 STR_SORT_BY_VALUE                                               :價值
 STR_SORT_BY_LENGTH                                              :長度
 STR_SORT_BY_LIFE_TIME                                           :剩餘年限
-STR_SORT_BY_TIMETABLE_DELAY                                     :時間表誤點
+STR_SORT_BY_TIMETABLE_DELAY                                     :時間表延誤
 STR_SORT_BY_FACILITY                                            :車站種類
 STR_SORT_BY_WAITING_TOTAL                                       :等緊嘅貨物總量
 STR_SORT_BY_WAITING_AVAILABLE                                   :等緊嘅可運載貨物總量
@@ -378,14 +378,14 @@ STR_GROUP_BY_NONE                                               :無
 STR_GROUP_BY_SHARED_ORDERS                                      :共享柯打
 
 # Order button in shared orders vehicle list
-STR_GOTO_ORDER_VIEW                                             :{BLACK}柯打表
-STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}開啟柯打表視窗
+STR_GOTO_ORDER_VIEW                                             :{BLACK}柯打單
+STR_GOTO_ORDER_VIEW_TOOLTIP                                     :{BLACK}開啟柯打單視窗
 
 # Tooltips for the main toolbar
 ###length 31
 STR_TOOLBAR_TOOLTIP_PAUSE_GAME                                  :{BLACK}暫停遊戲
 STR_TOOLBAR_TOOLTIP_FORWARD                                     :{BLACK}快轉遊戲
-STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}選項和設定
+STR_TOOLBAR_TOOLTIP_OPTIONS                                     :{BLACK}選項同設定
 STR_TOOLBAR_TOOLTIP_SAVE_GAME_ABANDON_GAME                      :{BLACK}儲存遊戲、載入遊戲、放棄遊戲、離開
 STR_TOOLBAR_TOOLTIP_DISPLAY_MAP                                 :{BLACK}開啟地圖、新增檢視視窗、貨物流或標誌名單
 STR_TOOLBAR_TOOLTIP_DISPLAY_TOWN_DIRECTORY                      :{BLACK}開啟市鎮名單或建立市鎮
@@ -410,9 +410,9 @@ STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}鋪設�
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}興建水運設施
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}興建機場
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}開啟地形選單、植樹選單或放置標誌
-STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}開啟聲效或背景音樂視窗
-STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}睇翻上次訊息、新聞報告、歷史訊息或刪除全部訊息
-STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}開啟土地資訊、截圖、關於 OpenTTD 和開發者工具
+STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}開啟聲效或音樂視窗
+STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}睇翻上次消息、新聞報告、消息記錄或刪除全部訊息
+STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}開啟土地資訊、截圖、關於 OpenTTD 同開發者工具
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}切換工具列
 
 # Extra tooltips for the scenario editor toolbar
@@ -528,7 +528,7 @@ STR_LANDSCAPING_MENU_PLACE_SIGN                                 :放置標誌
 STR_LANDSCAPING_MENU_PLACE_OBJECT                               :放置物件
 
 # Music menu
-STR_TOOLBAR_SOUND_MUSIC                                         :聲效／背景音樂
+STR_TOOLBAR_SOUND_MUSIC                                         :聲效／音樂
 
 # Message menu
 STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT                          :上次訊息／新聞報告
@@ -634,7 +634,7 @@ STR_GRAPH_LAST_24_YEARS                                         :{TINY_FONT}{BLA
 STR_GRAPH_SELECT_SCALE                                          :改變圖表水平比例
 
 STR_GRAPH_CARGO_PAYMENT_RATES_CAPTION                           :{WHITE}貨物運費表
-STR_GRAPH_CARGO_PAYMENT_RATES_DAYS                              :{TINY_FONT}{BLACK}運輸所用天數
+STR_GRAPH_CARGO_PAYMENT_RATES_DAYS                              :{TINY_FONT}{BLACK}運輸所用日數
 STR_GRAPH_CARGO_PAYMENT_RATES_SECONDS                           :{TINY_FONT}{BLACK}運輸所用秒數
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}將 10 單位（或 10,000 公升）貨物運送 20 格嘅費用
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}全部
@@ -724,7 +724,7 @@ STR_MUSIC_PLAYLIST_NEW_STYLE                                    :{TINY_FONT}{BLA
 STR_MUSIC_PLAYLIST_EZY_STREET                                   :{TINY_FONT}{BLACK}街頭表演
 STR_MUSIC_PLAYLIST_CUSTOM_1                                     :{TINY_FONT}{BLACK}自訂一
 STR_MUSIC_PLAYLIST_CUSTOM_2                                     :{TINY_FONT}{BLACK}自訂二
-STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}背景音樂聲量
+STR_MUSIC_MUSIC_VOLUME                                          :{TINY_FONT}{BLACK}音樂聲量
 STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLACK}聲效聲量
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
@@ -739,7 +739,7 @@ STR_MUSIC_TOOLTIP_SKIP_TO_PREVIOUS_TRACK                        :{BLACK}跳到�
 STR_MUSIC_TOOLTIP_SKIP_TO_NEXT_TRACK_IN_SELECTION               :{BLACK}跳到下首音樂
 STR_MUSIC_TOOLTIP_STOP_PLAYING_MUSIC                            :{BLACK}停止播放音樂
 STR_MUSIC_TOOLTIP_START_PLAYING_MUSIC                           :{BLACK}開始播放音樂
-STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC                     :{BLACK}拖拉滑動去設定背景音樂同聲效嘅聲量
+STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC                     :{BLACK}拖拉滑動去設定音樂同聲效嘅聲量
 STR_MUSIC_TOOLTIP_SELECT_ALL_TRACKS_PROGRAM                     :{BLACK}揀選「全部」播放曲目
 STR_MUSIC_TOOLTIP_SELECT_OLD_STYLE_MUSIC                        :{BLACK}揀選「古典」播放曲目
 STR_MUSIC_TOOLTIP_SELECT_NEW_STYLE_MUSIC                        :{BLACK}揀選「潮流」播放曲目
@@ -757,7 +757,7 @@ STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLA
 STR_PLAYLIST_CLEAR                                              :{TINY_FONT}{BLACK}清除
 STR_PLAYLIST_CHANGE_SET                                         :{BLACK}修改設定
 STR_PLAYLIST_TOOLTIP_CLEAR_CURRENT_PROGRAM_CUSTOM1              :{BLACK}清除目前播放曲目（剩係「自訂一」或「自訂二」）
-STR_PLAYLIST_TOOLTIP_CHANGE_SET                                 :{BLACK}揀選另外已裝嘅音樂包
+STR_PLAYLIST_TOOLTIP_CHANGE_SET                                 :{BLACK}揀選其他已裝嘅音樂檔
 STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}點擊聲軌嚟去加到目前播放曲目（剩係「自訂一」或「自訂二」）
 STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}點擊音樂嚟喺目前播放曲目喥刪除（剩係「自訂一」或「自訂二」）
 
@@ -773,8 +773,8 @@ STR_HIGHSCORE_PERFORMANCE_TITLE_MOGUL                           :商業龍頭
 STR_HIGHSCORE_PERFORMANCE_TITLE_TYCOON_OF_THE_CENTURY           :世紀大亨
 STR_HIGHSCORE_NAME                                              :{PRESIDENT_NAME}，{COMPANY}
 STR_HIGHSCORE_STATS                                             :{BIG_FONT}「{STRING}」（{COMMA}）
-STR_HIGHSCORE_COMPANY_ACHIEVES_STATUS                           :{BIG_FONT}{BLACK}{COMPANY} 達成「{STRING}」嘅地位！
-STR_HIGHSCORE_PRESIDENT_OF_COMPANY_ACHIEVES_STATUS              :{BIG_FONT}{WHITE}{PRESIDENT_NAME} 嘅 {COMPANY} 達成「{STRING}」 嘅地位！
+STR_HIGHSCORE_COMPANY_ACHIEVES_STATUS                           :{BIG_FONT}{BLACK}{COMPANY}達成「{STRING}」嘅地位！
+STR_HIGHSCORE_PRESIDENT_OF_COMPANY_ACHIEVES_STATUS              :{BIG_FONT}{WHITE}{PRESIDENT_NAME}嘅{COMPANY}達成「{STRING}」嘅地位！
 
 # Smallmap window
 STR_SMALLMAP_CAPTION                                            :{WHITE}地圖 - {STRING}
@@ -849,7 +849,7 @@ STR_SMALLMAP_TOOLTIP_DISABLE_ALL_CARGOS                         :{BLACK}在地�
 STR_SMALLMAP_TOOLTIP_ENABLE_ALL_CARGOS                          :{BLACK}在地圖上顯示全部貨物種類
 
 # Status bar messages
-STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}睇翻上次訊息／新聞報告
+STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}睇翻上次消息／新聞報告
 STR_STATUSBAR_COMPANY_NAME                                      :{SILVER}- -  {COMPANY}  - -
 STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  遊戲暫停  *  *
 STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}* * 遊戲已暫停（等待貨物分配圖更新）* *
@@ -860,67 +860,67 @@ STR_STATUSBAR_SPECTATOR                                         :{WHITE}（觀�
 STR_STATUSBAR_INFINITE_MONEY                                    :{WHITE}（無限）
 
 # News message history
-STR_MESSAGE_HISTORY                                             :{WHITE}訊息記錄
-STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}列出最近嘅新聞內容
+STR_MESSAGE_HISTORY                                             :{WHITE}消息記錄
+STR_MESSAGE_HISTORY_TOOLTIP                                     :{BLACK}最近新聞嘅清單
 STR_MESSAGE_NEWS_FORMAT                                         :{STRING} - {STRING}
 
-STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}訊息
+STR_NEWS_MESSAGE_CAPTION                                        :{WHITE}消息
 
-STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首班列車抵達 {STATION}！
-STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部巴士抵達 {STATION}！
-STR_NEWS_FIRST_TRUCK_ARRIVAL                                    :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部貨車抵達 {STATION}！
-STR_NEWS_FIRST_PASSENGER_TRAM_ARRIVAL                           :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部載客電車抵達 {STATION}！
-STR_NEWS_FIRST_CARGO_TRAM_ARRIVAL                               :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部載貨電車抵達 {STATION}！
-STR_NEWS_FIRST_SHIP_ARRIVAL                                     :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首艘船隻抵達 {STATION}！
-STR_NEWS_FIRST_AIRCRAFT_ARRIVAL                                 :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首架飛機抵達 {STATION}！
+STR_NEWS_FIRST_TRAIN_ARRIVAL                                    :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首班列車抵達{STATION}！
+STR_NEWS_FIRST_BUS_ARRIVAL                                      :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部巴士抵達{STATION}！
+STR_NEWS_FIRST_TRUCK_ARRIVAL                                    :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部貨車抵達{STATION}！
+STR_NEWS_FIRST_PASSENGER_TRAM_ARRIVAL                           :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部載客電車抵達{STATION}！
+STR_NEWS_FIRST_CARGO_TRAM_ARRIVAL                               :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首部載貨電車抵達{STATION}！
+STR_NEWS_FIRST_SHIP_ARRIVAL                                     :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首艘船隻抵達{STATION}！
+STR_NEWS_FIRST_AIRCRAFT_ARRIVAL                                 :{BIG_FONT}{BLACK}市民熱烈慶祝……{}首架飛機抵達{STATION}！
 
-STR_NEWS_TRAIN_CRASH                                            :{BIG_FONT}{BLACK}列車事故！{}衝撞後 {COMMA} 人死在火球下
+STR_NEWS_TRAIN_CRASH                                            :{BIG_FONT}{BLACK}列車事故！{}碰撞後 {COMMA} 個人死喺火球之下
 STR_NEWS_ROAD_VEHICLE_CRASH_DRIVER                              :{BIG_FONT}{BLACK}車禍！{}駕駛在與列車對撞後罹難
-STR_NEWS_ROAD_VEHICLE_CRASH                                     :{BIG_FONT}{BLACK}車禍！{}車輛在與列車對撞後，造成 {COMMA} 人罹難
-STR_NEWS_AIRCRAFT_CRASH                                         :{BIG_FONT}{BLACK}空難！{}{COMMA} 名乘客與機組員不幸罹難於 {STATION}
-STR_NEWS_PLANE_CRASH_OUT_OF_FUEL                                :{BIG_FONT}{BLACK}空難！{}飛機燃油耗盡，{COMMA} 名乘客與機組員不幸罹難！
+STR_NEWS_ROAD_VEHICLE_CRASH                                     :{BIG_FONT}{BLACK}車禍！{}車輛同列車喺碰撞後，造成 {COMMA} 個人罹難
+STR_NEWS_AIRCRAFT_CRASH                                         :{BIG_FONT}{BLACK}空難！{}{COMMA} 個乘客同機組人員喺{STATION}不幸罹難
+STR_NEWS_PLANE_CRASH_OUT_OF_FUEL                                :{BIG_FONT}{BLACK}空難！{}飛機燃油耗盡，{COMMA} 個乘客同機組員不幸罹難！
 
-STR_NEWS_DISASTER_ZEPPELIN                                      :{BIG_FONT}{BLACK}{STATION} 發生飛船災難！
+STR_NEWS_DISASTER_ZEPPELIN                                      :{BIG_FONT}{BLACK}{STATION}發生飛船災難！
 STR_NEWS_DISASTER_SMALL_UFO                                     :{BIG_FONT}{BLACK}車輛被 UFO 擊毀！
-STR_NEWS_DISASTER_AIRPLANE_OIL_REFINERY                         :{BIG_FONT}{BLACK}{TOWN} 附近嘅煉油廠發生爆炸！
-STR_NEWS_DISASTER_HELICOPTER_FACTORY                            :{BIG_FONT}{BLACK}{TOWN} 附近嘅工廠發生事故被毀！
-STR_NEWS_DISASTER_BIG_UFO                                       :{BIG_FONT}{BLACK}UFO 在 {TOWN} 附近著陸！
-STR_NEWS_DISASTER_COAL_MINE_SUBSIDENCE                          :{BIG_FONT}{BLACK}{TOWN} 附近嘅煤礦發生坍塌而毀！
+STR_NEWS_DISASTER_AIRPLANE_OIL_REFINERY                         :{BIG_FONT}{BLACK}{TOWN}附近嘅煉油廠發生爆炸！
+STR_NEWS_DISASTER_HELICOPTER_FACTORY                            :{BIG_FONT}{BLACK}{TOWN}附近嘅工廠發生事故被毀！
+STR_NEWS_DISASTER_BIG_UFO                                       :{BIG_FONT}{BLACK}UFO 喺{TOWN}附近著陸！
+STR_NEWS_DISASTER_COAL_MINE_SUBSIDENCE                          :{BIG_FONT}{BLACK}{TOWN}附近嘅煤礦發生坍塌而毀！
 STR_NEWS_DISASTER_FLOOD_VEHICLE                                 :{BIG_FONT}{BLACK}洪水！{}至少 {COMMA} 人失蹤，在洪水後宣告死亡
 
 STR_NEWS_COMPANY_IN_TROUBLE_TITLE                               :{BIG_FONT}{BLACK}運輸公司有麻煩了！
-STR_NEWS_COMPANY_IN_TROUBLE_DESCRIPTION                         :{BIG_FONT}{BLACK}除非盡快提升營運績效，否則 {STRING} 將被拍賣或宣告破產！
+STR_NEWS_COMPANY_IN_TROUBLE_DESCRIPTION                         :{BIG_FONT}{BLACK}除非盡快提升營運效率，否則{STRING}將被拍賣或宣佈破產！
 STR_NEWS_COMPANY_MERGER_TITLE                                   :{BIG_FONT}{BLACK}運輸公司合併！
-STR_NEWS_COMPANY_MERGER_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING} 被 {STRING} 用 {CURRENCY_LONG} 收購！
+STR_NEWS_COMPANY_MERGER_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING}被{STRING}用 {CURRENCY_LONG} 收購！
 STR_NEWS_COMPANY_BANKRUPT_TITLE                                 :{BIG_FONT}{BLACK}破產！
-STR_NEWS_COMPANY_BANKRUPT_DESCRIPTION                           :{BIG_FONT}{BLACK}{STRING} 已被出資者關閉，並出售全部資產！
+STR_NEWS_COMPANY_BANKRUPT_DESCRIPTION                           :{BIG_FONT}{BLACK}{STRING}已被出資者關閉，並出售全部資產！
 STR_NEWS_COMPANY_LAUNCH_TITLE                                   :{BIG_FONT}{BLACK}新運輸公司成立！
-STR_NEWS_COMPANY_LAUNCH_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING} 開始在 {TOWN} 附近建造！
-STR_NEWS_MERGER_TAKEOVER_TITLE                                  :{BIG_FONT}{BLACK}{STRING} 被 {STRING} 用未公開嘅價格收購！
+STR_NEWS_COMPANY_LAUNCH_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING}開始喺{TOWN}附近建造！
+STR_NEWS_MERGER_TAKEOVER_TITLE                                  :{BIG_FONT}{BLACK}{STRING}被{STRING}用未公開嘅價格收購！
 STR_PRESIDENT_NAME_MANAGER                                      :{BLACK}{PRESIDENT_NAME}{}(總經理)
 
-STR_NEWS_NEW_TOWN                                               :{BLACK}{BIG_FONT}{STRING} 出資贊助新市鎮「{TOWN}」嘅興建！
-STR_NEWS_NEW_TOWN_UNSPONSORED                                   :{BLACK}{BIG_FONT}一個叫{TOWN}嘅新市鎮剛剛建立了!
+STR_NEWS_NEW_TOWN                                               :{BLACK}{BIG_FONT}{STRING}出錢贊助興建「{TOWN}」新市鎮！
+STR_NEWS_NEW_TOWN_UNSPONSORED                                   :{BLACK}{BIG_FONT}一個叫{TOWN}嘅新市鎮啱啱落成咗!
 
-STR_NEWS_INDUSTRY_CONSTRUCTION                                  :{BIG_FONT}{BLACK}新嘅 {STRING} 正在 {TOWN} 附近建造中！
-STR_NEWS_INDUSTRY_PLANTED                                       :{BIG_FONT}{BLACK}新嘅 {STRING} 正在 {TOWN} 附近種植中！
+STR_NEWS_INDUSTRY_CONSTRUCTION                                  :{BIG_FONT}{BLACK}新嘅{STRING}喺{TOWN}附近起緊！
+STR_NEWS_INDUSTRY_PLANTED                                       :{BIG_FONT}{BLACK}新嘅{STRING}喺{TOWN}附近種緊！
 
-STR_NEWS_INDUSTRY_CLOSURE_GENERAL                               :{BIG_FONT}{BLACK}{STRING} 宣佈立即關閉！
-STR_NEWS_INDUSTRY_CLOSURE_SUPPLY_PROBLEMS                       :{BIG_FONT}{BLACK}原料供給問題使得 {STRING} 宣告立即關閉！
-STR_NEWS_INDUSTRY_CLOSURE_LACK_OF_TREES                         :{BIG_FONT}{BLACK}附近缺乏樹木使得 {STRING} 宣告立即關閉！
+STR_NEWS_INDUSTRY_CLOSURE_GENERAL                               :{BIG_FONT}{BLACK}{STRING}宣佈立即關閉！
+STR_NEWS_INDUSTRY_CLOSURE_SUPPLY_PROBLEMS                       :{BIG_FONT}{BLACK}原料供給問題使得{STRING}宣告立即關閉！
+STR_NEWS_INDUSTRY_CLOSURE_LACK_OF_TREES                         :{BIG_FONT}{BLACK}附近缺乏樹木使得{STRING}宣告立即關閉！
 
 STR_NEWS_EURO_INTRODUCTION                                      :{BIG_FONT}{BLACK}歐洲貨幣統一！{}{}你嘅國家用咗歐元做唯一嘅交易貨幣！
 STR_NEWS_BEGIN_OF_RECESSION                                     :{BIG_FONT}{BLACK}全球景氣低迷！{}{}財務專家對經濟蕭條做咗最壞打算！
 STR_NEWS_END_OF_RECESSION                                       :{BIG_FONT}{BLACK}景氣回升！{}{}湧現嘅訂單讓工業界對經濟活絡充滿信心！
 
-STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_GENERAL                   :{BIG_FONT}{BLACK}{INDUSTRY} 提高產量！
-STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_COAL                      :{BIG_FONT}{BLACK}在 {INDUSTRY} 發現新嘅煤礦層！{}產量可望加倍！
-STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_OIL                       :{BIG_FONT}{BLACK}在 {INDUSTRY} 發現新嘅油料蘊藏！{}產量可望加倍！
-STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_FARM                      :{BIG_FONT}{BLACK}{INDUSTRY} 改進耕種方式！產量可望加倍！
-STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_SMOOTH                    :{BIG_FONT}{BLACK}{1:INDUSTRY} 嘅 {0:STRING} 產量上升 {2:COMMA}%！
-STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_GENERAL                   :{BIG_FONT}{BLACK}{INDUSTRY} 產量減半
-STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_FARM                      :{BIG_FONT}{BLACK}{INDUSTRY} 遇到蟲害！{}產量減半
-STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_SMOOTH                    :{BIG_FONT}{BLACK}{1:INDUSTRY} 嘅 {0:STRING} 產量減少 {2:COMMA}%！
+STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_GENERAL                   :{BIG_FONT}{BLACK}{INDUSTRY}提高產量！
+STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_COAL                      :{BIG_FONT}{BLACK}在 {INDUSTRY}發現新嘅煤礦層！{}產量可望加倍！
+STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_OIL                       :{BIG_FONT}{BLACK}在 {INDUSTRY}發現新嘅油料蘊藏！{}產量可望加倍！
+STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_FARM                      :{BIG_FONT}{BLACK}{INDUSTRY}改進耕種方式！產量可望加倍！
+STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_SMOOTH                    :{BIG_FONT}{BLACK}{1:INDUSTRY}嘅{0:STRING}產量上升 {2:COMMA}%！
+STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_GENERAL                   :{BIG_FONT}{BLACK}{INDUSTRY}產量減半
+STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_FARM                      :{BIG_FONT}{BLACK}{INDUSTRY}遇到蟲害！{}產量減半
+STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_SMOOTH                    :{BIG_FONT}{BLACK}{1:INDUSTRY}嘅{0:STRING}產量減少 {2:COMMA}%！
 
 ###length VEHICLE_TYPES
 STR_NEWS_TRAIN_IS_WAITING                                       :{WHITE}{VEHICLE} 喺車廠候命
@@ -957,20 +957,20 @@ STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}打開�
 STR_NEWS_STATION_NO_LONGER_ACCEPTS_CARGO_LIST                   :{WHITE}{STATION}唔再需要：{CARGO_LIST}
 STR_NEWS_STATION_NOW_ACCEPTS_CARGO_LIST                         :{WHITE}{STATION}而家需要︰{CARGO_LIST}
 
-STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}財務補助項目到期：{}{}將 {STRING} 由 {STRING} 運去 {STRING} 嘅項目將唔再獲得財務補助
-STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}財務補助項目流標：{}{}將 {STRING} 由 {STRING} 運去 {STRING} 嘅項目將唔再獲得財務補助
-STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}財務補助項目招標：{}{}首先將 {STRING} 由 {STRING} 運去 {STRING} 嘅公司將獲得市政局為期 {UNITS_YEARS_OR_MINUTES} 嘅財務補助！
+STR_NEWS_OFFER_OF_SUBSIDY_EXPIRED                               :{BIG_FONT}{BLACK}財務補助項目到期：{}{}將{STRING}由{STRING}運去{STRING}嘅項目將唔再獲得財務補助
+STR_NEWS_SUBSIDY_WITHDRAWN_SERVICE                              :{BIG_FONT}{BLACK}財務補助項目流標：{}{}將{STRING}由{STRING}運去{STRING}嘅項目將唔再獲得財務補助
+STR_NEWS_SERVICE_SUBSIDY_OFFERED                                :{BIG_FONT}{BLACK}財務補助項目招標：{}{}首先將{STRING}由{STRING}運去{STRING}嘅公司將獲得市政局為期 {UNITS_YEARS_OR_MINUTES}嘅財務補助！
 ###length 4
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 由 {2:STRING} 運去 {3:STRING} 嘅服務項目將獲得額外 50% 嘅報酬！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 由 {2:STRING} 運去 {3:STRING} 嘅服務項目將獲得雙倍嘅報酬！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 由 {2:STRING} 運去 {3:STRING} 嘅服務項目將獲得三倍嘅報酬！
-STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING} 獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES} 期間內將 {1:STRING} 由 {2:STRING} 運去 {3:STRING} 嘅服務項目將獲得四倍嘅報酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_HALF                           :{BIG_FONT}{BLACK}{STRING}獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES}期間內將{1:STRING}由 {2:STRING}運去{3:STRING}嘅服務項目將獲得額外 50% 嘅報酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLACK}{STRING}獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES}期間內將{1:STRING}由 {2:STRING}運去{3:STRING}嘅服務項目將獲得雙倍嘅報酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING}獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES}期間內將{1:STRING}由 {2:STRING}運去{3:STRING}嘅服務項目將獲得三倍嘅報酬！
+STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING}獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES}期間內將{1:STRING}由 {2:STRING}運去{3:STRING}嘅服務項目將獲得四倍嘅報酬！
 
 STR_NEWS_ROAD_REBUILDING_MONTHS                                 :{BIG_FONT}{BLACK}喺{TOWN}市內發生交通擠塞！{}{}由{STRING}贊助嘅重鋪馬路計劃會令駕駛者帶嚟長達 6 個月嘅擠塞煩惱！
 STR_NEWS_ROAD_REBUILDING_MINUTES                                :{BIG_FONT}{BLACK}喺{TOWN}市內發生交通擠塞！{}{}由{STRING}贊助嘅重鋪馬路計劃會令駕駛者帶嚟長達 6 分鐘嘅擠塞煩惱！
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}運輸大亨!
-STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MONTHS                    :{BIG_FONT}{BLACK}{TOWN} 市政局同 {STRING} 簽署咗為期一年嘅專營權合約！
-STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLACK}{TOWN} 市政局同 {STRING} 簽署咗為時 12 分鐘嘅專營權合約！
+STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MONTHS                    :{BIG_FONT}{BLACK}{TOWN}市政局同{STRING}簽署咗為期一年嘅專營權合約！
+STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLACK}{TOWN}市政局同{STRING}簽署咗為時 12 分鐘嘅專營權合約！
 
 # Extra view window
 STR_EXTRA_VIEWPORT_TITLE                                        :{WHITE}檢視 {COMMA}
@@ -993,7 +993,7 @@ STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :揀選社交擴
 STR_GAME_OPTIONS_TAB_ADVANCED                                   :進階
 STR_GAME_OPTIONS_TAB_ADVANCED_TOOLTIP                           :修改進階設定
 
-STR_GAME_OPTIONS_VOLUME                                         :音量
+STR_GAME_OPTIONS_VOLUME                                         :聲量
 STR_GAME_OPTIONS_SFX_VOLUME                                     :聲效
 STR_GAME_OPTIONS_MUSIC_VOLUME                                   :音樂
 
@@ -1001,14 +1001,14 @@ STR_GAME_OPTIONS_SETTING                                        :{STRING}：{ORA
 
 STR_GAME_OPTIONS_VOLUME_MARK                                    :{NUM}%
 
-STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :幣值單位
-STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :揀選幣值單位
+STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :貨幣單位
+STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :揀選貨幣單位
 
 STR_GAME_OPTIONS_CURRENCY_CODE                                  :{STRING}（{STRING}）
 
 ###length 46
 STR_GAME_OPTIONS_CURRENCY_GBP                                   :英鎊
-STR_GAME_OPTIONS_CURRENCY_USD                                   :美元
+STR_GAME_OPTIONS_CURRENCY_USD                                   :美金
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :歐元
 STR_GAME_OPTIONS_CURRENCY_JPY                                   :日圓
 STR_GAME_OPTIONS_CURRENCY_ATS                                   :奧地利先令
@@ -1045,7 +1045,7 @@ STR_GAME_OPTIONS_CURRENCY_RUB                                   :俄羅斯盧布
 STR_GAME_OPTIONS_CURRENCY_MXN                                   :墨西哥披索
 STR_GAME_OPTIONS_CURRENCY_NTD                                   :新台幣
 STR_GAME_OPTIONS_CURRENCY_CNY                                   :中國人民幣
-STR_GAME_OPTIONS_CURRENCY_HKD                                   :港幣
+STR_GAME_OPTIONS_CURRENCY_HKD                                   :港紙
 STR_GAME_OPTIONS_CURRENCY_INR                                   :印度盧比
 STR_GAME_OPTIONS_CURRENCY_IDR                                   :印尼盾
 STR_GAME_OPTIONS_CURRENCY_MYR                                   :馬來西亞令吉
@@ -1082,9 +1082,9 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION_TOOLTIP                     :生效後，准
 STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}修改嘅設定將會在遊戲重啟後生效
 
 STR_GAME_OPTIONS_VIDEO_VSYNC                                    :垂直同步
-STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :生效後，使用垂直同步（V-SYNC）。此項設定將會在遊戲重啟後套用。只在使用硬體加速時可用
+STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :生效後，使用垂直同步（V-SYNC）。此項設定將會在遊戲重啟後套用。淨係用緊硬體加速嗰陣俾用
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :使用中嘅驅動程式：{STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :用緊嘅驅動程式：{STRING}
 
 STR_GAME_OPTIONS_INTERFACE                                      :介面
 
@@ -1396,7 +1396,7 @@ STR_CONFIG_SETTING_TRAIN_LENGTH                                 :列車長度上
 STR_CONFIG_SETTING_TRAIN_LENGTH_HELPTEXT                        :設定列車長度嘅上限。
 STR_CONFIG_SETTING_TILE_LENGTH                                  :{COMMA} 方格
 
-STR_CONFIG_SETTING_SMOKE_AMOUNT                                 :列車產生嘅蒸氣／火花數量：{STRING}
+STR_CONFIG_SETTING_SMOKE_AMOUNT                                 :列車產生嘅蒸氣或火花數量：{STRING}
 STR_CONFIG_SETTING_SMOKE_AMOUNT_HELPTEXT                        :設定車輛可產生多少蒸氣或火花。
 
 STR_CONFIG_SETTING_TRAIN_ACCELERATION_MODEL                     :列車加速演算模型：{STRING}
@@ -4464,7 +4464,7 @@ STR_ENGINE_PREVIEW_RAILTYPES                                    :路軌類型：
 # Autoreplace window
 STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}更換 {STRING} - {STRING}
 
-STR_REPLACE_VEHICLE_VEHICLES_IN_USE                             :{YELLOW}使用中嘅車輛
+STR_REPLACE_VEHICLE_VEHICLES_IN_USE                             :{YELLOW}用緊嘅車輛
 STR_REPLACE_VEHICLE_VEHICLES_IN_USE_TOOLTIP                     :{BLACK}此行顯示你擁有嘅車輛
 STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES                          :{YELLOW}可用嘅車輛
 STR_REPLACE_VEHICLE_AVAILABLE_VEHICLES_TOOLTIP                  :{BLACK}此行顯示可供更換嘅車輛
@@ -5107,7 +5107,7 @@ STR_ERROR_SCREENSHOT_FAILED                                     :畫面擷取失
 
 # Error message titles
 STR_ERROR_MESSAGE_CAPTION                                       :{YELLOW}訊息
-STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}來自 {COMPANY} 嘅訊息
+STR_ERROR_MESSAGE_CAPTION_OTHER_COMPANY                         :{YELLOW}嚟自{COMPANY}嘅訊息
 
 # Generic construction errors
 STR_ERROR_OFF_EDGE_OF_MAP                                       :超過地圖邊緣
@@ -5131,9 +5131,9 @@ STR_ERROR_GENERIC_OBJECT_IN_THE_WAY                             :被 {STRING} �
 STR_ERROR_NOT_ALLOWED_WHILE_PAUSED                              :暫停緊嗰陣唔畀咁做
 
 # Local authority errors
-STR_ERROR_LOCAL_AUTHORITY_REFUSES_TO_ALLOW_THIS                 :{TOWN} 市政局唔畀去做呢樣嘢
-STR_ERROR_LOCAL_AUTHORITY_REFUSES_AIRPORT                       :{TOWN} 市政局唔畀喺市內再整另一個機場
-STR_ERROR_LOCAL_AUTHORITY_REFUSES_NOISE                         :{TOWN} 市政局因噪音管制關係而唔畀整新機場
+STR_ERROR_LOCAL_AUTHORITY_REFUSES_TO_ALLOW_THIS                 :{TOWN}市政局唔畀去做呢樣嘢
+STR_ERROR_LOCAL_AUTHORITY_REFUSES_AIRPORT                       :{TOWN}市政局唔畀喺市內再整另一個機場
+STR_ERROR_LOCAL_AUTHORITY_REFUSES_NOISE                         :{TOWN}市政局因噪音管制關係而唔畀整新機場
 STR_ERROR_BRIBE_FAILED                                          :你嘅賄賂行為俾當區廉處探員發現咗
 
 # Levelling errors
@@ -5550,16 +5550,16 @@ STR_DESKTOP_SHORTCUT_COMMENT                                    :基於《運輸
 
 # Translatable descriptions in media/baseset/*.ob* files
 ###external 10
-STR_BASEGRAPHICS_DOS_DESCRIPTION                                :原版 Transport Tycoon Deluxe DOS 版嘅圖像。
-STR_BASEGRAPHICS_DOS_DE_DESCRIPTION                             :原版 Transport Tycoon Deluxe DOS 版（德國版）嘅圖像。
-STR_BASEGRAPHICS_WIN_DESCRIPTION                                :原版 Transport Tycoon Deluxe Windows 版嘅圖像。
-STR_BASESOUNDS_DOS_DESCRIPTION                                  :原版 Transport Tycoon Deluxe DOS 版嘅聲效。
-STR_BASESOUNDS_WIN_DESCRIPTION                                  :原版 Transport Tycoon Deluxe Windows 版嘅聲效。
+STR_BASEGRAPHICS_DOS_DESCRIPTION                                :原版運輸大亨豪華版（DOS）嘅圖像檔。
+STR_BASEGRAPHICS_DOS_DE_DESCRIPTION                             :原版運輸大亨豪華版（DOS）德文版嘅圖像檔。
+STR_BASEGRAPHICS_WIN_DESCRIPTION                                :原版運輸大亨豪華版（Windows）嘅圖像檔。
+STR_BASESOUNDS_DOS_DESCRIPTION                                  :原版運輸大亨豪華版（DOS）嘅聲效。
+STR_BASESOUNDS_WIN_DESCRIPTION                                  :原版運輸大亨豪華版（Windows）嘅聲效。
 STR_BASESOUNDS_NONE_DESCRIPTION                                 :咩聲效都冇嘅聲效檔。
-STR_BASEMUSIC_WIN_DESCRIPTION                                   :原版 Transport Tycoon Deluxe Windows 版嘅音樂。
-STR_BASEMUSIC_DOS_DESCRIPTION                                   :原版 Transport Tycoon Deluxe DOS 版嘅音樂。
-STR_BASEMUSIC_TTO_DESCRIPTION                                   :原版 Transport Tycoon（Original/World Editor）DOS 版嘅音樂。
-STR_BASEMUSIC_NONE_DESCRIPTION                                  :不含任何音樂嘅音樂檔。
+STR_BASEMUSIC_WIN_DESCRIPTION                                   :原版運輸大亨豪華版（Windows）嘅音樂。
+STR_BASEMUSIC_DOS_DESCRIPTION                                   :原版運輸大亨豪華版（DOS）嘅音樂。
+STR_BASEMUSIC_TTO_DESCRIPTION                                   :原版運輸大亨（原版或版圖編輯擴充）DOS 版嘅音樂。
+STR_BASEMUSIC_NONE_DESCRIPTION                                  :咩音樂都冇嘅音樂檔。
 
 ##id 0x2000
 # Town building names
@@ -5625,15 +5625,15 @@ STR_INDUSTRY_NAME_WATER_TOWER                                   :水塔
 STR_INDUSTRY_NAME_FACTORY_2                                     :工廠
 STR_INDUSTRY_NAME_FARM_2                                        :農場
 STR_INDUSTRY_NAME_LUMBER_MILL                                   :伐木場
-STR_INDUSTRY_NAME_COTTON_CANDY_FOREST                           :棉花糖林
-STR_INDUSTRY_NAME_CANDY_FACTORY                                 :糖果工廠
+STR_INDUSTRY_NAME_COTTON_CANDY_FOREST                           :棉花糖森林
+STR_INDUSTRY_NAME_CANDY_FACTORY                                 :糖果廠
 STR_INDUSTRY_NAME_BATTERY_FARM                                  :電芯農場
 STR_INDUSTRY_NAME_COLA_WELLS                                    :可樂井
 STR_INDUSTRY_NAME_TOY_SHOP                                      :玩具店
-STR_INDUSTRY_NAME_TOY_FACTORY                                   :玩具工廠
+STR_INDUSTRY_NAME_TOY_FACTORY                                   :玩具廠
 STR_INDUSTRY_NAME_PLASTIC_FOUNTAINS                             :塑膠噴水池
-STR_INDUSTRY_NAME_FIZZY_DRINK_FACTORY                           :汽水工廠
-STR_INDUSTRY_NAME_BUBBLE_GENERATOR                              :氣泡產生器
+STR_INDUSTRY_NAME_FIZZY_DRINK_FACTORY                           :汽水廠
+STR_INDUSTRY_NAME_BUBBLE_GENERATOR                              :氣泡生產器
 STR_INDUSTRY_NAME_TOFFEE_QUARRY                                 :拖肥糖採集場
 STR_INDUSTRY_NAME_SUGAR_MINE                                    :糖礦
 
@@ -5650,33 +5650,33 @@ STR_SV_AIRCRAFT_NAME                                            :飛機 #{COMMA}
 
 ###length 27
 STR_SV_STNAME                                                   :{STRING}
-STR_SV_STNAME_NORTH                                             :{STRING} 北站
-STR_SV_STNAME_SOUTH                                             :{STRING} 南站
-STR_SV_STNAME_EAST                                              :{STRING} 東站
-STR_SV_STNAME_WEST                                              :{STRING} 西站
-STR_SV_STNAME_CENTRAL                                           :{STRING} 市中心
-STR_SV_STNAME_TRANSFER                                          :{STRING} 交匯站
-STR_SV_STNAME_HALT                                              :{STRING} 停車處
-STR_SV_STNAME_VALLEY                                            :{STRING} 山谷
-STR_SV_STNAME_HEIGHTS                                           :{STRING} 高地
-STR_SV_STNAME_WOODS                                             :{STRING} 林業
-STR_SV_STNAME_LAKESIDE                                          :{STRING} 湖畔
-STR_SV_STNAME_EXCHANGE                                          :{STRING} 轉車站
-STR_SV_STNAME_AIRPORT                                           :{STRING} 機場
-STR_SV_STNAME_OILFIELD                                          :{STRING} 油田
-STR_SV_STNAME_MINES                                             :{STRING} 礦場
-STR_SV_STNAME_DOCKS                                             :{STRING} 碼頭
+STR_SV_STNAME_NORTH                                             :{STRING}北站
+STR_SV_STNAME_SOUTH                                             :{STRING}南站
+STR_SV_STNAME_EAST                                              :{STRING}東站
+STR_SV_STNAME_WEST                                              :{STRING}西站
+STR_SV_STNAME_CENTRAL                                           :{STRING}市中心
+STR_SV_STNAME_TRANSFER                                          :{STRING}交匯站
+STR_SV_STNAME_HALT                                              :{STRING}停車處
+STR_SV_STNAME_VALLEY                                            :{STRING}山谷
+STR_SV_STNAME_HEIGHTS                                           :{STRING}高地
+STR_SV_STNAME_WOODS                                             :{STRING}林業
+STR_SV_STNAME_LAKESIDE                                          :{STRING}湖畔
+STR_SV_STNAME_EXCHANGE                                          :{STRING}轉車站
+STR_SV_STNAME_AIRPORT                                           :{STRING}機場
+STR_SV_STNAME_OILFIELD                                          :{STRING}油田
+STR_SV_STNAME_MINES                                             :{STRING}礦場
+STR_SV_STNAME_DOCKS                                             :{STRING}碼頭
 STR_SV_STNAME_BUOY                                              :{STRING}
 STR_SV_STNAME_WAYPOINT                                          :{STRING}
 ##id 0x6020
-STR_SV_STNAME_ANNEXE                                            :{STRING} 輔助站
-STR_SV_STNAME_SIDINGS                                           :{STRING} 側站
-STR_SV_STNAME_BRANCH                                            :{STRING} 分站
-STR_SV_STNAME_UPPER                                             :{STRING} 台地
-STR_SV_STNAME_LOWER                                             :{STRING} 盆地
-STR_SV_STNAME_HELIPORT                                          :{STRING} 直升機坪
-STR_SV_STNAME_FOREST                                            :{STRING} 伐木場
-STR_SV_STNAME_FALLBACK                                          :{STRING} 車站 #{NUM}
+STR_SV_STNAME_ANNEXE                                            :{STRING}輔助站
+STR_SV_STNAME_SIDINGS                                           :{STRING}側站
+STR_SV_STNAME_BRANCH                                            :{STRING}分站
+STR_SV_STNAME_UPPER                                             :{STRING}台地
+STR_SV_STNAME_LOWER                                             :{STRING}盆地
+STR_SV_STNAME_HELIPORT                                          :{STRING}直升機坪
+STR_SV_STNAME_FOREST                                            :{STRING}伐木場
+STR_SV_STNAME_FALLBACK                                          :{STRING}車站 #{NUM}
 
 ############ end of savegame specific region!
 
@@ -5713,7 +5713,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_ASIASTAR_ELECTRIC            :亞洲之星（
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :載客車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :郵政車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COAL_CAR                      :煤斗車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :油罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :油缸車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :家畜車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GOODS_VAN                     :貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GRAIN_HOPPER                  :穀物斗車卡
@@ -5724,14 +5724,14 @@ STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_ARMORED_VAN                   :裝甲解款車
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FOOD_VAN                      :食物貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PAPER_TRUCK                   :紙料貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COPPER_ORE_HOPPER             :銅礦斗車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WATER_TANKER                  :水罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WATER_TANKER                  :水缸車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FRUIT_TRUCK                   :蔬果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_RUBBER_TRUCK                  :橡膠貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_SUGAR_TRUCK                   :砂糖貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COTTON_CANDY_HOPPER           :棉花糖斗車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOFFEE_HOPPER                 :拖肥糖斗車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BUBBLE_VAN                    :氣泡貨車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COLA_TANKER                   :可樂罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COLA_TANKER                   :可樂貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_CANDY_VAN                     :糖果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOY_VAN                       :玩具貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BATTERY_TRUCK                 :電芯貨車卡
@@ -5743,7 +5743,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_WIZZOWOW_Z99             :威而嘆 Z99
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :載客車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :郵政車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :煤斗車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :油罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :油缸車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_LIVESTOCK_VAN             :家畜車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GOODS_VAN                 :貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GRAIN_HOPPER              :穀斗車卡
@@ -5754,14 +5754,14 @@ STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_ARMORED_VAN               :裝甲解款車
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FOOD_VAN                  :食物貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PAPER_TRUCK               :紙料貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COPPER_ORE_HOPPER         :銅礦斗車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WATER_TANKER              :水罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WATER_TANKER              :水缸車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FRUIT_TRUCK               :蔬果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_RUBBER_TRUCK              :橡膠貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_SUGAR_TRUCK               :砂糖貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COTTON_CANDY_HOPPER       :棉花糖斗車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOFFEE_HOPPER             :拖肥糖斗車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BUBBLE_VAN                :氣泡貨車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COLA_TANKER               :可樂罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COLA_TANKER               :可樂貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_CANDY_VAN                 :糖果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOY_VAN                   :玩具貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BATTERY_TRUCK             :電芯貨車卡
@@ -5775,7 +5775,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_WIZZOWOW_ROCKETEER         :威而嘆火箭
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :載客車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :郵政車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COAL_CAR                    :煤斗車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :油罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :油缸車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_LIVESTOCK_VAN               :家畜車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GOODS_VAN                   :貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GRAIN_HOPPER                :穀斗車卡
@@ -5786,14 +5786,14 @@ STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_ARMORED_VAN                 :裝甲解款車
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FOOD_VAN                    :食物貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PAPER_TRUCK                 :紙料貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COPPER_ORE_HOPPER           :銅礦斗車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WATER_TANKER                :水罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WATER_TANKER                :水缸車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FRUIT_TRUCK                 :蔬果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_RUBBER_TRUCK                :橡膠貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_SUGAR_TRUCK                 :砂糖貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COTTON_CANDY_HOPPER         :棉花糖斗車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOFFEE_HOPPER               :拖肥糖斗車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BUBBLE_VAN                  :氣泡貨車卡
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COLA_TANKER                 :可樂罐車卡
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COLA_TANKER                 :可樂貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_CANDY_VAN                   :糖果貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOY_VAN                     :玩具貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BATTERY_TRUCK               :電芯貨車卡
@@ -5817,9 +5817,9 @@ STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_MAIL_TRUCK                  :佩里郵政車
 STR_VEHICLE_NAME_ROAD_VEHICLE_MIGHTYMOVER_MAIL_TRUCK            :勁力郵政車
 STR_VEHICLE_NAME_ROAD_VEHICLE_POWERNAUGHT_MAIL_TRUCK            :原力郵政車
 STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_MAIL_TRUCK               :威而嘆郵政車
-STR_VEHICLE_NAME_ROAD_VEHICLE_WITCOMBE_OIL_TANKER               :韋琴油罐車
-STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_OIL_TANKER                 :福斯特油罐車
-STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_OIL_TANKER                  :佩里油罐車
+STR_VEHICLE_NAME_ROAD_VEHICLE_WITCOMBE_OIL_TANKER               :韋琴油缸車
+STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_OIL_TANKER                 :福斯特油缸車
+STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_OIL_TANKER                  :佩里油缸車
 STR_VEHICLE_NAME_ROAD_VEHICLE_TALBOTT_LIVESTOCK_VAN             :托巴特家畜輕型貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_LIVESTOCK_VAN                 :鴞牌家畜輕型貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_LIVESTOCK_VAN              :福斯特家畜輕型貨車
@@ -5850,9 +5850,9 @@ STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_PAPER_TRUCK                   :MPS 紙料車
 STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_COPPER_ORE_TRUCK              :MPS 銅礦斗車
 STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_COPPER_ORE_TRUCK              :鴞牌銅礦斗車
 STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_COPPER_ORE_TRUCK             :鵝牌銅礦斗車
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_WATER_TANKER                  :鴞牌水罐車
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_WATER_TANKER               :炎魔水罐車
-STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_WATER_TANKER                  :MPS 水罐車
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_WATER_TANKER                  :鴞牌水缸車
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_WATER_TANKER               :炎魔水缸車
+STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_WATER_TANKER                  :MPS 水缸車
 STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_FRUIT_TRUCK                :炎魔蔬果貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_FRUIT_TRUCK                   :鴞牌蔬果貨車
 STR_VEHICLE_NAME_ROAD_VEHICLE_KELLING_FRUIT_TRUCK               :凱靈蔬果貨車
@@ -5959,23 +5959,23 @@ STR_FORMAT_GROUP_VEHICLE_NAME                                   :{GROUP} #{COMMA
 STR_FORMAT_INDUSTRY_NAME                                        :{TOWN} {STRING}
 
 ###length 2
-STR_FORMAT_BUOY_NAME                                            :{TOWN} 浮標
-STR_FORMAT_BUOY_NAME_SERIAL                                     :{TOWN} 浮標 #{COMMA}
+STR_FORMAT_BUOY_NAME                                            :{TOWN}浮標
+STR_FORMAT_BUOY_NAME_SERIAL                                     :{TOWN}浮標 #{COMMA}
 
 ###length 2
-STR_FORMAT_WAYPOINT_NAME                                        :{TOWN} 分站
-STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :{TOWN} 分站 #{COMMA}
+STR_FORMAT_WAYPOINT_NAME                                        :{TOWN}分站
+STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :{TOWN}分站 #{COMMA}
 
 ###length 6
-STR_FORMAT_DEPOT_NAME_TRAIN                                     :{TOWN} 鐵路車廠
-STR_FORMAT_DEPOT_NAME_TRAIN_SERIAL                              :{TOWN} 鐵路車廠 #{COMMA}
-STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE                              :{TOWN} 車廠
-STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE_SERIAL                       :{TOWN} 車廠 #{COMMA}
-STR_FORMAT_DEPOT_NAME_SHIP                                      :{TOWN} 船塢
-STR_FORMAT_DEPOT_NAME_SHIP_SERIAL                               :{TOWN} 船塢 #{COMMA}
+STR_FORMAT_DEPOT_NAME_TRAIN                                     :{TOWN}鐵路車廠
+STR_FORMAT_DEPOT_NAME_TRAIN_SERIAL                              :{TOWN}鐵路車廠 #{COMMA}
+STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE                              :{TOWN}車廠
+STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE_SERIAL                       :{TOWN}車廠 #{COMMA}
+STR_FORMAT_DEPOT_NAME_SHIP                                      :{TOWN}船塢
+STR_FORMAT_DEPOT_NAME_SHIP_SERIAL                               :{TOWN}船塢 #{COMMA}
 ###next-name-looks-similar
 
-STR_FORMAT_DEPOT_NAME_AIRCRAFT                                  :{STATION} 機棚
+STR_FORMAT_DEPOT_NAME_AIRCRAFT                                  :{STATION}機棚
 # _SERIAL version of AIRACRAFT doesn't exist
 
 STR_UNKNOWN_STATION                                             :不明車站
@@ -5987,7 +5987,7 @@ STR_SAVEGAME_NAME_DEFAULT                                       :{COMPANY}, {STR
 STR_SAVEGAME_NAME_SPECTATOR                                     :觀眾，{1:STRING}
 
 # Viewport strings
-STR_VIEWPORT_TOWN_POP                                           :{TOWN}（ {COMMA} ）
+STR_VIEWPORT_TOWN_POP                                           :{TOWN}（{COMMA}）
 STR_VIEWPORT_TOWN_CITY                                          :{TOWN}{CITY_ICON}
 STR_VIEWPORT_TOWN_CITY_POP                                      :{TOWN}（{COMMA}）{CITY_ICON}
 STR_VIEWPORT_STATION                                            :{STATION} {STATION_FEATURES}
@@ -6050,8 +6050,8 @@ STR_LORRY                                                       :{BLACK}{LORRY}
 STR_PLANE                                                       :{BLACK}{PLANE}
 STR_SHIP                                                        :{BLACK}{SHIP}
 
-STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING} {YELLOW}（{VELOCITY}）
-STR_TOOLBAR_ROADTYPE_VELOCITY                                   :{STRING} {YELLOW}（{VELOCITY}）
+STR_TOOLBAR_RAILTYPE_VELOCITY                                   :{STRING}{YELLOW}（{VELOCITY}）
+STR_TOOLBAR_ROADTYPE_VELOCITY                                   :{STRING}{YELLOW}（{VELOCITY}）
 
 STR_BADGE_NAME_LIST                                             :{STRING}：{GOLD}{STRING}
 STR_BADGE_CONFIG_MENU_TOOLTIP                                   :開啟徽章設定
