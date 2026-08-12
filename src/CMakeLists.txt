@@ -51,6 +51,11 @@ add_files(
 )
 
 add_files(
+    soundresampler_soxr.cpp
+    CONDITION Soxr_FOUND
+)
+
+add_files(
     aircraft.h
     aircraft_cmd.cpp
     aircraft_cmd.h
@@ -400,6 +405,8 @@ add_files(
     roadveh_cmd.h
     roadveh_gui.cpp
     safeguards.h
+    screensaver.cpp
+    screensaver.h
     screenshot_bmp.cpp
     screenshot_gui.cpp
     screenshot_gui.h
@@ -451,6 +458,7 @@ add_files(
     soundloader_type.h
     soundloader_raw.cpp
     soundloader_wav.cpp
+    soundresampler_type.h
     source_type.h
     sprite.cpp
     sprite.h
