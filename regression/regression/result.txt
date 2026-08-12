@@ -1643,7 +1643,6 @@ ERROR: IsEnd() is invalid as Begin() is never called
   GetAirportHeight(9):              -1
   GetAirportCoverageRadius(9):      -1
   GetAirportNumHelipads(9):         -1
-  GetBankBalance():     1999999790
   GetPrice():           5400
   BuildAirport():       true
   IsHangarTile():       false
@@ -1653,11 +1652,11 @@ ERROR: IsEnd() is invalid as Begin() is never called
   IsHangarTile():       true
   IsAirportTile():      true
   GetAirportType():     0
-  GetBankBalance():     1999989890
+  GetCosts():           9900
   RemoveAirport():      true
   IsHangarTile():       false
   IsAirportTile():      false
-  GetBankBalance():     1999989626
+  GetCosts():           264
   BuildAirport():       true
 
 --Bridge--
@@ -8413,7 +8412,6 @@ ERROR: IsEnd() is invalid as Begin() is never called
   IsBuoyTile():         false
   IsLockTile():         false
   IsCanalTile():        false
-  GetBankBalance():     1999979304
   BuildWaterDepot():    true
   BuildDock():          true
   BuildBuoy():          true
@@ -8426,7 +8424,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
   IsBuoyTile():         true
   IsLockTile():         true
   IsCanalTile():        true
-  GetBankBalance():     1999964680
+  GetCosts():           14624
 
 --AIWaypointList(BUOY)--
   Count():             1
@@ -8445,7 +8443,7 @@ ERROR: IsEnd() is invalid as Begin() is never called
   IsBuoyTile():         false
   IsLockTile():         false
   IsCanalTile():        false
-  GetBankBalance():     1999959285
+  GetCosts():           5395
   BuildWaterDepot():    true
   BuildDock():          true
   BuildBuoy():          true
@@ -10879,21 +10877,21 @@ ERROR: IsEnd() is invalid as Begin() is never called
 --Terraforming--
   DemolishTile():       true
   DemolishTile():       true
-  GetBankBalance():     1999216100
+  GetCosts():           120
   LowerTile():          false
   RaiseTile():          true
-  GetBankBalance():     1999155538
+  GetCosts():           60561
   LowerTile():          true
-  GetBankBalance():     1999154977
+  GetCosts():           561
   LowerTile():          true
   RaiseTile():          true
-  GetBankBalance():     1999124019
+  GetCosts():           30958
   RaiseTile():          false
   LowerTile():          false
   LowerTile():          true
   RaiseTile():          true
   LowerTile():          true
-  GetBankBalance():     1999121541
+  GetCosts():           2478
   LowerTile():          false
   LowerTile():          true
   RaiseTile():          false
@@ -10901,37 +10899,37 @@ ERROR: IsEnd() is invalid as Begin() is never called
   LowerTile():          false
   RaiseTile():          true
   LowerTile():          true
-  GetBankBalance():     1999115990
+  GetCosts():           5551
   RaiseTile():          true
   LowerTile():          true
-  GetBankBalance():     1999099935
+  GetCosts():           16055
   RaiseTile():          false
   LowerTile():          true
-  GetBankBalance():     1999097859
+  GetCosts():           2076
   RaiseTile():          true
   RaiseTile():          true
-  GetBankBalance():     1999087637
+  GetCosts():           10222
   LevelTiles():         true
   LevelTiles():         false
-  GetBankBalance():     1999078009
+  GetCosts():           9628
   LevelTiles():         true
   LevelTiles():         true
-  GetBankBalance():     1998791930
+  GetCosts():           286079
   LowerTile():          false
   RaiseTile():          true
   RaiseTile():          false
   LowerTile():          true
-  GetBankBalance():     1998785830
+  GetCosts():           6099
   RaiseTile():          true
   LowerTile():          true
   LowerTile():          false
-  GetBankBalance():     1998784663
+  GetCosts():           1167
   RaiseTile():          false
   LowerTile():          true
   LowerTile():          false
   RaiseTile():          false
   RaiseTile():          true
-  GetBankBalance():     1998745667
+  GetCosts():           38996
 --Valuate() with excessive CPU usage--
 constructor failed with: excessive CPU usage in list filter function
 Your script made an error: excessive CPU usage in valuator function
@@ -10940,7 +10938,7 @@ CALLSTACK WITH LOCALS
 *FUNCTION [Valuate()] Valuate line [5]
   [args] ARRAY
   [this] INSTANCE
-*FUNCTION [Start()] regression/main.nut line [2477]
+*FUNCTION [Start()] regression/main.nut line [2493]
   [Infinite] CLOSURE
   [list] INSTANCE
   [this] INSTANCE
