@@ -3119,13 +3119,13 @@ STR_RESET_LANDSCAPE_CONFIRMATION_TEXT                           :{WHITE}你確�
 # Town generation window (SE)
 STR_FOUND_TOWN_CAPTION                                          :{WHITE}生成市鎮
 STR_FOUND_TOWN_NEW_TOWN_BUTTON                                  :{BLACK}新市鎮
-STR_FOUND_TOWN_NEW_TOWN_TOOLTIP                                 :{BLACK}建立新市鎮。撳實「Shift」掣點擊則只會顯示預算嘅建造費用
+STR_FOUND_TOWN_NEW_TOWN_TOOLTIP                                 :{BLACK}起新市鎮。撳實「Shift」掣點擊則只會顯示預算嘅建造費用
 STR_FOUND_TOWN_RANDOM_TOWN_BUTTON                               :{BLACK}求其市鎮
-STR_FOUND_TOWN_RANDOM_TOWN_TOOLTIP                              :{BLACK}求其選址建立市鎮
+STR_FOUND_TOWN_RANDOM_TOWN_TOOLTIP                              :{BLACK}求其覓地起市鎮
 STR_FOUND_TOWN_MANY_RANDOM_TOWNS                                :{BLACK}好多求其市鎮
-STR_FOUND_TOWN_RANDOM_TOWNS_TOOLTIP                             :{BLACK}用求其分佈嘅市鎮佈滿地圖
-STR_FOUND_TOWN_LOAD_FROM_FILE                                   :{BLACK}從檔案載入
-STR_FOUND_TOWN_LOAD_FROM_FILE_TOOLTIP                           :{BLACK}從 JSON 檔案匯入市鎮數據
+STR_FOUND_TOWN_RANDOM_TOWNS_TOOLTIP                             :{BLACK}求其喺版圖嘅唔同地方起好多市鎮
+STR_FOUND_TOWN_LOAD_FROM_FILE                                   :{BLACK}喺檔案載入
+STR_FOUND_TOWN_LOAD_FROM_FILE_TOOLTIP                           :{BLACK}喺 JSON 檔案匯入市鎮數據
 STR_FOUND_TOWN_EXPAND_ALL_TOWNS                                 :{BLACK}擴展全部市鎮
 STR_FOUND_TOWN_EXPAND_ALL_TOWNS_TOOLTIP                         :{BLACK}讓全部市鎮略為成長
 
