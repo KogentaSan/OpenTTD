@@ -537,7 +537,8 @@ STR_NEWS_MENU_DELETE_ALL_MESSAGES                               :刪除全部訊
 
 # About menu
 STR_ABOUT_MENU_LAND_BLOCK_INFO                                  :土地資訊
-STR_ABOUT_MENU_HELP                                             :幫助同手冊
+STR_ABOUT_MENU_HELP                                             :幫助同指南
+STR_ABOUT_MENU_ENTER_SCREENSAVER_MODE                           :切換螢幕保護模式
 STR_ABOUT_MENU_TOGGLE_CONSOLE                                   :切換主控台
 STR_ABOUT_MENU_AI_DEBUG                                         :AI／遊戲腳本除錯
 STR_ABOUT_MENU_SCREENSHOT                                       :擷取畫面
@@ -3100,7 +3101,8 @@ STR_TREES_MODE_FOREST_LG_TOOLTIP                                :{BLACK}框選�
 
 # Land generation window (SE)
 STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION                   :{WHITE}生成地形
-STR_TERRAFORM_TOOLTIP_PLACE_ROCKY_AREAS_ON_LANDSCAPE            :{BLACK}在版圖中生成岩石地帶。{}撳實「Ctrll」掣點擊可移除岩石地帶
+STR_TERRAFORM_TOOLTIP_PLACE_ROCKY_AREAS_ON_LANDSCAPE            :{BLACK}喺版圖度設置岩石地帶。{}撳實「Ctrl」掣點擊可移除岩石地帶
+STR_TERRAFORM_TOOLTIP_PLACE_ROUGH_AREAS_ON_LANDSCAPE            :{BLACK}喺版圖度設置崎嶇地帶。{}撳實「Ctrl」掣點擊可移除崎嶇地帶
 STR_TERRAFORM_TOOLTIP_DEFINE_DESERT_AREA                        :{BLACK}定義沙漠地帶。{}撳實「Ctrl」掣點擊可移除沙漠地帶
 STR_TERRAFORM_TOOLTIP_INCREASE_SIZE_OF_LAND_AREA                :{BLACK}增加地形升降嘅範圍
 STR_TERRAFORM_TOOLTIP_DECREASE_SIZE_OF_LAND_AREA                :{BLACK}減少地形升降嘅範圍
@@ -3399,6 +3401,9 @@ STR_SAVELOAD_LOAD_BUTTON                                        :{BLACK}載入
 STR_SAVELOAD_LOAD_TOOLTIP                                       :{BLACK}載入揀選嘅遊戲
 STR_SAVELOAD_LOAD_HEIGHTMAP_TOOLTIP                             :{BLACK}載入揀選嘅高度圖
 STR_SAVELOAD_LOAD_TOWN_DATA_TOOLTIP                             :{BLACK}載入揀選嘅市鎮數據
+STR_SAVELOAD_NEW_DIRECTORY_BUTTON                               :{BLACK}開新資料夾
+STR_SAVELOAD_NEW_DIRECTORY_TOOLTIP                              :{BLACK}喺而家位置開新資料夾
+STR_SAVELOAD_NEW_DIRECTORY_QUERY_CAPTION                        :{WHITE}輸入新資料夾名
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}遊戲詳細資料
 STR_SAVELOAD_DETAIL_NOT_AVAILABLE                               :{BLACK}沒有可用嘅資訊
 STR_SAVELOAD_DETAIL_COMPANY_INDEX                               :{SILVER}{COMMA}：{WHITE}{STRING}
@@ -5066,6 +5071,11 @@ STR_ERROR_AUTOSAVE_FAILED                                       :自動儲存失
 STR_ERROR_UNABLE_TO_READ_DRIVE                                  :{BLACK}讀取唔到磁碟
 STR_ERROR_GAME_SAVE_FAILED                                      :遊戲儲存失敗……
 STR_ERROR_UNABLE_TO_DELETE_FILE                                 :刪除唔到檔案
+STR_ERROR_CANNOT_CREATE_DIRECTORY                               :開唔到新資料夾
+STR_ERROR_DIRECTORY_NAME_IN_USE                                 :已有同名嘅檔案或資料夾喺度
+STR_ERROR_DIRECTORY_ILLEGAL_NAME                                :資料夾名唔可以有特殊字元
+STR_ERROR_DIRECTORY_LEADING_DOT                                 :資料夾名唔可以用句號或點做開頭
+STR_ERROR_DIRECTORY_PERMISSION_DENIED                           :你無權限喺呢度開新資料夾
 STR_ERROR_GAME_LOAD_FAILED                                      :遊戲載入失敗……
 STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR                   :內部錯誤：{STRING}
 STR_GAME_SAVELOAD_ERROR_BROKEN_SAVEGAME                         :損壞嘅存檔 - {STRING}
