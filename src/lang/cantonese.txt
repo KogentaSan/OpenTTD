@@ -822,7 +822,7 @@ STR_SMALLMAP_LEGENDA_BARE_LAND                                  :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_RAINFOREST                                 :{TINY_FONT}{BLACK}雨林
 STR_SMALLMAP_LEGENDA_FIELDS                                     :{TINY_FONT}{BLACK}田地
 STR_SMALLMAP_LEGENDA_TREES                                      :{TINY_FONT}{BLACK}樹木
-STR_SMALLMAP_LEGENDA_ROCKS                                      :{TINY_FONT}{BLACK}岩石
+STR_SMALLMAP_LEGENDA_ROCKS                                      :{TINY_FONT}{BLACK}石頭
 STR_SMALLMAP_LEGENDA_WATER                                      :{TINY_FONT}{BLACK}水
 STR_SMALLMAP_LEGENDA_NO_OWNER                                   :{TINY_FONT}{BLACK}無持有人
 STR_SMALLMAP_LEGENDA_TOWNS                                      :{TINY_FONT}{BLACK}市鎮
@@ -3101,7 +3101,7 @@ STR_TREES_MODE_FOREST_LG_TOOLTIP                                :{BLACK}框選�
 
 # Land generation window (SE)
 STR_TERRAFORM_TOOLBAR_LAND_GENERATION_CAPTION                   :{WHITE}生成地形
-STR_TERRAFORM_TOOLTIP_PLACE_ROCKY_AREAS_ON_LANDSCAPE            :{BLACK}喺版圖度設置岩石地帶。{}撳實「Ctrl」掣點擊可移除岩石地帶
+STR_TERRAFORM_TOOLTIP_PLACE_ROCKY_AREAS_ON_LANDSCAPE            :{BLACK}喺版圖度設置石頭地帶。{}撳實「Ctrl」掣點擊可移除石頭地帶
 STR_TERRAFORM_TOOLTIP_PLACE_ROUGH_AREAS_ON_LANDSCAPE            :{BLACK}喺版圖度設置崎嶇地帶。{}撳實「Ctrl」掣點擊可移除崎嶇地帶
 STR_TERRAFORM_TOOLTIP_DEFINE_DESERT_AREA                        :{BLACK}定義沙漠地帶。{}撳實「Ctrl」掣點擊可移除沙漠地帶
 STR_TERRAFORM_TOOLTIP_INCREASE_SIZE_OF_LAND_AREA                :{BLACK}增加地形升降嘅範圍
@@ -3231,7 +3231,7 @@ STR_LAI_CLEAR_DESCRIPTION_BARE_LAND                             :裸地
 STR_LAI_CLEAR_DESCRIPTION_GRASS                                 :草地
 STR_LAI_CLEAR_DESCRIPTION_FIELDS                                :田地
 STR_LAI_CLEAR_DESCRIPTION_DESERT                                :沙漠
-STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROCKS                           :積雪岩石
+STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROCKS                           :積雪石頭
 STR_LAI_CLEAR_DESCRIPTION_SNOWY_ROUGH_LAND                      :積雪荒地
 STR_LAI_CLEAR_DESCRIPTION_SNOWY_GRASS                           :積雪草地
 
@@ -3288,6 +3288,8 @@ STR_LAI_WATER_DESCRIPTION_LOCK                                  :水閘
 STR_LAI_WATER_DESCRIPTION_RIVER                                 :河流
 STR_LAI_WATER_DESCRIPTION_COAST_OR_RIVERBANK                    :海岸或河邊
 STR_LAI_WATER_DESCRIPTION_SHIP_DEPOT                            :船塢
+STR_LAI_WATER_DESCRIPTION_WATER_ROCKS                           :石頭
+STR_LAI_WATER_DESCRIPTION_COAST_ROCKS                           :海岸或河邊有石頭
 
 # Industries come directly from their industry names
 
@@ -3537,7 +3539,7 @@ STR_GENERATION_PROGRESS_NUM                                     :{BLACK}{NUM} / 
 STR_GENERATION_WORLD_GENERATION                                 :{BLACK}世界生成
 STR_GENERATION_LANDSCAPE_GENERATION                             :{BLACK}景觀生成
 STR_GENERATION_RIVER_GENERATION                                 :{BLACK}河流生成
-STR_GENERATION_CLEARING_TILES                                   :{BLACK}荒地與岩石地貌生成
+STR_GENERATION_CLEARING_TILES                                   :{BLACK}荒地與石頭地貌生成
 STR_GENERATION_TOWN_GENERATION                                  :{BLACK}市鎮生成
 STR_GENERATION_LAND_INDUSTRY_GENERATION                         :{BLACK}陸上工業生成
 STR_GENERATION_WATER_INDUSTRY_GENERATION                        :{BLACK}水上工業生成
