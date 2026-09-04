@@ -185,7 +185,7 @@ public:
 
 class SlTownSupplied : public VectorSaveLoadHandler<SlTownSupplied, Town, Town::SuppliedCargo> {
 public:
-	inline static const SaveLoad description[] = {
+	static inline const SaveLoad description[] = {
 		SLE_VAR(Town::SuppliedCargo, cargo, VarTypes::U8),
 		SLEG_STRUCTLIST("history", SlTownSuppliedHistory),
 	};
@@ -228,7 +228,7 @@ public:
 class SlTownAccepted : public VectorSaveLoadHandler<SlTownAccepted, Town, Town::AcceptedCargo> {
 public:
 	/** Saveload description for handler. */
-	inline static const SaveLoad description[] = {
+	static inline const SaveLoad description[] = {
 		SLE_VAR(Town::AcceptedCargo, cargo, VarTypes::U8),
 		SLEG_STRUCTLIST("history", SlTownAcceptedHistory),
 	};
@@ -299,7 +299,7 @@ static const SaveLoad _town_desc[] = {
 	SLE_CONDVAR(Town, xy, VarFileType::U16 | VarMemType::U32, SaveLoadVersion::MinVersion, SaveLoadVersion::MultipleRoadStops),
 	SLE_CONDVAR(Town, xy, VarTypes::U32, SaveLoadVersion::MultipleRoadStops, SaveLoadVersion::MaxVersion),
 
-	SLE_CONDVAR(Town, townnamegrfid, VarTypes::LABEL_REVERSE, SaveLoadVersion::NewGRFTownNames, SaveLoadVersion::MaxVersion),
+	SLE_CONDVAR(Town, townnamegrfid, VarTypes::LABEL, SaveLoadVersion::NewGRFTownNames, SaveLoadVersion::MaxVersion),
 	    SLE_VAR(Town, townnametype,          VarTypes::U16),
 	    SLE_VAR(Town, townnameparts,         VarTypes::U32),
 	SLE_CONDSSTR(Town, name, VarTypes::STR | StringValidationSetting::AllowControlCode, SaveLoadVersion::ReplaceCustomNameArray, SaveLoadVersion::MaxVersion),
