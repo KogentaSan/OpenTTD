@@ -138,6 +138,10 @@ void Ship::GetImage(Direction direction, EngineImageType image_type, VehicleSpri
 
 	if (image_type == EngineImageType::OnMap) direction = this->rotation;
 
+	/* Reverse the ship's visual direction if the ship is double-ended and the second end is used as the bow.
+	 * The ship's sprites might not be symmetrical, this avoids them flipping around visually. */
+	if (this->flags.Test(VehicleShipFlag::SecondEndFacingForward)) direction = ReverseDir(direction);
+
 	if (IsCustomVehicleSpriteNum(spritenum)) {
 		GetCustomVehicleSprite(this, direction, image_type, result);
 		if (result->IsValid()) return;
@@ -312,7 +316,7 @@ void Ship::MarkDirty()
 
 void Ship::PlayLeaveStationSound(bool force) const
 {
-	if (PlayVehicleSound(this, VSE_START, force)) return;
+	if (PlayVehicleSound(this, VehicleSoundEvent::Start, force)) return;
 	SndPlayVehicleFx(ShipVehInfo(this->engine_type)->sfx, this);
 }
 
@@ -391,6 +395,9 @@ static bool CheckShipStayInDepot(Ship *v)
 	assert(v->GetVehicleTrackdir() == Trackdir::X_NE || v->GetVehicleTrackdir() == Trackdir::Y_NW);
 	v->direction = DiagDirToDir(TrackdirToExitdir(v->GetVehicleTrackdir()));
 	if (CheckReverseShip(v)) v->direction = ReverseDir(v->direction);
+
+	/* Double-ended always exit a depot with the first end facing forward, consistent with train reversal behaviour. */
+	v->flags.Reset(VehicleShipFlag::SecondEndFacingForward);
 
 	v->state = AxisToTrack(GetShipDepotAxis(v->tile));
 	v->rotation = v->direction;
@@ -594,6 +601,12 @@ static void ReverseShipIntoTrackdir(Ship *v, Trackdir trackdir)
 	assert(v->direction != Direction::Invalid);
 	v->state = TrackdirBitsToTrackBits(TrackdirToTrackdirBits(trackdir));
 
+	/* Double-ended ships can instantly "turn" 180 degrees by switching which end is forward-facing. */
+	if (v->GetEngine()->info.extra_flags.Test(ExtraEngineFlag::IsDoubleEnded)) {
+		v->rotation = ReverseDir(v->rotation);
+		v->flags.Flip(VehicleShipFlag::SecondEndFacingForward);
+	}
+
 	/* Remember our current location to avoid movement glitch */
 	v->rotation_x_pos = v->x_pos;
 	v->rotation_y_pos = v->y_pos;
@@ -607,6 +620,12 @@ static void ReverseShipIntoTrackdir(Ship *v, Trackdir trackdir)
 static void ReverseShip(Ship *v)
 {
 	v->direction = ReverseDir(v->direction);
+
+	/* Double-ended ships can instantly "turn" 180 degrees by switching which end is forward-facing. */
+	if (v->GetEngine()->info.extra_flags.Test(ExtraEngineFlag::IsDoubleEnded)) {
+		v->rotation = ReverseDir(v->rotation);
+		v->flags.Flip(VehicleShipFlag::SecondEndFacingForward);
+	}
 
 	/* Remember our current location to avoid movement glitch */
 	v->rotation_x_pos = v->x_pos;
