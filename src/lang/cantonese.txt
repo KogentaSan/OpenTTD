@@ -20,7 +20,7 @@
 STR_NULL                                                        :
 STR_EMPTY                                                       :
 STR_UNDEFINED                                                   :(未定義字串)
-STR_JUST_NOTHING                                                :無
+STR_JUST_NOTHING                                                :冇
 
 # Cargo related strings
 # Plural cargo name
@@ -374,7 +374,7 @@ STR_SORT_BY_AVERAGE_PROFIT_THIS_YEAR                            :今年平均盈
 STR_SORT_BY_AVERAGE_PROFIT_THIS_PERIOD                          :本期平均盈利
 
 # Group by options for vehicle list
-STR_GROUP_BY_NONE                                               :無
+STR_GROUP_BY_NONE                                               :冇
 STR_GROUP_BY_SHARED_ORDERS                                      :共享柯打
 
 # Order button in shared orders vehicle list
@@ -639,7 +639,7 @@ STR_GRAPH_CARGO_PAYMENT_RATES_DAYS                              :{TINY_FONT}{BLA
 STR_GRAPH_CARGO_PAYMENT_RATES_SECONDS                           :{TINY_FONT}{BLACK}運輸所用秒數
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}將 10 單位（或 10,000 公升）貨物運送 20 格嘅費用
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}全部
-STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}無
+STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}冇
 STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}喺貨物運費表顯示全部類型嘅貨物
 STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}喺貨物運費表收埋全部類型嘅貨物
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}切換顯示貨物
@@ -730,7 +730,7 @@ STR_MUSIC_EFFECTS_VOLUME                                        :{TINY_FONT}{BLA
 STR_MUSIC_TRACK_NONE                                            :{TINY_FONT}{DKGREEN}--
 STR_MUSIC_TRACK_DIGIT                                           :{TINY_FONT}{DKGREEN}{ZEROFILL_NUM}
 STR_MUSIC_TITLE_NONE                                            :{TINY_FONT}{DKGREEN}------
-STR_MUSIC_TITLE_NOMUSIC                                         :{TINY_FONT}{DKGREEN}無音樂
+STR_MUSIC_TITLE_NOMUSIC                                         :{TINY_FONT}{DKGREEN}冇音樂
 STR_MUSIC_TITLE_NAME                                            :{TINY_FONT}{DKGREEN}「{STRING}」
 STR_MUSIC_TRACK                                                 :{TINY_FONT}{BLACK}聲軌
 STR_MUSIC_XTITLE                                                :{TINY_FONT}{BLACK}歌名
@@ -824,7 +824,7 @@ STR_SMALLMAP_LEGENDA_FIELDS                                     :{TINY_FONT}{BLA
 STR_SMALLMAP_LEGENDA_TREES                                      :{TINY_FONT}{BLACK}樹木
 STR_SMALLMAP_LEGENDA_ROCKS                                      :{TINY_FONT}{BLACK}石頭
 STR_SMALLMAP_LEGENDA_WATER                                      :{TINY_FONT}{BLACK}水
-STR_SMALLMAP_LEGENDA_NO_OWNER                                   :{TINY_FONT}{BLACK}無持有人
+STR_SMALLMAP_LEGENDA_NO_OWNER                                   :{TINY_FONT}{BLACK}冇持有人
 STR_SMALLMAP_LEGENDA_TOWNS                                      :{TINY_FONT}{BLACK}市鎮
 STR_SMALLMAP_LEGENDA_INDUSTRIES                                 :{TINY_FONT}{BLACK}工業
 STR_SMALLMAP_LEGENDA_DESERT                                     :{TINY_FONT}{BLACK}沙漠
@@ -836,7 +836,7 @@ STR_SMALLMAP_INDUSTRY                                           :{TINY_FONT}{STR
 STR_SMALLMAP_LINKSTATS                                          :{TINY_FONT}{STRING}
 STR_SMALLMAP_COMPANY                                            :{TINY_FONT}{COMPANY}
 STR_SMALLMAP_TOWN                                               :{TINY_FONT}{WHITE}{TOWN}
-STR_SMALLMAP_DISABLE_ALL                                        :{BLACK}無
+STR_SMALLMAP_DISABLE_ALL                                        :{BLACK}冇
 STR_SMALLMAP_ENABLE_ALL                                         :{BLACK}全部
 STR_SMALLMAP_SHOW_HEIGHT                                        :{BLACK}顯示高度
 STR_SMALLMAP_SHOW_INDUSTRY_NAMES                                :{BLACK}顯示工業名稱
@@ -1134,7 +1134,7 @@ STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :關於基礎音
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :取得內容
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :檢查及下載最新內容
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（無安裝社交平台擴充包）
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（冇安裝社交平台擴充包）
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING}（{STRING}）
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :平台：
@@ -1146,7 +1146,7 @@ STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_PLATFORM_NOT_RUNNING       :{ORANGE}{STRING
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_UNLOADED                   :{RED}未載入
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_DUPLICATE                  :{RED}擴充包重複
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_UNSUPPORTED_API            :{RED}唔支援嘅版本
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_INVALID_SIGNATURE          :{RED}無效簽署
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_INVALID_SIGNATURE          :{RED}冇效簽署
 
 STR_BASESET_STATUS                                              :{STRING} {RED}（總共有 {NUM} 項檔案缺少或損毀）
 
@@ -1179,8 +1179,8 @@ STR_CURRENCY_PREVIEW                                            :{LTBLUE}預覽�
 STR_CURRENCY_CUSTOM_CURRENCY_PREVIEW_TOOLTIP                    :{BLACK}將 10000 英鎊（￡）兌換成自訂貨幣金額
 STR_CURRENCY_CHANGE_PARAMETER                                   :{BLACK}修改自訂幣值參數
 
-STR_NONE                                                        :無
-STR_FUNDING_ONLY                                                :只挹注資金
+STR_NONE                                                        :冇
+STR_FUNDING_ONLY                                                :淨投入資金
 STR_MINIMAL                                                     :最小
 STR_NUM_VERY_LOW                                                :非常少
 STR_NUM_LOW                                                     :低
@@ -1189,7 +1189,7 @@ STR_NUM_HIGH                                                    :高
 STR_NUM_CUSTOM                                                  :自訂
 STR_NUM_CUSTOM_NUMBER                                           :自訂（{NUM}）
 
-STR_VARIETY_NONE                                                :無
+STR_VARIETY_NONE                                                :冇
 STR_VARIETY_VERY_LOW                                            :非常低
 STR_VARIETY_LOW                                                 :低
 STR_VARIETY_MEDIUM                                              :中
@@ -1212,13 +1212,13 @@ STR_SEA_LEVEL_CUSTOM                                            :自訂
 STR_SEA_LEVEL_CUSTOM_PERCENTAGE                                 :自訂（{NUM}%）
 
 ###length 4
-STR_RIVERS_NONE                                                 :無
+STR_RIVERS_NONE                                                 :冇
 STR_RIVERS_FEW                                                  :少
 STR_RIVERS_MODERATE                                             :適量
 STR_RIVERS_LOT                                                  :多
 
 ###length 3
-STR_BREAKDOWNS_NONE                                             :無
+STR_BREAKDOWNS_NONE                                             :冇
 STR_BREAKDOWNS_REDUCED                                          :減少
 STR_BREAKDOWNS_NORMAL                                           :普通
 
@@ -1249,14 +1249,14 @@ STR_CITY_APPROVAL_TOLERANT                                      :包容
 STR_CITY_APPROVAL_HOSTILE                                       :敵意
 STR_CITY_APPROVAL_PERMISSIVE                                    :縱容（全部操作都唔受影響）
 
-STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}無適合嘅 AI 可供使用……{}{}你可以使用「網上擴充內容」功能下載更多嘅 AI
+STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}冇適合嘅 AI 可供使用……{}{}你可以使用「網上擴充內容」功能下載更多嘅 AI
 
 # Settings tree in the Game Options window
 STR_CONFIG_SETTING_FILTER_TITLE                                 :篩選：
 STR_CONFIG_SETTING_EXPAND_ALL                                   :展開全部選項
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :折疊全部選項
 STR_CONFIG_SETTING_RESET_ALL                                    :重設全部數值
-STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(無解釋)
+STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(冇解釋)
 STR_CONFIG_SETTING_VALUE                                        :{ORANGE}{STRING}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}例牌值：{ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}設定種類：{ORANGE}{STRING}
@@ -1285,7 +1285,7 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :遊戲設定（
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :公司設定（儲存時保存；只影響新遊戲）
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :公司設定（儲存時保存；只影響目前嘅公司）
 
-STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- 無 -
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- 冇 -
 ###length 3
 STR_CONFIG_SETTING_CATEGORY_HIDES                               :在{PUSH_COLOUR}{SILVER}篩選設定{POP_COLOUR}欄度揀選{PUSH_COLOUR}{WHITE}{STRING}{POP_COLOUR}嚟顯示全部搜尋結果
 STR_CONFIG_SETTING_TYPE_HIDES                                   :在{PUSH_COLOUR}{SILVER}適用範圍{POP_COLOUR}欄度揀選{PUSH_COLOUR}{WHITE}全部適用範圍{POP_COLOUR}嚟顯示全部搜尋結果
@@ -1297,12 +1297,12 @@ STR_CONFIG_SETTING_ON                                           :着
 STR_CONFIG_SETTING_DISABLED                                     :停用
 
 ###length 3
-STR_CONFIG_SETTING_COMPANIES_OFF                                :無
+STR_CONFIG_SETTING_COMPANIES_OFF                                :冇
 STR_CONFIG_SETTING_COMPANIES_OWN                                :自家公司
 STR_CONFIG_SETTING_COMPANIES_ALL                                :全部公司
 
 ###length 3
-STR_CONFIG_SETTING_NONE                                         :無
+STR_CONFIG_SETTING_NONE                                         :冇
 STR_CONFIG_SETTING_ORIGINAL                                     :原版
 STR_CONFIG_SETTING_REALISTIC                                    :真實
 
@@ -1348,7 +1348,7 @@ STR_CONFIG_SETTING_SUBSIDY_DURATION_HELPTEXT_PERIODS            :設定發放財
 
 STR_CONFIG_SETTING_SUBSIDY_DURATION_VALUE                       :{UNITS_YEARS_OR_PERIODS}
 ###setting-zero-is-special
-STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :沒有補助
+STR_CONFIG_SETTING_SUBSIDY_DURATION_DISABLED                    :冇補助
 
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :建造成本：{STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :設定建造和購買物件嘅成本水平。
@@ -1361,12 +1361,12 @@ STR_CONFIG_SETTING_RECESSIONS                                   :經濟衰退：
 STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :如果此選項被生效，經濟衰退將會週期性發生。屆時全部工業生產都會大幅下降，直至衰退結束後回到之前嘅水平
 
 STR_CONFIG_SETTING_TRAIN_FLIP_REVERSE                           :准許列車喺後車嗰陣調頭：{STRING}
-STR_CONFIG_SETTING_TRAIN_FLIP_REVERSE_HELPTEXT                  :揀列車畀喺邊啲地方調頭折返。喺揀「全部」嗰陣，列車畀喺任何地方調頭折返。揀「掘頭路」嗰陣，如列車能繼續行前，則列車唔會喺車站入面調頭折返。揀「無」嗰陣，列車唔畀調頭折返，需要嗰陣先會後車，但如車尾無駕駛室，則會慢速行駛
+STR_CONFIG_SETTING_TRAIN_FLIP_REVERSE_HELPTEXT                  :揀列車畀喺邊啲地方調頭折返。喺揀「全部」嗰陣，列車畀喺任何地方調頭折返。揀「掘頭路」嗰陣，如列車能繼續行前，則列車唔會喺車站入面調頭折返。揀「冇」嗰陣，列車唔畀調頭折返，需要嗰陣先會後車，但如車尾冇駕駛室，則會慢速行駛
 
 ###length 3
 STR_CONFIG_SETTING_TRAIN_FLIP_REVERSE_ALL                       :全部
 STR_CONFIG_SETTING_TRAIN_FLIP_REVERSE_END_OF_LINE_ONLY          :剩係掘頭路
-STR_CONFIG_SETTING_TRAIN_FLIP_REVERSE_NONE                      :無
+STR_CONFIG_SETTING_TRAIN_FLIP_REVERSE_NONE                      :冇
 
 STR_CONFIG_SETTING_DISASTERS                                    :災難：{STRING}
 STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :切換那些有可能阻礙、摧毀車輛或基礎建設嘅災難。
@@ -1506,7 +1506,7 @@ STR_CONFIG_SETTING_PLANE_SPEED_VALUE                            :1 / {COMMA}
 STR_CONFIG_SETTING_PLANE_CRASHES                                :飛機墜機機率：{STRING}
 STR_CONFIG_SETTING_PLANE_CRASHES_HELPTEXT                       :設定發生空難嘅機率{}* 無論機率大細，大型飛機在小型機場降落時會有機會墜毀。
 ###length 3
-STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :無
+STR_CONFIG_SETTING_PLANE_CRASHES_NONE                           :冇
 STR_CONFIG_SETTING_PLANE_CRASHES_REDUCED                        :減少
 STR_CONFIG_SETTING_PLANE_CRASHES_NORMAL                         :正常
 
@@ -1663,7 +1663,7 @@ STR_CONFIG_SETTING_RIVER_AMOUNT_HELPTEXT                        :揀選欲生成
 STR_CONFIG_SETTING_TREE_PLACER                                  :樹木分佈演算法：{STRING}
 STR_CONFIG_SETTING_TREE_PLACER_HELPTEXT                         :揀選地圖上樹木嘅分布方式：如揀選「原版」設定，系統會把樹木均勻地散佈在地圖上；如揀選「改進版」，系統會在地圖上生成若干樹林。
 ###length 3
-STR_CONFIG_SETTING_TREE_PLACER_NONE                             :無
+STR_CONFIG_SETTING_TREE_PLACER_NONE                             :冇
 STR_CONFIG_SETTING_TREE_PLACER_ORIGINAL                         :原版
 STR_CONFIG_SETTING_TREE_PLACER_IMPROVED                         :改良版
 
@@ -1751,8 +1751,8 @@ STR_CONFIG_SETTING_OSK_ACTIVATION_HELPTEXT                      :揀選開啟螢
 ###length 4
 STR_CONFIG_SETTING_OSK_ACTIVATION_DISABLED                      :停用
 STR_CONFIG_SETTING_OSK_ACTIVATION_DOUBLE_CLICK                  :雙撳
-STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :單撳（揀選輸入方塊時）
-STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :單撳（立刻）
+STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK_FOCUS            :單撳（揀選輸入方塊嗰陣）
+STR_CONFIG_SETTING_OSK_ACTIVATION_SINGLE_CLICK                  :單撳（即刻）
 
 STR_CONFIG_SETTING_USE_RELAY_SERVICE                            :使用中繼服務：{STRING}
 STR_CONFIG_SETTING_USE_RELAY_SERVICE_HELPTEXT                   :嘗試連結伺服器失敗時，玩家可以使用中繼伺服嚟建立連結。「關閉」唔准使用中繼伺服，「詢問」使用中繼伺服前先詢問，「准許」直接使用中繼伺服
@@ -1764,9 +1764,9 @@ STR_CONFIG_SETTING_USE_RELAY_SERVICE_ALLOW                      :准許
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU                          :右鍵模擬：{STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_HELPTEXT                 :揀選模擬右撳鼠鍵嘅方法。
 ###length 3
-STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Command 鍵
-STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Control 鍵
-STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :無
+STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_COMMAND                  :Command 掣
+STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_CONTROL                  :Control 掣
+STR_CONFIG_SETTING_RIGHT_MOUSE_BTN_EMU_OFF                      :冇
 
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE                        :右鍵關閉視窗：{STRING}
 STR_CONFIG_SETTING_RIGHT_MOUSE_WND_CLOSE_HELPTEXT               :在視窗內用右鍵點擊可關閉視窗。可用右鍵關閉工具提示。
@@ -1788,7 +1788,7 @@ STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :如生效此選
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL                          :暫停嗰陣准許：{STRING}
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_HELPTEXT                 :揀選遊戲暫停時可以進行嘅操作。
 ###length 4
-STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_NO_ACTIONS               :無操作
+STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_NO_ACTIONS               :冇操作
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_CONSTRUCTION     :全部非建設操作
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_NON_LANDSCAPING      :全部，除了版圖更變操作外
 STR_CONFIG_SETTING_COMMAND_PAUSE_LEVEL_ALL_ACTIONS              :全部操作
@@ -1922,7 +1922,7 @@ STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY               :列車超過車
 STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY_HELPTEXT      :生效後，對於列車超出車站嘅長度會使到裝載得變得更慢。此設定不會影響尋路
 
 STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :開啟列車車廂速限：{STRING}
-STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :如生效此選項，無動力車廂嘅限速會影響列車嘅最高速度。
+STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :如生效此選項，冇動力車廂嘅限速會影響列車嘅最高速度。
 
 STR_CONFIG_SETTING_AIRCRAFT_RANGE                               :生效飛機最大航程：{STRING}
 STR_CONFIG_SETTING_AIRCRAFT_RANGE_HELPTEXT                      :生效後，NewGRF 將能限制飛機嘅最大航程
@@ -1970,7 +1970,7 @@ STR_CONFIG_SETTING_NEWS_NEW_VEHICLES                            :新車輛：{ST
 STR_CONFIG_SETTING_NEWS_NEW_VEHICLES_HELPTEXT                   :當新車輛型號面世時顯示報紙訊息。
 
 STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE                      :貨物需求狀態變動：{STRING}
-STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE_HELPTEXT             :顯示有關車站、碼頭或機場改變所需要貨物種類嘅訊息
+STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE_HELPTEXT             :顯示相關車站、碼頭或機場改變所需要貨物種類嘅訊息
 
 STR_CONFIG_SETTING_NEWS_SUBSIDIES                               :補助資訊：{STRING}
 STR_CONFIG_SETTING_NEWS_SUBSIDIES_HELPTEXT                      :顯示補助金相關事件嘅報紙訊息
@@ -1994,8 +1994,8 @@ STR_CONFIG_SETTING_ENDING_YEAR_ZERO                             :永不
 
 STR_CONFIG_SETTING_ECONOMY_TYPE                                 :經濟類型：{STRING}
 ###length 2
-STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :平滑經濟使得產量變化更容易發生，且每次變化嘅幅度會降低。凍結經濟使產量不會改變，並且工業不會倒閉。此設置可能對 NewGRF 所提供嘅工業類型無效。{}{} 即使凍結經濟時，每月嘅工業產量可能仍會有所不同，因為工業生產是按固定間隔發生嘅，與月份並不完全對應
-STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT_PERIOD                 :平滑經濟使得產量變化更容易發生，且每次變化嘅幅度會降低。凍結經濟使產量不會改變，並且工業不會倒閉。此設置可能對 NewGRF 所提供嘅工業類型無效。{}{} 即使凍結經濟時，每分鐘嘅工業產量可能仍會有所不同，因為工業生產是按固定間隔發生嘅，與分鐘並不完全對應
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT                        :平滑經濟使得產量變化更容易發生，且每次變化嘅幅度會降低。凍結經濟使產量不會改變，並且工業不會倒閉。此設置可能對 NewGRF 所提供嘅工業類型冇效。{}{} 即使凍結經濟時，每月嘅工業產量可能仍會有所不同，因為工業生產是按固定間隔發生嘅，與月份並不完全對應
+STR_CONFIG_SETTING_ECONOMY_TYPE_HELPTEXT_PERIOD                 :平滑經濟使得產量變化更容易發生，且每次變化嘅幅度會降低。凍結經濟使產量不會改變，並且工業不會倒閉。此設置可能對 NewGRF 所提供嘅工業類型冇效。{}{} 即使凍結經濟時，每分鐘嘅工業產量可能仍會有所不同，因為工業生產是按固定間隔發生嘅，與分鐘並不完全對應
 
 ###length 3
 STR_CONFIG_SETTING_ECONOMY_TYPE_ORIGINAL                        :原版
@@ -2118,7 +2118,7 @@ STR_CONFIG_SETTING_LARGER_TOWNS                                 :城市佔全部
 STR_CONFIG_SETTING_LARGER_TOWNS_HELPTEXT                        :設定可以成為城市嘅市鎮數量。城市嘅起始人口和增長速度皆比一般市鎮高。
 STR_CONFIG_SETTING_LARGER_TOWNS_VALUE                           :每 {COMMA} 座市鎮有 1 座城市
 ###setting-zero-is-special
-STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :無
+STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :冇
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER                         :初期城市規模倍率：{STRING}
 STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :設定遊戲開始時城市嘅大細（相對於一般市鎮而言）。
 STR_CONFIG_SETTING_TOWN_MIN_DISTANCE                            :市鎮之間最小距離：{STRING}
@@ -2238,13 +2238,13 @@ STR_CONFIG_ERROR_ARRAY                                          :函數錯誤「
 STR_CONFIG_ERROR_INVALID_VALUE                                  :「{STRING}」不是「{STRING}」嘅有效值
 STR_CONFIG_ERROR_TRAILING_CHARACTERS                            :在設定「{STRING}」嘅末尾有殘餘字句
 STR_CONFIG_ERROR_DUPLICATE_GRFID                                :正忽略 NewGRF「{STRING}」：重複嘅 NewGRF ID「{STRING}」
-STR_CONFIG_ERROR_INVALID_GRF                                    :正忽略無效嘅 NewGRF「{STRING}」：{STRING}
+STR_CONFIG_ERROR_INVALID_GRF                                    :正忽略冇效嘅 NewGRF「{STRING}」：{STRING}
 STR_CONFIG_ERROR_INVALID_GRF_NOT_FOUND                          :搵唔到
 STR_CONFIG_ERROR_INVALID_GRF_UNSAFE                             :此套件被標記為「不安全」，不能載入為靜態 NewGRF
 STR_CONFIG_ERROR_INVALID_GRF_SYSTEM                             :系統 NewGRF
 STR_CONFIG_ERROR_INVALID_GRF_INCOMPATIBLE                       :與此版本嘅 OpenTTD 不相容
 STR_CONFIG_ERROR_INVALID_GRF_UNKNOWN                            :不明
-STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL             :無效嘅壓縮層級值「{STRING}」
+STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_LEVEL             :冇效嘅壓縮層級值「{STRING}」
 STR_CONFIG_ERROR_INVALID_SAVEGAME_COMPRESSION_ALGORITHM         :本版本不支援存檔格式「{STRING}」，現改用「{STRING}」格式
 STR_CONFIG_ERROR_INVALID_BASE_GRAPHICS_NOT_FOUND                :正在忽略基礎圖像檔「{STRING}」：搵唔到檔案
 STR_CONFIG_ERROR_INVALID_BASE_SOUNDS_NOT_FOUND                  :正在忽略基礎聲效檔「{STRING}」：搵唔到檔案
@@ -2287,7 +2287,7 @@ STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE                             :{BLACK}揀選�
 STR_INTRO_TOOLTIP_GAME_OPTIONS                                  :{BLACK}開啟遊戲選項
 STR_INTRO_TOOLTIP_HIGHSCORE                                     :{BLACK}開啟積分排行榜
 STR_INTRO_TOOLTIP_HELP                                          :{BLACK}搵說明同網上資源
-STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}睇吓有無最新或可更新嘅內容可下載
+STR_INTRO_TOOLTIP_ONLINE_CONTENT                                :{BLACK}睇吓有冇最新或可更新嘅內容可下載
 STR_INTRO_TOOLTIP_QUIT                                          :{BLACK}離開「OpenTTD」
 
 STR_INTRO_BASESET                                               :{BLACK}目前揀選嘅基礎圖像檔缺少了 {NUM} 張貼圖。請確認基礎圖像檔是否有更新。
@@ -2646,7 +2646,7 @@ STR_NETWORK_ERROR_CLIENT_CONNECTION_LOST                        :連綫中斷
 STR_NETWORK_ERROR_CLIENT_PROTOCOL_ERROR                         :通訊協定錯誤
 STR_NETWORK_ERROR_CLIENT_NEWGRF_MISMATCH                        :NewGRF 不符合
 STR_NETWORK_ERROR_CLIENT_NOT_AUTHORIZED                         :未通過認證
-STR_NETWORK_ERROR_CLIENT_NOT_EXPECTED                           :收到無效或未預期嘅封包
+STR_NETWORK_ERROR_CLIENT_NOT_EXPECTED                           :收到冇效或未預期嘅封包
 STR_NETWORK_ERROR_CLIENT_WRONG_REVISION                         :版本錯誤
 STR_NETWORK_ERROR_CLIENT_NAME_IN_USE                            :已有人使用相同名稱
 STR_NETWORK_ERROR_CLIENT_WRONG_PASSWORD                         :密碼錯誤
@@ -2661,7 +2661,7 @@ STR_NETWORK_ERROR_CLIENT_TIMEOUT_PASSWORD                       :未能及時取
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_COMPUTER                       :一般逾時狀況
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_MAP                            :下載地圖需時太長
 STR_NETWORK_ERROR_CLIENT_TIMEOUT_JOIN                           :處理地圖需時太長
-STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :無效嘅客戶端名稱
+STR_NETWORK_ERROR_CLIENT_INVALID_CLIENT_NAME                    :冇效嘅客戶端名稱
 
 # Network related errors
 STR_NETWORK_SERVER_MESSAGE                                      :*** {STRING}
@@ -2712,7 +2712,7 @@ STR_CONTENT_SELECT_UPDATES_CAPTION_TOOLTIP                      :{BLACK}將全�
 STR_CONTENT_UNSELECT_ALL_CAPTION                                :{BLACK}取消全選
 STR_CONTENT_UNSELECT_ALL_CAPTION_TOOLTIP                        :{BLACK}將全部內容標示為不要下載
 STR_CONTENT_SEARCH_EXTERNAL                                     :{BLACK}尋找外面嘅網站
-STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP                             :{BLACK}在與OpenTTD無聯繫嘅網站搜尋沒有納入OpenTTD內容服務嘅內容
+STR_CONTENT_SEARCH_EXTERNAL_TOOLTIP                             :{BLACK}在與OpenTTD冇聯繫嘅網站搜尋沒有納入OpenTTD內容服務嘅內容
 STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER_CAPTION                  :{WHITE}你正在離開 OpenTTD!
 STR_CONTENT_SEARCH_EXTERNAL_DISCLAIMER                          :{WHITE}在外部網站下載內容嘅規則及條款可能跟OpenTTD引用嘅規則及條款不同。{}你需要參照有關網站嚟取得在OpenTTD安裝有關內容嘅資訊。{}你要繼續嗎？
 STR_CONTENT_FILTER_TITLE                                        :{BLACK}過濾條件（標籤／名稱）：
@@ -2793,7 +2793,7 @@ STR_TRANSPARENT_INVISIBLE_TOOLTIP                               :{BLACK}完全�
 # Linkgraph legend window
 STR_LINKGRAPH_LEGEND_CAPTION                                    :{BLACK}貨物流程索引
 STR_LINKGRAPH_LEGEND_ALL                                        :{BLACK}全部
-STR_LINKGRAPH_LEGEND_NONE                                       :{BLACK}無
+STR_LINKGRAPH_LEGEND_NONE                                       :{BLACK}冇
 STR_LINKGRAPH_LEGEND_SELECT_COMPANIES                           :{BLACK}揀選所顯示嘅公司
 STR_LINKGRAPH_LEGEND_COMPANY_TOOLTIP                            :{BLACK}{STRING}{}{COMPANY}
 
@@ -2923,7 +2923,7 @@ STR_HOUSE_PICKER_YEARS_FROM                                     :{BLACK}可用�
 STR_HOUSE_PICKER_YEARS_UNTIL                                    :{BLACK}可用年份：{GOLD}至 {NUM} 年前可用
 STR_HOUSE_PICKER_SIZE                                           :{BLACK}大細：{GOLD}{NUM}x{NUM} 格
 STR_HOUSE_PICKER_CARGO_ACCEPTED                                 :{BLACK}需要貨物：{GOLD}{STRING}
-STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}出產貨物：{GOLD}{CARGO_LIST}
+STR_HOUSE_PICKER_CARGO_PRODUCED                                 :{BLACK}供應貨物：{GOLD}{CARGO_LIST}
 
 STR_HOUSE_PICKER_CLASS_ZONE1                                    :市鎮邊緣
 STR_HOUSE_PICKER_CLASS_ZONE2                                    :郊區邊緣
@@ -3175,21 +3175,20 @@ STR_FUND_INDUSTRY_REMOVE_ALL_INDUSTRIES_CAPTION                 :{WHITE}移除�
 STR_FUND_INDUSTRY_REMOVE_ALL_INDUSTRIES_QUERY                   :{YELLOW}你確定要清除全部工業嗎？
 
 # Industry cargoes window
-STR_INDUSTRY_CARGOES_INDUSTRY_CAPTION                           :{WHITE}產業鍊 - {STRING}
-STR_INDUSTRY_CARGOES_CARGO_CAPTION                              :{WHITE}貨物嘅產業鍊 - {STRING}
-STR_INDUSTRY_CARGOES_PRODUCERS                                  :{WHITE}供應商
-STR_INDUSTRY_CARGOES_CUSTOMERS                                  :{WHITE}購買商
-STR_INDUSTRY_CARGOES_HOUSES                                     :{WHITE}房屋
-STR_INDUSTRY_CARGOES_INDUSTRY_TOOLTIP                           :{BLACK}按該工業可顯示其上下游工業
-STR_INDUSTRY_CARGOES_CARGO_TOOLTIP                              :{BLACK}{STRING}{}按該貨物可顯示其上下游工業
-STR_INDUSTRY_DISPLAY_CHAIN                                      :{BLACK}產業鍊
-STR_INDUSTRY_DISPLAY_CHAIN_TOOLTIP                              :{BLACK}顯示貨物嘅上下游工業
-STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP                            :{BLACK}於小地圖顯示
-STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP_TOOLTIP                    :{BLACK}將該產業鍊嘅工業顯示在小地圖上
-STR_INDUSTRY_CARGOES_SELECT_CARGO                               :{BLACK}揀選貨物種類
-STR_INDUSTRY_CARGOES_SELECT_CARGO_TOOLTIP                       :{BLACK}揀選你希望顯示嘅貨物種類
-STR_INDUSTRY_CARGOES_SELECT_INDUSTRY                            :{BLACK}揀選工業種類
-STR_INDUSTRY_CARGOES_SELECT_INDUSTRY_TOOLTIP                    :{BLACK}揀選你希望顯示嘅工業種類
+STR_INDUSTRY_CARGOES_INDUSTRY_CAPTION                           :產業鍊 - {STRING}
+STR_INDUSTRY_CARGOES_CARGO_CAPTION                              :貨物嘅產業鍊 - {STRING}
+STR_INDUSTRY_CARGOES_SOURCES                                    :嚟自
+STR_INDUSTRY_CARGOES_DESTINATIONS                               :目的地
+STR_INDUSTRY_CARGOES_HOUSES                                     :房屋
+STR_INDUSTRY_CARGOES_ACCEPTS_PRODUCES_TOOLTIP                   :{STRING}{}需要：{CARGO_LIST}{}供應：{CARGO_LIST}
+STR_INDUSTRY_DISPLAY_CHAIN                                      :產業鍊
+STR_INDUSTRY_DISPLAY_CHAIN_TOOLTIP                              :顯示貨物嘅供需產業
+STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP                            :喺小地圖睇到
+STR_INDUSTRY_CARGOES_NOTIFY_SMALLMAP_TOOLTIP                    :令呢條產業鍊嘅工業喺小地圖度睇到
+STR_INDUSTRY_CARGOES_SELECT_CARGO                               :揀選貨物
+STR_INDUSTRY_CARGOES_SELECT_CARGO_TOOLTIP                       :揀選需要睇到嘅貨物
+STR_INDUSTRY_CARGOES_SELECT_INDUSTRY                            :揀選工業
+STR_INDUSTRY_CARGOES_SELECT_INDUSTRY_TOOLTIP                    :揀選需要睇到嘅工業
 
 # Land area window
 STR_LAND_AREA_INFORMATION_CAPTION                               :{WHITE}土地資訊
@@ -3203,7 +3202,7 @@ STR_LAND_AREA_INFORMATION_ROAD_OWNER                            :{BLACK}馬路�
 STR_LAND_AREA_INFORMATION_TRAM_OWNER                            :{BLACK}電車軌持有人：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_RAIL_OWNER                            :{BLACK}鐵路持有人：{LTBLUE}{STRING}
 STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY                       :{BLACK}市政局：{LTBLUE}{STRING}
-STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE                  :無
+STR_LAND_AREA_INFORMATION_LOCAL_AUTHORITY_NONE                  :冇
 STR_LAND_AREA_INFORMATION_LANDINFO_COORDS                       :{BLACK}座標：{LTBLUE}{NUM} x {NUM} x {NUM}
 STR_LAND_AREA_INFORMATION_LANDINFO_INDEX                        :{BLACK}格編號：{LTBLUE}{NUM}（{HEX}）
 STR_LAND_AREA_INFORMATION_BUILD_DATE                            :{BLACK}建造或翻新於：{LTBLUE}{DATE_LONG}
@@ -3603,7 +3602,7 @@ STR_NEWGRF_SETTINGS_PALETTE_DEFAULT_32BPP                       :例牌（D）/ 
 STR_NEWGRF_SETTINGS_PALETTE_LEGACY                              :傳統（W）
 STR_NEWGRF_SETTINGS_PALETTE_LEGACY_32BPP                        :傳統（W）/ 32 bpp
 STR_NEWGRF_SETTINGS_PARAMETER                                   :{BLACK}參數：{SILVER}{STRING}
-STR_NEWGRF_SETTINGS_PARAMETER_NONE                              :無
+STR_NEWGRF_SETTINGS_PARAMETER_NONE                              :冇
 
 STR_NEWGRF_SETTINGS_NO_INFO                                     :{BLACK}沒有相關資訊
 STR_NEWGRF_SETTINGS_NOT_FOUND                                   :{RED}搵唔到符合嘅檔案
@@ -3678,7 +3677,7 @@ STR_NEWGRF_ERROR_POPUP                                          :{WHITE}NewGRF�
 STR_NEWGRF_ERROR_VERSION_NUMBER                                 :{1:STRING} 跟由 OpenTTD 回報嘅 TTDPatch 版本不合
 STR_NEWGRF_ERROR_DOS_OR_WINDOWS                                 :{1:STRING} 只適合用於 TTD 版本 {2:STRING}。
 STR_NEWGRF_ERROR_UNSET_SWITCH                                   :{1:STRING} 必須跟 {2:STRING} 一起使用
-STR_NEWGRF_ERROR_INVALID_PARAMETER                              :{1:STRING} 嘅參數無效：參數 {2:STRING}（{3:NUM}）
+STR_NEWGRF_ERROR_INVALID_PARAMETER                              :{1:STRING} 嘅參數冇效：參數 {2:STRING}（{3:NUM}）
 STR_NEWGRF_ERROR_LOAD_BEFORE                                    :{1:STRING} 必須於 {2:STRING} 之前載入。
 STR_NEWGRF_ERROR_LOAD_AFTER                                     :{1:STRING} 必須於 {2:STRING} 之後載入。
 STR_NEWGRF_ERROR_OTTD_VERSION_NUMBER                            :{1:STRING} 需要 OpenTTD 版本 {2:STRING} 或更新嘅版本
@@ -3687,15 +3686,15 @@ STR_NEWGRF_ERROR_TOO_MANY_NEWGRFS_LOADED                        :已載入太多
 STR_NEWGRF_ERROR_STATIC_GRF_CAUSES_DESYNC                       :在已載入 {2:STRING} 嘅情況下將 {1:STRING} 載入為靜態 NewGRF，可能會造成同步失敗
 STR_NEWGRF_ERROR_UNEXPECTED_SPRITE                              :第 {3:NUM} 個子畫面與預期嘅畫面不符
 STR_NEWGRF_ERROR_UNKNOWN_PROPERTY                               :不明嘅 Action 0 屬性 {4:HEX}（發生於第 {3:NUM} 個子畫面）
-STR_NEWGRF_ERROR_INVALID_ID                                     :子畫面企圖使用無效嘅識別碼（發生於第 {3:NUM} 個子畫面）
+STR_NEWGRF_ERROR_INVALID_ID                                     :子畫面企圖使用冇效嘅識別碼（發生於第 {3:NUM} 個子畫面）
 STR_NEWGRF_ERROR_CORRUPT_SPRITE                                 :{YELLOW}{STRING} 包含了毀損嘅 sprite。全部毀損嘅 sprite 會用紅色問號（？）顯示。
 STR_NEWGRF_ERROR_MULTIPLE_ACTION_8                              :過多嘅 Action 8 資料（發生於第 {3:NUM} 個子畫面）
 STR_NEWGRF_ERROR_READ_BOUNDS                                    :子畫面資料不足（發生於第 {3:NUM} 個子畫面）
 STR_NEWGRF_ERROR_GRM_FAILED                                     :要求嘅 NewGRF 資料不存在或無法讀取（發生於第 {3:NUM} 個子畫面）
 STR_NEWGRF_ERROR_FORCEFULLY_DISABLED                            :{2:STRING} 使 {1:STRING} 被停用
-STR_NEWGRF_ERROR_INVALID_SPRITE_LAYOUT                          :無效或無法識別嘅子畫面配置格式（發生於第 {3:NUM} 個子畫面）
+STR_NEWGRF_ERROR_INVALID_SPRITE_LAYOUT                          :冇效或無法識別嘅子畫面配置格式（發生於第 {3:NUM} 個子畫面）
 STR_NEWGRF_ERROR_LIST_PROPERTY_TOO_LONG                         :參數列表中有過多元素（貼圖 {3:NUM}，屬性{4:HEX}）
-STR_NEWGRF_ERROR_INDPROD_CALLBACK                               :無效嘅產品回傳函數（sprite {3:NUM}，「{2:STRING}」）
+STR_NEWGRF_ERROR_INDPROD_CALLBACK                               :冇效嘅產品回傳函數（sprite {3:NUM}，「{2:STRING}」）
 
 # NewGRF related 'general' warnings
 STR_NEWGRF_POPUP_CAUTION_CAPTION                                :{WHITE}注意！
@@ -3711,7 +3710,7 @@ STR_NEWGRF_UNPAUSE_WARNING_TITLE                                :{YELLOW}缺少�
 STR_NEWGRF_UNPAUSE_WARNING                                      :{WHITE}取消暫停可能會讓 OpenTTD 當掉，請不要回報之後嘅當機情形。{}你真嘅要取消暫停嗎？
 
 # NewGRF status
-STR_NEWGRF_LIST_NONE                                            :無
+STR_NEWGRF_LIST_NONE                                            :冇
 ###length 3
 STR_NEWGRF_LIST_ALL_FOUND                                       :全部檔案齊備
 STR_NEWGRF_LIST_COMPATIBLE                                      :{YELLOW}發現相容檔案
@@ -3722,20 +3721,20 @@ STR_NEWGRF_BROKEN                                               :{WHITE}NewGRF�
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生動力車廂列車狀態嘅變動
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生列車長度嘅變動
 STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內或不在改裝時卻發生列車運載量嘅變動
-STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}{1:COMPANY} 所擁有嘅列車 {0:VEHICLE} 長度無效。 這個錯誤可能是由 NewGRF 導致嘅，遊戲可能會無法同步或當機
+STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}{1:COMPANY} 所擁有嘅列車 {0:VEHICLE} 長度冇效。 這個錯誤可能是由 NewGRF 導致嘅，遊戲可能會無法同步或當機
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF「 {PUSH_COLOUR}{0:STRING}{POP_COLOUR} 」提供了錯誤嘅資訊
 STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}購買名單中「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」嘅貨物或改裝資訊與購買後嘅資訊不同。這可能會導致自動更新或自動更換時無法正確嘅改裝該車輛
 STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」會導致生產回傳函數陷入無限循環嘅錯誤
-STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}回傳函數 {1:HEX} 回傳了一個未知或無效嘅結果：{2:HEX}
+STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}回傳函數 {1:HEX} 回傳了一個未知或冇效嘅結果：{2:HEX}
 STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」產品回傳函數：{2:HEX} ，回傳了錯誤嘅貨物類型
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
-STR_NEWGRF_INVALID_CARGO                                        :<無效貨物>
+STR_NEWGRF_INVALID_CARGO                                        :<冇效貨物>
 STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
-STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} / <無效貨物>
-STR_NEWGRF_INVALID_ENGINE                                       :<無效嘅車輛型號>
-STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<無效工業>
+STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} / <冇效貨物>
+STR_NEWGRF_INVALID_ENGINE                                       :<冇效嘅車輛型號>
+STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<冇效工業>
 
 # Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
 STR_INVALID_VEHICLE                                             :<不明車輛>
@@ -3761,7 +3760,7 @@ STR_EDIT_SIGN_SIGN_OSKTITLE                                     :{BLACK}輸入�
 
 # Town directory window
 STR_TOWN_DIRECTORY_CAPTION                                      :{WHITE}市鎮（{COMMA} 座，總共 {COMMA} 座）
-STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- 無 -
+STR_TOWN_DIRECTORY_NONE                                         :{ORANGE}- 冇 -
 STR_TOWN_DIRECTORY_TOWN                                         :{ORANGE}{TOWN}{BLACK}（{COMMA}）
 STR_TOWN_DIRECTORY_CITY                                         :{ORANGE}{TOWN}{BLACK}（{COMMA}）{YELLOW}{CITY_ICON}
 STR_TOWN_DIRECTORY_LIST_TOOLTIP                                 :{BLACK}市鎮名稱 - 點擊名稱可將市鎮置於畫面正中央。撳實「Ctrl」掣點擊可於市鎮位置開啟新檢視視窗
@@ -3772,10 +3771,10 @@ STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN}（城市）
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}人口：{ORANGE}{COMMA}{BLACK}  房屋：{ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_LAST_MONTH_MAX                              :{BLACK}{CARGO_LIST} 上月：{ORANGE}{COMMA}{BLACK} 最多：{ORANGE}{COMMA}
-STR_TOWN_VIEW_CARGO_LAST_MINUTE_MAX                             :{BLACK}上分鐘出產嘅{WHITE}{CARGO_LIST}{BLACK}︰{ORANGE}{COMMA}{NBSP}{BLACK}最大產量︰{ORANGE}{COMMA}
+STR_TOWN_VIEW_CARGO_LAST_MINUTE_MAX                             :{BLACK}上分鐘供應嘅{WHITE}{CARGO_LIST}{BLACK}︰{ORANGE}{COMMA}{NBSP}{BLACK}最高供應量︰{ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}市鎮成長所需貨物：
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{RED}需要 {ORANGE}{STRING}
-STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} 必須是冬天
+STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} 必須係冬天
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} 交收咗
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED}（仍然需要）
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED                    :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{GREEN}（交收咗）
@@ -3843,7 +3842,7 @@ STR_GOALS_GLOBAL_BUTTON_HELPTEXT                                :{BLACK}顯示�
 STR_GOALS_COMPANY_BUTTON                                        :{BLACK}公司
 STR_GOALS_COMPANY_BUTTON_HELPTEXT                               :{BLACK}顯示公司目標
 STR_GOALS_TEXT                                                  :{ORANGE}{STRING}
-STR_GOALS_NONE                                                  :{ORANGE}- 當前無目標 -
+STR_GOALS_NONE                                                  :{ORANGE}- 目前冇目標 -
 STR_GOALS_PROGRESS                                              :{ORANGE}{STRING}
 STR_GOALS_PROGRESS_COMPLETE                                     :{GREEN}{STRING}
 STR_GOALS_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                    :{BLACK}點擊目標可將有關工業或市鎮又或是方格置於畫面正中央。按下「Ctrl」掣點擊目標可於有關工業或市鎮又或是方格位置開啟新檢視視窗
@@ -3880,7 +3879,7 @@ STR_GOAL_QUESTION_BUTTON_CLOSE                                  :關閉
 STR_SUBSIDIES_CAPTION                                           :{WHITE}補助資訊
 STR_SUBSIDIES_OFFERED_TITLE                                     :{BLACK}提供補助嘅運輸服務：
 STR_SUBSIDIES_OFFERED_FROM_TO                                   :{ORANGE}將 {STRING} 從 {STRING} 運到 {STRING}{YELLOW}（{STRING}）
-STR_SUBSIDIES_NONE                                              :{ORANGE}- 無 -
+STR_SUBSIDIES_NONE                                              :{ORANGE}- 冇 -
 STR_SUBSIDIES_SUBSIDISED_TITLE                                  :{BLACK}已獲補助嘅服務：
 STR_SUBSIDIES_SUBSIDISED_FROM_TO                                :{ORANGE}將 {STRING} 從 {STRING} 運到 {STRING}{YELLOW}（{COMPANY}{YELLOW}，{STRING}）
 STR_SUBSIDIES_TOOLTIP_CLICK_ON_SERVICE_TO_CENTER                :{BLACK}點擊當前嘅工業或市鎮可將畫面置於正中央。撳實「Ctrl」掣點擊可於工業或市鎮位置開啟新檢視視窗
@@ -3900,7 +3899,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}上一�
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}前往上一頁繼續觀看
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}下一頁
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}前往下一頁繼續觀看
-STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}無效嘅目標參照
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}冇效嘅目標參照
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}車站名稱 - 點擊名稱可將車站置於畫面正中央。撳實「Ctrl」掣點擊可於車站位置開啟新檢視視窗
@@ -3908,14 +3907,14 @@ STR_STATION_LIST_USE_CTRL_TO_SELECT_MORE_TOOLTIP                :{BLACK}撳實�
 STR_STATION_LIST_CAPTION                                        :{WHITE}{COMPANY} - 車站 {COMMA} 座
 STR_STATION_LIST_STATION                                        :{YELLOW}{STATION} {STATION_FEATURES}
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
-STR_STATION_LIST_NONE                                           :{YELLOW}- 無 -
+STR_STATION_LIST_NONE                                           :{YELLOW}- 冇 -
 STR_STATION_LIST_SELECT_ALL_FACILITIES_TOOLTIP                  :{BLACK}揀選全部設施
 STR_STATION_LIST_CARGO_FILTER_ALL_AND_NO_RATING                 :全部貨物種類和沒有評價
 STR_STATION_LIST_CARGO_FILTER_MULTIPLE                          :多種貨物類型
-STR_STATION_LIST_CARGO_FILTER_NO_CARGO_TYPES                    :無貨物種類
-STR_STATION_LIST_CARGO_FILTER_ONLY_NO_RATING                    :無貨物評價
-STR_STATION_LIST_CARGO_FILTER_SELECT_ALL                        :揀選全部和無評價
-STR_STATION_LIST_CARGO_FILTER_NO_RATING                         :無貨物評價
+STR_STATION_LIST_CARGO_FILTER_NO_CARGO_TYPES                    :冇貨物種類
+STR_STATION_LIST_CARGO_FILTER_ONLY_NO_RATING                    :冇貨物評價
+STR_STATION_LIST_CARGO_FILTER_SELECT_ALL                        :揀選全部同冇評價
+STR_STATION_LIST_CARGO_FILTER_NO_RATING                         :冇貨物評價
 STR_STATION_LIST_CARGO_FILTER_EXPAND                            :顯示更多……
 
 # Station view window
@@ -3923,7 +3922,7 @@ STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
 STR_STATION_VIEW_RESERVED                                       :{YELLOW}(已預留裝載{CARGO_SHORT})
 
-STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}需要貨物
+STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}需要
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}睇吓需要嘅貨物名單
 STR_STATION_VIEW_ACCEPTS_CARGO                                  :{BLACK}需要：{WHITE}{CARGO_LIST}
 
@@ -4048,7 +4047,7 @@ STR_COMPANY_VIEW_TRAINS                                         :{WHITE}列車 {
 STR_COMPANY_VIEW_ROAD_VEHICLES                                  :{WHITE}車輛 {COMMA} 部
 STR_COMPANY_VIEW_AIRCRAFT                                       :{WHITE}飛機 {COMMA} 架
 STR_COMPANY_VIEW_SHIPS                                          :{WHITE}船隻 {COMMA} 艘
-STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}無
+STR_COMPANY_VIEW_VEHICLES_NONE                                  :{WHITE}冇
 STR_COMPANY_VIEW_COMPANY_VALUE                                  :{GOLD}公司市值：{WHITE}{CURRENCY_LONG}
 STR_COMPANY_VIEW_INFRASTRUCTURE                                 :{GOLD}基礎建設：
 STR_COMPANY_VIEW_INFRASTRUCTURE_RAIL                            :{WHITE}{COMMA} 鐵路區塊
@@ -4056,7 +4055,7 @@ STR_COMPANY_VIEW_INFRASTRUCTURE_ROAD                            :{WHITE}{COMMA} 
 STR_COMPANY_VIEW_INFRASTRUCTURE_WATER                           :{WHITE}{COMMA} 格水道或海運設施
 STR_COMPANY_VIEW_INFRASTRUCTURE_STATION                         :{WHITE}{COMMA} 格車站設施
 STR_COMPANY_VIEW_INFRASTRUCTURE_AIRPORT                         :{WHITE}{COMMA} 座機場
-STR_COMPANY_VIEW_INFRASTRUCTURE_NONE                            :{WHITE}無
+STR_COMPANY_VIEW_INFRASTRUCTURE_NONE                            :{WHITE}冇
 
 STR_COMPANY_VIEW_BUILD_HQ_BUTTON                                :{BLACK}建造總部
 STR_COMPANY_VIEW_BUILD_HQ_TOOLTIP                               :{BLACK}建造公司總部
@@ -4103,7 +4102,7 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}每週�
 
 # Industry directory
 STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}工廠（{COMMA} 間，總共 {COMMA} 間）
-STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- 無 -
+STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- 冇 -
 STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW}（運送了{COMMA}%）{BLACK}
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
 STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}
@@ -4112,9 +4111,9 @@ STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUST
 STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {BLACK}{STRING}、{STRING}、{STRING}……（尚有 {NUM} 個未顯示）
 STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}工業名稱 - 點擊名稱可將工業置於畫面正中央。撳實「Ctrl」掣點擊可於工業位置開啟新檢視視窗
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}需要貨物：{SILVER}{STRING}
-STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}出產貨物：{SILVER}{STRING}
+STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}供應貨物：{SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_FILTER_ALL_TYPES                         :全部貨物種類
-STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :無
+STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :冇
 
 # Industry view
 STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTRY}
@@ -4128,7 +4127,7 @@ STR_INDUSTRY_VIEW_PRODUCTION_LEVEL                              :{BLACK}生產�
 STR_INDUSTRY_VIEW_INDUSTRY_ANNOUNCED_CLOSURE                    :{YELLOW}該工業已宣佈關閉！
 
 STR_INDUSTRY_VIEW_REQUIRES_N_CARGO                              :{BLACK}需要：{YELLOW}{STRING}
-STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}出產：{YELLOW}{STRING}
+STR_INDUSTRY_VIEW_PRODUCES_N_CARGO                              :{BLACK}供應：{YELLOW}{STRING}
 STR_INDUSTRY_VIEW_CARGO_LIST_EXTENSION                          :{STRING}{STRING}
 
 STR_INDUSTRY_VIEW_REQUIRES                                      :{BLACK}需要：
@@ -4255,7 +4254,7 @@ STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}容量�
 STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}動力車廂：{GOLD}+{POWER}{BLACK} 載重：{GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}可改裝為：{GOLD}{STRING}
 STR_PURCHASE_INFO_ALL_TYPES                                     :全部貨物種類
-STR_PURCHASE_INFO_NONE                                          :無
+STR_PURCHASE_INFO_NONE                                          :冇
 STR_PURCHASE_INFO_ENGINES_ONLY                                  :僅機車頭
 STR_PURCHASE_INFO_ALL_BUT                                       :全部貨物（{CARGO_LIST}除外）
 STR_PURCHASE_INFO_MAX_TE                                        :{BLACK}最大牽引力：{GOLD}{FORCE}
@@ -4279,7 +4278,7 @@ STR_PURCHASE_SORT_DETAILS_CAPACITY                              :{COMMA}
 ###length 3
 STR_CARGO_TYPE_FILTER_ALL                                       :全部貨物種類
 STR_CARGO_TYPE_FILTER_FREIGHT                                   :貨運
-STR_CARGO_TYPE_FILTER_NONE                                      :無
+STR_CARGO_TYPE_FILTER_NONE                                      :冇
 
 ###length VEHICLE_TYPES
 STR_BUY_VEHICLE_TRAIN_LIST_TOOLTIP                              :{BLACK}列車選單。點擊車輛檢視詳細資訊。撳實「Ctrl」掣點擊嚟睇翻或收埋該車輛嘅種類
@@ -4876,7 +4875,7 @@ STR_ORDER_CONDITIONAL_UNCONDITIONAL                             :跳到柯打 {C
 STR_ORDER_CONDITIONAL_NUM                                       :跳到柯打 {COMMA} 當符合 {STRING} {STRING} {COMMA}
 STR_ORDER_CONDITIONAL_TRUE_FALSE                                :跳到柯打 {COMMA} 當符合 {STRING} {STRING}
 
-STR_INVALID_ORDER                                               :{RED}（柯打無效）
+STR_INVALID_ORDER                                               :{RED}（柯打冇效）
 
 # Time table window
 STR_TIMETABLE_TITLE                                             :{WHITE}{VEHICLE}（時間表）
@@ -4983,7 +4982,7 @@ STR_AI_CONFIG_GAMELIST_TOOLTIP                                  :{BLACK}將於�
 STR_AI_CONFIG_AILIST_TOOLTIP                                    :{BLACK}下局開始時將生效AI
 STR_AI_CONFIG_HUMAN_PLAYER                                      :人類玩家
 STR_AI_CONFIG_RANDOM_AI                                         :求其 AI
-STR_AI_CONFIG_NONE                                              :(無)
+STR_AI_CONFIG_NONE                                              :（冇）
 STR_AI_CONFIG_NAME_VERSION                                      :{STRING} {YELLOW}v{NUM}
 STR_AI_CONFIG_MAX_COMPETITORS                                   :{LTBLUE}競爭對手數目上限：{ORANGE}{COMMA}
 STR_AI_CONFIG_COMPETITORS_INTERVAL                              :{LTBLUE}競爭對手建立公司嘅區間：{ORANGE}{COMMA} 分鐘
@@ -5078,7 +5077,7 @@ STR_ERROR_CANNOT_CREATE_DIRECTORY                               :開唔到新資
 STR_ERROR_DIRECTORY_NAME_IN_USE                                 :已有同名嘅檔案或資料夾喺度
 STR_ERROR_DIRECTORY_ILLEGAL_NAME                                :資料夾名唔可以有特殊字元
 STR_ERROR_DIRECTORY_LEADING_DOT                                 :資料夾名唔可以用句號或點做開頭
-STR_ERROR_DIRECTORY_PERMISSION_DENIED                           :你無權限喺呢度開新資料夾
+STR_ERROR_DIRECTORY_PERMISSION_DENIED                           :你冇權限喺呢度開新資料夾
 STR_ERROR_GAME_LOAD_FAILED                                      :遊戲載入失敗……
 STR_GAME_SAVELOAD_ERROR_BROKEN_INTERNAL_ERROR                   :內部錯誤：{STRING}
 STR_GAME_SAVELOAD_ERROR_BROKEN_SAVEGAME                         :損壞嘅存檔 - {STRING}
@@ -5091,7 +5090,7 @@ STR_GAME_SAVELOAD_NOT_AVAILABLE                                 :<唔用得>
 STR_WARNING_LOADGAME_REMOVED_TRAMS                              :{WHITE}此存檔版本不支援路面電車，已移除全部路面電車
 
 # Map generation messages
-STR_ERROR_COULD_NOT_CREATE_TOWN                                 :地圖生成失敗……{}{}……無適當地方可興建市鎮
+STR_ERROR_COULD_NOT_CREATE_TOWN                                 :地圖生成失敗……{}{}……冇啱嘅地方去興建市鎮
 STR_ERROR_NO_TOWN_IN_SCENARIO                                   :這個地圖沒有市鎮
 
 STR_ERROR_PNGMAP                                                :無法從 PNG 檔載入地形……
@@ -5184,7 +5183,7 @@ STR_ERROR_TOO_MANY_TOWNS                                        :已有太多市
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :地圖沒有足夠空間
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :路面做緊工程
 STR_ERROR_TOWN_CAN_T_DELETE                                     :無法刪除該市鎮……{}{}市鎮範圍內還有車站或機廠或無法移除嘅區塊
-STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :市中心無啱使嘅地方擺雕像
+STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :市中心冇啱使嘅地方擺雕像
 STR_ERROR_CAN_T_BUILD_HOUSE                                     :起唔到屋……
 
 # Industry related errors
@@ -5207,9 +5206,9 @@ STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED                            :伐木場淨畀
 STR_ERROR_CAN_ONLY_BE_BUILT_ABOVE_SNOW_LINE                     :淨畀喺雪綫以上地方起
 STR_ERROR_CAN_ONLY_BE_BUILT_BELOW_SNOW_LINE                     :淨畀喺雪綫以下地方起
 
-STR_ERROR_PROSPECTING_WAS_UNLUCKY                               :由於運氣差，勘探失敗，請重試
-STR_ERROR_NO_SUITABLE_PLACES_FOR_PROSPECTING                    :無適當地點勘探此類工業。
-STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES                     :無適當地點興建「{STRING}」工業
+STR_ERROR_PROSPECTING_WAS_UNLUCKY                               :由於運滯，勘探衰咗，請再試
+STR_ERROR_NO_SUITABLE_PLACES_FOR_PROSPECTING                    :冇啱嘅地點勘探呢種工業。
+STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES                     :冇啱嘅地點興建「{STRING}」工業
 STR_ERROR_NO_SUITABLE_PLACES_FOR_INDUSTRIES_EXPLANATION         :請修改參數嚟生成較佳嘅地圖
 
 # Station construction related errors
@@ -5309,7 +5308,7 @@ STR_ERROR_UNBUNCHING_NO_UNBUNCHING_CONDITIONAL                  :不能對擁有
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{VEHICLE} 將在更換後太長
-STR_ERROR_AUTOREPLACE_NOTHING_TO_DO                             :無自動更換或翻新嘅規則可套用
+STR_ERROR_AUTOREPLACE_NOTHING_TO_DO                             :冇自動更換或翻新嘅規則可套用
 STR_ERROR_AUTOREPLACE_MONEY_LIMIT                               :(金錢限制)
 STR_ERROR_AUTOREPLACE_INCOMPATIBLE_CARGO                        :新嘅車輛無法運輸 {STRING}
 STR_ERROR_AUTOREPLACE_INCOMPATIBLE_REFIT                        :新載具無法在調度柯打 {NUM}時進行改裝
@@ -5317,7 +5316,7 @@ STR_ERROR_AUTOREPLACE_INCOMPATIBLE_REFIT                        :新載具無法
 # Rail construction errors
 STR_ERROR_IMPOSSIBLE_TRACK_COMBINATION                          :不合理嘅路軌組合
 STR_ERROR_MUST_REMOVE_SIGNALS_FIRST                             :必須先拆毀燈號
-STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :無啱使嘅路軌
+STR_ERROR_NO_SUITABLE_RAILROAD_TRACK                            :冇啱使嘅路軌
 STR_ERROR_MUST_REMOVE_RAILROAD_TRACK                            :必須先拆毀鐵路
 STR_ERROR_CROSSING_ON_ONEWAY_ROAD                               :條路係單程路又或者封咗
 STR_ERROR_CROSSING_DISALLOWED_RAIL                              :呢種路軌整唔到交匯處
@@ -5343,7 +5342,7 @@ STR_ERROR_THERE_IS_NO_ROAD                                      :這裡沒有馬
 STR_ERROR_THERE_IS_NO_TRAMWAY                                   :這裡沒有電車軌
 STR_ERROR_CAN_T_CONVERT_ROAD                                    :無法轉換此處嘅馬路類型……
 STR_ERROR_CAN_T_CONVERT_TRAMWAY                                 :無法在此轉換電車路軌類型……
-STR_ERROR_NO_SUITABLE_ROAD                                      :無啱使嘅馬路
+STR_ERROR_NO_SUITABLE_ROAD                                      :冇啱使嘅馬路
 STR_ERROR_NO_SUITABLE_TRAMWAY                                   :沒有合適嘅電車路軌
 
 # Waterway construction errors
@@ -5494,9 +5493,9 @@ STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :請修改你嘅
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET                             :未有可用嘅車輛
 STR_ERROR_NO_VEHICLES_AVAILABLE_YET_EXPLANATION                 :在{DATE_SHORT}後開始新遊戲，或使用提供早期車輛嘅NewGRF
 
-STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL                    :無市鎮可整嘅馬路類型
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL                    :冇市鎮可整嘅馬路類型
 STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_AT_ALL_EXPLANATION        :請修改你嘅 NewGRF 設定
-STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET                       :而家無市鎮可整嘅馬路類型
+STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET                       :而家冇市鎮可整嘅馬路類型
 STR_ERROR_NO_TOWN_ROADTYPES_AVAILABLE_YET_EXPLANATION           :喺 {DATE_SHORT} 後開新遊戲，或用一款能夠畀早期市鎮可整馬路類型嘅 NewGRF
 
 # Specific vehicle errors
@@ -5530,19 +5529,19 @@ STR_ERROR_TOO_FAR_FROM_PREVIOUS_DESTINATION                     :與上個目的
 STR_ERROR_AIRCRAFT_NOT_ENOUGH_RANGE                             :飛機嘅飛行距離不足
 
 # Extra messages which go on the third line of errors, explaining why orders failed
-STR_ERROR_NO_RAIL_STATION                                       :無鐵路站
-STR_ERROR_NO_BUS_STATION                                        :無巴士站
-STR_ERROR_NO_TRUCK_STATION                                      :無貨車場
-STR_ERROR_NO_DOCK                                               :這裡無碼頭
-STR_ERROR_NO_AIRPORT                                            :無機場或直升機場
-STR_ERROR_NO_STOP_COMPATIBLE_ROAD_TYPE                          :無相容此馬路類型嘅車站
-STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :無兼容此有軌電車馬路類型嘅車站
-STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :無適合掛接巴士嘅巴士站。{}掛接巴士需要路邊巴士站，而非港灣式巴士站
-STR_ERROR_AIRPORT_NO_PLANES                                     :這架飛機不能降落在這個直升機場
-STR_ERROR_AIRPORT_NO_HELICOPTERS                                :這架直升機不能降落在這個機場
-STR_ERROR_NO_RAIL_WAYPOINT                                      :無鐵路分站
-STR_ERROR_NO_ROAD_WAYPOINT                                      :無路面分站
-STR_ERROR_NO_BUOY                                               :無浮標
+STR_ERROR_NO_RAIL_STATION                                       :冇鐵路站
+STR_ERROR_NO_BUS_STATION                                        :冇巴士站
+STR_ERROR_NO_TRUCK_STATION                                      :冇貨車場
+STR_ERROR_NO_DOCK                                               :呢度冇碼頭
+STR_ERROR_NO_AIRPORT                                            :冇機場或直升機場
+STR_ERROR_NO_STOP_COMPATIBLE_ROAD_TYPE                          :冇兼容呢種馬路類型嘅車站
+STR_ERROR_NO_STOP_COMPATIBLE_TRAM_TYPE                          :冇兼容呢種有軌電車馬路類型嘅車站
+STR_ERROR_NO_STOP_ARTICULATED_VEHICLE                           :冇掛接巴士啱用嘅巴士站。{}掛接巴士需要路邊巴士站，而非港灣式巴士站
+STR_ERROR_AIRPORT_NO_PLANES                                     :呢架飛機降落唔到喺呢個直升機場
+STR_ERROR_AIRPORT_NO_HELICOPTERS                                :呢架直升機降落唔到喺呢個機場
+STR_ERROR_NO_RAIL_WAYPOINT                                      :冇鐵路分站
+STR_ERROR_NO_ROAD_WAYPOINT                                      :冇路面分站
+STR_ERROR_NO_BUOY                                               :冇浮標
 
 # Timetable related errors
 STR_ERROR_CAN_T_TIMETABLE_VEHICLE                               :同唔到架車編排時間表……
