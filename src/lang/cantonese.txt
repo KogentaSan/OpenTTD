@@ -1245,9 +1245,9 @@ STR_TERRAIN_TYPE_CUSTOM_VALUE                                   :自訂高度（
 
 ###length 4
 STR_CITY_APPROVAL_LENIENT                                       :手鬆
-STR_CITY_APPROVAL_TOLERANT                                      :包容
-STR_CITY_APPROVAL_HOSTILE                                       :敵意
-STR_CITY_APPROVAL_PERMISSIVE                                    :縱容（全部操作都唔受影響）
+STR_CITY_APPROVAL_TOLERANT                                      :忍讓
+STR_CITY_APPROVAL_HOSTILE                                       :敵視
+STR_CITY_APPROVAL_PERMISSIVE                                    :由佢（全部操作都唔受影響）
 
 STR_WARNING_NO_SUITABLE_AI                                      :{WHITE}冇適合嘅 AI 可供使用……{}{}你可以使用「網上擴充內容」功能下載更多嘅 AI
 
@@ -1256,7 +1256,7 @@ STR_CONFIG_SETTING_FILTER_TITLE                                 :篩選：
 STR_CONFIG_SETTING_EXPAND_ALL                                   :展開全部選項
 STR_CONFIG_SETTING_COLLAPSE_ALL                                 :折疊全部選項
 STR_CONFIG_SETTING_RESET_ALL                                    :重設全部數值
-STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(冇解釋)
+STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :（冇解釋）
 STR_CONFIG_SETTING_VALUE                                        :{ORANGE}{STRING}
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}例牌值：{ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}設定種類：{ORANGE}{STRING}
