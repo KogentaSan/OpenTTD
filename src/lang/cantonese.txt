@@ -410,7 +410,7 @@ STR_TOOLBAR_TOOLTIP_BUILD_TRAMWAYS                              :{BLACK}鋪設�
 STR_TOOLBAR_TOOLTIP_BUILD_SHIP_DOCKS                            :{BLACK}興建水運設施
 STR_TOOLBAR_TOOLTIP_BUILD_AIRPORTS                              :{BLACK}興建機場
 STR_TOOLBAR_TOOLTIP_LANDSCAPING                                 :{BLACK}開啟地形選單、植樹選單或放置標誌
-STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}開啟聲效或音樂視窗
+STR_TOOLBAR_TOOLTIP_SHOW_SOUND_MUSIC_WINDOW                     :{BLACK}開啟聲效同音樂設定畫面
 STR_TOOLBAR_TOOLTIP_SHOW_LAST_MESSAGE_NEWS                      :{BLACK}睇翻上次消息、新聞報告、消息記錄或刪除全部訊息
 STR_TOOLBAR_TOOLTIP_LAND_BLOCK_INFORMATION                      :{BLACK}開啟土地資訊、截圖、關於 OpenTTD 同開發者工具
 STR_TOOLBAR_TOOLTIP_SWITCH_TOOLBAR                              :{BLACK}切換工具列
@@ -528,7 +528,7 @@ STR_LANDSCAPING_MENU_PLACE_SIGN                                 :放置標誌
 STR_LANDSCAPING_MENU_PLACE_OBJECT                               :放置物件
 
 # Music menu
-STR_TOOLBAR_SOUND_MUSIC                                         :聲效／音樂
+STR_TOOLBAR_SOUND_MUSIC                                         :聲效同音樂
 
 # Message menu
 STR_NEWS_MENU_LAST_MESSAGE_NEWS_REPORT                          :上次訊息／新聞報告
@@ -640,8 +640,8 @@ STR_GRAPH_CARGO_PAYMENT_RATES_SECONDS                           :{TINY_FONT}{BLA
 STR_GRAPH_CARGO_PAYMENT_RATES_TITLE                             :{TINY_FONT}{BLACK}將 10 單位（或 10,000 公升）貨物運送 20 格嘅費用
 STR_GRAPH_CARGO_ENABLE_ALL                                      :{TINY_FONT}{BLACK}全部
 STR_GRAPH_CARGO_DISABLE_ALL                                     :{TINY_FONT}{BLACK}冇
-STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}喺貨物運費表顯示全部類型嘅貨物
-STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}喺貨物運費表收埋全部類型嘅貨物
+STR_GRAPH_CARGO_TOOLTIP_ENABLE_ALL                              :{BLACK}喺圖表嗰度睇到全部貨物
+STR_GRAPH_CARGO_TOOLTIP_DISABLE_ALL                             :{BLACK}喺圖表嗰度收埋全部貨物
 STR_GRAPH_CARGO_PAYMENT_TOGGLE_CARGO                            :{BLACK}切換顯示貨物
 STR_GRAPH_CARGO_PAYMENT_CARGO                                   :{TINY_FONT}{BLACK}{STRING}
 
@@ -687,9 +687,9 @@ STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_TYCOON                     :運輸大亨
 STR_PERFORMANCE_DETAIL                                          :{WHITE}詳細營運評比
 STR_PERFORMANCE_DETAIL_KEY                                      :{BLACK}詳細資料
 STR_PERFORMANCE_DETAIL_AMOUNT_CURRENCY                          :{BLACK}({CURRENCY_SHORT}/{CURRENCY_SHORT})
-STR_PERFORMANCE_DETAIL_AMOUNT_INT                               :{BLACK}({COMMA}/{COMMA})
+STR_PERFORMANCE_DETAIL_AMOUNT_INT                               :{BLACK}（{COMMA}/{COMMA}）
 STR_PERFORMANCE_DETAIL_PERCENT                                  :{WHITE}{NUM}%
-STR_PERFORMANCE_DETAIL_SELECT_COMPANY_TOOLTIP                   :{BLACK}檢視此公司嘅詳細資訊
+STR_PERFORMANCE_DETAIL_SELECT_COMPANY_TOOLTIP                   :{BLACK}睇下呢間公司嘅詳細資料
 
 ###length 10
 STR_PERFORMANCE_DETAIL_VEHICLES                                 :{BLACK}車輛：
@@ -718,7 +718,7 @@ STR_PERFORMANCE_DETAIL_LOAN_TOOLTIP                             :{BLACK}公司�
 STR_PERFORMANCE_DETAIL_TOTAL_TOOLTIP                            :{BLACK}全部嘅總得分
 
 # Music window
-STR_MUSIC_JAZZ_JUKEBOX_CAPTION                                  :{WHITE}爵士樂點唱機
+STR_MUSIC_JAZZ_JUKEBOX_CAPTION                                  :{WHITE}音樂點唱機
 STR_MUSIC_PLAYLIST_ALL                                          :{TINY_FONT}{BLACK}全部
 STR_MUSIC_PLAYLIST_OLD_STYLE                                    :{TINY_FONT}{BLACK}古典
 STR_MUSIC_PLAYLIST_NEW_STYLE                                    :{TINY_FONT}{BLACK}潮流
@@ -734,33 +734,33 @@ STR_MUSIC_TITLE_NOMUSIC                                         :{TINY_FONT}{DKG
 STR_MUSIC_TITLE_NAME                                            :{TINY_FONT}{DKGREEN}「{STRING}」
 STR_MUSIC_TRACK                                                 :{TINY_FONT}{BLACK}聲軌
 STR_MUSIC_XTITLE                                                :{TINY_FONT}{BLACK}歌名
-STR_MUSIC_SHUFFLE                                               :{TINY_FONT}{BLACK}隨機
+STR_MUSIC_SHUFFLE                                               :{TINY_FONT}{BLACK}求其
 STR_MUSIC_PROGRAM                                               :{TINY_FONT}{BLACK}播放曲目
-STR_MUSIC_TOOLTIP_SKIP_TO_PREVIOUS_TRACK                        :{BLACK}跳到上首音樂
-STR_MUSIC_TOOLTIP_SKIP_TO_NEXT_TRACK_IN_SELECTION               :{BLACK}跳到下首音樂
-STR_MUSIC_TOOLTIP_STOP_PLAYING_MUSIC                            :{BLACK}停止播放音樂
-STR_MUSIC_TOOLTIP_START_PLAYING_MUSIC                           :{BLACK}開始播放音樂
+STR_MUSIC_TOOLTIP_SKIP_TO_PREVIOUS_TRACK                        :{BLACK}返去上首音樂
+STR_MUSIC_TOOLTIP_SKIP_TO_NEXT_TRACK_IN_SELECTION               :{BLACK}飛去下首音樂
+STR_MUSIC_TOOLTIP_STOP_PLAYING_MUSIC                            :{BLACK}唔播音樂
+STR_MUSIC_TOOLTIP_START_PLAYING_MUSIC                           :{BLACK}播放音樂
 STR_MUSIC_TOOLTIP_DRAG_SLIDERS_TO_SET_MUSIC                     :{BLACK}拖拉滑動去設定音樂同聲效嘅聲量
-STR_MUSIC_TOOLTIP_SELECT_ALL_TRACKS_PROGRAM                     :{BLACK}揀選「全部」播放曲目
-STR_MUSIC_TOOLTIP_SELECT_OLD_STYLE_MUSIC                        :{BLACK}揀選「古典」播放曲目
-STR_MUSIC_TOOLTIP_SELECT_NEW_STYLE_MUSIC                        :{BLACK}揀選「潮流」播放曲目
-STR_MUSIC_TOOLTIP_SELECT_EZY_STREET_STYLE                       :{BLACK}揀選「街頭表演」播放曲目
-STR_MUSIC_TOOLTIP_SELECT_CUSTOM_1_USER_DEFINED                  :{BLACK}揀選「自訂一」播放曲目
-STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}揀選「自訂二」播放曲目
-STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}轉換順序或隨機播放歌曲
-STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}開啟曲目揀選視窗
+STR_MUSIC_TOOLTIP_SELECT_ALL_TRACKS_PROGRAM                     :{BLACK}揀選「全部」曲目
+STR_MUSIC_TOOLTIP_SELECT_OLD_STYLE_MUSIC                        :{BLACK}揀選「古典」曲目
+STR_MUSIC_TOOLTIP_SELECT_NEW_STYLE_MUSIC                        :{BLACK}揀選「潮流」曲目
+STR_MUSIC_TOOLTIP_SELECT_EZY_STREET_STYLE                       :{BLACK}揀選「街頭表演」曲目
+STR_MUSIC_TOOLTIP_SELECT_CUSTOM_1_USER_DEFINED                  :{BLACK}揀選「自訂一」曲目
+STR_MUSIC_TOOLTIP_SELECT_CUSTOM_2_USER_DEFINED                  :{BLACK}揀選「自訂二」曲目
+STR_MUSIC_TOOLTIP_TOGGLE_PROGRAM_SHUFFLE                        :{BLACK}轉換順序或求其播放歌曲
+STR_MUSIC_TOOLTIP_SHOW_MUSIC_TRACK_SELECTION                    :{BLACK}開啟曲目揀選畫面
 
 # Playlist window
-STR_PLAYLIST_MUSIC_SELECTION_SETNAME                            :{WHITE}歌曲名單 - 「{STRING}」
+STR_PLAYLIST_MUSIC_SELECTION_SETNAME                            :{WHITE}歌曲名單 -「{STRING}」
 STR_PLAYLIST_TRACK_NAME                                         :{TINY_FONT}{LTBLUE}{ZEROFILL_NUM}「{STRING}」
 STR_PLAYLIST_TRACK_INDEX                                        :{TINY_FONT}{BLACK}聲軌索引
 STR_PLAYLIST_PROGRAM                                            :{TINY_FONT}{BLACK}播放曲目 - 「{STRING}」
 STR_PLAYLIST_CLEAR                                              :{TINY_FONT}{BLACK}清除
 STR_PLAYLIST_CHANGE_SET                                         :{BLACK}修改設定
-STR_PLAYLIST_TOOLTIP_CLEAR_CURRENT_PROGRAM_CUSTOM1              :{BLACK}清除目前播放曲目（剩係「自訂一」或「自訂二」）
-STR_PLAYLIST_TOOLTIP_CHANGE_SET                                 :{BLACK}揀選其他已裝嘅音樂檔
-STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}點擊聲軌嚟去加到目前播放曲目（剩係「自訂一」或「自訂二」）
-STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}點擊音樂嚟喺目前播放曲目喥刪除（剩係「自訂一」或「自訂二」）
+STR_PLAYLIST_TOOLTIP_CLEAR_CURRENT_PROGRAM_CUSTOM1              :{BLACK}清除而家播放曲目（剩係「自訂一」或「自訂二」）
+STR_PLAYLIST_TOOLTIP_CHANGE_SET                                 :{BLACK}揀選其他裝咗嘅音樂檔
+STR_PLAYLIST_TOOLTIP_CLICK_TO_ADD_TRACK                         :{BLACK}點擊聲軌嚟去加到而家播放曲目（剩係「自訂一」或「自訂二」）
+STR_PLAYLIST_TOOLTIP_CLICK_TO_REMOVE_TRACK                      :{BLACK}點擊音樂嚟喺而家播放曲目喥刪除（剩係「自訂一」或「自訂二」）
 
 # Highscore window
 STR_HIGHSCORE_TOP_COMPANIES                                     :{BIG_FONT}{BLACK}頂尖公司
@@ -850,12 +850,12 @@ STR_SMALLMAP_TOOLTIP_DISABLE_ALL_CARGOS                         :{BLACK}在地�
 STR_SMALLMAP_TOOLTIP_ENABLE_ALL_CARGOS                          :{BLACK}在地圖上顯示全部貨物種類
 
 # Status bar messages
-STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}睇翻上次消息／新聞報告
+STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}睇翻上次消息或新聞報告
 STR_STATUSBAR_COMPANY_NAME                                      :{SILVER}- -  {COMPANY}  - -
 STR_STATUSBAR_PAUSED                                            :{YELLOW}* *  遊戲暫停  *  *
-STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}* * 遊戲已暫停（等待貨物分配圖更新）* *
+STR_STATUSBAR_PAUSED_LINK_GRAPH                                 :{ORANGE}* * 遊戲暫停咗（等緊貨物分配圖更新）* *
 STR_STATUSBAR_AUTOSAVE                                          :{RED}自動儲存
-STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  遊戲儲存中 *  *
+STR_STATUSBAR_SAVING_GAME                                       :{RED}*  *  遊戲儲存緊 *  *
 
 STR_STATUSBAR_SPECTATOR                                         :{WHITE}（觀眾）
 STR_STATUSBAR_INFINITE_MONEY                                    :{WHITE}（無限）
@@ -881,24 +881,24 @@ STR_NEWS_ROAD_VEHICLE_CRASH                                     :{BIG_FONT}{BLAC
 STR_NEWS_AIRCRAFT_CRASH                                         :{BIG_FONT}{BLACK}空難！{}{COMMA} 個乘客同機組人員喺{STATION}不幸罹難
 STR_NEWS_PLANE_CRASH_OUT_OF_FUEL                                :{BIG_FONT}{BLACK}空難！{}飛機燃油耗盡，{COMMA} 個乘客同機組員不幸罹難！
 
-STR_NEWS_DISASTER_ZEPPELIN                                      :{BIG_FONT}{BLACK}{STATION}發生飛船災難！
-STR_NEWS_DISASTER_SMALL_UFO                                     :{BIG_FONT}{BLACK}車輛被 UFO 擊毀！
+STR_NEWS_DISASTER_ZEPPELIN                                      :{BIG_FONT}{BLACK}{STATION}飛行船發生空難！
+STR_NEWS_DISASTER_SMALL_UFO                                     :{BIG_FONT}{BLACK}車輛畀 UFO 擊毀！
 STR_NEWS_DISASTER_AIRPLANE_OIL_REFINERY                         :{BIG_FONT}{BLACK}{TOWN}附近嘅煉油廠發生爆炸！
 STR_NEWS_DISASTER_HELICOPTER_FACTORY                            :{BIG_FONT}{BLACK}{TOWN}附近嘅工廠發生事故被毀！
 STR_NEWS_DISASTER_BIG_UFO                                       :{BIG_FONT}{BLACK}UFO 喺{TOWN}附近著陸！
 STR_NEWS_DISASTER_COAL_MINE_SUBSIDENCE                          :{BIG_FONT}{BLACK}{TOWN}附近嘅煤礦發生坍塌而毀！
-STR_NEWS_DISASTER_FLOOD_VEHICLE                                 :{BIG_FONT}{BLACK}洪水！{}至少 {COMMA} 人失蹤，在洪水後宣告死亡
+STR_NEWS_DISASTER_FLOOD_VEHICLE                                 :{BIG_FONT}{BLACK}洪水淹沒！{}最少有{COMMA}人失蹤，災後據推測凶多吉少！
 
 STR_NEWS_COMPANY_IN_TROUBLE_TITLE                               :{BIG_FONT}{BLACK}運輸公司有麻煩了！
 STR_NEWS_COMPANY_IN_TROUBLE_DESCRIPTION                         :{BIG_FONT}{BLACK}除非盡快提升營運效率，否則{STRING}將被拍賣或宣佈破產！
 STR_NEWS_COMPANY_MERGER_TITLE                                   :{BIG_FONT}{BLACK}運輸公司合併！
-STR_NEWS_COMPANY_MERGER_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING}被{STRING}用 {CURRENCY_LONG} 收購！
+STR_NEWS_COMPANY_MERGER_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING}被{STRING}用{CURRENCY_LONG}收購！
 STR_NEWS_COMPANY_BANKRUPT_TITLE                                 :{BIG_FONT}{BLACK}破產！
 STR_NEWS_COMPANY_BANKRUPT_DESCRIPTION                           :{BIG_FONT}{BLACK}{STRING}已被出資者關閉，並出售全部資產！
 STR_NEWS_COMPANY_LAUNCH_TITLE                                   :{BIG_FONT}{BLACK}新運輸公司成立！
 STR_NEWS_COMPANY_LAUNCH_DESCRIPTION                             :{BIG_FONT}{BLACK}{STRING}開始喺{TOWN}附近建造！
 STR_NEWS_MERGER_TAKEOVER_TITLE                                  :{BIG_FONT}{BLACK}{STRING}被{STRING}用未公開嘅價格收購！
-STR_PRESIDENT_NAME_MANAGER                                      :{BLACK}{PRESIDENT_NAME}{}(總經理)
+STR_PRESIDENT_NAME_MANAGER                                      :{BLACK}{PRESIDENT_NAME}{}（總經理）
 
 STR_NEWS_NEW_TOWN                                               :{BLACK}{BIG_FONT}{STRING}出錢贊助興建「{TOWN}」新市鎮！
 STR_NEWS_NEW_TOWN_UNSPONSORED                                   :{BLACK}{BIG_FONT}一個叫{TOWN}嘅新市鎮啱啱落成咗!
@@ -924,27 +924,27 @@ STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_FARM                      :{BIG_FONT}{BLAC
 STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_SMOOTH                    :{BIG_FONT}{BLACK}{1:INDUSTRY}嘅{0:STRING}產量減少 {2:COMMA}%！
 
 ###length VEHICLE_TYPES
-STR_NEWS_TRAIN_IS_WAITING                                       :{WHITE}{VEHICLE} 喺車廠候命
-STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE} 喺車廠候命
-STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} 喺船塢候命
-STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} 喺機棚候命
+STR_NEWS_TRAIN_IS_WAITING                                       :{WHITE}{VEHICLE}喺車廠候命
+STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE}喺車廠候命
+STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE}喺船塢候命
+STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE}喺機棚候命
 ###next-name-looks-similar
 
 # Order review system / warnings
-STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE} 嘅柯打太少
-STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE} 有錯誤嘅計劃柯打
-STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE} 有重複嘅柯打
-STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE} 有去唔到嘅車站
-STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE} 嘅柯打度有機場跑道太短升降唔到
+STR_NEWS_VEHICLE_HAS_TOO_FEW_ORDERS                             :{WHITE}{VEHICLE}嘅柯打太少
+STR_NEWS_VEHICLE_HAS_VOID_ORDER                                 :{WHITE}{VEHICLE}有錯誤嘅計劃柯打
+STR_NEWS_VEHICLE_HAS_DUPLICATE_ENTRY                            :{WHITE}{VEHICLE}有重複嘅柯打
+STR_NEWS_VEHICLE_HAS_INVALID_ENTRY                              :{WHITE}{VEHICLE}有去唔到嘅車站
+STR_NEWS_PLANE_USES_TOO_SHORT_RUNWAY                            :{WHITE}{VEHICLE}嘅柯打度有機場跑道太短升降唔到
 
-STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE} 就嚟退役
-STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE} 應該盡快退役
-STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD_AND                        :{WHITE}{VEHICLE} 應盡快退役並更換新車
-STR_NEWS_TRAIN_IS_STUCK                                         :{WHITE}{VEHICLE} 搵唔到路綫繼續前行
-STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE} 蕩失路了
-STR_NEWS_VEHICLE_UNPROFITABLE_YEAR                              :{WHITE}{VEHICLE} 舊年嘅盈利為 {CURRENCY_LONG}
-STR_NEWS_VEHICLE_UNPROFITABLE_PERIOD                            :{WHITE}{VEHICLE} 上期嘅盈利為 {CURRENCY_LONG}
-STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE} 去唔到下個目的地，因為呢個目的地超出咗飛行範圍
+STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE}就嚟退役
+STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE}應該盡快退役
+STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD_AND                        :{WHITE}{VEHICLE}應盡快退役並更換新車
+STR_NEWS_TRAIN_IS_STUCK                                         :{WHITE}{VEHICLE}搵唔到路綫繼續前行
+STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE}蕩失路了
+STR_NEWS_VEHICLE_UNPROFITABLE_YEAR                              :{WHITE}{VEHICLE}舊年嘅盈利為{CURRENCY_LONG}
+STR_NEWS_VEHICLE_UNPROFITABLE_PERIOD                            :{WHITE}{VEHICLE}上期嘅盈利為{CURRENCY_LONG}
+STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE}去唔到下個目的地，因為呢個目的地超出咗飛行範圍
 
 STR_NEWS_ORDER_REFIT_FAILED                                     :{WHITE}{VEHICLE}因改裝失敗而終止咗
 STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}自動更新唔到 {VEHICLE}{}{STRING}
