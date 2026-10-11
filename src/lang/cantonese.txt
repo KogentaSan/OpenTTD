@@ -1642,9 +1642,9 @@ STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN                         :地形起伏度
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_HELPTEXT                :揀選在地圖上嘅山丘密度和形狀。平坦嘅地形會包含較少而且相互距離較遠嘅山丘；較粗糙嘅地形會包含密集嘅山丘
 ###length 4
 STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_SMOOTH             :非常平滑
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :平滑
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :高低不平
-STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :非常粗糙
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_SMOOTH                  :平伏
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_ROUGH                   :巖巉
+STR_CONFIG_SETTING_ROUGHNESS_OF_TERRAIN_VERY_ROUGH              :非常崎嶇
 
 STR_CONFIG_SETTING_AVERAGE_HEIGHT                               :平均海拔：{STRING}
 STR_CONFIG_SETTING_AVERAGE_HEIGHT_HELPTEXT                      :揀選地圖平均海拔。揀選「自動」時，系統將依照揀選嘅氣候去決定平均高度：「亞熱帶」為「平原」，「溫帶」與「玩具樂園」為「普通」，而「寒帶」則為「高原」。
@@ -4628,21 +4628,21 @@ STR_VEHICLE_INFO_CAPACITY_CAPACITY                              :{BLACK}容量�
 
 STR_VEHICLE_INFO_FEEDER_CARGO_VALUE                             :{BLACK}轉運潛在收入：{LTBLUE}{CURRENCY_LONG}
 
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}每隔 {LTBLUE}{COMMA}{NBSP}天進行維護{BLACK}　上次維護日期：{LTBLUE}{STRING}
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_MINUTES                  :{BLACK}維護區間：{LTBLUE}{COMMA}{NBSP}分鐘{BLACK}　{STRING}
-STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}維護間隔：{LTBLUE}{COMMA}%{BLACK}　{STRING}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_DAYS                     :{BLACK}每 {LTBLUE}{COMMA}{NBSP}日{BLACK}去維修　{STRING}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_MINUTES                  :{BLACK}每 {LTBLUE}{COMMA}{NBSP}分鐘{BLACK}去維護　{STRING}
+STR_VEHICLE_DETAILS_SERVICING_INTERVAL_PERCENT                  :{BLACK}可靠性下跌 {LTBLUE}{COMMA}%{BLACK} 時進行維護　{STRING}
 STR_VEHICLE_DETAILS_LAST_SERVICE_DATE                           :上次維護︰{LTBLUE}{DATE_LONG}
 STR_VEHICLE_DETAILS_LAST_SERVICE_MINUTES_AGO                    :上次維護︰{LTBLUE}{NUM} 分鐘前
 STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP_DAYS    :{BLACK}將維護間隔增加 10 天。撳實「Ctrl」掣點擊可將維護間隔增加 5 天
 STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP_MINUTES :{BLACK}將維護間隔增加 5 分鐘。撳實「Ctrl」掣點擊可將維護間隔增加 1 分鐘
-STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP_PERCENT :{BLACK}將維護間隔增加 10%。 撳實「Ctrl」掣點擊可將維護間隔增加 5%
+STR_VEHICLE_DETAILS_INCREASE_SERVICING_INTERVAL_TOOLTIP_PERCENT :{BLACK}將維護臨界值增加 10%。 撳實「Ctrl」掣點擊可將維護臨界值增加 5%
 STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP_DAYS    :{BLACK}將維護間隔減少 10 天。 撳實「Ctrl」掣點擊可將維護間隔減少 5 天
 STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP_MINUTES :{BLACK}將維護間隔減少 5 分鐘。 撳實「Ctrl」掣點擊可將維護間隔減少 1 分鐘
-STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP_PERCENT :{BLACK}將維護間隔減少 10%。 撳實「Ctrl」掣點擊可將維護間隔減少 5%
+STR_VEHICLE_DETAILS_DECREASE_SERVICING_INTERVAL_TOOLTIP_PERCENT :{BLACK}將維護臨界值減少 10%。 撳實「Ctrl」掣點擊可將維護臨界值減少 5%
 
 STR_SERVICE_INTERVAL_DROPDOWN_TOOLTIP                           :{BLACK}修改檢修週期所用單位
 STR_VEHICLE_DETAILS_DEFAULT                                     :例牌
-STR_VEHICLE_DETAILS_DAYS                                        :天
+STR_VEHICLE_DETAILS_DAYS                                        :日
 STR_VEHICLE_DETAILS_MINUTES                                     :分鐘
 STR_VEHICLE_DETAILS_PERCENT                                     :百分比
 
@@ -4664,8 +4664,8 @@ STR_VEHICLE_DETAILS_TRAIN_TOTAL_CAPACITY                        :{LTBLUE}{CARGO_
 STR_VEHICLE_DETAILS_TRAIN_CARGO_EMPTY                           :{LTBLUE}吉車（{CARGO_LONG}）{STRING}
 STR_VEHICLE_DETAILS_TRAIN_CARGO_FROM                            :{LTBLUE}{CARGO_LONG}（{CARGO_SHORT}）來自{STATION}{STRING}
 
-STR_VEHICLE_DETAILS_CARGO_EMPTY                                 :{LTBLUE}吉
-STR_VEHICLE_DETAILS_CARGO_FROM                                  :{LTBLUE}{CARGO_LONG} 來自 {STATION}
+STR_VEHICLE_DETAILS_CARGO_EMPTY                                 :{LTBLUE}吉車
+STR_VEHICLE_DETAILS_CARGO_FROM                                  :{LTBLUE}{CARGO_LONG}嚟自{STATION}
 
 STR_VEHICLE_DETAIL_TAB_CARGO                                    :{BLACK}貨物
 STR_VEHICLE_DETAILS_TRAIN_CARGO_TOOLTIP                         :{BLACK}顯示載貨詳細資料
@@ -4679,17 +4679,17 @@ STR_VEHICLE_DETAILS_TRAIN_ARTICULATED_RV_CAPACITY               :{BLACK}容量�
 # Vehicle refit
 STR_REFIT_CAPTION                                               :{WHITE}{VEHICLE}（改裝）
 STR_REFIT_TITLE                                                 :{GOLD}揀選要運送嘅貨物種類：
-STR_REFIT_NEW_CAPACITY_COST_OF_REFIT                            :{BLACK}新容量：{GOLD}{CARGO_LONG}{}{BLACK}改裝費用：{RED}{CURRENCY_LONG}
-STR_REFIT_NEW_CAPACITY_INCOME_FROM_REFIT                        :{BLACK}新容量：{GOLD}{CARGO_LONG}{}{BLACK}改裝所得嘅收入：{GREEN}{CURRENCY_LONG}
-STR_REFIT_NEW_CAPACITY_COST_OF_AIRCRAFT_REFIT                   :{BLACK}新容量：{GOLD}{CARGO_LONG}、{GOLD}{CARGO_LONG}{}{BLACK}整修成本：{RED}{CURRENCY_LONG}
+STR_REFIT_NEW_CAPACITY_COST_OF_REFIT                            :{BLACK}新容量：{GOLD}{CARGO_LONG}{}{BLACK}改裝費：{RED}{CURRENCY_LONG}
+STR_REFIT_NEW_CAPACITY_INCOME_FROM_REFIT                        :{BLACK}新容量：{GOLD}{CARGO_LONG}{}{BLACK}改裝後嘅收入：{GREEN}{CURRENCY_LONG}
+STR_REFIT_NEW_CAPACITY_COST_OF_AIRCRAFT_REFIT                   :{BLACK}新容量：{GOLD}{CARGO_LONG}、{GOLD}{CARGO_LONG}{}{BLACK}改裝費：{RED}{CURRENCY_LONG}
 STR_REFIT_NEW_CAPACITY_INCOME_FROM_AIRCRAFT_REFIT               :{BLACK}新容量：{GOLD}{CARGO_LONG}、{GOLD}{CARGO_LONG}{}{BLACK}改裝所得嘅收入：{GREEN}{CURRENCY_LONG}
 STR_REFIT_SELECT_VEHICLES_TOOLTIP                               :{BLACK}揀選車廂進行改裝。撳實「Ctrl」掣拖拉嚟揀選多節連續嘅車廂。點擊空白嘅範圍嚟揀選整列列車。撳實「Ctrl」掣點擊嚟揀選該車廂以及與其後串接嘅車廂
 
 ###length VEHICLE_TYPES
-STR_REFIT_TRAIN_LIST_TOOLTIP                                    :{BLACK}揀選要運輸嘅貨物種類
-STR_REFIT_ROAD_VEHICLE_LIST_TOOLTIP                             :{BLACK}揀選車輛要運送嘅貨物種類
-STR_REFIT_SHIP_LIST_TOOLTIP                                     :{BLACK}揀選要讓船隻運送嘅貨物種類
-STR_REFIT_AIRCRAFT_LIST_TOOLTIP                                 :{BLACK}揀選要讓飛機運送嘅貨物種類
+STR_REFIT_TRAIN_LIST_TOOLTIP                                    :{BLACK}揀選列車運送嘅貨物種類
+STR_REFIT_ROAD_VEHICLE_LIST_TOOLTIP                             :{BLACK}揀選車輛運送嘅貨物種類
+STR_REFIT_SHIP_LIST_TOOLTIP                                     :{BLACK}揀選船隻運送嘅貨物種類
+STR_REFIT_AIRCRAFT_LIST_TOOLTIP                                 :{BLACK}揀選飛機運送嘅貨物種類
 
 ###length VEHICLE_TYPES
 STR_REFIT_TRAIN_REFIT_BUTTON                                    :{BLACK}改裝列車
