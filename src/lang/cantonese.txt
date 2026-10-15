@@ -5811,7 +5811,7 @@ STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FIZZY_DRINK_TRUCK           :汽水貨車卡
 STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PLASTIC_TRUCK               :塑膠貨車卡
 
 ###length 88
-STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_REGAL_BUS                     :MPS 君主巴士
+STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_REGAL_BUS                     :MPS 君王巴士
 STR_VEHICLE_NAME_ROAD_VEHICLE_HEREFORD_LEOPARD_BUS              :禧福獵豹巴士
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_BUS                        :福斯特巴士
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_MKII_SUPERBUS              :福斯特二世超級巴士
@@ -5931,7 +5931,7 @@ STR_VEHICLE_NAME_AIRCRAFT_DARWIN_300                            :達爾文 300
 STR_VEHICLE_NAME_AIRCRAFT_DARWIN_400                            :達爾文 400
 STR_VEHICLE_NAME_AIRCRAFT_DARWIN_500                            :達爾文 500
 STR_VEHICLE_NAME_AIRCRAFT_DARWIN_600                            :達爾文 600
-STR_VEHICLE_NAME_AIRCRAFT_GURU_GALAXY                           :大師銀河
+STR_VEHICLE_NAME_AIRCRAFT_GURU_GALAXY                           :銀河大師
 STR_VEHICLE_NAME_AIRCRAFT_AIRTAXI_A21                           :空中的士 A21
 STR_VEHICLE_NAME_AIRCRAFT_AIRTAXI_A31                           :空中的士 A31
 STR_VEHICLE_NAME_AIRCRAFT_AIRTAXI_A32                           :空中的士 A32
