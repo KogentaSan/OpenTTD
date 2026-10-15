@@ -3011,7 +3011,7 @@ STR_ROAD_NAME_TRAM                                              :電車軌
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}車廠方向
 STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}揀選車廠方向
-STR_BUILD_DEPOT_TRAM_ORIENTATION_CAPTION                        :{WHITE}電車
+STR_BUILD_DEPOT_TRAM_ORIENTATION_CAPTION                        :{WHITE}電車廠方向
 STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}揀選電車機廠方向
 
 # Road vehicle station construction window
