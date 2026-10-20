@@ -671,7 +671,7 @@ STR_GRAPH_KEY_COMPANY_SELECTION_TOOLTIP                         :{BLACK}切換�
 
 # Company league window
 STR_COMPANY_LEAGUE_TABLE_CAPTION                                :{WHITE}公司排行榜
-STR_COMPANY_LEAGUE_COMPANY_NAME                                 :{ORANGE}{COMPANY} {BLACK}{COMPANY_NUM} 「{STRING}」
+STR_COMPANY_LEAGUE_COMPANY_NAME                                 :{ORANGE}{COMPANY} {BLACK}{COMPANY_NUM}「{STRING}」
 STR_COMPANY_LEAGUE_COMPANY_RANK                                 :{YELLOW}#{NUM}
 STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_ENGINEER                   :維修技工
 STR_COMPANY_LEAGUE_PERFORMANCE_TITLE_TRAFFIC_MANAGER            :交通管制員
@@ -881,7 +881,7 @@ STR_NEWS_ROAD_VEHICLE_CRASH                                     :{BIG_FONT}{BLAC
 STR_NEWS_AIRCRAFT_CRASH                                         :{BIG_FONT}{BLACK}空難！{}{COMMA} 個乘客同機組人員喺{STATION}不幸罹難
 STR_NEWS_PLANE_CRASH_OUT_OF_FUEL                                :{BIG_FONT}{BLACK}空難！{}飛機燃油耗盡，{COMMA} 個乘客同機組員不幸罹難！
 
-STR_NEWS_DISASTER_ZEPPELIN                                      :{BIG_FONT}{BLACK}{STATION}飛行船發生空難！
+STR_NEWS_DISASTER_ZEPPELIN                                      :{BIG_FONT}{BLACK}齊柏林飛空艇喺{STATION}出事！
 STR_NEWS_DISASTER_SMALL_UFO                                     :{BIG_FONT}{BLACK}車輛畀 UFO 擊毀！
 STR_NEWS_DISASTER_AIRPLANE_OIL_REFINERY                         :{BIG_FONT}{BLACK}{TOWN}附近嘅煉油廠發生爆炸！
 STR_NEWS_DISASTER_HELICOPTER_FACTORY                            :{BIG_FONT}{BLACK}{TOWN}附近嘅工廠發生事故被毀！
@@ -3920,7 +3920,7 @@ STR_STATION_LIST_CARGO_FILTER_EXPAND                            :顯示更多…
 # Station view window
 STR_STATION_VIEW_CAPTION                                        :{WHITE}{STATION} {STATION_FEATURES}
 STR_STATION_VIEW_WAITING_CARGO                                  :{WHITE}{CARGO_LONG}
-STR_STATION_VIEW_RESERVED                                       :{YELLOW}(已預留裝載{CARGO_SHORT})
+STR_STATION_VIEW_RESERVED                                       :{YELLOW}（預留咗裝載{CARGO_SHORT}）
 
 STR_STATION_VIEW_ACCEPTS_BUTTON                                 :{BLACK}需要
 STR_STATION_VIEW_ACCEPTS_TOOLTIP                                :{BLACK}睇吓需要嘅貨物名單
