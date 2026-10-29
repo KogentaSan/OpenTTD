@@ -3959,14 +3959,14 @@ STR_STATION_VIEW_GROUP_D_S_V                                    :終點 - 起點
 STR_STATION_VIEW_GROUP_D_V_S                                    :終點 - 途經 - 起點
 
 ###length 8
-STR_CARGO_RATING_APPALLING                                      :慘不忍睹
-STR_CARGO_RATING_VERY_POOR                                      :非常糟糕
-STR_CARGO_RATING_POOR                                           :糟糕
-STR_CARGO_RATING_MEDIOCRE                                       :普通
-STR_CARGO_RATING_GOOD                                           :不錯
-STR_CARGO_RATING_VERY_GOOD                                      :十分不錯
-STR_CARGO_RATING_EXCELLENT                                      :極佳
-STR_CARGO_RATING_OUTSTANDING                                    :傑出
+STR_CARGO_RATING_APPALLING                                      :差到無眼睇
+STR_CARGO_RATING_VERY_POOR                                      :好鬼差
+STR_CARGO_RATING_POOR                                           :麻麻地
+STR_CARGO_RATING_MEDIOCRE                                       :一般
+STR_CARGO_RATING_GOOD                                           :幾好
+STR_CARGO_RATING_VERY_GOOD                                      :都幾好
+STR_CARGO_RATING_EXCELLENT                                      :好正
+STR_CARGO_RATING_OUTSTANDING                                    :正到爆
 
 STR_STATION_VIEW_CENTER_TOOLTIP                                 :{BLACK}將車站置於畫面正中央。撳實「Ctrl」掣點擊可於車站位置開啟新檢視視窗
 STR_STATION_VIEW_EDIT_TOOLTIP                                   :{BLACK}重新命名車站或移動車站標誌
@@ -4037,7 +4037,7 @@ STR_FINANCES_INFRASTRUCTURE_BUTTON                              :{BLACK}基礎�
 
 # Company view
 STR_COMPANY_VIEW_CAPTION                                        :{WHITE}{COMPANY} {BLACK}{COMPANY_NUM}
-STR_COMPANY_VIEW_PRESIDENT_MANAGER_TITLE                        :{WHITE}{PRESIDENT_NAME}{}{GOLD}(總經理)
+STR_COMPANY_VIEW_PRESIDENT_MANAGER_TITLE                        :{WHITE}{PRESIDENT_NAME}{}{GOLD}（總經理）
 
 STR_COMPANY_VIEW_INAUGURATED_TITLE                              :{GOLD}成立於：{WHITE}{NUM}
 STR_COMPANY_VIEW_INAUGURATED_TITLE_WALLCLOCK                    :{GOLD}成立於：{WHITE}{NUM}（第 {NUM} 週期）
@@ -4101,14 +4101,14 @@ STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_YEAR                      :{WHITE}每年{C
 STR_COMPANY_INFRASTRUCTURE_VIEW_TOTAL_PERIOD                    :{WHITE}每週期{CURRENCY_LONG}
 
 # Industry directory
-STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}工廠（{COMMA} 間，總共 {COMMA} 間）
+STR_INDUSTRY_DIRECTORY_CAPTION                                  :{WHITE}工業（{COMMA} 間，總共 {COMMA} 間）
 STR_INDUSTRY_DIRECTORY_NONE                                     :{ORANGE}- 冇 -
-STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW}（運送了{COMMA}%）{BLACK}
+STR_INDUSTRY_DIRECTORY_ITEM_INFO                                :{BLACK}{CARGO_LONG}{STRING}{YELLOW}（運咗{COMMA}%）
 STR_INDUSTRY_DIRECTORY_ITEM_NOPROD                              :{ORANGE}{INDUSTRY}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}、{STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY} {BLACK}{STRING}、{STRING}、{STRING}
-STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY} {BLACK}{STRING}、{STRING}、{STRING}……（尚有 {NUM} 個未顯示）
+STR_INDUSTRY_DIRECTORY_ITEM_PROD1                               :{ORANGE}{INDUSTRY}{BLACK}{STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD2                               :{ORANGE}{INDUSTRY}{BLACK}{STRING}、{STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PROD3                               :{ORANGE}{INDUSTRY}{BLACK}{STRING}、{STRING}、{STRING}
+STR_INDUSTRY_DIRECTORY_ITEM_PRODMORE                            :{ORANGE}{INDUSTRY}{BLACK}{STRING}、{STRING}、{STRING}……（重有 {NUM} 個未睇到）
 STR_INDUSTRY_DIRECTORY_LIST_TOOLTIP                             :{BLACK}工業名稱 - 點擊名稱可將工業置於畫面正中央。撳實「Ctrl」掣點擊可於工業位置開啟新檢視視窗
 STR_INDUSTRY_DIRECTORY_ACCEPTED_CARGO_FILTER                    :{BLACK}需要貨物：{SILVER}{STRING}
 STR_INDUSTRY_DIRECTORY_PRODUCED_CARGO_FILTER                    :{BLACK}供應貨物：{SILVER}{STRING}
@@ -4119,7 +4119,7 @@ STR_INDUSTRY_DIRECTORY_FILTER_NONE                              :冇
 STR_INDUSTRY_VIEW_CAPTION                                       :{WHITE}{INDUSTRY}
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MONTH_TITLE                   :{BLACK}上月產量：
 STR_INDUSTRY_VIEW_PRODUCTION_LAST_MINUTE_TITLE                  :{BLACK}上分鐘產量︰
-STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_LONG}{STRING}{BLACK}（運送了 {COMMA}%）
+STR_INDUSTRY_VIEW_TRANSPORTED                                   :{YELLOW}{CARGO_LONG}{STRING}{BLACK}（運咗{COMMA}%）
 STR_INDUSTRY_VIEW_LOCATION_TOOLTIP                              :{BLACK}將工業置於畫面正中央。撳實「Ctrl」掣點擊可於工業位置開啟新檢視視窗
 STR_INDUSTRY_VIEW_CARGO_GRAPH                                   :{BLACK}貨物圖表
 STR_INDUSTRY_VIEW_CARGO_GRAPH_TOOLTIP                           :{BLACK}檢視工業貨物運送記錄圖表
