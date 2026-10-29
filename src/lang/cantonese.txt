@@ -941,7 +941,7 @@ STR_NEWS_VEHICLE_IS_GETTING_OLD                                 :{WHITE}{VEHICLE
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD                            :{WHITE}{VEHICLE}應該盡快退役
 STR_NEWS_VEHICLE_IS_GETTING_VERY_OLD_AND                        :{WHITE}{VEHICLE}應盡快退役並更換新車
 STR_NEWS_TRAIN_IS_STUCK                                         :{WHITE}{VEHICLE}搵唔到路綫繼續前行
-STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE}蕩失路了
+STR_NEWS_VEHICLE_IS_LOST                                        :{WHITE}{VEHICLE}蕩失路喇
 STR_NEWS_VEHICLE_UNPROFITABLE_YEAR                              :{WHITE}{VEHICLE}舊年嘅盈利為{CURRENCY_LONG}
 STR_NEWS_VEHICLE_UNPROFITABLE_PERIOD                            :{WHITE}{VEHICLE}上期嘅盈利為{CURRENCY_LONG}
 STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE}去唔到下個目的地，因為呢個目的地超出咗飛行範圍
@@ -2689,8 +2689,8 @@ STR_NETWORK_MESSAGE_CLIENT_COMPANY_NEW                          :*** {STRING} �
 STR_NETWORK_MESSAGE_CLIENT_LEFT                                 :*** {STRING} 已離開遊戲（{STRING}）
 STR_NETWORK_MESSAGE_NAME_CHANGE                                 :*** {STRING} 已修改其名稱為 {STRING}
 STR_NETWORK_MESSAGE_GIVE_MONEY                                  :*** {0:STRING} 付給{2:STRING} {1:CURRENCY_LONG}
-STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}伺服器關閉連綫
-STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}伺服器重新啟動中……{}{}請稍候……
+STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :伺服器關閉連綫
+STR_NETWORK_MESSAGE_SERVER_REBOOT                               :伺服器重新啟動中……{}{}請稍候……
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} 已被踢出。原因：({STRING})
 
 STR_NETWORK_ERROR_COORDINATOR_REGISTRATION_FAILED               :伺服器註冊失敗
@@ -3707,7 +3707,7 @@ STR_NEWGRF_TOO_MANY_NEWGRFS                                     :加入唔到檔
 STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :已為搵唔到嘅檔案載入相容嘅 GRF
 STR_NEWGRF_DISABLED_WARNING                                     :搵唔到嘅 GRF 檔案被停用咗
 STR_NEWGRF_UNPAUSE_WARNING_TITLE                                :{YELLOW}缺少某啲 GRF 檔案
-STR_NEWGRF_UNPAUSE_WARNING                                      :取消暫停可能會讓 OpenTTD 當掉，請不要回報之後嘅當機情形。{}你真嘅要取消暫停嗎？
+STR_NEWGRF_UNPAUSE_WARNING                                      :{WHITE}取消暫停可能會讓 OpenTTD 當掉，請不要回報之後嘅當機情形。{}你真嘅要取消暫停嗎？
 
 # NewGRF status
 STR_NEWGRF_LIST_NONE                                            :冇
