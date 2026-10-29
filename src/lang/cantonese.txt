@@ -2693,10 +2693,10 @@ STR_NETWORK_MESSAGE_SERVER_SHUTDOWN                             :{WHITE}伺服�
 STR_NETWORK_MESSAGE_SERVER_REBOOT                               :{WHITE}伺服器重新啟動中……{}{}請稍候……
 STR_NETWORK_MESSAGE_KICKED                                      :*** {STRING} 已被踢出。原因：({STRING})
 
-STR_NETWORK_ERROR_COORDINATOR_REGISTRATION_FAILED               :{WHITE}伺服器註冊失敗
-STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE              :{WHITE}已有另一個伺服器用同樣嘅邀請碼進行註冊。正切換到『單機』遊戲模式。
-STR_NETWORK_ERROR_COORDINATOR_ISOLATED                          :{WHITE}你嘅伺服器不接受遠端連綫
-STR_NETWORK_ERROR_COORDINATOR_ISOLATED_DETAIL                   :{WHITE}其他玩家將連唔到綫去你嘅伺服器
+STR_NETWORK_ERROR_COORDINATOR_REGISTRATION_FAILED               :伺服器註冊失敗
+STR_NETWORK_ERROR_COORDINATOR_REUSE_OF_INVITE_CODE              :已有另一個伺服器用同樣嘅邀請碼進行註冊。正切換到『單機』遊戲模式。
+STR_NETWORK_ERROR_COORDINATOR_ISOLATED                          :你嘅伺服器不接受遠端連綫
+STR_NETWORK_ERROR_COORDINATOR_ISOLATED_DETAIL                   :其他玩家將連唔到綫去你嘅伺服器
 
 # Content downloading window
 STR_CONTENT_TITLE                                               :{WHITE}網上擴充資料
@@ -2763,7 +2763,7 @@ STR_CONTENT_DOWNLOAD_COMPLETE                                   :{WHITE}下載�
 STR_CONTENT_DOWNLOAD_PROGRESS_SIZE                              :{WHITE}{BYTES} / {BYTES} 已下載（{NUM} %）
 
 # Content downloading error messages
-STR_CONTENT_ERROR_COULD_NOT_CONNECT                             :{WHITE}連接唔到內容伺服器……
+STR_CONTENT_ERROR_COULD_NOT_CONNECT                             :連接唔到內容伺服器……
 STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD                            :下載衰咗……
 STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD_FILE_NOT_WRITABLE          :檔案寫入唔到
 STR_CONTENT_ERROR_COULD_NOT_EXTRACT                             :解壓唔到下載咗嘅檔案
@@ -3423,7 +3423,7 @@ STR_SAVELOAD_OSKTITLE                                           :{BLACK}為存�
 STR_MAPGEN_WORLD_GENERATION_CAPTION                             :{WHITE}生成世界
 STR_MAPGEN_MAPSIZE                                              :{BLACK}地圖大細：
 STR_MAPGEN_MAPSIZE_TOOLTIP                                      :{BLACK}揀選地圖大細（單位為方格）。實際可供使用嘅方格數量會比所設定嘅值略低
-STR_MAPGEN_BY                                                   :{BLACK}*
+STR_MAPGEN_BY                                                   :{BLACK}x
 STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}市鎮數量：
 STR_MAPGEN_NUMBER_OF_TOWNS_TOOLTIP                              :{BLACK}揀選市鎮密度，或輸入自訂數字
 STR_MAPGEN_TOWN_NAME_LABEL                                      :{BLACK}市鎮名稱:
@@ -3549,12 +3549,12 @@ STR_GENERATION_PREPARING_TILELOOP                               :{BLACK}執行�
 STR_GENERATION_PREPARING_SCRIPT                                 :{BLACK}正在執行腳本
 STR_GENERATION_PREPARING_GAME                                   :{BLACK}準備遊戲中
 
-STR_TOWN_DATA_ERROR_LOAD_FAILED                                 :{WHITE}市鎮資料載入失敗
-STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY                  :{WHITE}JSON 檔案格式不正確
-STR_TOWN_DATA_ERROR_TOWN_FORMATTED_INCORRECTLY                  :{WHITE}{STRING}嘅資料格式唔正確
-STR_TOWN_DATA_ERROR_BAD_COORDINATE                              :{WHITE}{STRING}嘅座標格式唔正確，代表高度圖總尺寸比例嘅座標必須為 0 到 1 之間嘅一個小數位數值
+STR_TOWN_DATA_ERROR_LOAD_FAILED                                 :市鎮資料載入失敗
+STR_TOWN_DATA_ERROR_JSON_FORMATTED_INCORRECTLY                  :JSON 檔案格式不正確
+STR_TOWN_DATA_ERROR_TOWN_FORMATTED_INCORRECTLY                  :{STRING}嘅資料格式唔正確
+STR_TOWN_DATA_ERROR_BAD_COORDINATE                              :{STRING}嘅座標格式唔正確，代表高度圖總尺寸比例嘅座標必須為 0 到 1 之間嘅一個小數位數值
 
-STR_TOWN_DATA_ERROR_FAILED_TO_FOUND_TOWN                        :{WHITE}有{NUM}座市鎮搵唔到合適嘅生成地點，並喺市鎮嘅原定地點建立咗標誌
+STR_TOWN_DATA_ERROR_FAILED_TO_FOUND_TOWN                        :有{NUM}座市鎮搵唔到合適嘅生成地點，並喺市鎮嘅原定地點建立咗標誌
 
 # NewGRF settings
 STR_NEWGRF_SETTINGS_CAPTION                                     :{WHITE}NewGRF 設定
@@ -3700,14 +3700,14 @@ STR_NEWGRF_ERROR_INDPROD_CALLBACK                               :冇效嘅產品
 STR_NEWGRF_POPUP_CAUTION_CAPTION                                :{WHITE}注意！
 STR_NEWGRF_CONFIRMATION_TEXT                                    :{YELLOW}你將會修改玩緊嘅遊戲；咁可能會令到 OpenTTD 當機或整壞遊戲資料，修改後遇到錯誤時請不要回報。{}你真嘅確定要這麼做嗎？
 
-STR_NEWGRF_DUPLICATE_GRFID                                      :{WHITE}新增唔到檔案：GRF ID 重複
+STR_NEWGRF_DUPLICATE_GRFID                                      :新增唔到檔案：GRF ID 重複
 STR_NEWGRF_COMPATIBLE_LOADED                                    :{ORANGE}搵唔到符合嘅檔案（已載入相容嘅 GRF）
-STR_NEWGRF_TOO_MANY_NEWGRFS                                     :{WHITE}加入唔到檔案：已到咗 NewGRF 檔案數量上限
+STR_NEWGRF_TOO_MANY_NEWGRFS                                     :加入唔到檔案：已到咗 NewGRF 檔案數量上限
 
-STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :{WHITE}已為搵唔到嘅檔案載入相容嘅 GRF
-STR_NEWGRF_DISABLED_WARNING                                     :{WHITE}搵唔到嘅 GRF 檔案被停用咗
+STR_NEWGRF_COMPATIBLE_LOAD_WARNING                              :已為搵唔到嘅檔案載入相容嘅 GRF
+STR_NEWGRF_DISABLED_WARNING                                     :搵唔到嘅 GRF 檔案被停用咗
 STR_NEWGRF_UNPAUSE_WARNING_TITLE                                :{YELLOW}缺少某啲 GRF 檔案
-STR_NEWGRF_UNPAUSE_WARNING                                      :{WHITE}取消暫停可能會讓 OpenTTD 當掉，請不要回報之後嘅當機情形。{}你真嘅要取消暫停嗎？
+STR_NEWGRF_UNPAUSE_WARNING                                      :取消暫停可能會讓 OpenTTD 當掉，請不要回報之後嘅當機情形。{}你真嘅要取消暫停嗎？
 
 # NewGRF status
 STR_NEWGRF_LIST_NONE                                            :冇
@@ -3717,17 +3717,17 @@ STR_NEWGRF_LIST_COMPATIBLE                                      :{YELLOW}發現�
 STR_NEWGRF_LIST_MISSING                                         :{RED}缺少檔案
 
 # NewGRF 'it's broken' warnings
-STR_NEWGRF_BROKEN                                               :{WHITE}NewGRF「 {PUSH_COLOUR}{0:STRING}{POP_COLOUR} 」嘅行為可能會造成同步失敗或當機
-STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生動力車廂列車狀態嘅變動
-STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生列車長度嘅變動
-STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內或不在改裝時卻發生列車運載量嘅變動
-STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}{1:COMPANY} 所擁有嘅列車 {0:VEHICLE} 長度冇效。 這個錯誤可能是由 NewGRF 導致嘅，遊戲可能會同步唔到或當機
+STR_NEWGRF_BROKEN                                               :NewGRF「 {PUSH_COLOUR}{0:STRING}{POP_COLOUR} 」嘅行為可能會造成同步失敗或當機
+STR_NEWGRF_BROKEN_POWERED_WAGON                                 :「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生動力車廂列車狀態嘅變動
+STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內卻發生列車長度嘅變動
+STR_NEWGRF_BROKEN_CAPACITY                                      :「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」不在機廠內或不在改裝時卻發生列車運載量嘅變動
+STR_BROKEN_VEHICLE_LENGTH                                       :{1:COMPANY} 所擁有嘅列車 {0:VEHICLE} 長度冇效。 這個錯誤可能是由 NewGRF 導致嘅，遊戲可能會同步唔到或當機
 
-STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF「 {PUSH_COLOUR}{0:STRING}{POP_COLOUR} 」提供了錯誤嘅資訊
-STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :{WHITE}購買名單中「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」嘅貨物或改裝資訊與購買後嘅資訊不同。咁可能會導致自動更新或自動更換嗰陣改裝唔到呢架車輛啱使嘅野
-STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :{WHITE}「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」會導致生產回傳函數陷入無限循環嘅錯誤
-STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :{WHITE}回傳函數 {1:HEX} 回傳了一個未知或冇效嘅結果：{2:HEX}
-STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :{WHITE}「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」產品回傳函數：{2:HEX} ，回傳了錯誤嘅貨物類型
+STR_NEWGRF_BUGGY                                                :NewGRF「 {PUSH_COLOUR}{0:STRING}{POP_COLOUR} 」提供了錯誤嘅資訊
+STR_NEWGRF_BUGGY_ARTICULATED_CARGO                              :購買名單中「 {PUSH_COLOUR}{1:ENGINE}{POP_COLOUR} 」嘅貨物或改裝資訊與購買後嘅資訊不同。咁可能會導致自動更新或自動更換嗰陣改裝唔到呢架車輛啱使嘅野
+STR_NEWGRF_BUGGY_ENDLESS_PRODUCTION_CALLBACK                    :「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」會導致生產回傳函數陷入無限循環嘅錯誤
+STR_NEWGRF_BUGGY_UNKNOWN_CALLBACK_RESULT                        :回傳函數 {1:HEX} 回傳了一個未知或冇效嘅結果：{2:HEX}
+STR_NEWGRF_BUGGY_INVALID_CARGO_PRODUCTION_CALLBACK              :「 {PUSH_COLOUR}{1:STRING}{POP_COLOUR} 」產品回傳函數：{2:HEX} ，回傳了錯誤嘅貨物類型
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
 STR_NEWGRF_INVALID_CARGO                                        :<冇效貨物>
@@ -3745,12 +3745,12 @@ STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}正在�
 STR_NEWGRF_SCAN_STATUS                                          :{BLACK}估計共有 {1:NUM} 個 NewGRF 套件，現已掃描 {0:NUM} 個……
 
 # Sign list window
-STR_SIGN_LIST_CAPTION                                           :{WHITE}標誌名單 - 標誌 {COMMA} 個
+STR_SIGN_LIST_CAPTION                                           :{WHITE}標誌名單 - {COMMA}個標誌
 STR_SIGN_LIST_MATCH_CASE                                        :{BLACK}符合大細寫
 STR_SIGN_LIST_MATCH_CASE_TOOLTIP                                :{BLACK}切換比對標誌名稱是否與篩選字串相符時是否要符合大細寫
 
 # Sign window
-STR_EDIT_SIGN_CAPTION                                           :{WHITE}編輯標誌文字
+STR_EDIT_SIGN_CAPTION                                           :{WHITE}編輯標誌
 STR_EDIT_SIGN_LOCATION_TOOLTIP                                  :{BLACK}將標誌置於畫面正中央。撳實「Ctrl」掣點擊可於標誌位置開啟新檢視視窗
 STR_EDIT_SIGN_NEXT_SIGN_TOOLTIP                                 :{BLACK}前往下個標誌
 STR_EDIT_SIGN_PREVIOUS_SIGN_TOOLTIP                             :{BLACK}前往上個標誌
@@ -3771,9 +3771,9 @@ STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN}（城市）
 STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}人口：{ORANGE}{COMMA}{BLACK}  房屋：{ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_LAST_MONTH_MAX                              :{BLACK}{CARGO_LIST} 上月：{ORANGE}{COMMA}{BLACK} 最多：{ORANGE}{COMMA}
-STR_TOWN_VIEW_CARGO_LAST_MINUTE_MAX                             :{BLACK}上分鐘供應嘅{WHITE}{CARGO_LIST}{BLACK}︰{ORANGE}{COMMA}{NBSP}{BLACK}最高供應量︰{ORANGE}{COMMA}
+STR_TOWN_VIEW_CARGO_LAST_MINUTE_MAX                             :{BLACK}上分鐘供應嘅{CARGO_LIST}：{ORANGE}{COMMA}{BLACK}　最高供應量：{ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}市鎮成長所需貨物：
-STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{RED}需要 {ORANGE}{STRING}
+STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_GENERAL             :{RED}需要：{ORANGE}{STRING}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED_WINTER              :{ORANGE}{STRING}{BLACK} 必須係冬天
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_DELIVERED_GENERAL            :{ORANGE}{STRING}{GREEN} 交收咗
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH_REQUIRED                     :{ORANGE}{CARGO_TINY} / {CARGO_LONG}{RED}（仍然需要）
