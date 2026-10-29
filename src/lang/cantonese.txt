@@ -285,7 +285,7 @@ STR_TOOLTIP_CATCHMENT                                           :{BLACK}顯示�
 
 STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}關閉視窗
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}視窗標題 - 點此拖拉可移動視窗
-STR_TOOLTIP_SHADE                                               :{BLACK}陰影視窗 - 只顯示標題列
+STR_TOOLTIP_SHADE                                               :{BLACK}最小化視窗 - 只顯示標題列
 STR_TOOLTIP_DEBUG                                               :{BLACK}顯示 NewGRF 除錯資訊
 STR_TOOLTIP_DEFSIZE                                             :{BLACK}將視窗改回例牌大細。撳實「Ctrl」掣點擊此按鈕可將視窗現時大細設為例牌。撳實「Ctrl」掣雙擊則可重設例牌大細
 STR_TOOLTIP_STICKY                                              :{BLACK}標記此視窗使其不受「關閉全部視窗」掣影響。撳實「Ctrl」鍵點擊此掣嚟將選項定為常態
