@@ -1335,8 +1335,8 @@ STR_CONFIG_SETTING_RUNNING_COSTS_HIGH                           :高
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED                           :建造速度：{STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_SPEED_HELPTEXT                  :限制電腦 AI 嘅建造速度。
 
-STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS                           :車輛拋錨率：{STRING}
-STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS_HELPTEXT                  :控制維修不足嘅車輛拋錨嘅頻率。
+STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS                           :車輛死火率：{STRING}
+STR_CONFIG_SETTING_VEHICLE_BREAKDOWNS_HELPTEXT                  :控制維修不足嘅車輛死火嘅頻率。
 
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER                           :補助倍率：{STRING}
 STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :設定獲補助服務嘅總利潤金額相對原有利潤嘅倍率
@@ -1915,8 +1915,8 @@ STR_CONFIG_SETTING_SERVINT_VALUE_PERCENTAGE                     :{COMMA}{NBSP}%
 ###setting-zero-is-special
 STR_CONFIG_SETTING_SERVINT_DISABLED                             :停用
 
-STR_CONFIG_SETTING_NOSERVICE                                    :如果停用拋錨，車輛唔會去自動維修：{STRING}
-STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :如生效此選項，而且車輛設定為唔拋錨，它們將唔會進入機廠接受維修。
+STR_CONFIG_SETTING_NOSERVICE                                    :如果停用死火，車輛唔會去自動維修：{STRING}
+STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :如生效此選項，而且車輛設定為唔死火，它們將唔會進入機廠接受維修。
 
 STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY               :列車超過車站長度嘅裝載懲罰︰{STRING}
 STR_CONFIG_SETTING_STATION_LENGTH_LOADING_PENALTY_HELPTEXT      :生效後，對於列車超出車站嘅長度會使到裝載得變得更慢。此設定不會影響尋路
@@ -2764,7 +2764,7 @@ STR_CONTENT_DOWNLOAD_PROGRESS_SIZE                              :{WHITE}{BYTES} 
 
 # Content downloading error messages
 STR_CONTENT_ERROR_COULD_NOT_CONNECT                             :{WHITE}連接唔到內容伺服器……
-STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD                            :{WHITE}下載失敗……
+STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD                            :下載衰咗……
 STR_CONTENT_ERROR_COULD_NOT_DOWNLOAD_FILE_NOT_WRITABLE          :檔案寫入唔到
 STR_CONTENT_ERROR_COULD_NOT_EXTRACT                             :解壓唔到下載咗嘅檔案
 
@@ -4573,7 +4573,7 @@ STR_VEHICLE_STATUS_LOADING_UNLOADING                            :{LTBLUE}裝卸�
 STR_VEHICLE_STATUS_LEAVING                                      :{LTBLUE}開緊車
 STR_VEHICLE_STATUS_WAITING_UNBUNCHING                           :{LTBLUE}等待調節班次開車時間
 STR_VEHICLE_STATUS_CRASHED                                      :{RED}已撞毀！
-STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}拋錨
+STR_VEHICLE_STATUS_BROKEN_DOWN                                  :{RED}死火
 STR_VEHICLE_STATUS_STOPPED                                      :{RED}停駛
 STR_VEHICLE_STATUS_TRAIN_STOPPING_VEL                           :{RED}{VELOCITY} - 停駛咗
 STR_VEHICLE_STATUS_TRAIN_NO_POWER                               :{RED}冇電
@@ -4620,7 +4620,7 @@ STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR                     :{BLACK}今年�
 STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR_MIN_PERFORMANCE     :{BLACK}今年盈利：{LTBLUE}{CURRENCY_LONG}（去年盈利：{CURRENCY_LONG}）{BLACK}最差表現：{LTBLUE}{POWER_TO_WEIGHT}
 STR_VEHICLE_INFO_PROFIT_THIS_PERIOD_LAST_PERIOD                 :{BLACK}本期盈利：{LTBLUE}{CURRENCY_LONG}（上期盈利：{CURRENCY_LONG}）
 STR_VEHICLE_INFO_PROFIT_THIS_PERIOD_LAST_PERIOD_MIN_PERFORMANCE :{BLACK}本期盈利：{LTBLUE}{CURRENCY_LONG}（上期盈利：{CURRENCY_LONG}）{BLACK}最小功率：{LTBLUE}{POWER_TO_WEIGHT}
-STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}可靠度：{LTBLUE}{COMMA}%（最大：{COMMA}%）{BLACK}上次維修後嘅拋錨次數：{LTBLUE}{COMMA}
+STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}可靠度：{LTBLUE}{COMMA}%（最大：{COMMA}%）{BLACK}上次維修後嘅死火次數：{LTBLUE}{COMMA}
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE}　{BLACK}製造於：{LTBLUE}{NUM}{BLACK}　價值：{LTBLUE}{CURRENCY_LONG}
 STR_VEHICLE_INFO_CAPACITY                                       :{BLACK}容量：{LTBLUE}{CARGO_LONG}{STRING}
