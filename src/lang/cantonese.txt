@@ -990,7 +990,7 @@ STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :揀選影像設
 STR_GAME_OPTIONS_TAB_SOUND                                      :聲效
 STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :揀選聲效同音樂設定
 STR_GAME_OPTIONS_TAB_SOCIAL                                     :社群
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :揀選社群擴充包設定
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :揀選社群功能設定
 STR_GAME_OPTIONS_TAB_ADVANCED                                   :進階
 STR_GAME_OPTIONS_TAB_ADVANCED_TOOLTIP                           :修改進階設定
 
@@ -1085,13 +1085,13 @@ STR_GAME_OPTIONS_VIDEO_ACCELERATION_RESTART                     :{WHITE}修改�
 STR_GAME_OPTIONS_VIDEO_VSYNC                                    :垂直同步
 STR_GAME_OPTIONS_VIDEO_VSYNC_TOOLTIP                            :生效後，使用垂直同步（V-SYNC）。此項設定將會在遊戲重啟後套用。淨係用緊硬體加速嗰陣俾用
 
-STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :用緊嘅驅動程式：{STRING}
+STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :驅動程式：{STRING}
 
 STR_GAME_OPTIONS_INTERFACE                                      :介面
 
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :介面大細
 STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :拖拉滑動嚟設定介面大細。 撳實「Ctrl」掣嚟精準細緻調整
-STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :自動選取大細
+STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :自動揀選大細
 STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :生效後，自動選取介面大細
 
 STR_GAME_OPTIONS_GUI_SCALE_BEVELS                               :縮放邊框
@@ -1104,13 +1104,13 @@ STR_GAME_OPTIONS_GUI_FONT_AA_TOOLTIP                            :生效後，使
 
 STR_GAME_OPTIONS_GUI_SCALE_MARK                                 :{DECIMAL}x
 
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :自動問卷調查
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :參與遊戲體驗自動問卷調查
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :生效後，OpenTTD 將在離開遊戲時傳送問卷調查資訊
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :關於問卷和隱私
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :開啟瀏覽器嚟顯示更多有關遊戲體驗自動問卷調查嘅資訊
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_FRAME                       :遊戲體驗自動調查
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY                             :參與遊戲體驗自動調查
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_TOOLTIP                     :生效後，OpenTTD 將喺熄咗遊戲嗰陣傳送體驗調查資料
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK                        :關於調查和隱私
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_LINK_TOOLTIP                :開啟瀏覽器嚟睇多啲有關遊戲體驗自動調查嘅資料
 STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW                     :預覽調查結果
-STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :顯示現正執行嘅遊戲體驗問卷調查結果
+STR_GAME_OPTIONS_PARTICIPATE_SURVEY_PREVIEW_TOOLTIP             :睇下而家遊戲體驗嘅調查結果
 
 STR_GAME_OPTIONS_DISPLAY                                        :顯示
 
@@ -1134,17 +1134,17 @@ STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :關於基礎音
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :取得內容
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :檢查同下載最新內容
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（冇安裝社群平台擴充包）
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（冇安裝社群平台功能）
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING}（{STRING}）
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :平台：
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :擴充包狀態：
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :擴充功能狀態：
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}執行緊
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}初期化失敗
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_PLATFORM_NOT_RUNNING       :{ORANGE}{STRING} 未執行
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_UNLOADED                   :{RED}未載入
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_DUPLICATE                  :{RED}擴充包重複
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_DUPLICATE                  :{RED}擴充功能重複
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_UNSUPPORTED_API            :{RED}唔支援嘅版本
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_INVALID_SIGNATURE          :{RED}冇效簽署
 
@@ -2582,10 +2582,10 @@ STR_NETWORK_ASK_RELAY_NO                                        :{BLACK}否
 STR_NETWORK_ASK_RELAY_YES_ONCE                                  :{BLACK}是，僅此一次
 STR_NETWORK_ASK_RELAY_YES_ALWAYS                                :{BLACK}是，且不再詢問
 
-STR_NETWORK_ASK_SURVEY_CAPTION                                  :是否參與遊戲體驗自動問卷調查？
-STR_NETWORK_ASK_SURVEY_TEXT                                     :你是否願意參加遊戲體驗自動問卷調查？{} OpenTTD 會在離開遊戲時傳送調查資訊。{}你可在任何時候於「遊戲選項」選單裡修改此項設定。
+STR_NETWORK_ASK_SURVEY_CAPTION                                  :係咪參與遊戲體驗自動調查？
+STR_NETWORK_ASK_SURVEY_TEXT                                     :你係咪想參加遊戲體驗自動調查？{} OpenTTD 會喺熄咗遊戲嗰陣傳送調查資料。{}你可喺任何時候喺「遊戲選項」選單裏修改呢項設定。
 STR_NETWORK_ASK_SURVEY_PREVIEW                                  :預覽調查結果
-STR_NETWORK_ASK_SURVEY_LINK                                     :關於問卷和隱私
+STR_NETWORK_ASK_SURVEY_LINK                                     :關於調查和隱私
 STR_NETWORK_ASK_SURVEY_NO                                       :唔䎺
 STR_NETWORK_ASK_SURVEY_YES                                      :䎺
 
