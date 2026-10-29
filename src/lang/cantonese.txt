@@ -356,7 +356,7 @@ STR_SORT_BY_ENGINE_ID                                           :引擎編號（
 STR_SORT_BY_COST                                                :價值
 STR_SORT_BY_POWER                                               :功率
 STR_SORT_BY_TRACTIVE_EFFORT                                     :牽引力
-STR_SORT_BY_INTRO_DATE                                          :面世日期
+STR_SORT_BY_INTRO_DATE                                          :賣街日
 STR_SORT_BY_RUNNING_COST                                        :營運成本
 STR_SORT_BY_POWER_VS_RUNNING_COST                               :功率/營運成本
 STR_SORT_BY_CARGO_CAPACITY                                      :貨物容量
@@ -949,9 +949,9 @@ STR_NEWS_AIRCRAFT_DEST_TOO_FAR                                  :{WHITE}{VEHICLE
 STR_NEWS_ORDER_REFIT_FAILED                                     :{WHITE}{VEHICLE}因改裝失敗而終止咗
 STR_NEWS_VEHICLE_AUTORENEW_FAILED                               :{WHITE}自動更新唔到 {VEHICLE}{}{STRING}
 
-STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING}面世了！
+STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE                              :{BIG_FONT}{BLACK}{STRING}賣街喇！
 STR_NEWS_NEW_VEHICLE_TYPE                                       :{BIG_FONT}{BLACK}{ENGINE}
-STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}{STRING}面世了！  -  {ENGINE}
+STR_NEWS_NEW_VEHICLE_NOW_AVAILABLE_WITH_TYPE                    :{BLACK}{STRING}賣街喇！  -  {ENGINE}
 
 STR_NEWS_SHOW_VEHICLE_GROUP_TOOLTIP                             :{BLACK}打開該運輸工具嘅組別
 
@@ -967,8 +967,8 @@ STR_NEWS_SERVICE_SUBSIDY_AWARDED_DOUBLE                         :{BIG_FONT}{BLAC
 STR_NEWS_SERVICE_SUBSIDY_AWARDED_TRIPLE                         :{BIG_FONT}{BLACK}{STRING}獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES}期間內將{1:STRING}由 {2:STRING}運去{3:STRING}嘅服務項目將獲得三倍嘅報酬！
 STR_NEWS_SERVICE_SUBSIDY_AWARDED_QUADRUPLE                      :{BIG_FONT}{BLACK}{STRING}獲得財務補助！{}{}現在起 {4:UNITS_YEARS_OR_MINUTES}期間內將{1:STRING}由 {2:STRING}運去{3:STRING}嘅服務項目將獲得四倍嘅報酬！
 
-STR_NEWS_ROAD_REBUILDING_MONTHS                                 :{BIG_FONT}{BLACK}喺{TOWN}市內發生交通擠塞！{}{}由{STRING}贊助嘅重鋪馬路計劃會令駕駛者帶嚟長達 6 個月嘅擠塞煩惱！
-STR_NEWS_ROAD_REBUILDING_MINUTES                                :{BIG_FONT}{BLACK}喺{TOWN}市內發生交通擠塞！{}{}由{STRING}贊助嘅重鋪馬路計劃會令駕駛者帶嚟長達 6 分鐘嘅擠塞煩惱！
+STR_NEWS_ROAD_REBUILDING_MONTHS                                 :{BIG_FONT}{BLACK}喺{TOWN}市內出現交通擠塞！{}{}由{STRING}贊助嘅重鋪馬路計劃會令駕駛者帶嚟長達 6 個月嘅擠塞煩惱！
+STR_NEWS_ROAD_REBUILDING_MINUTES                                :{BIG_FONT}{BLACK}喺{TOWN}市內出現交通擠塞！{}{}由{STRING}贊助嘅重鋪馬路計劃會令駕駛者帶嚟長達 6 分鐘嘅擠塞煩惱！
 STR_NEWS_EXCLUSIVE_RIGHTS_TITLE                                 :{BIG_FONT}{BLACK}運輸大亨!
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MONTHS                    :{BIG_FONT}{BLACK}{TOWN}市政局同{STRING}簽署咗為期一年嘅專營權合約！
 STR_NEWS_EXCLUSIVE_RIGHTS_DESCRIPTION_MINUTES                   :{BIG_FONT}{BLACK}{TOWN}市政局同{STRING}簽署咗為時 12 分鐘嘅專營權合約！
@@ -989,8 +989,8 @@ STR_GAME_OPTIONS_TAB_GRAPHICS                                   :影像
 STR_GAME_OPTIONS_TAB_GRAPHICS_TOOLTIP                           :揀選影像設定
 STR_GAME_OPTIONS_TAB_SOUND                                      :聲效
 STR_GAME_OPTIONS_TAB_SOUND_TOOLTIP                              :揀選聲效同音樂設定
-STR_GAME_OPTIONS_TAB_SOCIAL                                     :社交
-STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :揀選社交擴充包設定
+STR_GAME_OPTIONS_TAB_SOCIAL                                     :社群
+STR_GAME_OPTIONS_TAB_SOCIAL_TOOLTIP                             :揀選社群擴充包設定
 STR_GAME_OPTIONS_TAB_ADVANCED                                   :進階
 STR_GAME_OPTIONS_TAB_ADVANCED_TOOLTIP                           :修改進階設定
 
@@ -1134,13 +1134,13 @@ STR_GAME_OPTIONS_BASE_MUSIC_DESCRIPTION_TOOLTIP                 :關於基礎音
 STR_GAME_OPTIONS_ONLINE_CONTENT                                 :取得內容
 STR_GAME_OPTIONS_ONLINE_CONTENT_TOOLTIP                         :檢查同下載最新內容
 
-STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（冇安裝社交平台擴充包）
+STR_GAME_OPTIONS_SOCIAL_PLUGINS_NONE                            :（冇安裝社群平台擴充包）
 
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_TITLE                            :{STRING}（{STRING}）
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_PLATFORM                         :平台：
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE                            :擴充包狀態：
 
-STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}正在執行
+STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_RUNNING                    :{GREEN}執行緊
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_FAILED                     :{RED}初期化失敗
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_PLATFORM_NOT_RUNNING       :{ORANGE}{STRING} 未執行
 STR_GAME_OPTIONS_SOCIAL_PLUGIN_STATE_UNLOADED                   :{RED}未載入
@@ -1550,7 +1550,7 @@ STR_CONFIG_SETTING_WARN_OLD_VEHICLE                             :車輛老化時
 STR_CONFIG_SETTING_WARN_OLD_VEHICLE_HELPTEXT                    :如生效此選項，車輛老化嘅時候會顯示訊息
 
 STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES                        :車輛永不過期：{STRING}
-STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :如生效此選項，全部車輛一經面世，就永遠可以揀選建造。
+STR_CONFIG_SETTING_NEVER_EXPIRE_VEHICLES_HELPTEXT               :如生效此選項，全部車輛一經賣街，就永遠可以揀選購買。
 
 STR_CONFIG_SETTING_TIMEKEEPING_UNITS                            :時間模式︰{STRING}
 STR_CONFIG_SETTING_TIMEKEEPING_UNITS_HELPTEXT                   :揀選遊戲嘅計時模式。請留意呢個選項喺玩緊嗰陣改唔到。{}{}日曆模式是經典嘅 OpenTTD 體驗，在此模式中，一年由 12 個月組成，每個月有 28-31 天。{}{}在牆鐘模式中，車輛移動、貨物生產和財務計算等都用分鐘為單位，一分鐘大約等於日曆模式中嘅一個月，即 30 天。此模式下每 12 分鐘即是日曆模式下嘅一年。{}{}兩種模式都包含一個用來記錄車輛、房屋和其他基礎設施引入日期嘅計時器
@@ -1967,7 +1967,7 @@ STR_CONFIG_SETTING_NEWS_ADVICE                                  :有關自家公
 STR_CONFIG_SETTING_NEWS_ADVICE_HELPTEXT                         :顯示需要注意嘅車輛嘅訊息。
 
 STR_CONFIG_SETTING_NEWS_NEW_VEHICLES                            :新車輛：{STRING}
-STR_CONFIG_SETTING_NEWS_NEW_VEHICLES_HELPTEXT                   :當新車輛型號面世時顯示報紙訊息。
+STR_CONFIG_SETTING_NEWS_NEW_VEHICLES_HELPTEXT                   :當新車輛型號賣街時顯示報紙訊息。
 
 STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE                      :貨物需求狀態變動：{STRING}
 STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE_HELPTEXT             :顯示相關車站、碼頭或機場改變所需要貨物種類嘅訊息
