@@ -352,7 +352,7 @@ STR_SORT_BY_WAITING_TOTAL                                       :等緊嘅貨物
 STR_SORT_BY_WAITING_AVAILABLE                                   :等緊嘅可運載貨物總量
 STR_SORT_BY_RATING_MAX                                          :最高運輸評價
 STR_SORT_BY_RATING_MIN                                          :最低運輸評價
-STR_SORT_BY_ENGINE_ID                                           :引擎編號
+STR_SORT_BY_ENGINE_ID                                           :引擎編號（預設）
 STR_SORT_BY_COST                                                :價值
 STR_SORT_BY_POWER                                               :功率
 STR_SORT_BY_TRACTIVE_EFFORT                                     :牽引力
