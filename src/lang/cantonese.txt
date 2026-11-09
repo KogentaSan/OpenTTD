@@ -1090,7 +1090,7 @@ STR_GAME_OPTIONS_VIDEO_DRIVER_INFO                              :驅動程式：
 STR_GAME_OPTIONS_INTERFACE                                      :介面
 
 STR_GAME_OPTIONS_GUI_SCALE_FRAME                                :介面大細
-STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :拖拉滑動嚟設定介面大細。 撳實「Ctrl」掣嚟精準細緻調整
+STR_GAME_OPTIONS_GUI_SCALE_TOOLTIP                              :拖拉滑動嚟設定介面大細。範圍受視窗大細限制。撳實「Ctrl」掣嚟精細調整
 STR_GAME_OPTIONS_GUI_SCALE_AUTO                                 :自動揀選大細
 STR_GAME_OPTIONS_GUI_SCALE_AUTO_TOOLTIP                         :生效後，自動選取介面大細
 
@@ -2960,7 +2960,7 @@ STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}出口�
 STR_BUILD_SIGNAL_ELECTRIC_COMBO_TOOLTIP                         :{BLACK}組合燈號（電子）{}組合燈號同時具有入口或出口燈號嘅特性，這可讓玩家設置一卡車嘅預留燈號。
 STR_BUILD_SIGNAL_ELECTRIC_PBS_TOOLTIP                           :{BLACK}路綫燈號（電子）{}路綫燈號可在列車能找到前往下個安全停車點嘅路綫嘅前提下，容許多列列車進入同一個閉塞區間。一般路綫燈號可以從燈號後方穿過。
 STR_BUILD_SIGNAL_ELECTRIC_PBS_OWAY_TOOLTIP                      :{BLACK}單程路綫燈號（電子）{}路綫燈號可在列車能找到前往下個安全停車點嘅路綫嘅前提下，容許多列列車進入同一個閉塞區間。單程路綫燈號唔畀喺燈號後面穿過。
-STR_BUILD_SIGNAL_CONVERT_TOOLTIP                                :{BLACK}燈號轉換{}點擊現有燈號將會轉換為工具所揀選嘅燈號種類和風格。撳實「Ctrl」掣則只會修改風格。撳實「Shift」掣則可睇下預算成本
+STR_BUILD_SIGNAL_CONVERT_TOOLTIP                                :{BLACK}燈號轉換{}點擊現有燈號將會轉換為工具所揀選嘅燈號種類和風格。撳實「Ctrl」掣則只會修改風格。另撳實「Shift」掣則淨係睇預算成本
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP                   :{BLACK}修改等距燈號拖拉間隔
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}減少（拉近）
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}增加（拉遠）
@@ -4361,10 +4361,10 @@ STR_DEPOT_VEHICLE_TOOLTIP_CHAIN                                 :{BLACK}車輛 {
 STR_DEPOT_VEHICLE_TOOLTIP_CARGO                                 :{}{CARGO_LONG}（{CARGO_SHORT}）
 
 ###length VEHICLE_TYPES
-STR_DEPOT_TRAIN_LIST_TOOLTIP                                    :{BLACK}列車 - 拖放車廂可連接或解除連接，右鍵點擊可顯示詳細資訊。撳實「Ctrl」掣點擊可一併揀選之後嘅車廂
-STR_DEPOT_ROAD_VEHICLE_LIST_TOOLTIP                             :{BLACK}車輛 - 右鍵點擊可顯示詳細資訊
-STR_DEPOT_SHIP_LIST_TOOLTIP                                     :{BLACK}船隻 - 右鍵點擊可顯示詳細資訊
-STR_DEPOT_AIRCRAFT_LIST_TOOLTIP                                 :{BLACK}飛機 - 右鍵點擊可顯示詳細資訊
+STR_DEPOT_TRAIN_LIST_TOOLTIP                                    :{BLACK}列車 - 拖放車廂可連接或解除連接，右鍵點擊可顯示詳細資訊。撳實「Ctrl」掣點擊可一併揀選之後嘅車廂。同時撳實「『Ctrl』+『Shift』」掣可覆蓋貨物種類
+STR_DEPOT_ROAD_VEHICLE_LIST_TOOLTIP                             :{BLACK}車輛 - 右鍵點擊可顯示詳細資訊。同時撳實「『Ctrl』+『Shift』」掣可覆蓋貨物種類
+STR_DEPOT_SHIP_LIST_TOOLTIP                                     :{BLACK}船隻 - 右鍵點擊可顯示詳細資訊。同時撳實「『Ctrl』+『Shift』」掣可覆蓋貨物種類
+STR_DEPOT_AIRCRAFT_LIST_TOOLTIP                                 :{BLACK}飛機 - 右鍵點擊可顯示詳細資訊。同時撳實「『Ctrl』+『Shift』」掣可覆蓋貨物種類
 
 ###length VEHICLE_TYPES
 STR_DEPOT_TRAIN_SELL_TOOLTIP                                    :{BLACK}將列車拖到這裡即可出售
