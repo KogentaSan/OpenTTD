@@ -475,7 +475,14 @@ void TextfileWindow::NavigateToFile(std::string newfile, size_t line)
 {
 	this->link_anchors.clear();
 
-	if (StrEndsWithIgnoreCase(this->filename, ".md")) this->AfterLoadMarkdown();
+	std::string_view content_name = this->filename;
+#if defined(WITH_ZLIB)
+	if (StrEndsWithIgnoreCase(this->filename, ".gz")) content_name.remove_suffix(3);
+#endif
+#if defined(WITH_LIBLZMA)
+	if (StrEndsWithIgnoreCase(this->filename, ".xz")) content_name.remove_suffix(3);
+#endif
+	if (StrEndsWithIgnoreCase(content_name, ".md")) this->AfterLoadMarkdown();
 
 	if (this->GetWidget<NWidgetStacked>(WID_TF_SEL_JUMPLIST)->SetDisplayedPlane(this->jumplist.empty() ? SZSP_HORIZONTAL : 0)) this->ReInit();
 }
@@ -870,12 +877,12 @@ static std::vector<char> Xunzip(std::span<char> input)
 
 #if defined(WITH_ZLIB)
 	/* In-place gunzip */
-	if (textfile.ends_with(".gz")) buf = Gunzip(buf);
+	if (StrEndsWithIgnoreCase(textfile, ".gz")) buf = Gunzip(buf);
 #endif
 
 #if defined(WITH_LIBLZMA)
 	/* In-place xunzip */
-	if (textfile.ends_with(".xz")) buf = Xunzip(buf);
+	if (StrEndsWithIgnoreCase(textfile, ".xz")) buf = Xunzip(buf);
 #endif
 
 	if (buf.empty()) return;
